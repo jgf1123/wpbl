@@ -1,0 +1,302 @@
+"""Win probability from a base-out state, score differential, and point in the game.
+
+    pixi run wp
+
+The idea that makes this work on 24 games: the base-out state only affects the
+half-inning in progress. Every later half-inning starts bases-empty, nobody out,
+and is drawn from one distribution estimated on 288 half-innings. So the thinly
+sampled 24-cell part contributes at most one inning of variance, and the rest of
+the game is carried by the well-estimated piece. Accumulating over the remaining
+half-innings averages the noise down rather than compounding it.
+
+Assumptions, all of them the ones asked for:
+
+* Both teams draw from the same league-wide run distributions -- no team
+  strength, no platoon, no park.
+* Half-innings are independent and identically distributed, pooled over every
+  uncensored half-inning: innings 1-6 plus the top of the 7th. Only the bottom
+  of the 7th is left out, being both truncated by walk-offs and conditioned on
+  the home team not already leading.
+* No park or travel term. Every game is played in the same stadium, so the only
+  home advantage in the model is batting last, which is a rule rather than a
+  venue.
+* Regulation is seven innings. The home team does not bat in the bottom of the
+  7th when already ahead, and stops as soon as it leads.
+
+Under those assumptions a tie entering extra innings is exactly 50/50: both
+sides draw the same distribution, so the sign of the difference is symmetric,
+and the home team's ability to stop early cannot change who finishes ahead.
+That closes the recursion without modelling the tiebreaker inning at all.
+"""
+
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from wpbl.run_expectancy import pool, states
+
+REGULATION = 7
+MAX_RUNS = 12          # per half-inning; the observed maximum is 7
+MAX_DIFF = 25          # differential range the grid covers
+SHRINK = 25            # pseudo-observations pulling a thin cell toward its group
+
+
+def half_inning_pmf() -> np.ndarray:
+    """Runs in a complete, uncensored half-inning.
+
+    Innings 1-6 plus the top of the 7th. The top of the 7th is always played and
+    never cut short, so it is a clean observation. The bottom of the 7th is the
+    only half-inning that is both censored -- the home team stops the moment it
+    leads -- and selected, since it happens only when the home team is not ahead.
+    Including it would bias the distribution downwards.
+    """
+    plays = pd.read_parquet("data/tables/plays.parquet")
+    key = ["game_id", "batting_team_id", "inning", "half"]
+    clean = plays[(plays["inning"] <= 6)
+                  | ((plays["inning"] == REGULATION) & (plays["half"] == "top"))]
+    return _pmf(clean.groupby(key)["runs_scored"].sum().values)
+
+
+def _pmf(values) -> np.ndarray:
+    pmf = np.zeros(MAX_RUNS + 1)
+    for v in values:
+        pmf[min(int(v), MAX_RUNS)] += 1
+    return pmf / pmf.sum()
+
+
+def state_pmfs(frame: pd.DataFrame):
+    """Runs from a base-out state to the end of the half-inning, per state.
+
+    A thin cell is shrunk toward its pooled group (bases empty / runner on first
+    only / scoring position / loaded) rather than trusted on its own count.
+    """
+    frame = frame.assign(grp=frame["bases"].map(pool))
+    group_pmf = {(g, o): _pmf(sub["runs_rest"].values)
+                 for (g, o), sub in frame.groupby(["grp", "outs"])}
+    out = {}
+    for (bases, outs), sub in frame.groupby(["bases", "outs"]):
+        n = len(sub)
+        raw = _pmf(sub["runs_rest"].values)
+        prior = group_pmf[(pool(bases), outs)]
+        out[(bases, outs)] = (n * raw + SHRINK * prior) / (n + SHRINK)
+    return out
+
+
+class Model:
+    def __init__(self):
+        frame = states()
+        # Drop the bottom of the 7th here too, for the same reason the full
+        # half-inning distribution does: it is truncated the moment the home
+        # team leads, so it understates how much a state is worth.
+        frame = frame[~((frame["inning"] == REGULATION) & (frame["half"] == "bottom"))]
+        self.full = half_inning_pmf()
+        self.state = state_pmfs(frame)
+        self.n_states = frame.groupby(["bases", "outs"]).size().to_dict()
+        self.offset = MAX_DIFF
+        self.width = 2 * MAX_DIFF + 1
+        self._solve()
+
+    def _shift(self, wins: np.ndarray, pmf: np.ndarray, sign: int) -> np.ndarray:
+        """Expected win probability after the batting team scores r ~ pmf.
+
+        sign=+1 when the home team is batting (differential rises), -1 when the
+        away team is batting.
+        """
+        out = np.zeros(self.width)
+        for r, p in enumerate(pmf):
+            if p == 0:
+                continue
+            if r == 0:
+                shifted = wins
+            elif sign > 0:
+                # Home scored r: read the win probability r higher up the scale,
+                # clamping at the top of the grid.
+                shifted = np.empty_like(wins)
+                shifted[:-r] = wins[r:]
+                shifted[-r:] = wins[-1]
+            else:
+                shifted = np.empty_like(wins)
+                shifted[r:] = wins[:-r]
+                shifted[:r] = wins[0]
+            out += p * shifted
+        return out
+
+    def _solve(self) -> None:
+        """Backward induction over half-inning boundaries.
+
+        top[i][d]    = P(home wins) about to start the top of inning i, home
+                       leading by d, bases empty, nobody out.
+        bottom[i][d] = same, about to start the bottom of inning i.
+        """
+        diffs = np.arange(-MAX_DIFF, MAX_DIFF + 1)
+        self.top, self.bottom = {}, {}
+
+        # End of the bottom of the 7th: the game is over.
+        end = np.where(diffs > 0, 1.0, np.where(diffs < 0, 0.0, 0.5))
+
+        # Bottom of the 7th. If the home team already leads it does not bat.
+        batted = self._shift(end, self.full, +1)
+        self.bottom[REGULATION] = np.where(diffs > 0, 1.0, batted)
+        self.top[REGULATION] = self._shift(self.bottom[REGULATION], self.full, -1)
+
+        for inning in range(REGULATION - 1, 0, -1):
+            self.bottom[inning] = self._shift(self.top[inning + 1], self.full, +1)
+            self.top[inning] = self._shift(self.bottom[inning], self.full, -1)
+
+    def _lookup(self, table: np.ndarray, diff: int) -> float:
+        return float(table[int(np.clip(diff + self.offset, 0, self.width - 1))])
+
+    def win_probability(self, inning: int, half: str, outs: int, bases: str, diff: int) -> float:
+        """P(home team wins), given the home team leads by `diff` right now.
+
+        `half` is "top" or "bottom"; `bases` is a code like "_2_" or "123".
+        """
+        pmf = self.state[(bases, outs)]
+        if half == "top":
+            # Away batting: their runs cut the home lead, then the bottom follows.
+            return float(sum(p * self._lookup(self.bottom[inning], diff - r)
+                             for r, p in enumerate(pmf) if p))
+        if inning >= REGULATION:
+            diffs = np.arange(-MAX_DIFF, MAX_DIFF + 1)
+            end = np.where(diffs > 0, 1.0, np.where(diffs < 0, 0.0, 0.5))
+            return float(sum(p * self._lookup(end, diff + r) for r, p in enumerate(pmf) if p))
+        return float(sum(p * self._lookup(self.top[inning + 1], diff + r)
+                         for r, p in enumerate(pmf) if p))
+
+
+BASES = ["___", "1__", "_2_", "__3", "12_", "1_3", "_23", "123"]
+
+DOMINATED_BY = {
+    "___": ["1__", "_2_", "__3"], "1__": ["12_", "1_3"], "_2_": ["12_", "_23"],
+    "__3": ["1_3", "_23"], "12_": ["123"], "1_3": ["123"], "_23": ["123"],
+}
+
+
+def observed_states(model: "Model") -> pd.DataFrame:
+    """Every real plate appearance, with the win probability the model gives it."""
+    plays = pd.read_parquet("data/tables/plays.parquet")
+    games = pd.read_parquet("data/tables/games.parquet")
+    home_won = (games.set_index("game_id")
+                .apply(lambda r: r["home_score"] > r["away_score"], axis=1).to_dict())
+    home_id = games.set_index("game_id")["home_team_id"].to_dict()
+
+    rows = []
+    live = plays[(plays["play_kind"] == "plate_appearance") & (plays["inning"] <= REGULATION)]
+    for play in live.itertuples():
+        bases = (("1" if pd.notna(play.first_base) else "_")
+                 + ("2" if pd.notna(play.second_base) else "_")
+                 + ("3" if pd.notna(play.third_base) else "_"))
+        half = "bottom" if play.batting_team_id == home_id[play.game_id] else "top"
+        rows.append({
+            "game_id": play.game_id,
+            "wp": model.win_probability(play.inning, half, int(play.outs_before), bases,
+                                        int(play.home_score_before - play.away_score_before)),
+            "home_won": home_won[play.game_id],
+        })
+    return pd.DataFrame(rows)
+
+
+def validate(model: "Model") -> None:
+    print("=== structural checks ===")
+    falling = 0
+    for inning in range(1, REGULATION + 1):
+        for half in ("top", "bottom"):
+            for outs in (0, 1, 2):
+                for bases in BASES:
+                    curve = [model.win_probability(inning, half, outs, bases, d)
+                             for d in range(-8, 9)]
+                    if any(b < a - 1e-9 for a, b in zip(curve, curve[1:])):
+                        falling += 1
+    print(f"  win probability falls as the lead grows: {falling} of 336 curves  "
+          f"({'PASS' if falling == 0 else 'FAIL'})")
+
+    # Adding a runner must help the batting team. Any breach is inherited base-out
+    # noise; what matters is how large it is once future innings damp it.
+    breaches = []
+    for inning in range(1, REGULATION + 1):
+        for half in ("top", "bottom"):
+            for outs in (0, 1, 2):
+                for base, better in DOMINATED_BY.items():
+                    for state in better:
+                        low = model.win_probability(inning, half, outs, base, 0)
+                        high = model.win_probability(inning, half, outs, state, 0)
+                        gain = (high - low) if half == "bottom" else (low - high)
+                        if gain < 0:
+                            breaches.append((abs(gain), inning, half, outs, base, state))
+    breaches.sort(reverse=True)
+    if breaches:
+        sizes = [b[0] for b in breaches]
+        print(f"  adding a runner lowers win probability: {len(breaches)} of 462 comparisons")
+        print(f"    median breach {np.median(sizes):.4f}, largest {sizes[0]:.4f}, "
+              f"{sum(1 for s in sizes if s > 0.01)} above 0.01")
+        worst = breaches[0]
+        print(f"    worst: inning {worst[1]} {worst[2]}, {worst[3]} out, "
+              f"{worst[4]} -> {worst[5]}")
+        print(f"    in the 7th inning: {sum(1 for b in breaches if b[1] == REGULATION)} "
+              f"(no later innings left to average the noise away)")
+
+    print("\n=== calibration on the 24 completed games ===")
+    frame = observed_states(model)
+    frame["bin"] = pd.cut(frame["wp"], np.arange(0, 1.01, 0.1))
+    # Weight by game, not by plate appearance: a team that blows a lead racks up
+    # plate appearances while ahead, so PA-weighting systematically over-counts
+    # the losses and makes a sound model look badly calibrated.
+    per_game = (frame.groupby(["bin", "game_id"], observed=True)
+                .agg(wp=("wp", "mean"), home_won=("home_won", "first")).reset_index())
+    table = (per_game.groupby("bin", observed=True)
+             .agg(games=("game_id", "size"), predicted=("wp", "mean"),
+                  actual=("home_won", "mean")).round(3))
+    table["pas"] = frame.groupby("bin", observed=True).size()
+    print(table.to_string())
+
+    brier = ((frame["wp"] - frame["home_won"]) ** 2).mean()
+    base = ((0.5 - frame["home_won"]) ** 2).mean()
+    print(f"\n  Brier {brier:.4f} vs {base:.4f} for a flat 0.500 "
+          f"({100 * (1 - brier / base):.0f}% better)")
+    print(f"  {len(frame)} plate appearances, but only {frame['game_id'].nunique()} "
+          f"independent games -- treat every calibration row as provisional.")
+
+
+def main() -> None:
+    pd.set_option("display.width", 250)
+    model = Model()
+
+    print("half-inning run distribution (innings 1-6 and top of the 7th):")
+    print("  " + "  ".join(f"{r}:{p:.3f}" for r, p in enumerate(model.full[:8])))
+    print(f"  mean {sum(r * p for r, p in enumerate(model.full)):.3f}")
+
+    start = model.win_probability(1, "top", 0, "___", 0)
+    print(f"\nhome win probability at first pitch: {start:.3f}")
+    print("  (batting last is the only asymmetry; no team, park or travel term)")
+
+    print("\n=== P(home wins), tied game, nobody out ===")
+    rows = {}
+    for inning in range(1, REGULATION + 1):
+        for half in ("top", "bottom"):
+            rows[f"{half[0]}{inning}"] = {
+                b: round(model.win_probability(inning, half, 0, b, 0), 3) for b in BASES}
+    print(pd.DataFrame(rows).T.to_string())
+
+    print("\n=== P(home wins), bottom of the 7th, home trailing by 1, by outs ===")
+    grid = {}
+    for outs in (0, 1, 2):
+        grid[f"{outs} out"] = {b: round(model.win_probability(7, "bottom", outs, b, -1), 3)
+                               for b in BASES}
+    print(pd.DataFrame(grid).T.to_string())
+
+    print()
+    validate(model)
+
+    print("\n=== P(home wins) by differential, start of each half-inning ===")
+    band = range(-5, 6)
+    rows = {}
+    for inning in range(1, REGULATION + 1):
+        for half in ("top", "bottom"):
+            table = model.top[inning] if half == "top" else model.bottom[inning]
+            rows[f"{half[0]}{inning}"] = {d: round(model._lookup(table, d), 3) for d in band}
+    print(pd.DataFrame(rows).T.to_string())
+
+
+if __name__ == "__main__":
+    main()

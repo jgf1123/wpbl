@@ -1,0 +1,540 @@
+<title>WPBL Pitcher Innings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #f7f8f6;
+  --surface: #ffffff;
+  --ink: #14181a;
+  --ink-2: #55605c;
+  --ink-3: #7d8783;
+  --hair: #dde2de;
+  --track: #e7ebe6;
+  --win: #1f6f4a;
+  --loss: #96524a;
+  --s0: #2a78d6;
+  --s0-ink: #ffffff;
+  --s1: #eb6834;
+  --s1-ink: #101310;
+  --s2: #1baf7a;
+  --s2-ink: #101310;
+  --s3: #eda100;
+  --s3-ink: #101310;
+  --s4: #e87ba4;
+  --s4-ink: #101310;
+  --s5: #008300;
+  --s5-ink: #ffffff;
+  --s6: #4a3aa7;
+  --s6-ink: #ffffff;
+  --s7: #e34948;
+  --s7-ink: #101310;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #16191a;
+    --surface: #1c2021;
+    --ink: #eef1ee;
+    --ink-2: #a4aeaa;
+    --ink-3: #7d8783;
+    --hair: #2c3231;
+    --track: #262b2b;
+    --win: #63b98d;
+    --loss: #d78a82;
+    --s0: #3987e5;
+    --s0-ink: #101310;
+    --s1: #d95926;
+    --s1-ink: #101310;
+    --s2: #199e70;
+    --s2-ink: #101310;
+    --s3: #c98500;
+    --s3-ink: #101310;
+    --s4: #d55181;
+    --s4-ink: #101310;
+    --s5: #008300;
+    --s5-ink: #ffffff;
+    --s6: #9085e9;
+    --s6-ink: #101310;
+    --s7: #e66767;
+    --s7-ink: #101310;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #16191a;
+  --surface: #1c2021;
+  --ink: #eef1ee;
+  --ink-2: #a4aeaa;
+  --ink-3: #7d8783;
+  --hair: #2c3231;
+  --track: #262b2b;
+  --win: #63b98d;
+  --loss: #d78a82;
+    --s0: #3987e5;
+    --s0-ink: #101310;
+    --s1: #d95926;
+    --s1-ink: #101310;
+    --s2: #199e70;
+    --s2-ink: #101310;
+    --s3: #c98500;
+    --s3-ink: #101310;
+    --s4: #d55181;
+    --s4-ink: #101310;
+    --s5: #008300;
+    --s5-ink: #ffffff;
+    --s6: #9085e9;
+    --s6-ink: #101310;
+    --s7: #e66767;
+    --s7-ink: #101310;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px 72px; }
+header.top { border-bottom: 1px solid var(--hair); padding-bottom: 20px; margin-bottom: 28px; }
+h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.015em; margin: 0 0 6px; text-wrap: balance; }
+.sub { color: var(--ink-2); margin: 0 0 10px; max-width: 65ch; }
+.sub:last-child { margin-bottom: 0; }
+.panel { background: var(--surface); border: 1px solid var(--hair); border-radius: 10px;
+  padding: 20px 20px 14px; margin-bottom: 22px; }
+.panel-head { margin-bottom: 12px; }
+h2 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.meta { margin: 3px 0 0; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+ul.key { list-style: none; margin: 0 0 16px; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 4px 20px; }
+ul.key li { display: flex; align-items: center; gap: 7px; font-size: 12.5px; min-width: 0; }
+ul.key li.wide { grid-column: 1 / -1; align-items: baseline; flex-wrap: wrap; }
+ul.key .tail { color: var(--ink-3); font-size: 11.5px; flex: none;
+  font-family: "IBM Plex Mono", ui-monospace, monospace; }
+span.sw { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+ul.key li.wide span.sw { align-self: center; }
+ul.key .nm { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+ul.key li.wide .nm { white-space: normal; }
+ul.key .ip { color: var(--ink-2); font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 11.5px; margin-left: auto; flex: none; padding-left: 10px; }
+ul.key .rl { color: var(--ink-3); font-size: 11.5px; flex: none; width: 72px; text-align: right; }
+.scroll { overflow-x: auto; }
+svg { display: block; min-width: 874px; }
+.rule { stroke: var(--hair); stroke-width: 1; }
+.tick { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; fill: var(--ink-3); }
+.glabel { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11.5px; fill: var(--ink-2); }
+.glabel.dim { fill: var(--ink-3); }
+.score { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11.5px; font-weight: 500; }
+.score.win { fill: var(--win); }
+.score.loss { fill: var(--loss); }
+.track { fill: var(--track); }
+.seg { cursor: default; }
+.seg:hover rect { filter: brightness(1.08); }
+.seglabel { font-size: 12px; font-weight: 500; pointer-events: none; }
+.s0 rect, path.noout.s0 { fill: var(--s0); }
+span.sw.s0 { background: var(--s0); }
+.s0 .seglabel { fill: var(--s0-ink); }
+.s1 rect, path.noout.s1 { fill: var(--s1); }
+span.sw.s1 { background: var(--s1); }
+.s1 .seglabel { fill: var(--s1-ink); }
+.s2 rect, path.noout.s2 { fill: var(--s2); }
+span.sw.s2 { background: var(--s2); }
+.s2 .seglabel { fill: var(--s2-ink); }
+.s3 rect, path.noout.s3 { fill: var(--s3); }
+span.sw.s3 { background: var(--s3); }
+.s3 .seglabel { fill: var(--s3-ink); }
+.s4 rect, path.noout.s4 { fill: var(--s4); }
+span.sw.s4 { background: var(--s4); }
+.s4 .seglabel { fill: var(--s4-ink); }
+.s5 rect, path.noout.s5 { fill: var(--s5); }
+span.sw.s5 { background: var(--s5); }
+.s5 .seglabel { fill: var(--s5-ink); }
+.s6 rect, path.noout.s6 { fill: var(--s6); }
+span.sw.s6 { background: var(--s6); }
+.s6 .seglabel { fill: var(--s6-ink); }
+.s7 rect, path.noout.s7 { fill: var(--s7); }
+span.sw.s7 { background: var(--s7); }
+.s7 .seglabel { fill: var(--s7-ink); }
+details { margin-top: 10px; border-top: 1px solid var(--hair); padding-top: 8px; }
+summary { cursor: pointer; font-size: 13px; color: var(--ink-2); }
+summary:focus-visible { outline: 2px solid var(--s0); outline-offset: 3px; border-radius: 3px; }
+table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 13px; }
+th, td { text-align: left; padding: 5px 10px 5px 0; border-bottom: 1px solid var(--hair); white-space: nowrap; }
+td .sw { display: inline-block; margin-right: 6px; vertical-align: middle; }
+th { color: var(--ink-3); font-weight: 500; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.05em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums;
+  font-family: "IBM Plex Mono", ui-monospace, monospace; }
+footer { color: var(--ink-3); font-size: 13px; margin-top: 30px; max-width: 65ch; }
+footer p { margin: 0 0 8px; }
+</style>
+<div class="wrap">
+  <header class="top">
+    <h1>Which innings each pitcher covered</h1>
+    <p class="sub">WPBL 2026, all 24 completed games. Every bar is one game, split at the exact out
+      each pitcher handed off &mdash; a segment ending two-thirds through the 5th means she was
+      pulled with two out. Regulation is seven innings, and the leftmost segment is always the
+      starter.</p>
+    <p class="sub">Colour identifies the pitcher. Each team's seven busiest arms by innings get
+      their own colour and everyone below them shares the last one, so read colour against the key
+      in that panel &mdash; the same colour is a different person on a different team.</p>
+  </header>
+  
+<section class="panel">
+  <header class="panel-head">
+    <h2>Boston Hunters</h2>
+    <p class="meta">12 games &middot; 4-8 &middot;
+      8 pitchers used</p>
+  </header>
+  <ul class="key"><li><span class="sw s0"></span><span class="nm">Gigi Schiano</span><span class="ip">23.1</span><span class="rl">2 GS, 5 RP</span></li><li><span class="sw s1"></span><span class="nm">Alli Schroder</span><span class="ip">14.2</span><span class="rl">4 GS, 2 RP</span></li><li><span class="sw s2"></span><span class="nm">Kate Blunt</span><span class="ip">11.0</span><span class="rl">2 GS, 2 RP</span></li><li><span class="sw s3"></span><span class="nm">Ma&#239;ka Dumais</span><span class="ip">10.0</span><span class="rl">6 RP</span></li><li><span class="sw s4"></span><span class="nm">Paloma Benach</span><span class="ip">10.0</span><span class="rl">2 GS, 2 RP</span></li><li><span class="sw s5"></span><span class="nm">Raine Padgham</span><span class="ip">7.2</span><span class="rl">2 GS, 1 RP</span></li><li><span class="sw s6"></span><span class="nm">Olivia Bricker</span><span class="ip">3.0</span><span class="rl">4 RP</span></li><li><span class="sw s7"></span><span class="nm">Denver Bryant</span><span class="ip">2.1</span><span class="rl">1 RP</span></li></ul>
+  <div class="scroll"><svg viewBox="0 0 874 420" width="100%" height="420" role="img" aria-label="Pitcher usage by inning for Boston Hunters"><line class="rule" x1="190.0" y1="22" x2="190.0" y2="414"/><text class="tick" x="232.0" y="16" text-anchor="middle">1</text><line class="rule" x1="274.0" y1="22" x2="274.0" y2="414"/><text class="tick" x="316.0" y="16" text-anchor="middle">2</text><line class="rule" x1="358.0" y1="22" x2="358.0" y2="414"/><text class="tick" x="400.0" y="16" text-anchor="middle">3</text><line class="rule" x1="442.0" y1="22" x2="442.0" y2="414"/><text class="tick" x="484.0" y="16" text-anchor="middle">4</text><line class="rule" x1="526.0" y1="22" x2="526.0" y2="414"/><text class="tick" x="568.0" y="16" text-anchor="middle">5</text><line class="rule" x1="610.0" y1="22" x2="610.0" y2="414"/><text class="tick" x="652.0" y="16" text-anchor="middle">6</text><line class="rule" x1="694.0" y1="22" x2="694.0" y2="414"/><text class="tick" x="736.0" y="16" text-anchor="middle">7</text><line class="rule" x1="778.0" y1="22" x2="778.0" y2="414"/><text class="tick" x="820.0" y="16" text-anchor="middle">8</text><line class="rule" x1="862.0" y1="22" x2="862.0" y2="414"/><text class="glabel dim" x="0" y="50.0">g1</text><text class="glabel" x="26" y="50.0">Aug 2</text><text class="glabel" x="84" y="50.0">vs SFF</text><text class="score loss" x="176" y="50.0" text-anchor="end">L 3-11</text><rect class="track" x="190" y="36.5" width="588.0" height="19" rx="4"/><g class="seg s5"><rect x="190.0" y="36.5" width="222.0" height="19" rx="4"/><title>Raine Padgham - 1st-3rd, 2.2 IP
+22 batters faced, 74 pitches
+started</title><text class="seglabel" x="197.0" y="50.0">Raine Padgham</text></g><g class="seg s3"><rect x="414.0" y="36.5" width="194.0" height="19" rx="4"/><title>Ma&#239;ka Dumais - 3rd-5th, 2.1 IP
+11 batters faced, 48 pitches
+entered 3rd, 2 outs, 2 on</title><text class="seglabel" x="421.0" y="50.0">Ma&#239;ka Dumais</text></g><g class="seg s1"><rect x="610.0" y="36.5" width="82.0" height="19" rx="4"/><title>Alli Schroder - 6th, 1.0 IP
+6 batters faced, 25 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="50.0">Schroder</text></g><g class="seg s0"><rect x="694.0" y="36.5" width="82.0" height="19" rx="4"/><title>Gigi Schiano - 7th, 1.0 IP
+4 batters faced, 15 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="50.0">Schiano</text></g><text class="glabel dim" x="0" y="82.0">g2</text><text class="glabel" x="26" y="82.0">Aug 5</text><text class="glabel" x="84" y="82.0">@ LAQ</text><text class="score loss" x="176" y="82.0" text-anchor="end">L 4-12</text><rect class="track" x="190" y="68.5" width="504.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="68.5" width="194.0" height="19" rx="4"/><title>Alli Schroder - 1st-3rd, 2.1 IP
+21 batters faced, 83 pitches
+started</title><text class="seglabel" x="197.0" y="82.0">Alli Schroder</text></g><g class="seg s0"><rect x="386.0" y="68.5" width="306.0" height="19" rx="4"/><title>Gigi Schiano - 3rd-6th, 3.2 IP
+18 batters faced, 69 pitches
+entered 3rd, 1 out, 2 on</title><text class="seglabel" x="393.0" y="82.0">Gigi Schiano</text></g><text class="glabel dim" x="0" y="114.0">g3</text><text class="glabel" x="26" y="114.0">Aug 8</text><text class="glabel" x="84" y="114.0">@ NYH</text><text class="score win" x="176" y="114.0" text-anchor="end">W 9-6</text><rect class="track" x="190" y="100.5" width="588.0" height="19" rx="4"/><g class="seg s5"><rect x="190.0" y="100.5" width="334.0" height="19" rx="4"/><title>Raine Padgham - 1st-4th, 4.0 IP
+23 batters faced, 101 pitches
+started</title><text class="seglabel" x="197.0" y="114.0">Raine Padgham</text></g><g class="seg s3"><rect x="526.0" y="100.5" width="250.0" height="19" rx="4"/><title>Ma&#239;ka Dumais - 5th-7th, 3.0 IP
+13 batters faced, 58 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="114.0">Ma&#239;ka Dumais</text></g><text class="glabel dim" x="0" y="146.0">g4</text><text class="glabel" x="26" y="146.0">Aug 9</text><text class="glabel" x="84" y="146.0">vs NYH</text><text class="score loss" x="176" y="146.0" text-anchor="end">L 6-7</text><rect class="track" x="190" y="132.5" width="672.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="132.5" width="278.0" height="19" rx="4"/><title>Gigi Schiano - 1st-4th, 3.1 IP
+18 batters faced, 58 pitches
+started</title><text class="seglabel" x="197.0" y="146.0">Gigi Schiano</text></g><g class="seg s4"><rect x="470.0" y="132.5" width="222.0" height="19" rx="4"/><title>Paloma Benach - 4th-6th, 2.2 IP
+11 batters faced, 32 pitches
+entered 4th, 1 out, 2 on</title><text class="seglabel" x="477.0" y="146.0">Paloma Benach</text></g><g class="seg s2"><rect x="694.0" y="132.5" width="166.0" height="19" rx="4"/><title>Kate Blunt - 7th-8th, 2.0 IP
+12 batters faced, 39 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="146.0">Kate Blunt</text></g><text class="glabel dim" x="0" y="178.0">g5</text><text class="glabel" x="26" y="178.0">Aug 13</text><text class="glabel" x="84" y="178.0">@ NYH</text><text class="score win" x="176" y="178.0" text-anchor="end">W 6-1</text><rect class="track" x="190" y="164.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="164.5" width="250.0" height="19" rx="4"/><title>Alli Schroder - 1st-3rd, 3.0 IP
+15 batters faced, 61 pitches
+started</title><text class="seglabel" x="197.0" y="178.0">Alli Schroder</text></g><g class="seg s6"><rect x="442.0" y="164.5" width="82.0" height="19" rx="4"/><title>Olivia Bricker - 4th, 1.0 IP
+5 batters faced, 19 pitches
+entered 4th, 0 outs, 0 on</title><text class="seglabel" x="449.0" y="178.0">Bricker</text></g><g class="seg s0"><rect x="526.0" y="164.5" width="250.0" height="19" rx="4"/><title>Gigi Schiano - 5th-7th, 3.0 IP
+13 batters faced, 39 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="178.0">Gigi Schiano</text></g><text class="glabel dim" x="0" y="210.0">g6</text><text class="glabel" x="26" y="210.0">Aug 15</text><text class="glabel" x="84" y="210.0">vs LAQ</text><text class="score loss" x="176" y="210.0" text-anchor="end">L 3-13</text><rect class="track" x="190" y="196.5" width="588.0" height="19" rx="4"/><g class="seg s4"><rect x="190.0" y="196.5" width="334.0" height="19" rx="4"/><title>Paloma Benach - 1st-4th, 4.0 IP
+18 batters faced, 68 pitches
+started</title><text class="seglabel" x="197.0" y="210.0">Paloma Benach</text></g><g class="seg s5"><rect x="526.0" y="196.5" width="82.0" height="19" rx="4"/><title>Raine Padgham - 5th, 1.0 IP
+7 batters faced, 29 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="210.0">Padgham</text></g><g class="seg s6"><rect x="610.0" y="196.5" width="54.0" height="19" rx="4"/><title>Olivia Bricker - 6th, 0.2 IP
+4 batters faced, 16 pitches
+entered 6th, 0 outs, 0 on</title></g><g class="seg s3"><rect x="666.0" y="196.5" width="110.0" height="19" rx="4"/><title>Ma&#239;ka Dumais - 6th-7th, 1.1 IP
+10 batters faced, 47 pitches
+entered 6th, 2 outs, 1 on</title><text class="seglabel" x="673.0" y="210.0">Ma&#239;ka Dumais</text></g><text class="glabel dim" x="0" y="242.0">g7</text><text class="glabel" x="26" y="242.0">Aug 16</text><text class="glabel" x="84" y="242.0">@ NYH</text><text class="score win" x="176" y="242.0" text-anchor="end">W 9-7</text><rect class="track" x="190" y="228.5" width="588.0" height="19" rx="4"/><g class="seg s2"><rect x="190.0" y="228.5" width="250.0" height="19" rx="4"/><title>Kate Blunt - 1st-3rd, 3.0 IP
+17 batters faced, 70 pitches
+started</title><text class="seglabel" x="197.0" y="242.0">Kate Blunt</text></g><g class="seg s0"><rect x="442.0" y="228.5" width="334.0" height="19" rx="4"/><title>Gigi Schiano - 4th-7th, 4.0 IP
+16 batters faced, 63 pitches
+entered 4th, 0 outs, 0 on</title><text class="seglabel" x="449.0" y="242.0">Gigi Schiano</text></g><text class="glabel dim" x="0" y="274.0">g8</text><text class="glabel" x="26" y="274.0">Aug 20</text><text class="glabel" x="84" y="274.0">vs NYH</text><text class="score loss" x="176" y="274.0" text-anchor="end">L 4-9</text><rect class="track" x="190" y="260.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="260.5" width="334.0" height="19" rx="4"/><title>Alli Schroder - 1st-4th, 4.0 IP
+20 batters faced, 81 pitches
+started</title><text class="seglabel" x="197.0" y="274.0">Alli Schroder</text></g><g class="seg s6"><rect x="526.0" y="260.5" width="54.0" height="19" rx="4"/><title>Olivia Bricker - 5th, 0.2 IP
+7 batters faced, 21 pitches
+entered 5th, 0 outs, 0 on</title></g><g class="seg s7"><rect x="582.0" y="260.5" width="194.0" height="19" rx="4"/><title>Denver Bryant - 5th-7th, 2.1 IP
+13 batters faced, 50 pitches
+entered 5th, 2 outs, 1 on</title><text class="seglabel" x="589.0" y="274.0">Denver Bryant</text></g><text class="glabel dim" x="0" y="306.0">g9</text><text class="glabel" x="26" y="306.0">Aug 22</text><text class="glabel" x="84" y="306.0">vs SFF</text><text class="score loss" x="176" y="306.0" text-anchor="end">L 5-12</text><rect class="track" x="190" y="292.5" width="588.0" height="19" rx="4"/><g class="seg s4"><rect x="190.0" y="292.5" width="166.0" height="19" rx="4"/><title>Paloma Benach - 1st-2nd, 2.0 IP
+17 batters faced, 49 pitches
+started</title><text class="seglabel" x="197.0" y="306.0">Paloma Benach</text></g><g class="seg s0"><rect x="358.0" y="292.5" width="334.0" height="19" rx="4"/><title>Gigi Schiano - 3rd-6th, 4.0 IP
+23 batters faced, 73 pitches
+entered 3rd, 0 outs, 0 on</title><text class="seglabel" x="365.0" y="306.0">Gigi Schiano</text></g><g class="seg s3"><rect x="694.0" y="292.5" width="82.0" height="19" rx="4"/><title>Ma&#239;ka Dumais - 7th, 1.0 IP
+5 batters faced, 21 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="306.0">Dumais</text></g><text class="glabel dim" x="0" y="338.0">g10</text><text class="glabel" x="26" y="338.0">Aug 23</text><text class="glabel" x="84" y="338.0">vs LAQ</text><text class="score win" x="176" y="338.0" text-anchor="end">W 7-3</text><rect class="track" x="190" y="324.5" width="588.0" height="19" rx="4"/><g class="seg s2"><rect x="190.0" y="324.5" width="418.0" height="19" rx="4"/><title>Kate Blunt - 1st-5th, 5.0 IP
+22 batters faced, 78 pitches
+started</title><text class="seglabel" x="197.0" y="338.0">Kate Blunt</text></g><g class="seg s3"><rect x="610.0" y="324.5" width="166.0" height="19" rx="4"/><title>Ma&#239;ka Dumais - 6th-7th, 2.0 IP
+10 batters faced, 37 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="338.0">Ma&#239;ka Dumais</text></g><text class="glabel dim" x="0" y="370.0">g11</text><text class="glabel" x="26" y="370.0">Aug 26</text><text class="glabel" x="84" y="370.0">@ LAQ</text><text class="score loss" x="176" y="370.0" text-anchor="end">L 6-8</text><rect class="track" x="190" y="356.5" width="504.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="356.5" width="362.0" height="19" rx="4"/><title>Gigi Schiano - 1st-5th, 4.1 IP
+26 batters faced, 88 pitches
+started</title><text class="seglabel" x="197.0" y="370.0">Gigi Schiano</text></g><g class="seg s6"><rect x="554.0" y="356.5" width="54.0" height="19" rx="4"/><title>Olivia Bricker - 5th, 0.2 IP
+3 batters faced, 12 pitches
+entered 5th, 1 out, 2 on</title></g><g class="seg s1"><rect x="610.0" y="356.5" width="82.0" height="19" rx="4"/><title>Alli Schroder - 6th, 1.0 IP
+6 batters faced, 31 pitches
+entered 6th, 0 outs, 2 on</title><text class="seglabel" x="617.0" y="370.0">Schroder</text></g><text class="glabel dim" x="0" y="402.0">g12</text><text class="glabel" x="26" y="402.0">Aug 28</text><text class="glabel" x="84" y="402.0">@ SFF</text><text class="score loss" x="176" y="402.0" text-anchor="end">L 6-14</text><rect class="track" x="190" y="388.5" width="504.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="388.5" width="278.0" height="19" rx="4"/><title>Alli Schroder - 1st-4th, 3.1 IP
+18 batters faced, 61 pitches
+started</title><text class="seglabel" x="197.0" y="402.0">Alli Schroder</text></g><g class="seg s4"><rect x="470.0" y="388.5" width="110.0" height="19" rx="4"/><title>Paloma Benach - 4th-5th, 1.1 IP
+10 batters faced, 32 pitches
+entered 4th, 1 out, 1 on</title><text class="seglabel" x="477.0" y="402.0">Paloma Benach</text></g><g class="seg s3"><rect x="582.0" y="388.5" width="26.0" height="19" rx="4"/><title>Ma&#239;ka Dumais - 5th, 0.1 IP
+6 batters faced, 22 pitches
+entered 5th, 2 outs, 2 on</title></g><g class="seg s2"><rect x="610.0" y="388.5" width="82.0" height="19" rx="4"/><title>Kate Blunt - 6th, 1.0 IP
+5 batters faced, 25 pitches
+entered 6th, 0 outs, 3 on</title><text class="seglabel" x="617.0" y="402.0">Kate Blunt</text></g></svg></div>
+  <details>
+    <summary>Table view &mdash; 35 appearances</summary>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Gm</th><th>Opponent</th><th>Pitcher</th><th>Role</th>
+          <th>Innings</th><th class="num">IP</th><th class="num">BF</th>
+          <th class="num">Pit</th></tr></thead>
+        <tbody><tr><td>1</td><td>vs San Francisco Firebells</td><td><span class="sw s5"></span>Raine Padgham</td><td>Started</td><td>1st-3rd</td><td class="num">2.2</td><td class="num">22</td><td class="num">74</td></tr><tr><td>1</td><td>vs San Francisco Firebells</td><td><span class="sw s3"></span>Ma&#239;ka Dumais</td><td>Relieved</td><td>3rd-5th</td><td class="num">2.1</td><td class="num">11</td><td class="num">48</td></tr><tr><td>1</td><td>vs San Francisco Firebells</td><td><span class="sw s1"></span>Alli Schroder</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">6</td><td class="num">25</td></tr><tr><td>1</td><td>vs San Francisco Firebells</td><td><span class="sw s0"></span>Gigi Schiano</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">4</td><td class="num">15</td></tr><tr><td>2</td><td>@ Los Angeles Queens</td><td><span class="sw s1"></span>Alli Schroder</td><td>Started</td><td>1st-3rd</td><td class="num">2.1</td><td class="num">21</td><td class="num">83</td></tr><tr><td>2</td><td>@ Los Angeles Queens</td><td><span class="sw s0"></span>Gigi Schiano</td><td>Relieved</td><td>3rd-6th</td><td class="num">3.2</td><td class="num">18</td><td class="num">69</td></tr><tr><td>3</td><td>@ New York Heights</td><td><span class="sw s5"></span>Raine Padgham</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">23</td><td class="num">101</td></tr><tr><td>3</td><td>@ New York Heights</td><td><span class="sw s3"></span>Ma&#239;ka Dumais</td><td>Relieved</td><td>5th-7th</td><td class="num">3.0</td><td class="num">13</td><td class="num">58</td></tr><tr><td>4</td><td>vs New York Heights</td><td><span class="sw s0"></span>Gigi Schiano</td><td>Started</td><td>1st-4th</td><td class="num">3.1</td><td class="num">18</td><td class="num">58</td></tr><tr><td>4</td><td>vs New York Heights</td><td><span class="sw s4"></span>Paloma Benach</td><td>Relieved</td><td>4th-6th</td><td class="num">2.2</td><td class="num">11</td><td class="num">32</td></tr><tr><td>4</td><td>vs New York Heights</td><td><span class="sw s2"></span>Kate Blunt</td><td>Relieved</td><td>7th-8th</td><td class="num">2.0</td><td class="num">12</td><td class="num">39</td></tr><tr><td>5</td><td>@ New York Heights</td><td><span class="sw s1"></span>Alli Schroder</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">15</td><td class="num">61</td></tr><tr><td>5</td><td>@ New York Heights</td><td><span class="sw s6"></span>Olivia Bricker</td><td>Relieved</td><td>4th</td><td class="num">1.0</td><td class="num">5</td><td class="num">19</td></tr><tr><td>5</td><td>@ New York Heights</td><td><span class="sw s0"></span>Gigi Schiano</td><td>Relieved</td><td>5th-7th</td><td class="num">3.0</td><td class="num">13</td><td class="num">39</td></tr><tr><td>6</td><td>vs Los Angeles Queens</td><td><span class="sw s4"></span>Paloma Benach</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">18</td><td class="num">68</td></tr><tr><td>6</td><td>vs Los Angeles Queens</td><td><span class="sw s5"></span>Raine Padgham</td><td>Relieved</td><td>5th</td><td class="num">1.0</td><td class="num">7</td><td class="num">29</td></tr><tr><td>6</td><td>vs Los Angeles Queens</td><td><span class="sw s6"></span>Olivia Bricker</td><td>Relieved</td><td>6th</td><td class="num">0.2</td><td class="num">4</td><td class="num">16</td></tr><tr><td>6</td><td>vs Los Angeles Queens</td><td><span class="sw s3"></span>Ma&#239;ka Dumais</td><td>Relieved</td><td>6th-7th</td><td class="num">1.1</td><td class="num">10</td><td class="num">47</td></tr><tr><td>7</td><td>@ New York Heights</td><td><span class="sw s2"></span>Kate Blunt</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">17</td><td class="num">70</td></tr><tr><td>7</td><td>@ New York Heights</td><td><span class="sw s0"></span>Gigi Schiano</td><td>Relieved</td><td>4th-7th</td><td class="num">4.0</td><td class="num">16</td><td class="num">63</td></tr><tr><td>8</td><td>vs New York Heights</td><td><span class="sw s1"></span>Alli Schroder</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">20</td><td class="num">81</td></tr><tr><td>8</td><td>vs New York Heights</td><td><span class="sw s6"></span>Olivia Bricker</td><td>Relieved</td><td>5th</td><td class="num">0.2</td><td class="num">7</td><td class="num">21</td></tr><tr><td>8</td><td>vs New York Heights</td><td><span class="sw s7"></span>Denver Bryant</td><td>Relieved</td><td>5th-7th</td><td class="num">2.1</td><td class="num">13</td><td class="num">50</td></tr><tr><td>9</td><td>vs San Francisco Firebells</td><td><span class="sw s4"></span>Paloma Benach</td><td>Started</td><td>1st-2nd</td><td class="num">2.0</td><td class="num">17</td><td class="num">49</td></tr><tr><td>9</td><td>vs San Francisco Firebells</td><td><span class="sw s0"></span>Gigi Schiano</td><td>Relieved</td><td>3rd-6th</td><td class="num">4.0</td><td class="num">23</td><td class="num">73</td></tr><tr><td>9</td><td>vs San Francisco Firebells</td><td><span class="sw s3"></span>Ma&#239;ka Dumais</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">5</td><td class="num">21</td></tr><tr><td>10</td><td>vs Los Angeles Queens</td><td><span class="sw s2"></span>Kate Blunt</td><td>Started</td><td>1st-5th</td><td class="num">5.0</td><td class="num">22</td><td class="num">78</td></tr><tr><td>10</td><td>vs Los Angeles Queens</td><td><span class="sw s3"></span>Ma&#239;ka Dumais</td><td>Relieved</td><td>6th-7th</td><td class="num">2.0</td><td class="num">10</td><td class="num">37</td></tr><tr><td>11</td><td>@ Los Angeles Queens</td><td><span class="sw s0"></span>Gigi Schiano</td><td>Started</td><td>1st-5th</td><td class="num">4.1</td><td class="num">26</td><td class="num">88</td></tr><tr><td>11</td><td>@ Los Angeles Queens</td><td><span class="sw s6"></span>Olivia Bricker</td><td>Relieved</td><td>5th</td><td class="num">0.2</td><td class="num">3</td><td class="num">12</td></tr><tr><td>11</td><td>@ Los Angeles Queens</td><td><span class="sw s1"></span>Alli Schroder</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">6</td><td class="num">31</td></tr><tr><td>12</td><td>@ San Francisco Firebells</td><td><span class="sw s1"></span>Alli Schroder</td><td>Started</td><td>1st-4th</td><td class="num">3.1</td><td class="num">18</td><td class="num">61</td></tr><tr><td>12</td><td>@ San Francisco Firebells</td><td><span class="sw s4"></span>Paloma Benach</td><td>Relieved</td><td>4th-5th</td><td class="num">1.1</td><td class="num">10</td><td class="num">32</td></tr><tr><td>12</td><td>@ San Francisco Firebells</td><td><span class="sw s3"></span>Ma&#239;ka Dumais</td><td>Relieved</td><td>5th</td><td class="num">0.1</td><td class="num">6</td><td class="num">22</td></tr><tr><td>12</td><td>@ San Francisco Firebells</td><td><span class="sw s2"></span>Kate Blunt</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">5</td><td class="num">25</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+</section>
+<section class="panel">
+  <header class="panel-head">
+    <h2>Los Angeles Queens</h2>
+    <p class="meta">13 games &middot; 7-6 &middot;
+      12 pitchers used</p>
+  </header>
+  <ul class="key"><li><span class="sw s0"></span><span class="nm">Ayami Sato</span><span class="ip">21.0</span><span class="rl">5 GS, 1 RP</span></li><li><span class="sw s1"></span><span class="nm">Michelle Roche</span><span class="ip">19.2</span><span class="rl">5 GS</span></li><li><span class="sw s2"></span><span class="nm">Meggie Meidlinger</span><span class="ip">13.1</span><span class="rl">8 RP</span></li><li><span class="sw s3"></span><span class="nm">Jamie Mackay</span><span class="ip">8.1</span><span class="rl">4 RP</span></li><li><span class="sw s4"></span><span class="nm">Th&#225;ima Maximiliana</span><span class="ip">8.0</span><span class="rl">1 GS, 3 RP</span></li><li><span class="sw s5"></span><span class="nm">Ayuri Shimano</span><span class="ip">7.2</span><span class="rl">1 GS, 1 RP</span></li><li><span class="sw s6"></span><span class="nm">Amira Hondras</span><span class="ip">2.2</span><span class="rl">1 RP</span></li><li class="wide"><span class="sw s7"></span><span class="nm">Maggie Foxx, Suzu Narasaki, Adelaide Frank, Isabella Villareal, Brittany Apgar</span><span class="tail">6.1 across 5 pitchers</span></li></ul>
+  <div class="scroll"><svg viewBox="0 0 874 452" width="100%" height="452" role="img" aria-label="Pitcher usage by inning for Los Angeles Queens"><line class="rule" x1="190.0" y1="22" x2="190.0" y2="446"/><text class="tick" x="232.0" y="16" text-anchor="middle">1</text><line class="rule" x1="274.0" y1="22" x2="274.0" y2="446"/><text class="tick" x="316.0" y="16" text-anchor="middle">2</text><line class="rule" x1="358.0" y1="22" x2="358.0" y2="446"/><text class="tick" x="400.0" y="16" text-anchor="middle">3</text><line class="rule" x1="442.0" y1="22" x2="442.0" y2="446"/><text class="tick" x="484.0" y="16" text-anchor="middle">4</text><line class="rule" x1="526.0" y1="22" x2="526.0" y2="446"/><text class="tick" x="568.0" y="16" text-anchor="middle">5</text><line class="rule" x1="610.0" y1="22" x2="610.0" y2="446"/><text class="tick" x="652.0" y="16" text-anchor="middle">6</text><line class="rule" x1="694.0" y1="22" x2="694.0" y2="446"/><text class="tick" x="736.0" y="16" text-anchor="middle">7</text><line class="rule" x1="778.0" y1="22" x2="778.0" y2="446"/><text class="tick" x="820.0" y="16" text-anchor="middle">8</text><line class="rule" x1="862.0" y1="22" x2="862.0" y2="446"/><text class="glabel dim" x="0" y="50.0">g1</text><text class="glabel" x="26" y="50.0">Aug 1</text><text class="glabel" x="84" y="50.0">@ NYH</text><text class="score win" x="176" y="50.0" text-anchor="end">W 10-8</text><rect class="track" x="190" y="36.5" width="588.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="36.5" width="250.0" height="19" rx="4"/><title>Ayami Sato - 1st-3rd, 3.0 IP
+19 batters faced, 71 pitches
+started</title><text class="seglabel" x="197.0" y="50.0">Ayami Sato</text></g><g class="seg s7"><rect x="442.0" y="36.5" width="166.0" height="19" rx="4"/><title>Maggie Foxx - 4th-5th, 2.0 IP
+8 batters faced, 38 pitches
+entered 4th, 0 outs, 0 on</title><text class="seglabel" x="449.0" y="50.0">Maggie Foxx</text></g><g class="seg s2"><rect x="610.0" y="36.5" width="166.0" height="19" rx="4"/><title>Meggie Meidlinger - 6th-7th, 2.0 IP
+8 batters faced, 29 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="50.0">Meggie Meidlinger</text></g><text class="glabel dim" x="0" y="82.0">g2</text><text class="glabel" x="26" y="82.0">Aug 5</text><text class="glabel" x="84" y="82.0">vs BOS</text><text class="score win" x="176" y="82.0" text-anchor="end">W 12-4</text><rect class="track" x="190" y="68.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="68.5" width="418.0" height="19" rx="4"/><title>Michelle Roche - 1st-5th, 5.0 IP
+18 batters faced, 50 pitches
+started</title><text class="seglabel" x="197.0" y="82.0">Michelle Roche</text></g><g class="seg s3"><rect x="610.0" y="68.5" width="82.0" height="19" rx="4"/><title>Jamie Mackay - 6th, 1.0 IP
+4 batters faced, 22 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="82.0">Mackay</text></g><g class="seg s4"><rect x="694.0" y="68.5" width="82.0" height="19" rx="4"/><title>Th&#225;ima Maximiliana - 7th, 1.0 IP
+6 batters faced, 28 pitches
+entered 7th, 0 outs, 0 on</title></g><text class="glabel dim" x="0" y="114.0">g3</text><text class="glabel" x="26" y="114.0">Aug 7</text><text class="glabel" x="84" y="114.0">vs SFF</text><text class="score win" x="176" y="114.0" text-anchor="end">W 12-3</text><rect class="track" x="190" y="100.5" width="588.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="100.5" width="418.0" height="19" rx="4"/><title>Ayami Sato - 1st-5th, 5.0 IP
+18 batters faced, 55 pitches
+started</title><text class="seglabel" x="197.0" y="114.0">Ayami Sato</text></g><g class="seg s7"><rect x="610.0" y="100.5" width="54.0" height="19" rx="4"/><title>Brittany Apgar - 6th, 0.2 IP
+7 batters faced, 30 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="114.0">Apgar</text></g><g class="seg s2"><rect x="666.0" y="100.5" width="110.0" height="19" rx="4"/><title>Meggie Meidlinger - 6th-7th, 1.1 IP
+5 batters faced, 18 pitches
+entered 6th, 2 outs, 3 on</title><text class="seglabel" x="673.0" y="114.0">Meidlinger</text></g><text class="glabel dim" x="0" y="146.0">g4</text><text class="glabel" x="26" y="146.0">Aug 8</text><text class="glabel" x="84" y="146.0">@ SFF</text><text class="score loss" x="176" y="146.0" text-anchor="end">L 3-10</text><rect class="track" x="190" y="132.5" width="504.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="132.5" width="306.0" height="19" rx="4"/><title>Michelle Roche - 1st-4th, 3.2 IP
+22 batters faced, 74 pitches
+started</title><text class="seglabel" x="197.0" y="146.0">Michelle Roche</text></g><g class="seg s3"><rect x="498.0" y="132.5" width="194.0" height="19" rx="4"/><title>Jamie Mackay - 4th-6th, 2.1 IP
+13 batters faced, 49 pitches
+entered 4th, 2 outs, 2 on</title><text class="seglabel" x="505.0" y="146.0">Jamie Mackay</text></g><text class="glabel dim" x="0" y="178.0">g5</text><text class="glabel" x="26" y="178.0">Aug 12</text><text class="glabel" x="84" y="178.0">@ SFF</text><text class="score loss" x="176" y="178.0" text-anchor="end">L 2-8</text><rect class="track" x="190" y="164.5" width="504.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="164.5" width="334.0" height="19" rx="4"/><title>Ayami Sato - 1st-4th, 4.0 IP
+23 batters faced, 73 pitches
+started</title><text class="seglabel" x="197.0" y="178.0">Ayami Sato</text></g><g class="seg s2"><rect x="526.0" y="164.5" width="166.0" height="19" rx="4"/><title>Meggie Meidlinger - 5th-6th, 2.0 IP
+8 batters faced, 25 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="178.0">Meggie Meidlinger</text></g><text class="glabel dim" x="0" y="210.0">g6</text><text class="glabel" x="26" y="210.0">Aug 14</text><text class="glabel" x="84" y="210.0">@ SFF</text><text class="score loss" x="176" y="210.0" text-anchor="end">L 3-17</text><rect class="track" x="190" y="196.5" width="504.0" height="19" rx="4"/><g class="seg s7"><rect x="190.0" y="196.5" width="110.0" height="19" rx="4"/><title>Suzu Narasaki - 1st-2nd, 1.1 IP
+14 batters faced, 51 pitches
+started</title><text class="seglabel" x="197.0" y="210.0">Suzu Narasaki</text></g><g class="seg s3"><rect x="302.0" y="196.5" width="306.0" height="19" rx="4"/><title>Jamie Mackay - 2nd-5th, 3.2 IP
+24 batters faced, 79 pitches
+entered 2nd, 1 out, 2 on</title><text class="seglabel" x="309.0" y="210.0">Jamie Mackay</text></g><g class="seg s7"><rect x="610.0" y="196.5" width="82.0" height="19" rx="4"/><title>Adelaide Frank - 6th, 1.0 IP
+7 batters faced, 38 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="210.0">Frank</text></g><text class="glabel dim" x="0" y="242.0">g7</text><text class="glabel" x="26" y="242.0">Aug 15</text><text class="glabel" x="84" y="242.0">@ BOS</text><text class="score win" x="176" y="242.0" text-anchor="end">W 13-3</text><rect class="track" x="190" y="228.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="228.5" width="334.0" height="19" rx="4"/><title>Michelle Roche - 1st-4th, 4.0 IP
+18 batters faced, 72 pitches
+started</title><text class="seglabel" x="197.0" y="242.0">Michelle Roche</text></g><g class="seg s0"><rect x="526.0" y="228.5" width="82.0" height="19" rx="4"/><title>Ayami Sato - 5th, 1.0 IP
+3 batters faced, 12 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="242.0">Ayami Sato</text></g><g class="seg s2"><rect x="610.0" y="228.5" width="166.0" height="19" rx="4"/><title>Meggie Meidlinger - 6th-7th, 2.0 IP
+6 batters faced, 29 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="242.0">Meggie Meidlinger</text></g><text class="glabel dim" x="0" y="274.0">g8</text><text class="glabel" x="26" y="274.0">Aug 21</text><text class="glabel" x="84" y="274.0">vs SFF</text><text class="score win" x="176" y="274.0" text-anchor="end">W 8-6</text><rect class="track" x="190" y="260.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="260.5" width="390.0" height="19" rx="4"/><title>Michelle Roche - 1st-5th, 4.2 IP
+23 batters faced, 69 pitches
+started</title><text class="seglabel" x="197.0" y="274.0">Michelle Roche</text></g><g class="seg s3"><rect x="582.0" y="260.5" width="110.0" height="19" rx="4"/><title>Jamie Mackay - 5th-6th, 1.1 IP
+7 batters faced, 31 pitches
+entered 5th, 2 outs, 3 on</title><text class="seglabel" x="589.0" y="274.0">Jamie Mackay</text></g><g class="seg s2"><rect x="694.0" y="260.5" width="82.0" height="19" rx="4"/><title>Meggie Meidlinger - 7th, 1.0 IP
+4 batters faced, 14 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="274.0">Meidlinger</text></g><text class="glabel dim" x="0" y="306.0">g9</text><text class="glabel" x="26" y="306.0">Aug 22</text><text class="glabel" x="84" y="306.0">vs NYH</text><text class="score loss" x="176" y="306.0" text-anchor="end">L 7-8</text><rect class="track" x="190" y="292.5" width="672.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="292.5" width="390.0" height="19" rx="4"/><title>Ayami Sato - 1st-5th, 4.2 IP
+20 batters faced, 71 pitches
+started</title><text class="seglabel" x="197.0" y="306.0">Ayami Sato</text></g><g class="seg s7"><rect x="582.0" y="292.5" width="26.0" height="19" rx="4"/><title>Maggie Foxx - 5th, 0.1 IP
+4 batters faced, 20 pitches
+entered 5th, 2 outs, 1 on</title></g><g class="seg s2"><rect x="610.0" y="292.5" width="250.0" height="19" rx="4"/><title>Meggie Meidlinger - 6th-8th, 3.0 IP
+17 batters faced, 60 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="306.0">Meggie Meidlinger</text></g><text class="glabel dim" x="0" y="338.0">g10</text><text class="glabel" x="26" y="338.0">Aug 23</text><text class="glabel" x="84" y="338.0">@ BOS</text><text class="score loss" x="176" y="338.0" text-anchor="end">L 3-7</text><rect class="track" x="190" y="324.5" width="504.0" height="19" rx="4"/><g class="seg s5"><rect x="190.0" y="324.5" width="390.0" height="19" rx="4"/><title>Ayuri Shimano - 1st-5th, 4.2 IP
+24 batters faced, 85 pitches
+started</title><text class="seglabel" x="197.0" y="338.0">Ayuri Shimano</text></g><g class="seg s4"><rect x="582.0" y="324.5" width="110.0" height="19" rx="4"/><title>Th&#225;ima Maximiliana - 5th-6th, 1.1 IP
+5 batters faced, 23 pitches
+entered 5th, 2 outs, 0 on</title><text class="seglabel" x="589.0" y="338.0">Maximiliana</text></g><text class="glabel dim" x="0" y="370.0">g11</text><text class="glabel" x="26" y="370.0">Aug 26</text><text class="glabel" x="84" y="370.0">vs BOS</text><text class="score win" x="176" y="370.0" text-anchor="end">W 8-6</text><rect class="track" x="190" y="356.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="356.5" width="194.0" height="19" rx="4"/><title>Michelle Roche - 1st-3rd, 2.1 IP
+17 batters faced, 64 pitches
+started</title><text class="seglabel" x="197.0" y="370.0">Michelle Roche</text></g><g class="seg s4"><rect x="386.0" y="356.5" width="222.0" height="19" rx="4"/><title>Th&#225;ima Maximiliana - 3rd-5th, 2.2 IP
+10 batters faced, 35 pitches
+entered 3rd, 1 out, 1 on</title><text class="seglabel" x="393.0" y="370.0">Th&#225;ima Maximiliana</text></g><g class="seg s7"><rect x="610.0" y="356.5" width="82.0" height="19" rx="4"/><title>Isabella Villareal - 6th, 1.0 IP
+4 batters faced, 13 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="370.0">Villareal</text></g><g class="seg s2"><rect x="694.0" y="356.5" width="82.0" height="19" rx="4"/><title>Meggie Meidlinger - 7th, 1.0 IP
+3 batters faced, 14 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="370.0">Meidlinger</text></g><text class="glabel dim" x="0" y="402.0">g12</text><text class="glabel" x="26" y="402.0">Aug 27</text><text class="glabel" x="84" y="402.0">@ NYH</text><text class="score loss" x="176" y="402.0" text-anchor="end">L 4-12</text><rect class="track" x="190" y="388.5" width="504.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="388.5" width="278.0" height="19" rx="4"/><title>Ayami Sato - 1st-4th, 3.1 IP
+24 batters faced, 77 pitches
+started</title><text class="seglabel" x="197.0" y="402.0">Ayami Sato</text></g><g class="seg s6"><rect x="470.0" y="388.5" width="222.0" height="19" rx="4"/><title>Amira Hondras - 4th-6th, 2.2 IP
+12 batters faced, 43 pitches
+entered 4th, 1 out, 1 on</title><text class="seglabel" x="477.0" y="402.0">Amira Hondras</text></g><text class="glabel dim" x="0" y="434.0">g13</text><text class="glabel" x="26" y="434.0">Aug 29</text><text class="glabel" x="84" y="434.0">vs NYH</text><text class="score win" x="176" y="434.0" text-anchor="end">W 10-6</text><rect class="track" x="190" y="420.5" width="588.0" height="19" rx="4"/><g class="seg s4"><rect x="190.0" y="420.5" width="250.0" height="19" rx="4"/><title>Th&#225;ima Maximiliana - 1st-3rd, 3.0 IP
+19 batters faced, 57 pitches
+started</title><text class="seglabel" x="197.0" y="434.0">Th&#225;ima Maximiliana</text></g><g class="seg s5"><rect x="442.0" y="420.5" width="250.0" height="19" rx="4"/><title>Ayuri Shimano - 4th-6th, 3.0 IP
+10 batters faced, 41 pitches
+entered 4th, 0 outs, 2 on</title><text class="seglabel" x="449.0" y="434.0">Ayuri Shimano</text></g><g class="seg s2"><rect x="694.0" y="420.5" width="82.0" height="19" rx="4"/><title>Meggie Meidlinger - 7th, 1.0 IP
+3 batters faced, 14 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="434.0">Meidlinger</text></g></svg></div>
+  <details>
+    <summary>Table view &mdash; 36 appearances</summary>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Gm</th><th>Opponent</th><th>Pitcher</th><th>Role</th>
+          <th>Innings</th><th class="num">IP</th><th class="num">BF</th>
+          <th class="num">Pit</th></tr></thead>
+        <tbody><tr><td>1</td><td>@ New York Heights</td><td><span class="sw s0"></span>Ayami Sato</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">19</td><td class="num">71</td></tr><tr><td>1</td><td>@ New York Heights</td><td><span class="sw s7"></span>Maggie Foxx</td><td>Relieved</td><td>4th-5th</td><td class="num">2.0</td><td class="num">8</td><td class="num">38</td></tr><tr><td>1</td><td>@ New York Heights</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>6th-7th</td><td class="num">2.0</td><td class="num">8</td><td class="num">29</td></tr><tr><td>2</td><td>vs Boston Hunters</td><td><span class="sw s1"></span>Michelle Roche</td><td>Started</td><td>1st-5th</td><td class="num">5.0</td><td class="num">18</td><td class="num">50</td></tr><tr><td>2</td><td>vs Boston Hunters</td><td><span class="sw s3"></span>Jamie Mackay</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">4</td><td class="num">22</td></tr><tr><td>2</td><td>vs Boston Hunters</td><td><span class="sw s4"></span>Th&#225;ima Maximiliana</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">6</td><td class="num">28</td></tr><tr><td>3</td><td>vs San Francisco Firebells</td><td><span class="sw s0"></span>Ayami Sato</td><td>Started</td><td>1st-5th</td><td class="num">5.0</td><td class="num">18</td><td class="num">55</td></tr><tr><td>3</td><td>vs San Francisco Firebells</td><td><span class="sw s7"></span>Brittany Apgar</td><td>Relieved</td><td>6th</td><td class="num">0.2</td><td class="num">7</td><td class="num">30</td></tr><tr><td>3</td><td>vs San Francisco Firebells</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>6th-7th</td><td class="num">1.1</td><td class="num">5</td><td class="num">18</td></tr><tr><td>4</td><td>@ San Francisco Firebells</td><td><span class="sw s1"></span>Michelle Roche</td><td>Started</td><td>1st-4th</td><td class="num">3.2</td><td class="num">22</td><td class="num">74</td></tr><tr><td>4</td><td>@ San Francisco Firebells</td><td><span class="sw s3"></span>Jamie Mackay</td><td>Relieved</td><td>4th-6th</td><td class="num">2.1</td><td class="num">13</td><td class="num">49</td></tr><tr><td>5</td><td>@ San Francisco Firebells</td><td><span class="sw s0"></span>Ayami Sato</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">23</td><td class="num">73</td></tr><tr><td>5</td><td>@ San Francisco Firebells</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>5th-6th</td><td class="num">2.0</td><td class="num">8</td><td class="num">25</td></tr><tr><td>6</td><td>@ San Francisco Firebells</td><td><span class="sw s7"></span>Suzu Narasaki</td><td>Started</td><td>1st-2nd</td><td class="num">1.1</td><td class="num">14</td><td class="num">51</td></tr><tr><td>6</td><td>@ San Francisco Firebells</td><td><span class="sw s3"></span>Jamie Mackay</td><td>Relieved</td><td>2nd-5th</td><td class="num">3.2</td><td class="num">24</td><td class="num">79</td></tr><tr><td>6</td><td>@ San Francisco Firebells</td><td><span class="sw s7"></span>Adelaide Frank</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">7</td><td class="num">38</td></tr><tr><td>7</td><td>@ Boston Hunters</td><td><span class="sw s1"></span>Michelle Roche</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">18</td><td class="num">72</td></tr><tr><td>7</td><td>@ Boston Hunters</td><td><span class="sw s0"></span>Ayami Sato</td><td>Relieved</td><td>5th</td><td class="num">1.0</td><td class="num">3</td><td class="num">12</td></tr><tr><td>7</td><td>@ Boston Hunters</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>6th-7th</td><td class="num">2.0</td><td class="num">6</td><td class="num">29</td></tr><tr><td>8</td><td>vs San Francisco Firebells</td><td><span class="sw s1"></span>Michelle Roche</td><td>Started</td><td>1st-5th</td><td class="num">4.2</td><td class="num">23</td><td class="num">69</td></tr><tr><td>8</td><td>vs San Francisco Firebells</td><td><span class="sw s3"></span>Jamie Mackay</td><td>Relieved</td><td>5th-6th</td><td class="num">1.1</td><td class="num">7</td><td class="num">31</td></tr><tr><td>8</td><td>vs San Francisco Firebells</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">4</td><td class="num">14</td></tr><tr><td>9</td><td>vs New York Heights</td><td><span class="sw s0"></span>Ayami Sato</td><td>Started</td><td>1st-5th</td><td class="num">4.2</td><td class="num">20</td><td class="num">71</td></tr><tr><td>9</td><td>vs New York Heights</td><td><span class="sw s7"></span>Maggie Foxx</td><td>Relieved</td><td>5th</td><td class="num">0.1</td><td class="num">4</td><td class="num">20</td></tr><tr><td>9</td><td>vs New York Heights</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>6th-8th</td><td class="num">3.0</td><td class="num">17</td><td class="num">60</td></tr><tr><td>10</td><td>@ Boston Hunters</td><td><span class="sw s5"></span>Ayuri Shimano</td><td>Started</td><td>1st-5th</td><td class="num">4.2</td><td class="num">24</td><td class="num">85</td></tr><tr><td>10</td><td>@ Boston Hunters</td><td><span class="sw s4"></span>Th&#225;ima Maximiliana</td><td>Relieved</td><td>5th-6th</td><td class="num">1.1</td><td class="num">5</td><td class="num">23</td></tr><tr><td>11</td><td>vs Boston Hunters</td><td><span class="sw s1"></span>Michelle Roche</td><td>Started</td><td>1st-3rd</td><td class="num">2.1</td><td class="num">17</td><td class="num">64</td></tr><tr><td>11</td><td>vs Boston Hunters</td><td><span class="sw s4"></span>Th&#225;ima Maximiliana</td><td>Relieved</td><td>3rd-5th</td><td class="num">2.2</td><td class="num">10</td><td class="num">35</td></tr><tr><td>11</td><td>vs Boston Hunters</td><td><span class="sw s7"></span>Isabella Villareal</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">4</td><td class="num">13</td></tr><tr><td>11</td><td>vs Boston Hunters</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">3</td><td class="num">14</td></tr><tr><td>12</td><td>@ New York Heights</td><td><span class="sw s0"></span>Ayami Sato</td><td>Started</td><td>1st-4th</td><td class="num">3.1</td><td class="num">24</td><td class="num">77</td></tr><tr><td>12</td><td>@ New York Heights</td><td><span class="sw s6"></span>Amira Hondras</td><td>Relieved</td><td>4th-6th</td><td class="num">2.2</td><td class="num">12</td><td class="num">43</td></tr><tr><td>13</td><td>vs New York Heights</td><td><span class="sw s4"></span>Th&#225;ima Maximiliana</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">19</td><td class="num">57</td></tr><tr><td>13</td><td>vs New York Heights</td><td><span class="sw s5"></span>Ayuri Shimano</td><td>Relieved</td><td>4th-6th</td><td class="num">3.0</td><td class="num">10</td><td class="num">41</td></tr><tr><td>13</td><td>vs New York Heights</td><td><span class="sw s2"></span>Meggie Meidlinger</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">3</td><td class="num">14</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+</section>
+<section class="panel">
+  <header class="panel-head">
+    <h2>New York Heights</h2>
+    <p class="meta">12 games &middot; 6-6 &middot;
+      9 pitchers used</p>
+  </header>
+  <ul class="key"><li><span class="sw s0"></span><span class="nm">Jaida Lee</span><span class="ip">17.1</span><span class="rl">2 GS, 6 RP</span></li><li><span class="sw s1"></span><span class="nm">Rakyung Kim</span><span class="ip">14.2</span><span class="rl">3 GS, 1 RP</span></li><li><span class="sw s2"></span><span class="nm">Claire O&#x27;Sullivan</span><span class="ip">14.1</span><span class="rl">1 GS, 3 RP</span></li><li><span class="sw s3"></span><span class="nm">Jacqui Reynolds</span><span class="ip">9.0</span><span class="rl">2 GS, 2 RP</span></li><li><span class="sw s4"></span><span class="nm">London Studer</span><span class="ip">8.0</span><span class="rl">5 RP</span></li><li><span class="sw s5"></span><span class="nm">Claire Eccles</span><span class="ip">7.0</span><span class="rl">2 GS, 1 RP</span></li><li><span class="sw s6"></span><span class="nm">Emi Saiki</span><span class="ip">5.0</span><span class="rl">1 GS</span></li><li class="wide"><span class="sw s7"></span><span class="nm">Keira Izumi, Alyssa Zettlemoyer</span><span class="tail">8.0 across 2 pitchers</span></li></ul>
+  <div class="scroll"><svg viewBox="0 0 874 420" width="100%" height="420" role="img" aria-label="Pitcher usage by inning for New York Heights"><line class="rule" x1="190.0" y1="22" x2="190.0" y2="414"/><text class="tick" x="232.0" y="16" text-anchor="middle">1</text><line class="rule" x1="274.0" y1="22" x2="274.0" y2="414"/><text class="tick" x="316.0" y="16" text-anchor="middle">2</text><line class="rule" x1="358.0" y1="22" x2="358.0" y2="414"/><text class="tick" x="400.0" y="16" text-anchor="middle">3</text><line class="rule" x1="442.0" y1="22" x2="442.0" y2="414"/><text class="tick" x="484.0" y="16" text-anchor="middle">4</text><line class="rule" x1="526.0" y1="22" x2="526.0" y2="414"/><text class="tick" x="568.0" y="16" text-anchor="middle">5</text><line class="rule" x1="610.0" y1="22" x2="610.0" y2="414"/><text class="tick" x="652.0" y="16" text-anchor="middle">6</text><line class="rule" x1="694.0" y1="22" x2="694.0" y2="414"/><text class="tick" x="736.0" y="16" text-anchor="middle">7</text><line class="rule" x1="778.0" y1="22" x2="778.0" y2="414"/><text class="tick" x="820.0" y="16" text-anchor="middle">8</text><line class="rule" x1="862.0" y1="22" x2="862.0" y2="414"/><text class="glabel dim" x="0" y="50.0">g1</text><text class="glabel" x="26" y="50.0">Aug 1</text><text class="glabel" x="84" y="50.0">vs LAQ</text><text class="score loss" x="176" y="50.0" text-anchor="end">L 8-10</text><rect class="track" x="190" y="36.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="36.5" width="334.0" height="19" rx="4"/><title>Rakyung Kim - 1st-4th, 4.0 IP
+19 batters faced, 80 pitches
+started</title><text class="seglabel" x="197.0" y="50.0">Rakyung Kim</text></g><g class="seg s3"><rect x="526.0" y="36.5" width="222.0" height="19" rx="4"/><title>Jacqui Reynolds - 5th-7th, 2.2 IP
+16 batters faced, 65 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="50.0">Jacqui Reynolds</text></g><g class="seg s0"><rect x="750.0" y="36.5" width="26.0" height="19" rx="4"/><title>Jaida Lee - 7th, 0.1 IP
+1 batters faced, 6 pitches
+entered 7th, 2 outs, 1 on</title></g><text class="glabel dim" x="0" y="82.0">g2</text><text class="glabel" x="26" y="82.0">Aug 6</text><text class="glabel" x="84" y="82.0">@ SFF</text><text class="score win" x="176" y="82.0" text-anchor="end">W 13-8</text><rect class="track" x="190" y="68.5" width="588.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="68.5" width="418.0" height="19" rx="4"/><title>Jaida Lee - 1st-5th, 5.0 IP
+24 batters faced, 102 pitches
+started</title><text class="seglabel" x="197.0" y="82.0">Jaida Lee</text></g><g class="seg s4"><rect x="610.0" y="68.5" width="26.0" height="19" rx="4"/><title>London Studer - 6th, 0.1 IP
+6 batters faced, 27 pitches
+entered 6th, 0 outs, 0 on</title></g><g class="seg s7"><rect x="638.0" y="68.5" width="138.0" height="19" rx="4"/><title>Keira Izumi - 6th-7th, 1.2 IP
+6 batters faced, 21 pitches
+entered 6th, 1 out, 2 on</title><text class="seglabel" x="645.0" y="82.0">Keira Izumi</text></g><text class="glabel dim" x="0" y="114.0">g3</text><text class="glabel" x="26" y="114.0">Aug 8</text><text class="glabel" x="84" y="114.0">vs BOS</text><text class="score loss" x="176" y="114.0" text-anchor="end">L 6-9</text><rect class="track" x="190" y="100.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="100.5" width="446.0" height="19" rx="4"/><title>Rakyung Kim - 1st-6th, 5.1 IP
+25 batters faced, 87 pitches
+started</title><text class="seglabel" x="197.0" y="114.0">Rakyung Kim</text></g><path class="noout s7" d="M638.0 95.5 l4.5 0 l-4.5 6.5 l-4.5 -6.5 Z"><title>Keira Izumi - 6th, no outs recorded; 5 batters faced, 25 pitches</title></path><g class="seg s7"><rect x="638.0" y="100.5" width="138.0" height="19" rx="4"/><title>Alyssa Zettlemoyer - 6th-7th, 1.2 IP
+8 batters faced, 34 pitches
+entered 6th, 1 out, 3 on</title><text class="seglabel" x="645.0" y="114.0">Alyssa Zettlemoyer</text></g><text class="glabel dim" x="0" y="146.0">g4</text><text class="glabel" x="26" y="146.0">Aug 9</text><text class="glabel" x="84" y="146.0">@ BOS</text><text class="score win" x="176" y="146.0" text-anchor="end">W 7-6</text><rect class="track" x="190" y="132.5" width="672.0" height="19" rx="4"/><g class="seg s3"><rect x="190.0" y="132.5" width="334.0" height="19" rx="4"/><title>Jacqui Reynolds - 1st-4th, 4.0 IP
+20 batters faced, 72 pitches
+started</title><text class="seglabel" x="197.0" y="146.0">Jacqui Reynolds</text></g><g class="seg s0"><rect x="526.0" y="132.5" width="26.0" height="19" rx="4"/><title>Jaida Lee - 5th, 0.1 IP
+6 batters faced, 38 pitches
+entered 5th, 0 outs, 0 on</title></g><g class="seg s2"><rect x="554.0" y="132.5" width="306.0" height="19" rx="4"/><title>Claire O&#x27;Sullivan - 5th-8th, 3.2 IP
+14 batters faced, 45 pitches
+entered 5th, 1 out, 2 on</title><text class="seglabel" x="561.0" y="146.0">Claire O&#x27;Sullivan</text></g><text class="glabel dim" x="0" y="178.0">g5</text><text class="glabel" x="26" y="178.0">Aug 13</text><text class="glabel" x="84" y="178.0">vs BOS</text><text class="score loss" x="176" y="178.0" text-anchor="end">L 1-6</text><rect class="track" x="190" y="164.5" width="588.0" height="19" rx="4"/><g class="seg s5"><rect x="190.0" y="164.5" width="250.0" height="19" rx="4"/><title>Claire Eccles - 1st-3rd, 3.0 IP
+15 batters faced, 62 pitches
+started</title><text class="seglabel" x="197.0" y="178.0">Claire Eccles</text></g><g class="seg s1"><rect x="442.0" y="164.5" width="110.0" height="19" rx="4"/><title>Rakyung Kim - 4th-5th, 1.1 IP
+11 batters faced, 46 pitches
+entered 4th, 0 outs, 0 on</title><text class="seglabel" x="449.0" y="178.0">Rakyung Kim</text></g><g class="seg s4"><rect x="554.0" y="164.5" width="222.0" height="19" rx="4"/><title>London Studer - 5th-7th, 2.2 IP
+12 batters faced, 56 pitches
+entered 5th, 1 out, 2 on</title><text class="seglabel" x="561.0" y="178.0">London Studer</text></g><text class="glabel dim" x="0" y="210.0">g6</text><text class="glabel" x="26" y="210.0">Aug 15</text><text class="glabel" x="84" y="210.0">vs SFF</text><text class="score loss" x="176" y="210.0" text-anchor="end">L 6-11</text><rect class="track" x="190" y="196.5" width="588.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="196.5" width="278.0" height="19" rx="4"/><title>Jaida Lee - 1st-4th, 3.1 IP
+22 batters faced, 82 pitches
+started</title><text class="seglabel" x="197.0" y="210.0">Jaida Lee</text></g><g class="seg s2"><rect x="470.0" y="196.5" width="222.0" height="19" rx="4"/><title>Claire O&#x27;Sullivan - 4th-6th, 2.2 IP
+17 batters faced, 51 pitches
+entered 4th, 1 out, 2 on</title><text class="seglabel" x="477.0" y="210.0">Claire O&#x27;Sullivan</text></g><g class="seg s7"><rect x="694.0" y="196.5" width="82.0" height="19" rx="4"/><title>Keira Izumi - 7th, 1.0 IP
+7 batters faced, 21 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="210.0">Izumi</text></g><text class="glabel dim" x="0" y="242.0">g7</text><text class="glabel" x="26" y="242.0">Aug 16</text><text class="glabel" x="84" y="242.0">vs BOS</text><text class="score loss" x="176" y="242.0" text-anchor="end">L 7-9</text><rect class="track" x="190" y="228.5" width="588.0" height="19" rx="4"/><g class="seg s3"><rect x="190.0" y="228.5" width="166.0" height="19" rx="4"/><title>Jacqui Reynolds - 1st-2nd, 2.0 IP
+10 batters faced, 38 pitches
+started</title><text class="seglabel" x="197.0" y="242.0">Jacqui Reynolds</text></g><g class="seg s7"><rect x="358.0" y="228.5" width="194.0" height="19" rx="4"/><title>Alyssa Zettlemoyer - 3rd-5th, 2.1 IP
+16 batters faced, 55 pitches
+entered 3rd, 0 outs, 0 on</title><text class="seglabel" x="365.0" y="242.0">Alyssa Zettlemoyer</text></g><g class="seg s4"><rect x="554.0" y="228.5" width="222.0" height="19" rx="4"/><title>London Studer - 5th-7th, 2.2 IP
+12 batters faced, 45 pitches
+entered 5th, 1 out, 3 on</title><text class="seglabel" x="561.0" y="242.0">London Studer</text></g><text class="glabel dim" x="0" y="274.0">g8</text><text class="glabel" x="26" y="274.0">Aug 19</text><text class="glabel" x="84" y="274.0">@ SFF</text><text class="score win" x="176" y="274.0" text-anchor="end">W 11-8</text><rect class="track" x="190" y="260.5" width="448.0" height="19" rx="4"/><g class="seg s7"><rect x="190.0" y="260.5" width="110.0" height="19" rx="4"/><title>Keira Izumi - 1st-2nd, 1.1 IP
+12 batters faced, 49 pitches
+started</title><text class="seglabel" x="197.0" y="274.0">Keira Izumi</text></g><g class="seg s2"><rect x="302.0" y="260.5" width="334.0" height="19" rx="4"/><title>Claire O&#x27;Sullivan - 2nd-6th, 4.0 IP
+18 batters faced, 60 pitches
+entered 2nd, 1 out, 2 on</title><text class="seglabel" x="309.0" y="274.0">Claire O&#x27;Sullivan</text></g><text class="glabel dim" x="0" y="306.0">g9</text><text class="glabel" x="26" y="306.0">Aug 20</text><text class="glabel" x="84" y="306.0">@ BOS</text><text class="score win" x="176" y="306.0" text-anchor="end">W 9-4</text><rect class="track" x="190" y="292.5" width="588.0" height="19" rx="4"/><g class="seg s5"><rect x="190.0" y="292.5" width="250.0" height="19" rx="4"/><title>Claire Eccles - 1st-3rd, 3.0 IP
+15 batters faced, 54 pitches
+started</title><text class="seglabel" x="197.0" y="306.0">Claire Eccles</text></g><g class="seg s4"><rect x="442.0" y="292.5" width="166.0" height="19" rx="4"/><title>London Studer - 4th-5th, 2.0 IP
+13 batters faced, 43 pitches
+entered 4th, 0 outs, 0 on</title><text class="seglabel" x="449.0" y="306.0">London Studer</text></g><g class="seg s0"><rect x="610.0" y="292.5" width="166.0" height="19" rx="4"/><title>Jaida Lee - 6th-7th, 2.0 IP
+6 batters faced, 22 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="306.0">Jaida Lee</text></g><text class="glabel dim" x="0" y="338.0">g10</text><text class="glabel" x="26" y="338.0">Aug 22</text><text class="glabel" x="84" y="338.0">@ LAQ</text><text class="score win" x="176" y="338.0" text-anchor="end">W 8-7</text><rect class="track" x="190" y="324.5" width="672.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="324.5" width="334.0" height="19" rx="4"/><title>Rakyung Kim - 1st-4th, 4.0 IP
+19 batters faced, 76 pitches
+started</title><text class="seglabel" x="197.0" y="338.0">Rakyung Kim</text></g><g class="seg s3"><rect x="526.0" y="324.5" width="26.0" height="19" rx="4"/><title>Jacqui Reynolds - 5th, 0.1 IP
+4 batters faced, 18 pitches
+entered 5th, 0 outs, 0 on</title></g><g class="seg s0"><rect x="554.0" y="324.5" width="306.0" height="19" rx="4"/><title>Jaida Lee - 5th-8th, 3.2 IP
+12 batters faced, 46 pitches
+entered 5th, 1 out, 1 on</title><text class="seglabel" x="561.0" y="338.0">Jaida Lee</text></g><text class="glabel dim" x="0" y="370.0">g11</text><text class="glabel" x="26" y="370.0">Aug 27</text><text class="glabel" x="84" y="370.0">vs LAQ</text><text class="score win" x="176" y="370.0" text-anchor="end">W 12-4</text><rect class="track" x="190" y="356.5" width="588.0" height="19" rx="4"/><g class="seg s2"><rect x="190.0" y="356.5" width="334.0" height="19" rx="4"/><title>Claire O&#x27;Sullivan - 1st-4th, 4.0 IP
+19 batters faced, 62 pitches
+started</title><text class="seglabel" x="197.0" y="370.0">Claire O&#x27;Sullivan</text></g><g class="seg s5"><rect x="526.0" y="356.5" width="82.0" height="19" rx="4"/><title>Claire Eccles - 5th, 1.0 IP
+6 batters faced, 23 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="370.0">Eccles</text></g><g class="seg s0"><rect x="610.0" y="356.5" width="166.0" height="19" rx="4"/><title>Jaida Lee - 6th-7th, 2.0 IP
+10 batters faced, 38 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="370.0">Jaida Lee</text></g><text class="glabel dim" x="0" y="402.0">g12</text><text class="glabel" x="26" y="402.0">Aug 29</text><text class="glabel" x="84" y="402.0">@ LAQ</text><text class="score loss" x="176" y="402.0" text-anchor="end">L 6-10</text><rect class="track" x="190" y="388.5" width="504.0" height="19" rx="4"/><g class="seg s6"><rect x="190.0" y="388.5" width="418.0" height="19" rx="4"/><title>Emi Saiki - 1st-5th, 5.0 IP
+28 batters faced, 88 pitches
+started</title><text class="seglabel" x="197.0" y="402.0">Emi Saiki</text></g><g class="seg s4"><rect x="610.0" y="388.5" width="26.0" height="19" rx="4"/><title>London Studer - 6th, 0.1 IP
+6 batters faced, 23 pitches
+entered 6th, 0 outs, 0 on</title></g><g class="seg s0"><rect x="638.0" y="388.5" width="54.0" height="19" rx="4"/><title>Jaida Lee - 6th, 0.2 IP
+3 batters faced, 10 pitches
+entered 6th, 1 out, 3 on</title><text class="seglabel" x="645.0" y="402.0">Lee</text></g></svg></div>
+  <details>
+    <summary>Table view &mdash; 35 appearances</summary>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Gm</th><th>Opponent</th><th>Pitcher</th><th>Role</th>
+          <th>Innings</th><th class="num">IP</th><th class="num">BF</th>
+          <th class="num">Pit</th></tr></thead>
+        <tbody><tr><td>1</td><td>vs Los Angeles Queens</td><td><span class="sw s1"></span>Rakyung Kim</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">19</td><td class="num">80</td></tr><tr><td>1</td><td>vs Los Angeles Queens</td><td><span class="sw s3"></span>Jacqui Reynolds</td><td>Relieved</td><td>5th-7th</td><td class="num">2.2</td><td class="num">16</td><td class="num">65</td></tr><tr><td>1</td><td>vs Los Angeles Queens</td><td><span class="sw s0"></span>Jaida Lee</td><td>Relieved</td><td>7th</td><td class="num">0.1</td><td class="num">1</td><td class="num">6</td></tr><tr><td>2</td><td>@ San Francisco Firebells</td><td><span class="sw s0"></span>Jaida Lee</td><td>Started</td><td>1st-5th</td><td class="num">5.0</td><td class="num">24</td><td class="num">102</td></tr><tr><td>2</td><td>@ San Francisco Firebells</td><td><span class="sw s4"></span>London Studer</td><td>Relieved</td><td>6th</td><td class="num">0.1</td><td class="num">6</td><td class="num">27</td></tr><tr><td>2</td><td>@ San Francisco Firebells</td><td><span class="sw s7"></span>Keira Izumi</td><td>Relieved</td><td>6th-7th</td><td class="num">1.2</td><td class="num">6</td><td class="num">21</td></tr><tr><td>3</td><td>vs Boston Hunters</td><td><span class="sw s1"></span>Rakyung Kim</td><td>Started</td><td>1st-6th</td><td class="num">5.1</td><td class="num">25</td><td class="num">87</td></tr><tr><td>3</td><td>vs Boston Hunters</td><td><span class="sw s7"></span>Keira Izumi</td><td>Relieved</td><td>6th, no outs recorded</td><td class="num">0.0</td><td class="num">5</td><td class="num">25</td></tr><tr><td>3</td><td>vs Boston Hunters</td><td><span class="sw s7"></span>Alyssa Zettlemoyer</td><td>Relieved</td><td>6th-7th</td><td class="num">1.2</td><td class="num">8</td><td class="num">34</td></tr><tr><td>4</td><td>@ Boston Hunters</td><td><span class="sw s3"></span>Jacqui Reynolds</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">20</td><td class="num">72</td></tr><tr><td>4</td><td>@ Boston Hunters</td><td><span class="sw s0"></span>Jaida Lee</td><td>Relieved</td><td>5th</td><td class="num">0.1</td><td class="num">6</td><td class="num">38</td></tr><tr><td>4</td><td>@ Boston Hunters</td><td><span class="sw s2"></span>Claire O&#x27;Sullivan</td><td>Relieved</td><td>5th-8th</td><td class="num">3.2</td><td class="num">14</td><td class="num">45</td></tr><tr><td>5</td><td>vs Boston Hunters</td><td><span class="sw s5"></span>Claire Eccles</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">15</td><td class="num">62</td></tr><tr><td>5</td><td>vs Boston Hunters</td><td><span class="sw s1"></span>Rakyung Kim</td><td>Relieved</td><td>4th-5th</td><td class="num">1.1</td><td class="num">11</td><td class="num">46</td></tr><tr><td>5</td><td>vs Boston Hunters</td><td><span class="sw s4"></span>London Studer</td><td>Relieved</td><td>5th-7th</td><td class="num">2.2</td><td class="num">12</td><td class="num">56</td></tr><tr><td>6</td><td>vs San Francisco Firebells</td><td><span class="sw s0"></span>Jaida Lee</td><td>Started</td><td>1st-4th</td><td class="num">3.1</td><td class="num">22</td><td class="num">82</td></tr><tr><td>6</td><td>vs San Francisco Firebells</td><td><span class="sw s2"></span>Claire O&#x27;Sullivan</td><td>Relieved</td><td>4th-6th</td><td class="num">2.2</td><td class="num">17</td><td class="num">51</td></tr><tr><td>6</td><td>vs San Francisco Firebells</td><td><span class="sw s7"></span>Keira Izumi</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">7</td><td class="num">21</td></tr><tr><td>7</td><td>vs Boston Hunters</td><td><span class="sw s3"></span>Jacqui Reynolds</td><td>Started</td><td>1st-2nd</td><td class="num">2.0</td><td class="num">10</td><td class="num">38</td></tr><tr><td>7</td><td>vs Boston Hunters</td><td><span class="sw s7"></span>Alyssa Zettlemoyer</td><td>Relieved</td><td>3rd-5th</td><td class="num">2.1</td><td class="num">16</td><td class="num">55</td></tr><tr><td>7</td><td>vs Boston Hunters</td><td><span class="sw s4"></span>London Studer</td><td>Relieved</td><td>5th-7th</td><td class="num">2.2</td><td class="num">12</td><td class="num">45</td></tr><tr><td>8</td><td>@ San Francisco Firebells</td><td><span class="sw s7"></span>Keira Izumi</td><td>Started</td><td>1st-2nd</td><td class="num">1.1</td><td class="num">12</td><td class="num">49</td></tr><tr><td>8</td><td>@ San Francisco Firebells</td><td><span class="sw s2"></span>Claire O&#x27;Sullivan</td><td>Relieved</td><td>2nd-6th</td><td class="num">4.0</td><td class="num">18</td><td class="num">60</td></tr><tr><td>9</td><td>@ Boston Hunters</td><td><span class="sw s5"></span>Claire Eccles</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">15</td><td class="num">54</td></tr><tr><td>9</td><td>@ Boston Hunters</td><td><span class="sw s4"></span>London Studer</td><td>Relieved</td><td>4th-5th</td><td class="num">2.0</td><td class="num">13</td><td class="num">43</td></tr><tr><td>9</td><td>@ Boston Hunters</td><td><span class="sw s0"></span>Jaida Lee</td><td>Relieved</td><td>6th-7th</td><td class="num">2.0</td><td class="num">6</td><td class="num">22</td></tr><tr><td>10</td><td>@ Los Angeles Queens</td><td><span class="sw s1"></span>Rakyung Kim</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">19</td><td class="num">76</td></tr><tr><td>10</td><td>@ Los Angeles Queens</td><td><span class="sw s3"></span>Jacqui Reynolds</td><td>Relieved</td><td>5th</td><td class="num">0.1</td><td class="num">4</td><td class="num">18</td></tr><tr><td>10</td><td>@ Los Angeles Queens</td><td><span class="sw s0"></span>Jaida Lee</td><td>Relieved</td><td>5th-8th</td><td class="num">3.2</td><td class="num">12</td><td class="num">46</td></tr><tr><td>11</td><td>vs Los Angeles Queens</td><td><span class="sw s2"></span>Claire O&#x27;Sullivan</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">19</td><td class="num">62</td></tr><tr><td>11</td><td>vs Los Angeles Queens</td><td><span class="sw s5"></span>Claire Eccles</td><td>Relieved</td><td>5th</td><td class="num">1.0</td><td class="num">6</td><td class="num">23</td></tr><tr><td>11</td><td>vs Los Angeles Queens</td><td><span class="sw s0"></span>Jaida Lee</td><td>Relieved</td><td>6th-7th</td><td class="num">2.0</td><td class="num">10</td><td class="num">38</td></tr><tr><td>12</td><td>@ Los Angeles Queens</td><td><span class="sw s6"></span>Emi Saiki</td><td>Started</td><td>1st-5th</td><td class="num">5.0</td><td class="num">28</td><td class="num">88</td></tr><tr><td>12</td><td>@ Los Angeles Queens</td><td><span class="sw s4"></span>London Studer</td><td>Relieved</td><td>6th</td><td class="num">0.1</td><td class="num">6</td><td class="num">23</td></tr><tr><td>12</td><td>@ Los Angeles Queens</td><td><span class="sw s0"></span>Jaida Lee</td><td>Relieved</td><td>6th</td><td class="num">0.2</td><td class="num">3</td><td class="num">10</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+</section>
+<section class="panel">
+  <header class="panel-head">
+    <h2>San Francisco Firebells</h2>
+    <p class="meta">11 games &middot; 7-4 &middot;
+      9 pitchers used</p>
+  </header>
+  <ul class="key"><li><span class="sw s0"></span><span class="nm">Kelsie Whitmore</span><span class="ip">20.0</span><span class="rl">5 GS</span></li><li><span class="sw s1"></span><span class="nm">Liz Gilder</span><span class="ip">12.2</span><span class="rl">3 GS, 1 RP</span></li><li><span class="sw s2"></span><span class="nm">Niki Eckert</span><span class="ip">11.2</span><span class="rl">1 GS, 3 RP</span></li><li><span class="sw s3"></span><span class="nm">Jill Albayati</span><span class="ip">10.0</span><span class="rl">2 GS, 1 RP</span></li><li><span class="sw s4"></span><span class="nm">Peyton Coria</span><span class="ip">8.1</span><span class="rl">6 RP</span></li><li><span class="sw s5"></span><span class="nm">Ela Day-B&#233;dard</span><span class="ip">7.0</span><span class="rl">4 RP</span></li><li><span class="sw s6"></span><span class="nm">Rosi del Castillo</span><span class="ip">2.2</span><span class="rl">2 RP</span></li><li class="wide"><span class="sw s7"></span><span class="nm">Andreanne Leblanc, Jua Park</span><span class="tail">1.2 across 2 pitchers</span></li></ul>
+  <div class="scroll"><svg viewBox="0 0 874 388" width="100%" height="388" role="img" aria-label="Pitcher usage by inning for San Francisco Firebells"><line class="rule" x1="190.0" y1="22" x2="190.0" y2="382"/><text class="tick" x="232.0" y="16" text-anchor="middle">1</text><line class="rule" x1="274.0" y1="22" x2="274.0" y2="382"/><text class="tick" x="316.0" y="16" text-anchor="middle">2</text><line class="rule" x1="358.0" y1="22" x2="358.0" y2="382"/><text class="tick" x="400.0" y="16" text-anchor="middle">3</text><line class="rule" x1="442.0" y1="22" x2="442.0" y2="382"/><text class="tick" x="484.0" y="16" text-anchor="middle">4</text><line class="rule" x1="526.0" y1="22" x2="526.0" y2="382"/><text class="tick" x="568.0" y="16" text-anchor="middle">5</text><line class="rule" x1="610.0" y1="22" x2="610.0" y2="382"/><text class="tick" x="652.0" y="16" text-anchor="middle">6</text><line class="rule" x1="694.0" y1="22" x2="694.0" y2="382"/><text class="tick" x="736.0" y="16" text-anchor="middle">7</text><line class="rule" x1="778.0" y1="22" x2="778.0" y2="382"/><text class="tick" x="820.0" y="16" text-anchor="middle">8</text><line class="rule" x1="862.0" y1="22" x2="862.0" y2="382"/><text class="glabel dim" x="0" y="50.0">g1</text><text class="glabel" x="26" y="50.0">Aug 2</text><text class="glabel" x="84" y="50.0">@ BOS</text><text class="score win" x="176" y="50.0" text-anchor="end">W 11-3</text><rect class="track" x="190" y="36.5" width="588.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="36.5" width="250.0" height="19" rx="4"/><title>Kelsie Whitmore - 1st-3rd, 3.0 IP
+12 batters faced, 52 pitches
+started</title><text class="seglabel" x="197.0" y="50.0">Kelsie Whitmore</text></g><g class="seg s2"><rect x="442.0" y="36.5" width="166.0" height="19" rx="4"/><title>Niki Eckert - 4th-5th, 2.0 IP
+12 batters faced, 48 pitches
+entered 4th, 0 outs, 0 on</title><text class="seglabel" x="449.0" y="50.0">Niki Eckert</text></g><g class="seg s3"><rect x="610.0" y="36.5" width="166.0" height="19" rx="4"/><title>Jill Albayati - 6th-7th, 2.0 IP
+6 batters faced, 27 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="50.0">Jill Albayati</text></g><text class="glabel dim" x="0" y="82.0">g2</text><text class="glabel" x="26" y="82.0">Aug 6</text><text class="glabel" x="84" y="82.0">vs NYH</text><text class="score loss" x="176" y="82.0" text-anchor="end">L 8-13</text><rect class="track" x="190" y="68.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="68.5" width="222.0" height="19" rx="4"/><title>Liz Gilder - 1st-3rd, 2.2 IP
+16 batters faced, 65 pitches
+started</title><text class="seglabel" x="197.0" y="82.0">Liz Gilder</text></g><g class="seg s7"><rect x="414.0" y="68.5" width="54.0" height="19" rx="4"/><title>Jua Park - 3rd-4th, 0.2 IP
+9 batters faced, 49 pitches
+entered 3rd, 2 outs, 2 on</title><text class="seglabel" x="421.0" y="82.0">Park</text></g><g class="seg s5"><rect x="470.0" y="68.5" width="222.0" height="19" rx="4"/><title>Ela Day-B&#233;dard - 4th-6th, 2.2 IP
+16 batters faced, 49 pitches
+entered 4th, 1 out, 3 on</title><text class="seglabel" x="477.0" y="82.0">Ela Day-B&#233;dard</text></g><g class="seg s7"><rect x="694.0" y="68.5" width="82.0" height="19" rx="4"/><title>Andreanne Leblanc - 7th, 1.0 IP
+3 batters faced, 18 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="82.0">Leblanc</text></g><text class="glabel dim" x="0" y="114.0">g3</text><text class="glabel" x="26" y="114.0">Aug 7</text><text class="glabel" x="84" y="114.0">@ LAQ</text><text class="score loss" x="176" y="114.0" text-anchor="end">L 3-12</text><rect class="track" x="190" y="100.5" width="504.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="100.5" width="250.0" height="19" rx="4"/><title>Kelsie Whitmore - 1st-3rd, 3.0 IP
+19 batters faced, 64 pitches
+started</title><text class="seglabel" x="197.0" y="114.0">Kelsie Whitmore</text></g><g class="seg s4"><rect x="442.0" y="100.5" width="166.0" height="19" rx="4"/><title>Peyton Coria - 4th-5th, 2.0 IP
+11 batters faced, 53 pitches
+entered 4th, 0 outs, 0 on</title><text class="seglabel" x="449.0" y="114.0">Peyton Coria</text></g><g class="seg s6"><rect x="610.0" y="100.5" width="82.0" height="19" rx="4"/><title>Rosi del Castillo - 6th, 1.0 IP
+6 batters faced, 21 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="114.0">Castillo</text></g><text class="glabel dim" x="0" y="146.0">g4</text><text class="glabel" x="26" y="146.0">Aug 8</text><text class="glabel" x="84" y="146.0">vs LAQ</text><text class="score win" x="176" y="146.0" text-anchor="end">W 10-3</text><rect class="track" x="190" y="132.5" width="588.0" height="19" rx="4"/><g class="seg s3"><rect x="190.0" y="132.5" width="334.0" height="19" rx="4"/><title>Jill Albayati - 1st-4th, 4.0 IP
+19 batters faced, 68 pitches
+started</title><text class="seglabel" x="197.0" y="146.0">Jill Albayati</text></g><g class="seg s2"><rect x="526.0" y="132.5" width="250.0" height="19" rx="4"/><title>Niki Eckert - 5th-7th, 3.0 IP
+13 batters faced, 48 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="146.0">Niki Eckert</text></g><text class="glabel dim" x="0" y="178.0">g5</text><text class="glabel" x="26" y="178.0">Aug 12</text><text class="glabel" x="84" y="178.0">vs LAQ</text><text class="score win" x="176" y="178.0" text-anchor="end">W 8-2</text><rect class="track" x="190" y="164.5" width="588.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="164.5" width="334.0" height="19" rx="4"/><title>Liz Gilder - 1st-4th, 4.0 IP
+18 batters faced, 56 pitches
+started</title><text class="seglabel" x="197.0" y="178.0">Liz Gilder</text></g><g class="seg s6"><rect x="526.0" y="164.5" width="138.0" height="19" rx="4"/><title>Rosi del Castillo - 5th-6th, 1.2 IP
+6 batters faced, 24 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="178.0">Rosi del Castillo</text></g><g class="seg s4"><rect x="666.0" y="164.5" width="110.0" height="19" rx="4"/><title>Peyton Coria - 6th-7th, 1.1 IP
+5 batters faced, 29 pitches
+entered 6th, 2 outs, 0 on</title><text class="seglabel" x="673.0" y="178.0">Peyton Coria</text></g><text class="glabel dim" x="0" y="210.0">g6</text><text class="glabel" x="26" y="210.0">Aug 14</text><text class="glabel" x="84" y="210.0">vs LAQ</text><text class="score win" x="176" y="210.0" text-anchor="end">W 17-3</text><rect class="track" x="190" y="196.5" width="588.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="196.5" width="334.0" height="19" rx="4"/><title>Kelsie Whitmore - 1st-4th, 4.0 IP
+19 batters faced, 63 pitches
+started</title><text class="seglabel" x="197.0" y="210.0">Kelsie Whitmore</text></g><g class="seg s5"><rect x="526.0" y="196.5" width="166.0" height="19" rx="4"/><title>Ela Day-B&#233;dard - 5th-6th, 2.0 IP
+8 batters faced, 37 pitches
+entered 5th, 0 outs, 2 on</title><text class="seglabel" x="533.0" y="210.0">Ela Day-B&#233;dard</text></g><g class="seg s4"><rect x="694.0" y="196.5" width="82.0" height="19" rx="4"/><title>Peyton Coria - 7th, 1.0 IP
+3 batters faced, 13 pitches
+entered 7th, 0 outs, 0 on</title><text class="seglabel" x="701.0" y="210.0">Coria</text></g><text class="glabel dim" x="0" y="242.0">g7</text><text class="glabel" x="26" y="242.0">Aug 15</text><text class="glabel" x="84" y="242.0">@ NYH</text><text class="score win" x="176" y="242.0" text-anchor="end">W 11-6</text><rect class="track" x="190" y="228.5" width="588.0" height="19" rx="4"/><g class="seg s3"><rect x="190.0" y="228.5" width="334.0" height="19" rx="4"/><title>Jill Albayati - 1st-4th, 4.0 IP
+22 batters faced, 71 pitches
+started</title><text class="seglabel" x="197.0" y="242.0">Jill Albayati</text></g><g class="seg s2"><rect x="526.0" y="228.5" width="250.0" height="19" rx="4"/><title>Niki Eckert - 5th-7th, 3.0 IP
+14 batters faced, 62 pitches
+entered 5th, 0 outs, 0 on</title><text class="seglabel" x="533.0" y="242.0">Niki Eckert</text></g><text class="glabel dim" x="0" y="274.0">g8</text><text class="glabel" x="26" y="274.0">Aug 19</text><text class="glabel" x="84" y="274.0">vs NYH</text><text class="score loss" x="176" y="274.0" text-anchor="end">L 8-11</text><rect class="track" x="190" y="260.5" width="504.0" height="19" rx="4"/><g class="seg s1"><rect x="190.0" y="260.5" width="306.0" height="19" rx="4"/><title>Liz Gilder - 1st-4th, 3.2 IP
+22 batters faced, 72 pitches
+started</title><text class="seglabel" x="197.0" y="274.0">Liz Gilder</text></g><g class="seg s5"><rect x="498.0" y="260.5" width="110.0" height="19" rx="4"/><title>Ela Day-B&#233;dard - 4th-5th, 1.1 IP
+9 batters faced, 41 pitches
+entered 4th, 2 outs, 2 on</title><text class="seglabel" x="505.0" y="274.0">Ela Day-B&#233;dard</text></g><g class="seg s4"><rect x="610.0" y="260.5" width="82.0" height="19" rx="4"/><title>Peyton Coria - 6th, 1.0 IP
+6 batters faced, 27 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="274.0">Coria</text></g><text class="glabel dim" x="0" y="306.0">g9</text><text class="glabel" x="26" y="306.0">Aug 21</text><text class="glabel" x="84" y="306.0">@ LAQ</text><text class="score loss" x="176" y="306.0" text-anchor="end">L 6-8</text><rect class="track" x="190" y="292.5" width="504.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="292.5" width="418.0" height="19" rx="4"/><title>Kelsie Whitmore - 1st-5th, 5.0 IP
+25 batters faced, 82 pitches
+started</title><text class="seglabel" x="197.0" y="306.0">Kelsie Whitmore</text></g><g class="seg s4"><rect x="610.0" y="292.5" width="82.0" height="19" rx="4"/><title>Peyton Coria - 6th, 1.0 IP
+8 batters faced, 35 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="306.0">Coria</text></g><text class="glabel dim" x="0" y="338.0">g10</text><text class="glabel" x="26" y="338.0">Aug 22</text><text class="glabel" x="84" y="338.0">@ BOS</text><text class="score win" x="176" y="338.0" text-anchor="end">W 12-5</text><rect class="track" x="190" y="324.5" width="588.0" height="19" rx="4"/><g class="seg s2"><rect x="190.0" y="324.5" width="306.0" height="19" rx="4"/><title>Niki Eckert - 1st-4th, 3.2 IP
+21 batters faced, 82 pitches
+started</title><text class="seglabel" x="197.0" y="338.0">Niki Eckert</text></g><g class="seg s5"><rect x="498.0" y="324.5" width="82.0" height="19" rx="4"/><title>Ela Day-B&#233;dard - 4th-5th, 1.0 IP
+9 batters faced, 37 pitches
+entered 4th, 2 outs, 2 on</title><text class="seglabel" x="505.0" y="338.0">Day-B&#233;dard</text></g><g class="seg s1"><rect x="582.0" y="324.5" width="194.0" height="19" rx="4"/><title>Liz Gilder - 5th-7th, 2.1 IP
+9 batters faced, 39 pitches
+entered 5th, 2 outs, 3 on</title><text class="seglabel" x="589.0" y="338.0">Liz Gilder</text></g><text class="glabel dim" x="0" y="370.0">g11</text><text class="glabel" x="26" y="370.0">Aug 28</text><text class="glabel" x="84" y="370.0">vs BOS</text><text class="score win" x="176" y="370.0" text-anchor="end">W 14-6</text><rect class="track" x="190" y="356.5" width="588.0" height="19" rx="4"/><g class="seg s0"><rect x="190.0" y="356.5" width="418.0" height="19" rx="4"/><title>Kelsie Whitmore - 1st-5th, 5.0 IP
+23 batters faced, 85 pitches
+started</title><text class="seglabel" x="197.0" y="370.0">Kelsie Whitmore</text></g><g class="seg s4"><rect x="610.0" y="356.5" width="166.0" height="19" rx="4"/><title>Peyton Coria - 6th-7th, 2.0 IP
+12 batters faced, 50 pitches
+entered 6th, 0 outs, 0 on</title><text class="seglabel" x="617.0" y="370.0">Peyton Coria</text></g></svg></div>
+  <details>
+    <summary>Table view &mdash; 30 appearances</summary>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Gm</th><th>Opponent</th><th>Pitcher</th><th>Role</th>
+          <th>Innings</th><th class="num">IP</th><th class="num">BF</th>
+          <th class="num">Pit</th></tr></thead>
+        <tbody><tr><td>1</td><td>@ Boston Hunters</td><td><span class="sw s0"></span>Kelsie Whitmore</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">12</td><td class="num">52</td></tr><tr><td>1</td><td>@ Boston Hunters</td><td><span class="sw s2"></span>Niki Eckert</td><td>Relieved</td><td>4th-5th</td><td class="num">2.0</td><td class="num">12</td><td class="num">48</td></tr><tr><td>1</td><td>@ Boston Hunters</td><td><span class="sw s3"></span>Jill Albayati</td><td>Relieved</td><td>6th-7th</td><td class="num">2.0</td><td class="num">6</td><td class="num">27</td></tr><tr><td>2</td><td>vs New York Heights</td><td><span class="sw s1"></span>Liz Gilder</td><td>Started</td><td>1st-3rd</td><td class="num">2.2</td><td class="num">16</td><td class="num">65</td></tr><tr><td>2</td><td>vs New York Heights</td><td><span class="sw s7"></span>Jua Park</td><td>Relieved</td><td>3rd-4th</td><td class="num">0.2</td><td class="num">9</td><td class="num">49</td></tr><tr><td>2</td><td>vs New York Heights</td><td><span class="sw s5"></span>Ela Day-B&#233;dard</td><td>Relieved</td><td>4th-6th</td><td class="num">2.2</td><td class="num">16</td><td class="num">49</td></tr><tr><td>2</td><td>vs New York Heights</td><td><span class="sw s7"></span>Andreanne Leblanc</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">3</td><td class="num">18</td></tr><tr><td>3</td><td>@ Los Angeles Queens</td><td><span class="sw s0"></span>Kelsie Whitmore</td><td>Started</td><td>1st-3rd</td><td class="num">3.0</td><td class="num">19</td><td class="num">64</td></tr><tr><td>3</td><td>@ Los Angeles Queens</td><td><span class="sw s4"></span>Peyton Coria</td><td>Relieved</td><td>4th-5th</td><td class="num">2.0</td><td class="num">11</td><td class="num">53</td></tr><tr><td>3</td><td>@ Los Angeles Queens</td><td><span class="sw s6"></span>Rosi del Castillo</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">6</td><td class="num">21</td></tr><tr><td>4</td><td>vs Los Angeles Queens</td><td><span class="sw s3"></span>Jill Albayati</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">19</td><td class="num">68</td></tr><tr><td>4</td><td>vs Los Angeles Queens</td><td><span class="sw s2"></span>Niki Eckert</td><td>Relieved</td><td>5th-7th</td><td class="num">3.0</td><td class="num">13</td><td class="num">48</td></tr><tr><td>5</td><td>vs Los Angeles Queens</td><td><span class="sw s1"></span>Liz Gilder</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">18</td><td class="num">56</td></tr><tr><td>5</td><td>vs Los Angeles Queens</td><td><span class="sw s6"></span>Rosi del Castillo</td><td>Relieved</td><td>5th-6th</td><td class="num">1.2</td><td class="num">6</td><td class="num">24</td></tr><tr><td>5</td><td>vs Los Angeles Queens</td><td><span class="sw s4"></span>Peyton Coria</td><td>Relieved</td><td>6th-7th</td><td class="num">1.1</td><td class="num">5</td><td class="num">29</td></tr><tr><td>6</td><td>vs Los Angeles Queens</td><td><span class="sw s0"></span>Kelsie Whitmore</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">19</td><td class="num">63</td></tr><tr><td>6</td><td>vs Los Angeles Queens</td><td><span class="sw s5"></span>Ela Day-B&#233;dard</td><td>Relieved</td><td>5th-6th</td><td class="num">2.0</td><td class="num">8</td><td class="num">37</td></tr><tr><td>6</td><td>vs Los Angeles Queens</td><td><span class="sw s4"></span>Peyton Coria</td><td>Relieved</td><td>7th</td><td class="num">1.0</td><td class="num">3</td><td class="num">13</td></tr><tr><td>7</td><td>@ New York Heights</td><td><span class="sw s3"></span>Jill Albayati</td><td>Started</td><td>1st-4th</td><td class="num">4.0</td><td class="num">22</td><td class="num">71</td></tr><tr><td>7</td><td>@ New York Heights</td><td><span class="sw s2"></span>Niki Eckert</td><td>Relieved</td><td>5th-7th</td><td class="num">3.0</td><td class="num">14</td><td class="num">62</td></tr><tr><td>8</td><td>vs New York Heights</td><td><span class="sw s1"></span>Liz Gilder</td><td>Started</td><td>1st-4th</td><td class="num">3.2</td><td class="num">22</td><td class="num">72</td></tr><tr><td>8</td><td>vs New York Heights</td><td><span class="sw s5"></span>Ela Day-B&#233;dard</td><td>Relieved</td><td>4th-5th</td><td class="num">1.1</td><td class="num">9</td><td class="num">41</td></tr><tr><td>8</td><td>vs New York Heights</td><td><span class="sw s4"></span>Peyton Coria</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">6</td><td class="num">27</td></tr><tr><td>9</td><td>@ Los Angeles Queens</td><td><span class="sw s0"></span>Kelsie Whitmore</td><td>Started</td><td>1st-5th</td><td class="num">5.0</td><td class="num">25</td><td class="num">82</td></tr><tr><td>9</td><td>@ Los Angeles Queens</td><td><span class="sw s4"></span>Peyton Coria</td><td>Relieved</td><td>6th</td><td class="num">1.0</td><td class="num">8</td><td class="num">35</td></tr><tr><td>10</td><td>@ Boston Hunters</td><td><span class="sw s2"></span>Niki Eckert</td><td>Started</td><td>1st-4th</td><td class="num">3.2</td><td class="num">21</td><td class="num">82</td></tr><tr><td>10</td><td>@ Boston Hunters</td><td><span class="sw s5"></span>Ela Day-B&#233;dard</td><td>Relieved</td><td>4th-5th</td><td class="num">1.0</td><td class="num">9</td><td class="num">37</td></tr><tr><td>10</td><td>@ Boston Hunters</td><td><span class="sw s1"></span>Liz Gilder</td><td>Relieved</td><td>5th-7th</td><td class="num">2.1</td><td class="num">9</td><td class="num">39</td></tr><tr><td>11</td><td>vs Boston Hunters</td><td><span class="sw s0"></span>Kelsie Whitmore</td><td>Started</td><td>1st-5th</td><td class="num">5.0</td><td class="num">23</td><td class="num">85</td></tr><tr><td>11</td><td>vs Boston Hunters</td><td><span class="sw s4"></span>Peyton Coria</td><td>Relieved</td><td>6th-7th</td><td class="num">2.0</td><td class="num">12</td><td class="num">50</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+</section>
+  <footer>
+    <p><strong>Reading a row.</strong> The scale is fixed across every panel, so bar length is
+      directly comparable: a short track means a short game, not a short outing.</p>
+    <p>Boundaries come from the box score's innings-pitched figures, accumulated in the order
+      pitchers appeared. They agree with the entry inning derived independently from the
+      play-by-play in all 136 appearances.</p>
+  </footer>
+</div>

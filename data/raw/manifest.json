@@ -1,0 +1,271 @@
+{
+ "activity": {
+  "193phvm8rl9cf53w": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:34.985580+00:00"
+  },
+  "19k396na7ad9r561": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:40.807770+00:00"
+  },
+  "20f8lv4g5kfttfg1": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:32.326689+00:00"
+  },
+  "7sh6ncqvuaz87451": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:30.055318+00:00"
+  },
+  "8alsgvzc90ypwphl": {
+   "complete": true,
+   "events": 382,
+   "fetched_at": "2026-08-30T18:38:18.089431+00:00"
+  },
+  "8m8qyyfytlcngh7s": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:25.526028+00:00"
+  },
+  "aqe6d881m2xt0khm": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:44.894790+00:00"
+  },
+  "awbrugq1q63c3uph": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:37.208902+00:00"
+  },
+  "dmgjo870o24ty4q8": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:24.309552+00:00"
+  },
+  "dtksss0az7dpa97f": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:36.085991+00:00"
+  },
+  "kije6tnlnl71eocg": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:31.145574+00:00"
+  },
+  "mksw641s8uwrx6vp": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:46.000217+00:00"
+  },
+  "n89hf3ji823n4p07": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:39.578154+00:00"
+  },
+  "oxmfgfm084vlisfi": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:28.917888+00:00"
+  },
+  "ppkwakaltuvio20t": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:33.871716+00:00"
+  },
+  "qik38y6p8336rqzc": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:23.184591+00:00"
+  },
+  "qk2oug9ikob2a1hl": {
+   "complete": true,
+   "events": 384,
+   "fetched_at": "2026-08-30T18:38:19.825361+00:00"
+  },
+  "rr37bu1ieptkbzhp": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:27.791886+00:00"
+  },
+  "swof9w8fb4z5n6yz": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:38.454524+00:00"
+  },
+  "tcvtrxvuqrl488nu": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:22.086542+00:00"
+  },
+  "uqnlzivjhyjg4cj9": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:26.677389+00:00"
+  },
+  "v4tqgh11vbo55wl3": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:42.145902+00:00"
+  },
+  "v7zr9elz0xc5lqbw": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:20.944604+00:00"
+  },
+  "zpp9h33tj77csmoq": {
+   "complete": true,
+   "events": 0,
+   "fetched_at": "2026-08-30T18:38:43.310506+00:00"
+  }
+ },
+ "boxscore": {
+  "193phvm8rl9cf53w": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:03.874595+00:00",
+   "plays": 83,
+   "source_updated_at": "2026-08-20T02:39:59Z"
+  },
+  "19k396na7ad9r561": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:11.010989+00:00",
+   "plays": 72,
+   "source_updated_at": "2026-08-24T01:52:16Z"
+  },
+  "20f8lv4g5kfttfg1": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:01.170120+00:00",
+   "plays": 90,
+   "source_updated_at": "2026-08-16T02:10:21Z"
+  },
+  "7sh6ncqvuaz87451": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:58.396274+00:00",
+   "plays": 91,
+   "source_updated_at": "2026-08-15T02:03:36Z"
+  },
+  "8alsgvzc90ypwphl": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:44.511332+00:00",
+   "plays": 112,
+   "source_updated_at": "2026-08-08T15:34:22Z"
+  },
+  "8m8qyyfytlcngh7s": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:52.710550+00:00",
+   "plays": 89,
+   "source_updated_at": "2026-08-09T01:38:27Z"
+  },
+  "aqe6d881m2xt0khm": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:15.018678+00:00",
+   "plays": 95,
+   "source_updated_at": "2026-08-29T02:11:53Z"
+  },
+  "awbrugq1q63c3uph": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:06.953295+00:00",
+   "plays": 87,
+   "source_updated_at": "2026-08-22T01:47:26Z"
+  },
+  "dmgjo870o24ty4q8": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:51.368527+00:00",
+   "plays": 95,
+   "source_updated_at": "2026-08-08T21:18:30Z"
+  },
+  "dtksss0az7dpa97f": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:05.203854+00:00",
+   "plays": 96,
+   "source_updated_at": "2026-08-21T02:03:12Z"
+  },
+  "kije6tnlnl71eocg": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:59.844104+00:00",
+   "plays": 101,
+   "source_updated_at": "2026-08-22T19:46:06Z"
+  },
+  "mksw641s8uwrx6vp": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:16.361095+00:00",
+   "plays": 87,
+   "source_updated_at": "2026-08-30T01:58:18Z"
+  },
+  "n89hf3ji823n4p07": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:09.720099+00:00",
+   "plays": 95,
+   "source_updated_at": "2026-08-23T02:27:12Z"
+  },
+  "oxmfgfm084vlisfi": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:57.035026+00:00",
+   "plays": 98,
+   "source_updated_at": "2026-08-18T16:22:25Z"
+  },
+  "ppkwakaltuvio20t": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:02.498546+00:00",
+   "plays": 101,
+   "source_updated_at": "2026-08-17T03:07:59Z"
+  },
+  "qik38y6p8336rqzc": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:50.009521+00:00",
+   "plays": 87,
+   "source_updated_at": "2026-08-08T01:56:16Z"
+  },
+  "qk2oug9ikob2a1hl": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:46.046986+00:00",
+   "plays": 102,
+   "source_updated_at": "2026-08-03T02:26:18Z"
+  },
+  "rr37bu1ieptkbzhp": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:55.709520+00:00",
+   "plays": 72,
+   "source_updated_at": "2026-08-13T01:47:31Z"
+  },
+  "swof9w8fb4z5n6yz": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:08.370325+00:00",
+   "plays": 111,
+   "source_updated_at": "2026-08-22T20:52:40Z"
+  },
+  "tcvtrxvuqrl488nu": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:48.725890+00:00",
+   "plays": 105,
+   "source_updated_at": "2026-08-07T02:39:42Z"
+  },
+  "uqnlzivjhyjg4cj9": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:54.201124+00:00",
+   "plays": 112,
+   "source_updated_at": "2026-08-10T02:28:32Z"
+  },
+  "v4tqgh11vbo55wl3": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:12.409010+00:00",
+   "plays": 90,
+   "source_updated_at": "2026-08-27T02:05:00Z"
+  },
+  "v7zr9elz0xc5lqbw": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:37:47.354925+00:00",
+   "plays": 92,
+   "source_updated_at": "2026-08-06T01:53:05Z"
+  },
+  "zpp9h33tj77csmoq": {
+   "complete": true,
+   "fetched_at": "2026-08-30T18:38:13.760331+00:00",
+   "plays": 102,
+   "source_updated_at": "2026-08-28T01:56:27Z"
+  }
+ },
+ "updated_at": "2026-08-31T07:06:13.875632+00:00"
+}

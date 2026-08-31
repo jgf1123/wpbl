@@ -1,0 +1,30 @@
+[workspace]
+authors = ["jgf1123 <jgf1123@gmail.com>"]
+channels = ["conda-forge"]
+name = "wpbl"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[tasks]
+scrape = "python -m wpbl.scrape"
+build = "python -m wpbl.parse"
+check = "python -m wpbl.validate"
+rosters = "python -m wpbl.rosters"
+timeline = "python -m wpbl.timeline"
+chart = "python -m wpbl.usage_chart"
+innings = "python -m wpbl.innings"
+re = "python -m wpbl.run_expectancy"
+wp = "python -m wpbl.win_probability"
+upsets = "python -m wpbl.upsets"
+pwp = "python -m wpbl.pitcher_wp"
+refresh = { depends-on = ["scrape", "build", "check"] }
+
+[activation.env]
+PYTHONPATH = "src"
+
+[dependencies]
+python = ">=3.14.7,<3.15"
+pandas = ">=3.0.5,<4"
+pyarrow = ">=25.0.0,<26"
+duckdb = ">=1.5.5,<2"
+requests = ">=2.34.2,<3"

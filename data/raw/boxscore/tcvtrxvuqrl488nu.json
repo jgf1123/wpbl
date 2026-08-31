@@ -1,0 +1,5983 @@
+{
+ "boxscore": {
+  "fetched_at": "2026-08-22T14:03:43.257881975Z",
+  "game_id": "tcvtrxvuqrl488nu",
+  "game_status": "Final",
+  "plays": [
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Val Perez",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Val Perez grounded out to ss (1-0 B).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 1,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Natsuki Yonetani",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 1,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Natsuki Yonetani singled to shortstop (1-0 B).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 2,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Denae Benites",
+    "event_type": "unknown",
+    "first_base": "Natsuki Yonetani",
+    "fouls": 0,
+    "half": "top",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Natsuki Yonetani Failed pickoff attempt.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 3,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Denae Benites",
+    "event_type": "wild_pitch",
+    "first_base": "Natsuki Yonetani",
+    "fouls": 0,
+    "half": "top",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Natsuki Yonetani advanced to second on a wild pitch.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 4,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Denae Benites",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 1,
+    "half": "top",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Denae Benites flied out to rf (2-2 BBFS).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 4,
+      "type": "swinging_strike"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBFSP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "Natsuki Yonetani",
+    "sequence": 5,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Kylee Lahners",
+    "event_type": "popup",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Kylee Lahners popped up to 2b (2-1 BKB).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKBP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "Natsuki Yonetani",
+    "sequence": 6,
+    "strikes": 1,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Amanda Gianelloni",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 3,
+    "half": "bottom",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Amanda Gianelloni flied out to cf (1-2 BFFF).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 2,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BFFFP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 7,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Kelsie Whitmore",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Kelsie Whitmore grounded out to ss (2-1 KBB).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBBP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 8,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Jill Albayati",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 1,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jill Albayati grounded out to ss (0-0).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 1,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "P",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 9,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Diana Ibarra",
+    "event_type": "popup",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Diana Ibarra popped up to ss (1-0 B).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 10,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Rakyung Kim",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Rakyung Kim grounded out to ss (2-2 BKKB).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKKBP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 11,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Keira Izumi",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 2,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Keira Izumi singled to left field (0-2 KK).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KKP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 12,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "single",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 2,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Alyssa Zettlemoyer singled to left field (2-0 BB); Keira Izumi advanced to second.",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 13,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Claire Eccles",
+    "event_type": "popup",
+    "first_base": "Alyssa Zettlemoyer",
+    "fouls": 0,
+    "half": "top",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Claire Eccles popped up to ss (1-1 BK).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "Keira Izumi",
+    "sequence": 14,
+    "strikes": 1,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Andreanne Leblanc",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 2,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Andreanne Leblanc singled up the middle (1-2 BSK).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 2,
+      "type": "swinging_strike"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BSKP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 15,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Alexia Jorge",
+    "event_type": "fielders_choice",
+    "first_base": "Andreanne Leblanc",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Alexia Jorge reached on a fielder's choice (1-1 KB); Andreanne Leblanc out at second 3b to 2b.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 16,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Ela Day-B\u00e9dard",
+    "event_type": "fielders_choice",
+    "first_base": "Alexia Jorge",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Ela Day-B\u00e9dard reached on a fielder's choice (1-0 B); Alexia Jorge advanced to second on an error by p.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 17,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Skylar Kaplan",
+    "event_type": "walk",
+    "first_base": "Ela Day-B\u00e9dard",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Skylar Kaplan walked (3-2 BFKBBB); Ela Day-B\u00e9dard advanced to second; Alexia Jorge advanced to third.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 2,
+      "type": "foul"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 6,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BFKBBB",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Alexia Jorge",
+    "sequence": 18,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Joely Leguizamon",
+    "event_type": "wild_pitch",
+    "first_base": "Skylar Kaplan",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": true,
+    "narrative": "Skylar Kaplan advanced to second; Ela Day-B\u00e9dard advanced to third; Alexia Jorge scored on a wild pitch, unearned.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 1,
+    "second_base": "Ela Day-B\u00e9dard",
+    "sequence": 19,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Alexia Jorge"
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Joely Leguizamon",
+    "event_type": "strikeout",
+    "first_base": "",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Joely Leguizamon struck out swinging (1-2 BFKS).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 2,
+      "type": "foul"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 4,
+      "type": "swinging_strike"
+     }
+    ],
+    "pitch_sequence": "BFKS",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Skylar Kaplan",
+    "sequence": 20,
+    "strikes": 3,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Ela Day-B\u00e9dard"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Jua Park",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 2,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jua Park grounded out to 3b (0-1 K).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Skylar Kaplan",
+    "sequence": 21,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Ela Day-B\u00e9dard"
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Val Perez",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Val Perez reached first on an error by 3b (3-1 BBBK).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 4,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBBKP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 22,
+    "strikes": 1,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Natsuki Yonetani",
+    "event_type": "single",
+    "first_base": "Val Perez",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Natsuki Yonetani singled to shortstop (1-2 BKK); Val Perez advanced to second.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKKP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 23,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Denae Benites",
+    "event_type": "single",
+    "first_base": "Natsuki Yonetani",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Denae Benites singled to left field, RBI (3-0 BBB); Natsuki Yonetani advanced to second; Val Perez scored, unearned.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBBP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 1,
+    "second_base": "Val Perez",
+    "sequence": 24,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Kylee Lahners",
+    "event_type": "wild_pitch",
+    "first_base": "Denae Benites",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Denae Benites advanced to second; Natsuki Yonetani advanced to third on a wild pitch.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "Natsuki Yonetani",
+    "sequence": 25,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Kylee Lahners",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 1,
+    "half": "top",
+    "inning": 3,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Kylee Lahners singled to left field, 2 RBI (3-2 KBKBBF); Denae Benites scored; Natsuki Yonetani scored.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 6,
+      "type": "foul"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 7,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBKBBFP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 2,
+    "second_base": "Denae Benites",
+    "sequence": 26,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Natsuki Yonetani"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Diana Ibarra",
+    "event_type": "unknown",
+    "first_base": "Kylee Lahners",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Kylee Lahners advanced to second on the throw.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 27,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Diana Ibarra",
+    "event_type": "strikeout",
+    "first_base": "",
+    "fouls": 1,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Diana Ibarra struck out swinging (1-2 KBKFS).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 5,
+      "type": "swinging_strike"
+     }
+    ],
+    "pitch_sequence": "KBKFS",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "Kylee Lahners",
+    "sequence": 28,
+    "strikes": 3,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Rakyung Kim",
+    "event_type": "strikeout",
+    "first_base": "",
+    "fouls": 1,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Rakyung Kim struck out swinging (2-2 KKFBBS).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 6,
+      "type": "swinging_strike"
+     }
+    ],
+    "pitch_sequence": "KKFBBS",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "Kylee Lahners",
+    "sequence": 29,
+    "strikes": 3,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Keira Izumi",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Keira Izumi singled to center field (2-2 KBBK); Kylee Lahners advanced to third.",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 4,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBBKP",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "Kylee Lahners",
+    "sequence": 30,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     3
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "unknown",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Samantha Gutierrez to 3b for Kelsie Whitmore.",
+    "outs": 2,
+    "pitch_sequence": "",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 31,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Kylee Lahners"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     3
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "unknown",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jua Park to p.",
+    "outs": 2,
+    "pitch_sequence": "",
+    "pitcher_name": "Liz Gilder",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 32,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Kylee Lahners"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     3
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "unknown",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "/  for Liz Gilder.",
+    "outs": 2,
+    "pitch_sequence": "",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 33,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Kylee Lahners"
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     3
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "walk",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Alyssa Zettlemoyer walked (3-0 BBBB); Keira Izumi advanced to second.",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BBBB",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 34,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Kylee Lahners"
+   },
+   {
+    "balls": 2,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Claire Eccles",
+    "event_type": "groundout",
+    "first_base": "Alyssa Zettlemoyer",
+    "fouls": 2,
+    "half": "top",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Claire Eccles grounded out to p (2-2 KBBFF).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 5,
+      "type": "foul"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBBFFP",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "Keira Izumi",
+    "sequence": 35,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Kylee Lahners"
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Amanda Gianelloni",
+    "event_type": "walk",
+    "first_base": "",
+    "fouls": 4,
+    "half": "bottom",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Amanda Gianelloni walked (3-2 BKFFBFFBB).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 6,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 7,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 8,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 9,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BKFFBFFBB",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 36,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Samantha Gutierrez",
+    "event_type": "out",
+    "first_base": "Amanda Gianelloni",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Samantha Gutierrez grounded into double play ss to 1b (1-0 B); Amanda Gianelloni out on the play.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 37,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Jill Albayati",
+    "event_type": "double",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 3,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Jill Albayati doubled to right center (1-1 BK).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 38,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Andreanne Leblanc",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 3,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Andreanne Leblanc grounded out to ss (3-1 BBKB).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBKBP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Jill Albayati",
+    "sequence": 39,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Val Perez",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 4,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Val Perez singled to left field (3-2 BBBKK).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 4,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 5,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBBKKP",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 40,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Natsuki Yonetani",
+    "event_type": "single",
+    "first_base": "Val Perez",
+    "fouls": 1,
+    "half": "top",
+    "inning": 4,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Natsuki Yonetani singled up the middle, advanced to second on the throw (3-2 BBKBF); Val Perez advanced to third, scored on a throwing error by cf.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 5,
+      "type": "foul"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBKBFP",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 1,
+    "second_base": "",
+    "sequence": 41,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Denae Benites",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 4,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Denae Benites singled to center field, RBI (0-0); Natsuki Yonetani scored.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 1,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "P",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 1,
+    "second_base": "Natsuki Yonetani",
+    "sequence": 42,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Kylee Lahners",
+    "event_type": "stolen_base",
+    "first_base": "Denae Benites",
+    "fouls": 0,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Denae Benites stole second.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 43,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Kylee Lahners",
+    "event_type": "walk",
+    "first_base": "",
+    "fouls": 1,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Kylee Lahners walked (3-2 BBFKBB).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 4,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 6,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BBFKBB",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "Denae Benites",
+    "sequence": 44,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Diana Ibarra",
+    "event_type": "walk",
+    "first_base": "Kylee Lahners",
+    "fouls": 3,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Diana Ibarra walked (3-2 FFBBFBB); Kylee Lahners advanced to second; Denae Benites advanced to third.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 1,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 2,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 5,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 6,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 7,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "FFBBFBB",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "Denae Benites",
+    "sequence": 45,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Rakyung Kim",
+    "event_type": "fielders_choice",
+    "first_base": "Diana Ibarra",
+    "fouls": 1,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Rakyung Kim reached on a fielder's choice (3-2 BBKFB); Diana Ibarra advanced to second; Kylee Lahners advanced to third; Denae Benites out at home p to c.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBKFBP",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "Kylee Lahners",
+    "sequence": 46,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Denae Benites"
+   },
+   {
+    "balls": 4,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Keira Izumi",
+    "event_type": "hit_by_pitch",
+    "first_base": "Rakyung Kim",
+    "fouls": 1,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": true,
+    "narrative": "Keira Izumi hit by pitch, RBI (3-2 KBKBBFH); Rakyung Kim advanced to second; Diana Ibarra advanced to third; Kylee Lahners scored.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 6,
+      "type": "foul"
+     },
+     {
+      "code": "H",
+      "description": "Hit by pitch",
+      "sequence": 7,
+      "type": "hit_by_pitch"
+     }
+    ],
+    "pitch_sequence": "KBKBBFH",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 1,
+    "second_base": "Diana Ibarra",
+    "sequence": 47,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Kylee Lahners"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "unknown",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Ela Day-B\u00e9dard to p.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Jua Park",
+    "runs_scored": 0,
+    "second_base": "Rakyung Kim",
+    "sequence": 48,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Diana Ibarra"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "unknown",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jua Park to cf.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "Rakyung Kim",
+    "sequence": 49,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Diana Ibarra"
+   },
+   {
+    "balls": 1,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "sacrifice",
+    "first_base": "Keira Izumi",
+    "fouls": 1,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": true,
+    "narrative": "Alyssa Zettlemoyer flied out to cf, sacrifice fly, RBI (1-2 KKBF); Diana Ibarra scored.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KKBFP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 1,
+    "second_base": "Rakyung Kim",
+    "sequence": 50,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Diana Ibarra"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Claire Eccles",
+    "event_type": "flyout",
+    "first_base": "Keira Izumi",
+    "fouls": 0,
+    "half": "top",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Claire Eccles flied out to cf (0-0).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 1,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "P",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "Rakyung Kim",
+    "sequence": 51,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Alexia Jorge",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Alexia Jorge singled to center field (2-1 BSB).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 2,
+      "type": "swinging_strike"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BSBP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 52,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Ela Day-B\u00e9dard",
+    "event_type": "stolen_base",
+    "first_base": "Alexia Jorge",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Alexia Jorge stole second.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 53,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Ela Day-B\u00e9dard",
+    "event_type": "hit_by_pitch",
+    "first_base": "",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Ela Day-B\u00e9dard hit by pitch (3-2 KBBBFH).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 5,
+      "type": "foul"
+     },
+     {
+      "code": "H",
+      "description": "Hit by pitch",
+      "sequence": 6,
+      "type": "hit_by_pitch"
+     }
+    ],
+    "pitch_sequence": "KBBBFH",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Alexia Jorge",
+    "sequence": 54,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Skylar Kaplan",
+    "event_type": "lineout",
+    "first_base": "Ela Day-B\u00e9dard",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Skylar Kaplan lined out to ss (2-2 KBKFB).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBKFBP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Alexia Jorge",
+    "sequence": 55,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Joely Leguizamon",
+    "event_type": "hit_by_pitch",
+    "first_base": "Ela Day-B\u00e9dard",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Joely Leguizamon hit by pitch (1-2 KKH); Ela Day-B\u00e9dard advanced to second; Alexia Jorge advanced to third.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "H",
+      "description": "Hit by pitch",
+      "sequence": 3,
+      "type": "hit_by_pitch"
+     }
+    ],
+    "pitch_sequence": "KKH",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Alexia Jorge",
+    "sequence": 56,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Jua Park",
+    "event_type": "fielders_choice",
+    "first_base": "Joely Leguizamon",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": true,
+    "narrative": "Jua Park reached on a fielder's choice to second base, RBI (2-1 BBK); Joely Leguizamon advanced to second on a fielding error by 2b; Ela Day-B\u00e9dard advanced to third; Alexia Jorge scored.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBKP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 1,
+    "second_base": "Ela Day-B\u00e9dard",
+    "sequence": 57,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Alexia Jorge"
+   },
+   {
+    "balls": 1,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Amanda Gianelloni",
+    "event_type": "groundout",
+    "first_base": "Jua Park",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": true,
+    "narrative": "Amanda Gianelloni grounded out to c, RBI (1-2 KBK); Jua Park advanced to second; Joely Leguizamon advanced to third; Ela Day-B\u00e9dard scored, unearned.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBKP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 1,
+    "second_base": "Joely Leguizamon",
+    "sequence": 58,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Ela Day-B\u00e9dard"
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Samantha Gutierrez",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 4,
+    "half": "bottom",
+    "inning": 4,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Samantha Gutierrez grounded out to ss (1-2 BKFFFF).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 5,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 6,
+      "type": "foul"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 7,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKFFFFP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "Jua Park",
+    "sequence": 59,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Joely Leguizamon"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Val Perez",
+    "event_type": "lineout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Val Perez lined out to rf (0-0).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 1,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "P",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 60,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Natsuki Yonetani",
+    "event_type": "double",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 5,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Natsuki Yonetani doubled to left field (0-0).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 1,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "P",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 61,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Denae Benites",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 1,
+    "half": "top",
+    "inning": 5,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Denae Benites singled to left field (3-2 BBFSB); Natsuki Yonetani advanced to third.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 4,
+      "type": "swinging_strike"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBFSBP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "Natsuki Yonetani",
+    "sequence": 62,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     3
+    ],
+    "batter_name": "Kylee Lahners",
+    "event_type": "stolen_base",
+    "first_base": "Denae Benites",
+    "fouls": 0,
+    "half": "top",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Denae Benites stole second.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 63,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Natsuki Yonetani"
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Kylee Lahners",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Kylee Lahners grounded out to ss (1-0 B).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "Denae Benites",
+    "sequence": 64,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Natsuki Yonetani"
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Diana Ibarra",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 3,
+    "half": "top",
+    "inning": 5,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Diana Ibarra singled down the lf line, 2 RBI (3-2 FBSBFFB); Denae Benites scored; Natsuki Yonetani scored.",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 1,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 3,
+      "type": "swinging_strike"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 5,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 6,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 7,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 8,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "FBSBFFBP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 2,
+    "second_base": "Denae Benites",
+    "sequence": 65,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": "Natsuki Yonetani"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Rakyung Kim",
+    "event_type": "unknown",
+    "first_base": "Diana Ibarra",
+    "fouls": 0,
+    "half": "top",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Diana Ibarra advanced to second on the throw.",
+    "outs": 2,
+    "pitch_sequence": "",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 66,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Rakyung Kim",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Rakyung Kim grounded out to ss (0-0).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 1,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "P",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "Diana Ibarra",
+    "sequence": 67,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Jill Albayati",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jill Albayati flied out to rf (3-1 BBBK).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 4,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBBKP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 68,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Andreanne Leblanc",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 5,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Andreanne Leblanc singled to right field (3-1 BBBK).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 4,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 5,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBBKP",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 69,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Alexia Jorge",
+    "event_type": "strikeout",
+    "first_base": "Andreanne Leblanc",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Alexia Jorge struck out swinging (0-2 KKS).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 3,
+      "type": "swinging_strike"
+     }
+    ],
+    "pitch_sequence": "KKS",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 70,
+    "strikes": 3,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Ela Day-B\u00e9dard",
+    "event_type": "strikeout",
+    "first_base": "Andreanne Leblanc",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 5,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Ela Day-B\u00e9dard struck out swinging (1-2 KBKFS).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 5,
+      "type": "swinging_strike"
+     }
+    ],
+    "pitch_sequence": "KBKFS",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 71,
+    "strikes": 3,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Keira Izumi",
+    "event_type": "home_run",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 6,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Keira Izumi homered to left field, RBI (0-2 KK).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KKP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 72,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "hit_by_pitch",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Alyssa Zettlemoyer hit by pitch (1-0 H).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "H",
+      "description": "Hit by pitch",
+      "sequence": 1,
+      "type": "hit_by_pitch"
+     }
+    ],
+    "pitch_sequence": "H",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 73,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Claire Eccles",
+    "event_type": "flyout",
+    "first_base": "Alyssa Zettlemoyer",
+    "fouls": 0,
+    "half": "top",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Claire Eccles flied out to cf (1-1 KB).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 74,
+    "strikes": 1,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Val Perez",
+    "event_type": "fielders_choice",
+    "first_base": "Alyssa Zettlemoyer",
+    "fouls": 0,
+    "half": "top",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Val Perez reached on a fielder's choice (2-0 BB); Alyssa Zettlemoyer out at second cf to 2b.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 75,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Natsuki Yonetani",
+    "event_type": "hit_by_pitch",
+    "first_base": "Val Perez",
+    "fouls": 0,
+    "half": "top",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Natsuki Yonetani hit by pitch (1-0 H); Val Perez advanced to second.",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "H",
+      "description": "Hit by pitch",
+      "sequence": 1,
+      "type": "hit_by_pitch"
+     }
+    ],
+    "pitch_sequence": "H",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 76,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     2
+    ],
+    "batter_name": "Denae Benites",
+    "event_type": "home_run",
+    "first_base": "Natsuki Yonetani",
+    "fouls": 0,
+    "half": "top",
+    "inning": 6,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Denae Benites homered to center field, 3 RBI (1-0 B); Natsuki Yonetani scored; Val Perez scored.",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 2,
+    "second_base": "Val Perez",
+    "sequence": 77,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Kylee Lahners",
+    "event_type": "walk",
+    "first_base": "",
+    "fouls": 2,
+    "half": "top",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Kylee Lahners walked (3-2 BFKBBFB).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 2,
+      "type": "foul"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 6,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 7,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BFKBBFB",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 78,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Diana Ibarra",
+    "event_type": "flyout",
+    "first_base": "Kylee Lahners",
+    "fouls": 0,
+    "half": "top",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Diana Ibarra flied out to lf (2-1 BKB).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKBP",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 79,
+    "strikes": 1,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Skylar Kaplan",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "London Studer to p for Jaida Lee.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Jaida Lee",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 80,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Skylar Kaplan",
+    "event_type": "double",
+    "first_base": "",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": true,
+    "is_scoring_play": false,
+    "narrative": "Skylar Kaplan doubled down the rf line (1-1 FB).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 1,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 3,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "FBP",
+    "pitcher_name": "London Studer",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 81,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Joely Leguizamon",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Joely Leguizamon flied out to cf (2-1 BKB); Skylar Kaplan advanced to third.",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BKBP",
+    "pitcher_name": "London Studer",
+    "runs_scored": 0,
+    "second_base": "Skylar Kaplan",
+    "sequence": 82,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     3
+    ],
+    "batter_name": "Jua Park",
+    "event_type": "walk",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jua Park walked (3-1 BSBBB).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 2,
+      "type": "swinging_strike"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BSBBB",
+    "pitcher_name": "London Studer",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 83,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Skylar Kaplan"
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1,
+     3
+    ],
+    "batter_name": "Amanda Gianelloni",
+    "event_type": "walk",
+    "first_base": "Jua Park",
+    "fouls": 2,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Amanda Gianelloni walked (3-2 BBFFBB); Jua Park advanced to second.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 6,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BBFFBB",
+    "pitcher_name": "London Studer",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 84,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Skylar Kaplan"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Samantha Gutierrez",
+    "event_type": "wild_pitch",
+    "first_base": "Amanda Gianelloni",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": true,
+    "narrative": "Amanda Gianelloni advanced to second; Jua Park advanced to third; Skylar Kaplan scored on a wild pitch.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "London Studer",
+    "runs_scored": 1,
+    "second_base": "Jua Park",
+    "sequence": 85,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Skylar Kaplan"
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Samantha Gutierrez",
+    "event_type": "walk",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Samantha Gutierrez walked (3-1 BBBKB).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 4,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BBBKB",
+    "pitcher_name": "London Studer",
+    "runs_scored": 0,
+    "second_base": "Amanda Gianelloni",
+    "sequence": 86,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Jua Park"
+   },
+   {
+    "balls": 2,
+    "bases_loaded": true,
+    "bases_occupied": [
+     1,
+     2,
+     3
+    ],
+    "batter_name": "Jill Albayati",
+    "event_type": "double",
+    "first_base": "Samantha Gutierrez",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Jill Albayati doubled to center field, 2 RBI (2-1 BBK); Samantha Gutierrez advanced to third; Amanda Gianelloni scored; Jua Park scored.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BBKP",
+    "pitcher_name": "London Studer",
+    "runs_scored": 2,
+    "second_base": "Amanda Gianelloni",
+    "sequence": 87,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Jua Park"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Andreanne Leblanc",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Madison Willan to 2b for Kylee Lahners.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "London Studer",
+    "runs_scored": 0,
+    "second_base": "Jill Albayati",
+    "sequence": 88,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Samantha Gutierrez"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Andreanne Leblanc",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Keira Izumi to p.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "London Studer",
+    "runs_scored": 0,
+    "second_base": "Jill Albayati",
+    "sequence": 89,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Samantha Gutierrez"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Andreanne Leblanc",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "/  for London Studer.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "Jill Albayati",
+    "sequence": 90,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Samantha Gutierrez"
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2,
+     3
+    ],
+    "batter_name": "Andreanne Leblanc",
+    "event_type": "single",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": true,
+    "is_scoring_play": true,
+    "narrative": "Andreanne Leblanc singled to center field, 2 RBI (1-0 B); Jill Albayati scored; Samantha Gutierrez scored.",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BP",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 2,
+    "second_base": "Jill Albayati",
+    "sequence": 91,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": "Samantha Gutierrez"
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Alexia Jorge",
+    "event_type": "wild_pitch",
+    "first_base": "Andreanne Leblanc",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Andreanne Leblanc advanced to second on a wild pitch.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 92,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Alexia Jorge",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 2,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Alexia Jorge flied out to cf (2-2 FKFBB).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 1,
+      "type": "foul"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 2,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 3,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "FKFBBP",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "Andreanne Leblanc",
+    "sequence": 93,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Ela Day-B\u00e9dard",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jordan Eyster pinch hit for Ela Day-B\u00e9dard.",
+    "outs": 2,
+    "pitch_sequence": "",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "Andreanne Leblanc",
+    "sequence": 94,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     2
+    ],
+    "batter_name": "Jordan Eyster",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 6,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jordan Eyster flied out to rf (0-1 S).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "S",
+      "description": "Swinging strike",
+      "sequence": 1,
+      "type": "swinging_strike"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 2,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "SP",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "Andreanne Leblanc",
+    "sequence": 95,
+    "strikes": 1,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Rakyung Kim",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jill Albayati to 1b.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 96,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Rakyung Kim",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Andreanne Leblanc to p.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Ela Day-B\u00e9dard",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 97,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Rakyung Kim",
+    "event_type": "unknown",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jordan Eyster to lf.",
+    "outs": 0,
+    "pitch_sequence": "",
+    "pitcher_name": "Andreanne Leblanc",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 98,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 4,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Rakyung Kim",
+    "event_type": "walk",
+    "first_base": "",
+    "fouls": 1,
+    "half": "top",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Rakyung Kim walked (3-2 BBKFBB).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 6,
+      "type": "ball"
+     }
+    ],
+    "pitch_sequence": "BBKFBB",
+    "pitcher_name": "Andreanne Leblanc",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 99,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 2,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Keira Izumi",
+    "event_type": "strikeout",
+    "first_base": "Rakyung Kim",
+    "fouls": 2,
+    "half": "top",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Keira Izumi struck out looking (2-2 KBBFFK).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 4,
+      "type": "foul"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 5,
+      "type": "foul"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 6,
+      "type": "unknown"
+     }
+    ],
+    "pitch_sequence": "KBBFFK",
+    "pitcher_name": "Andreanne Leblanc",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 100,
+    "strikes": 3,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [
+     1
+    ],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "caught_stealing",
+    "first_base": "Rakyung Kim",
+    "fouls": 0,
+    "half": "top",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Rakyung Kim out at second p to 1b, picked off, caught stealing.",
+    "outs": 1,
+    "pitch_sequence": "",
+    "pitcher_name": "Andreanne Leblanc",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 101,
+    "strikes": 0,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Alyssa Zettlemoyer",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 0,
+    "half": "top",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Alyssa Zettlemoyer flied out to lf (3-2 KBKBB).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 2,
+      "type": "ball"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KBKBBP",
+    "pitcher_name": "Andreanne Leblanc",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 102,
+    "strikes": 2,
+    "team_id": "fttth861nft1j2s7",
+    "third_base": ""
+   },
+   {
+    "balls": 0,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Skylar Kaplan",
+    "event_type": "popup",
+    "first_base": "",
+    "fouls": 0,
+    "half": "bottom",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Skylar Kaplan popped up to ss (0-0).",
+    "outs": 0,
+    "pitch_events": [
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 1,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "P",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 103,
+    "strikes": 0,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 1,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Joely Leguizamon",
+    "event_type": "groundout",
+    "first_base": "",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Joely Leguizamon grounded out to ss (1-2 KFB).",
+    "outs": 1,
+    "pitch_events": [
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 1,
+      "type": "unknown"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 2,
+      "type": "foul"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 3,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 4,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "KFBP",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 104,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   },
+   {
+    "balls": 3,
+    "bases_loaded": false,
+    "bases_occupied": [],
+    "batter_name": "Jua Park",
+    "event_type": "flyout",
+    "first_base": "",
+    "fouls": 1,
+    "half": "bottom",
+    "inning": 7,
+    "is_hit": false,
+    "is_scoring_play": false,
+    "narrative": "Jua Park flied out to cf (3-2 BFKBB).",
+    "outs": 2,
+    "pitch_events": [
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 1,
+      "type": "ball"
+     },
+     {
+      "code": "F",
+      "description": "Foul",
+      "sequence": 2,
+      "type": "foul"
+     },
+     {
+      "code": "K",
+      "description": "Unknown pitch code",
+      "sequence": 3,
+      "type": "unknown"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 4,
+      "type": "ball"
+     },
+     {
+      "code": "B",
+      "description": "Ball",
+      "sequence": 5,
+      "type": "ball"
+     },
+     {
+      "code": "P",
+      "description": "Pitchout",
+      "sequence": 6,
+      "type": "pitchout"
+     }
+    ],
+    "pitch_sequence": "BFKBBP",
+    "pitcher_name": "Keira Izumi",
+    "runs_scored": 0,
+    "second_base": "",
+    "sequence": 105,
+    "strikes": 2,
+    "team_id": "vhubhz8li07tmgq8",
+    "third_base": ""
+   }
+  ],
+  "provider": "presto",
+  "source_updated_at": "2026-08-22T01:58:11Z",
+  "status": {
+   "away_runs": 13,
+   "balls": 0,
+   "bases_loaded": false,
+   "bases_occupied": [],
+   "batter_name": "",
+   "batting_team_id": "",
+   "complete": true,
+   "first_base": "",
+   "half": "",
+   "home_runs": 8,
+   "inning": 0,
+   "outs": 0,
+   "pitcher_name": "",
+   "second_base": "",
+   "strikes": 0,
+   "third_base": ""
+  },
+  "teams": [
+   {
+    "code": "WPBL003",
+    "id": "fttth861nft1j2s7",
+    "line": [
+     {
+      "inning": 1,
+      "runs": 0
+     },
+     {
+      "inning": 2,
+      "runs": 0
+     },
+     {
+      "inning": 3,
+      "runs": 3
+     },
+     {
+      "inning": 4,
+      "runs": 4
+     },
+     {
+      "inning": 5,
+      "runs": 2
+     },
+     {
+      "inning": 6,
+      "runs": 4
+     },
+     {
+      "inning": 7,
+      "runs": 0
+     }
+    ],
+    "name": "New York Heights",
+    "players": [
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "6",
+       "e": "0",
+       "indp": "1",
+       "po": "3"
+      },
+      "hitting": {
+       "ab": "5",
+       "fly": "1",
+       "ground": "2",
+       "h": "1",
+       "obp": ".200",
+       "ops": ".400",
+       "r": "3",
+       "rbi": "0",
+       "slg": ".200"
+      },
+      "id": "qpz463w9p8a43hmp",
+      "name": "Val Perez",
+      "position": "ss",
+      "profile_url": "https://www.womensprobaseballleague.com/players/valerie-perez/",
+      "short_name": "Val Perez",
+      "spot": "1",
+      "throws": "R",
+      "uniform": "27"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "2"
+      },
+      "hitting": {
+       "ab": "4",
+       "double": "1",
+       "h": "4",
+       "hbp": "1",
+       "obp": "1.000",
+       "ops": "2.250",
+       "r": "4",
+       "rbi": "0",
+       "slg": "1.250"
+      },
+      "id": "qo6ahavmzhlynlcv",
+      "name": "Natsuki Yonetani",
+      "position": "rf",
+      "profile_url": "https://www.womensprobaseballleague.com/players/natsuki-yonetani/",
+      "short_name": "Natsuki Yonetani",
+      "spot": "2",
+      "throws": "R",
+      "uniform": "15"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "1",
+       "e": "0",
+       "po": "3",
+       "sba": "1"
+      },
+      "hitting": {
+       "ab": "5",
+       "fly": "1",
+       "h": "4",
+       "hr": "1",
+       "obp": ".800",
+       "ops": "2.200",
+       "r": "3",
+       "rbi": "5",
+       "sb": "2",
+       "slg": "1.400"
+      },
+      "id": "6fn9036v8jpxmptb",
+      "name": "Denae Benites",
+      "position": "c",
+      "profile_url": "https://www.womensprobaseballleague.com/players/denae-benites/",
+      "short_name": "Denae Benites",
+      "spot": "3",
+      "throws": "R",
+      "uniform": "2"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "3",
+       "bb": "2",
+       "fly": "1",
+       "ground": "1",
+       "h": "1",
+       "obp": ".600",
+       "ops": ".933",
+       "r": "1",
+       "rbi": "2",
+       "slg": ".333"
+      },
+      "id": "54od878q20rx7hv5",
+      "name": "Kylee Lahners",
+      "position": "dh",
+      "profile_url": "https://www.womensprobaseballleague.com/players/kylee-lahners/",
+      "short_name": "Kylee Lahners",
+      "spot": "4",
+      "throws": "R",
+      "uniform": "22"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "0",
+       "h": "0",
+       "obp": ".000",
+       "ops": ".000",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "v5hhkau8fhbyk14s",
+      "name": "Madison Willan",
+      "position": "2b",
+      "profile_url": "https://www.womensprobaseballleague.com/players/madison-willan/",
+      "short_name": "Madison Willan",
+      "spot": "4",
+      "throws": "R",
+      "uniform": "4"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "4",
+       "bb": "1",
+       "fly": "2",
+       "h": "1",
+       "obp": ".400",
+       "ops": ".650",
+       "r": "1",
+       "rbi": "2",
+       "slg": ".250",
+       "so": "1"
+      },
+      "id": "moizfkn9dtrm4vno",
+      "name": "Diana Ibarra",
+      "position": "lf",
+      "profile_url": "https://www.womensprobaseballleague.com/players/diana-ibarra/",
+      "short_name": "Diana Ibarra",
+      "spot": "5",
+      "throws": "R",
+      "uniform": "8"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "indp": "1",
+       "po": "8"
+      },
+      "hitting": {
+       "ab": "4",
+       "bb": "1",
+       "cs": "1",
+       "ground": "3",
+       "h": "0",
+       "obp": ".200",
+       "ops": ".200",
+       "picked": "1",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000",
+       "so": "1"
+      },
+      "id": "n4n9isveqnhvmxn1",
+      "name": "Rakyung Kim",
+      "position": "1b",
+      "profile_url": "https://www.womensprobaseballleague.com/players/rakyung-kim/",
+      "short_name": "Rakyung Kim",
+      "spot": "6",
+      "throws": "R",
+      "uniform": "29"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "1",
+       "po": "1"
+      },
+      "hitting": {
+       "ab": "4",
+       "h": "3",
+       "hbp": "1",
+       "hr": "1",
+       "kl": "1",
+       "obp": ".800",
+       "ops": "2.300",
+       "r": "1",
+       "rbi": "2",
+       "slg": "1.500",
+       "so": "1"
+      },
+      "id": "fvj1lg6pwlrh58wy",
+      "name": "Keira Izumi",
+      "pitching": {
+       "ab": "6",
+       "appear": "3",
+       "bf": "6",
+       "fly": "4",
+       "ground": "1",
+       "h": "1",
+       "ip": "1.2",
+       "pitches": "21",
+       "strikes": "14",
+       "whip": ".83",
+       "wp": "1"
+      },
+      "position": "2b/p",
+      "profile_url": "https://www.womensprobaseballleague.com/players/keira-izumi/",
+      "short_name": "Keira Izumi",
+      "spot": "7",
+      "throws": "R",
+      "uniform": "1"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "2",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "2",
+       "bb": "1",
+       "fly": "2",
+       "h": "1",
+       "hbp": "1",
+       "obp": ".600",
+       "ops": "1.100",
+       "r": "0",
+       "rbi": "1",
+       "sf": "1",
+       "slg": ".500"
+      },
+      "id": "m88moq3qi0q1081g",
+      "name": "Alyssa Zettlemoyer",
+      "position": "3b",
+      "profile_url": "https://www.womensprobaseballleague.com/players/alyssa-zettlemoyer/",
+      "short_name": "Alyssa Zettlemoyer",
+      "spot": "8",
+      "throws": "R",
+      "uniform": "13"
+     },
+     {
+      "bats": "L",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "4"
+      },
+      "hitting": {
+       "ab": "4",
+       "fly": "3",
+       "ground": "1",
+       "h": "0",
+       "obp": ".000",
+       "ops": ".000",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "5k1pl6aopao2hedi",
+      "name": "Claire Eccles",
+      "position": "cf",
+      "profile_url": "https://www.womensprobaseballleague.com/players/claire-eccles/",
+      "short_name": "Claire Eccles",
+      "spot": "9",
+      "throws": "L",
+      "uniform": "21"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "1",
+       "po": "0",
+       "sba": "1"
+      },
+      "hitting": {
+       "ab": "0",
+       "h": "0",
+       "obp": ".000",
+       "ops": ".000",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "06xgy0o4voly96uv",
+      "name": "Jaida Lee",
+      "pitching": {
+       "ab": "20",
+       "appear": "1",
+       "bb": "2",
+       "bf": "24",
+       "double": "1",
+       "er": "1",
+       "fly": "3",
+       "ground": "8",
+       "gs": "1",
+       "h": "4",
+       "hbp": "2",
+       "ip": "5.0",
+       "pitches": "102",
+       "r": "3",
+       "so": "3",
+       "strikes": "62",
+       "whip": "1.20",
+       "win": "1-1",
+       "wp": "1"
+      },
+      "position": "p",
+      "profile_url": "https://www.womensprobaseballleague.com/players/jaida-lee/",
+      "short_name": "Jaida Lee",
+      "spot": "10",
+      "throws": "R",
+      "uniform": "7"
+     },
+     {
+      "bats": "L",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "0",
+       "h": "0",
+       "obp": ".000",
+       "ops": ".000",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "qdpgigusdzaox501",
+      "name": "London Studer",
+      "pitching": {
+       "ab": "3",
+       "appear": "2",
+       "bb": "3",
+       "bf": "6",
+       "double": "2",
+       "er": "5",
+       "fly": "1",
+       "h": "2",
+       "ip": "0.1",
+       "pitches": "27",
+       "r": "5",
+       "strikes": "10",
+       "whip": "50.00",
+       "wp": "1"
+      },
+      "position": "p",
+      "profile_url": "https://www.womensprobaseballleague.com/players/london-studer/",
+      "short_name": "London Studer",
+      "spot": "10",
+      "throws": "L",
+      "uniform": "5"
+     },
+     {
+      "bats": "R",
+      "id": "",
+      "name": "Katherine Murphy",
+      "position": "",
+      "short_name": "Katherine Murphy",
+      "spot": "0",
+      "throws": "R",
+      "uniform": "17"
+     },
+     {
+      "bats": "R",
+      "id": "",
+      "name": "Elodie Ciamarro",
+      "position": "",
+      "short_name": "Elodie Ciamarro",
+      "spot": "0",
+      "throws": "R",
+      "uniform": "19"
+     },
+     {
+      "bats": "R",
+      "id": "",
+      "name": "Claire O'Sullivan",
+      "position": "",
+      "short_name": "Claire O'Sullivan",
+      "spot": "0",
+      "throws": "R",
+      "uniform": "18"
+     },
+     {
+      "bats": "R",
+      "id": "",
+      "name": "Jacqui Reynolds",
+      "position": "",
+      "short_name": "Jacqui Reynolds",
+      "spot": "0",
+      "throws": "R",
+      "uniform": "31"
+     }
+    ],
+    "record": "1-1",
+    "side": "away",
+    "starters": [
+     {
+      "name": "Val Perez",
+      "position": "ss",
+      "spot": "1",
+      "uniform": "27"
+     },
+     {
+      "name": "Natsuki Yonetani",
+      "position": "rf",
+      "spot": "2",
+      "uniform": "15"
+     },
+     {
+      "name": "Denae Benites",
+      "position": "c",
+      "spot": "3",
+      "uniform": "2"
+     },
+     {
+      "name": "Kylee Lahners",
+      "position": "dh",
+      "spot": "4",
+      "uniform": "22"
+     },
+     {
+      "name": "Diana Ibarra",
+      "position": "lf",
+      "spot": "5",
+      "uniform": "8"
+     },
+     {
+      "name": "Rakyung Kim",
+      "position": "1b",
+      "spot": "6",
+      "uniform": "29"
+     },
+     {
+      "name": "Keira Izumi",
+      "position": "2b",
+      "spot": "7",
+      "uniform": "1"
+     },
+     {
+      "name": "Alyssa Zettlemoyer",
+      "position": "3b",
+      "spot": "8",
+      "uniform": "13"
+     },
+     {
+      "name": "Claire Eccles",
+      "position": "cf",
+      "spot": "9",
+      "uniform": "21"
+     },
+     {
+      "name": "Jaida Lee",
+      "position": "p",
+      "spot": "10",
+      "uniform": "7"
+     }
+    ],
+    "team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+    "totals": {
+     "batting": {
+      "ab": "35",
+      "bb": "5",
+      "cs": "1",
+      "double": "1",
+      "fly": "10",
+      "gdp": "0",
+      "ground": "7",
+      "h": "15",
+      "hbp": "3",
+      "hitdp": "0",
+      "hittp": "0",
+      "hr": "2",
+      "ibb": "0",
+      "kl": "1",
+      "picked": "1",
+      "r": "13",
+      "rbi": "12",
+      "sb": "2",
+      "sf": "1",
+      "sh": "0",
+      "so": "3",
+      "triple": "0"
+     },
+     "errors": 2,
+     "fielding": {
+      "a": "9",
+      "ci": "0",
+      "e": "2",
+      "indp": "1",
+      "pb": "0",
+      "po": "21",
+      "sba": "1"
+     },
+     "hits": 15,
+     "left_on_base": 10,
+     "pitching": {
+      "ab": "29",
+      "bb": "5",
+      "bf": "36",
+      "bk": "0",
+      "double": "3",
+      "er": "6",
+      "fly": "8",
+      "gdp": "0",
+      "ground": "9",
+      "h": "7",
+      "hbp": "2",
+      "hr": "0",
+      "ibb": "0",
+      "ip": "7.0",
+      "kl": "0",
+      "picked": "0",
+      "pitches": "150",
+      "r": "8",
+      "sfa": "0",
+      "sha": "0",
+      "so": "3",
+      "strikes": "86",
+      "triple": "0",
+      "wp": "3"
+     },
+     "runs": 13
+    }
+   },
+   {
+    "code": "WPBL004",
+    "id": "vhubhz8li07tmgq8",
+    "line": [
+     {
+      "inning": 1,
+      "runs": 0
+     },
+     {
+      "inning": 2,
+      "runs": 1
+     },
+     {
+      "inning": 3,
+      "runs": 0
+     },
+     {
+      "inning": 4,
+      "runs": 2
+     },
+     {
+      "inning": 5,
+      "runs": 0
+     },
+     {
+      "inning": 6,
+      "runs": 5
+     },
+     {
+      "inning": 7,
+      "runs": 0
+     }
+    ],
+    "name": "San Francisco Firebells",
+    "players": [
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "2"
+      },
+      "hitting": {
+       "ab": "2",
+       "bb": "2",
+       "fly": "1",
+       "ground": "1",
+       "h": "0",
+       "obp": ".500",
+       "ops": ".500",
+       "r": "1",
+       "rbi": "1",
+       "slg": ".000"
+      },
+      "id": "v3d0akr1chosb9hc",
+      "name": "Amanda Gianelloni",
+      "position": "2b",
+      "profile_url": "https://www.womensprobaseballleague.com/players/amanda-gianelloni/",
+      "short_name": "Amanda Gianelloni",
+      "spot": "1",
+      "throws": "R",
+      "uniform": "5"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "1",
+       "ground": "1",
+       "h": "0",
+       "obp": ".000",
+       "ops": ".000",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "5htcb87cbshse09e",
+      "name": "Kelsie Whitmore",
+      "position": "dh",
+      "profile_url": "https://www.womensprobaseballleague.com/players/kelsie-whitmore/",
+      "short_name": "Kelsie Whitmore",
+      "spot": "2",
+      "throws": "R",
+      "uniform": "3"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "2",
+       "bb": "1",
+       "ground": "2",
+       "h": "0",
+       "hitdp": "1",
+       "obp": ".333",
+       "ops": ".333",
+       "r": "1",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "0unpm1ekzapebqws",
+      "name": "Samantha Gutierrez",
+      "position": "3b",
+      "profile_url": "https://www.womensprobaseballleague.com/players/samantha-gutierrez/",
+      "short_name": "Samantha Gutierrez",
+      "spot": "2",
+      "throws": "R",
+      "uniform": "33"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "2"
+      },
+      "hitting": {
+       "ab": "4",
+       "double": "2",
+       "fly": "1",
+       "ground": "1",
+       "h": "2",
+       "obp": ".500",
+       "ops": "1.500",
+       "r": "1",
+       "rbi": "2",
+       "slg": "1.000"
+      },
+      "id": "bpyqct4a85lh306g",
+      "name": "Jill Albayati",
+      "position": "lf/1b",
+      "profile_url": "https://www.womensprobaseballleague.com/players/jill-albayati/",
+      "short_name": "Jill Albayati",
+      "spot": "3",
+      "throws": "R",
+      "uniform": "18"
+     },
+     {
+      "bats": "B",
+      "fielding": {
+       "a": "1",
+       "csb": "1",
+       "e": "0",
+       "po": "5"
+      },
+      "hitting": {
+       "ab": "4",
+       "ground": "1",
+       "h": "3",
+       "obp": ".750",
+       "ops": "1.500",
+       "r": "0",
+       "rbi": "2",
+       "slg": ".750"
+      },
+      "id": "19hks0fi4jxlzunj",
+      "name": "Andreanne Leblanc",
+      "pitching": {
+       "ab": "2",
+       "appear": "4",
+       "bb": "1",
+       "bf": "3",
+       "fly": "1",
+       "ip": "1.0",
+       "kl": "1",
+       "picked": "1",
+       "pitches": "18",
+       "so": "1",
+       "strikes": "9",
+       "whip": "1.00"
+      },
+      "position": "1b/p",
+      "profile_url": "https://www.womensprobaseballleague.com/players/andreanne-leblanc/",
+      "short_name": "Andreanne Leblanc",
+      "spot": "4",
+      "throws": "R",
+      "uniform": "16"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "4",
+       "sba": "2"
+      },
+      "hitting": {
+       "ab": "4",
+       "fly": "1",
+       "ground": "1",
+       "h": "1",
+       "obp": ".250",
+       "ops": ".500",
+       "r": "2",
+       "rbi": "0",
+       "sb": "1",
+       "slg": ".250",
+       "so": "1"
+      },
+      "id": "n6zoj50tv6fuahf7",
+      "name": "Alexia Jorge",
+      "position": "c",
+      "profile_url": "https://www.womensprobaseballleague.com/players/alexia-jorge/",
+      "short_name": "Alexia Jorge",
+      "spot": "5",
+      "throws": "R",
+      "uniform": "26"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "1",
+       "po": "0",
+       "sba": "1"
+      },
+      "hitting": {
+       "ab": "2",
+       "h": "0",
+       "hbp": "1",
+       "obp": ".333",
+       "ops": ".333",
+       "r": "1",
+       "rbi": "0",
+       "slg": ".000",
+       "so": "1"
+      },
+      "id": "psexfbwrg9daflgp",
+      "name": "Ela Day-B\u00e9dard",
+      "pitching": {
+       "ab": "12",
+       "appear": "3",
+       "bb": "1",
+       "bf": "16",
+       "double": "1",
+       "er": "6",
+       "fly": "5",
+       "ground": "3",
+       "h": "5",
+       "hbp": "2",
+       "hr": "2",
+       "ip": "2.2",
+       "pitches": "49",
+       "r": "6",
+       "sfa": "1",
+       "strikes": "29",
+       "whip": "2.73"
+      },
+      "position": "cf/p",
+      "profile_url": "https://www.womensprobaseballleague.com/players/ela-day-bedard/",
+      "short_name": "Ela Day-B\u00e9dard",
+      "spot": "6",
+      "throws": "R",
+      "uniform": "25"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "1"
+      },
+      "hitting": {
+       "ab": "1",
+       "fly": "1",
+       "h": "0",
+       "obp": ".000",
+       "ops": ".000",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "tkrtkar39cpn8kpl",
+      "name": "Jordan Eyster",
+      "position": "lf",
+      "profile_url": "https://www.womensprobaseballleague.com/players/jordan-eyster/",
+      "short_name": "Jordan Eyster",
+      "spot": "6",
+      "throws": "R",
+      "uniform": "1"
+     },
+     {
+      "bats": "L",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "2"
+      },
+      "hitting": {
+       "ab": "3",
+       "bb": "1",
+       "double": "1",
+       "fly": "2",
+       "h": "1",
+       "obp": ".500",
+       "ops": "1.167",
+       "r": "1",
+       "rbi": "0",
+       "slg": ".667"
+      },
+      "id": "k89g6dvpn3fh4hoc",
+      "name": "Skylar Kaplan",
+      "position": "rf",
+      "profile_url": "https://www.womensprobaseballleague.com/players/skylar-kaplan/",
+      "short_name": "Skylar Kaplan",
+      "spot": "7",
+      "throws": "R",
+      "uniform": "21"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "4",
+       "e": "0",
+       "po": "2"
+      },
+      "hitting": {
+       "ab": "3",
+       "fly": "1",
+       "ground": "1",
+       "h": "0",
+       "hbp": "1",
+       "obp": ".250",
+       "ops": ".250",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000",
+       "so": "1"
+      },
+      "id": "nkyvasxbczf0o2br",
+      "name": "Joely Leguizamon",
+      "position": "ss",
+      "profile_url": "https://www.womensprobaseballleague.com/players/joely-leguizamon/",
+      "short_name": "Joely Leguizamon",
+      "spot": "8",
+      "throws": "R",
+      "uniform": "13"
+     },
+     {
+      "bats": "R",
+      "fielding": {
+       "a": "3",
+       "e": "1",
+       "po": "3",
+       "sba": "1"
+      },
+      "hitting": {
+       "ab": "3",
+       "bb": "1",
+       "fly": "1",
+       "ground": "1",
+       "h": "0",
+       "obp": ".250",
+       "ops": ".250",
+       "r": "1",
+       "rbi": "1",
+       "slg": ".000"
+      },
+      "id": "5uue0zu3y0p9focn",
+      "name": "Jua Park",
+      "pitching": {
+       "ab": "5",
+       "appear": "2",
+       "bb": "3",
+       "bf": "9",
+       "er": "4",
+       "ground": "2",
+       "h": "3",
+       "hbp": "1",
+       "ip": "0.2",
+       "pitches": "49",
+       "r": "4",
+       "strikes": "22",
+       "whip": "30.00"
+      },
+      "position": "3b/cf",
+      "profile_url": "https://www.womensprobaseballleague.com/players/jua-park/",
+      "short_name": "Jua Park",
+      "spot": "9",
+      "throws": "R",
+      "uniform": "7"
+     },
+     {
+      "bats": "L",
+      "fielding": {
+       "a": "0",
+       "e": "0",
+       "po": "0"
+      },
+      "hitting": {
+       "ab": "0",
+       "h": "0",
+       "obp": ".000",
+       "ops": ".000",
+       "r": "0",
+       "rbi": "0",
+       "slg": ".000"
+      },
+      "id": "tnt51eebunwaqu93",
+      "name": "Liz Gilder",
+      "pitching": {
+       "ab": "16",
+       "appear": "1",
+       "bb": "0",
+       "bf": "16",
+       "er": "2",
+       "fly": "4",
+       "ground": "2",
+       "gs": "1",
+       "h": "7",
+       "ip": "2.2",
+       "loss": "0-1",
+       "pitches": "65",
+       "r": "3",
+       "so": "2",
+       "strikes": "38",
+       "whip": "3.18",
+       "wp": "2"
+      },
+      "position": "p",
+      "profile_url": "https://www.womensprobaseballleague.com/players/liz-gilder/",
+      "short_name": "Liz Gilder",
+      "spot": "10",
+      "throws": "L",
+      "uniform": "10"
+     },
+     {
+      "bats": "R",
+      "id": "",
+      "name": "Ayaka Yamamoto",
+      "position": "",
+      "short_name": "Ayaka Yamamoto",
+      "spot": "0",
+      "throws": "R",
+      "uniform": "6"
+     },
+     {
+      "bats": "R",
+      "id": "",
+      "name": "Rosi del Castillo",
+      "position": "",
+      "short_name": "Rosi del Castillo",
+      "spot": "0",
+      "throws": "R",
+      "uniform": "57"
+     },
+     {
+      "bats": "R",
+      "id": "",
+      "name": "Hinano Beppu",
+      "position": "",
+      "short_name": "Hinano Beppu",
+      "spot": "0",
+      "throws": "R",
+      "uniform": "8"
+     },
+     {
+      "bats": "L",
+      "id": "",
+      "name": "Niki Eckert",
+      "position": "",
+      "short_name": "Niki Eckert",
+      "spot": "0",
+      "throws": "L",
+      "uniform": "22"
+     }
+    ],
+    "record": "1-1",
+    "side": "home",
+    "starters": [
+     {
+      "name": "Amanda Gianelloni",
+      "position": "2b",
+      "spot": "1",
+      "uniform": "5"
+     },
+     {
+      "name": "Kelsie Whitmore",
+      "position": "dh",
+      "spot": "2",
+      "uniform": "3"
+     },
+     {
+      "name": "Jill Albayati",
+      "position": "lf",
+      "spot": "3",
+      "uniform": "18"
+     },
+     {
+      "name": "Andreanne Leblanc",
+      "position": "1b",
+      "spot": "4",
+      "uniform": "16"
+     },
+     {
+      "name": "Alexia Jorge",
+      "position": "c",
+      "spot": "5",
+      "uniform": "26"
+     },
+     {
+      "name": "Ela Day-B\u00e9dard",
+      "position": "cf",
+      "spot": "6",
+      "uniform": "25"
+     },
+     {
+      "name": "Skylar Kaplan",
+      "position": "rf",
+      "spot": "7",
+      "uniform": "21"
+     },
+     {
+      "name": "Joely Leguizamon",
+      "position": "ss",
+      "spot": "8",
+      "uniform": "13"
+     },
+     {
+      "name": "Jua Park",
+      "position": "3b",
+      "spot": "9",
+      "uniform": "7"
+     },
+     {
+      "name": "Liz Gilder",
+      "position": "p",
+      "spot": "10",
+      "uniform": "10"
+     }
+    ],
+    "team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+    "totals": {
+     "batting": {
+      "ab": "29",
+      "bb": "5",
+      "cs": "0",
+      "double": "3",
+      "fly": "8",
+      "gdp": "0",
+      "ground": "9",
+      "h": "7",
+      "hbp": "2",
+      "hitdp": "1",
+      "hittp": "0",
+      "hr": "0",
+      "ibb": "0",
+      "kl": "0",
+      "picked": "0",
+      "r": "8",
+      "rbi": "6",
+      "sb": "1",
+      "sf": "0",
+      "sh": "0",
+      "so": "3",
+      "triple": "0"
+     },
+     "errors": 2,
+     "fielding": {
+      "a": "8",
+      "ci": "0",
+      "csb": "0",
+      "e": "2",
+      "pb": "0",
+      "po": "21",
+      "sba": "2"
+     },
+     "hits": 7,
+     "left_on_base": 7,
+     "pitching": {
+      "ab": "35",
+      "bb": "5",
+      "bf": "44",
+      "bk": "0",
+      "double": "1",
+      "er": "12",
+      "fly": "10",
+      "gdp": "0",
+      "ground": "7",
+      "h": "15",
+      "hbp": "3",
+      "hr": "2",
+      "ibb": "0",
+      "ip": "7.0",
+      "kl": "1",
+      "picked": "1",
+      "pitches": "181",
+      "r": "13",
+      "sfa": "1",
+      "sha": "0",
+      "so": "3",
+      "strikes": "98",
+      "triple": "0",
+      "wp": "2"
+     },
+     "runs": 8
+    }
+   }
+  ]
+ }
+}

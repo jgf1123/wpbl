@@ -1,0 +1,6847 @@
+{
+ "count": 50,
+ "games": [
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-08-02T12:29:47Z",
+   "counts_in_standings": true,
+   "game_id": "8alsgvzc90ypwphl",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "8alsgvzc90ypwphl",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": true,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-08T15:34:22",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "10",
+     "home": "8"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-01T21:00:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-01T21:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 10,
+    "batter_id": "",
+    "game_id": "8alsgvzc90ypwphl",
+    "half": "",
+    "home_score": 8,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-08T15:34:22Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-08T15:34:22Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "mcns90grkf4vinwa",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "1415 E North Grand Ave.",
+    "city": "Springfield",
+    "eventId": "mcns90grkf4vinwa",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-01T20:39:57",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-01T22:00:00",
+    "stateCountry": "Il",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "Robin Roberts Stadium",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-01T22:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "mcns90grkf4vinwa",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-01T20:39:57Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-01T20:39:57Z",
+   "venue": "Robin Roberts Stadium"
+  },
+  {
+   "away_team_id": "",
+   "away_team_name": "",
+   "counts_in_standings": true,
+   "game_id": "gnja1cz7onrn3lmt",
+   "game_type": "regular",
+   "home_team_id": "",
+   "home_team_name": "",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "gnja1cz7onrn3lmt",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-01T21:17:10",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-02T23:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": null,
+     "homeTeam": null
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-02T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "gnja1cz7onrn3lmt",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-01T21:17:10Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-01T21:17:10Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "completed_at": "2026-08-03T02:26:18Z",
+   "counts_in_standings": true,
+   "game_id": "qk2oug9ikob2a1hl",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "1415 N Grand Ave E",
+    "city": "Springfield",
+    "eventId": "qk2oug9ikob2a1hl",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-03T02:26:18",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "11",
+     "home": "3"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-02T23:30:00",
+    "stateCountry": "Il",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "Robin Roberts",
+    "zipCode": "62702"
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-02T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 11,
+    "batter_id": "",
+    "game_id": "qk2oug9ikob2a1hl",
+    "half": "",
+    "home_score": 3,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-03T02:26:18Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-03T02:26:18Z",
+   "venue": "Robin Roberts"
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "completed_at": "2026-08-06T01:53:05Z",
+   "counts_in_standings": true,
+   "game_id": "v7zr9elz0xc5lqbw",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "1415 N Grand Ave E",
+    "city": "Springfield",
+    "eventId": "v7zr9elz0xc5lqbw",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-06T01:53:05",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "4",
+     "home": "12"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-05T23:30:00",
+    "stateCountry": "Illinois",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "Robin Roberts",
+    "zipCode": "62702"
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-05T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 4,
+    "batter_id": "",
+    "game_id": "v7zr9elz0xc5lqbw",
+    "half": "",
+    "home_score": 12,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-06T01:53:05Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-06T01:53:05Z",
+   "venue": "Robin Roberts"
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "counts_in_standings": true,
+   "game_id": "7e3ys466tbcontza",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "7e3ys466tbcontza",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-06T21:58:56",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-06T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-06T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "7e3ys466tbcontza",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-06T21:58:56Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-06T21:58:56Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "completed_at": "2026-08-07T02:39:42Z",
+   "counts_in_standings": true,
+   "game_id": "tcvtrxvuqrl488nu",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "tcvtrxvuqrl488nu",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-07T02:39:42",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "13",
+     "home": "8"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-06T22:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-06T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 13,
+    "batter_id": "",
+    "game_id": "tcvtrxvuqrl488nu",
+    "half": "",
+    "home_score": 8,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-07T02:39:42Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-07T02:39:42Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "counts_in_standings": true,
+   "game_id": "8ohszkk3oa3uxeie",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "8ohszkk3oa3uxeie",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-07T21:33:01",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-07T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-07T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "8ohszkk3oa3uxeie",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-07T21:33:01Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-07T21:33:01Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "completed_at": "2026-08-08T01:56:16Z",
+   "counts_in_standings": true,
+   "game_id": "qik38y6p8336rqzc",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "qik38y6p8336rqzc",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-08T01:56:16",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "3",
+     "home": "12"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-07T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-07T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 3,
+    "batter_id": "",
+    "game_id": "qik38y6p8336rqzc",
+    "half": "",
+    "home_score": 12,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-08T01:56:16Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-08T01:56:16Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "counts_in_standings": true,
+   "game_id": "3cqcsl5hdrdcd85s",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "3cqcsl5hdrdcd85s",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-08T16:23:57",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-08T17:00:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-08T17:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "3cqcsl5hdrdcd85s",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-08T16:23:57Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-08T16:23:57Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "completed_at": "2026-08-08T21:18:30Z",
+   "counts_in_standings": true,
+   "game_id": "dmgjo870o24ty4q8",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "dmgjo870o24ty4q8",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-08T21:18:30",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "9",
+     "home": "6"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-08T18:00:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-08T18:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 9,
+    "batter_id": "",
+    "game_id": "dmgjo870o24ty4q8",
+    "half": "",
+    "home_score": 6,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-08T21:18:30Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-08T21:18:30Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "r2eioirzu8zu8jfp",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "r2eioirzu8zu8jfp",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-07-25T01:38:33",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "",
+     "home": ""
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-08T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-08T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "r2eioirzu8zu8jfp",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-07-25T01:38:33Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-07-25T01:38:33Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-08-09T01:38:27Z",
+   "counts_in_standings": true,
+   "game_id": "8m8qyyfytlcngh7s",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "8m8qyyfytlcngh7s",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-09T01:38:27",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "3",
+     "home": "10"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-08T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-08T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 3,
+    "batter_id": "",
+    "game_id": "8m8qyyfytlcngh7s",
+    "half": "",
+    "home_score": 10,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-09T01:38:27Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-09T01:38:27Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "counts_in_standings": true,
+   "game_id": "kjjb80bc5thdl7x0",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "kjjb80bc5thdl7x0",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-09T21:33:40",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-09T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-09T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "kjjb80bc5thdl7x0",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-09T21:33:40Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-09T21:33:40Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "completed_at": "2026-08-10T02:28:32Z",
+   "counts_in_standings": true,
+   "game_id": "uqnlzivjhyjg4cj9",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "uqnlzivjhyjg4cj9",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-10T02:28:32",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "7",
+     "home": "6"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-09T23:30:00",
+    "stateCountry": "",
+    "status": "Final - 8 innings",
+    "statusCode": 8,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-09T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 7,
+    "batter_id": "",
+    "game_id": "uqnlzivjhyjg4cj9",
+    "half": "",
+    "home_score": 6,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final - 8 innings",
+    "updated_at": "2026-08-10T02:28:32Z"
+   },
+   "status": "Final - 8 innings",
+   "updated_at": "2026-08-10T02:28:32Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "5sz8ohgnl9wh9246",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "5sz8ohgnl9wh9246",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-12T21:35:33",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-12T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-12T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "5sz8ohgnl9wh9246",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-12T21:35:33Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-12T21:35:33Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-08-13T01:47:31Z",
+   "counts_in_standings": true,
+   "game_id": "rr37bu1ieptkbzhp",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "rr37bu1ieptkbzhp",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-13T01:47:31",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "2",
+     "home": "8"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-12T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-12T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 2,
+    "batter_id": "",
+    "game_id": "rr37bu1ieptkbzhp",
+    "half": "",
+    "home_score": 8,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-13T01:47:31Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-13T01:47:31Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "counts_in_standings": true,
+   "game_id": "ft8uskmuohiasrmg",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "ft8uskmuohiasrmg",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-07-25T01:55:41",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "",
+     "home": ""
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-13T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-13T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "ft8uskmuohiasrmg",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-07-25T01:55:41Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-07-25T01:55:41Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "counts_in_standings": true,
+   "game_id": "lwobtj7rj0r3r25j",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "lwobtj7rj0r3r25j",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-12T22:01:33",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "",
+     "home": ""
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-13T23:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-13T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "lwobtj7rj0r3r25j",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-12T22:01:33Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-12T22:01:33Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "completed_at": "2026-08-14T02:11:13Z",
+   "counts_in_standings": true,
+   "game_id": "oxmfgfm084vlisfi",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "oxmfgfm084vlisfi",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-18T16:22:25",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "6",
+     "home": "1"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-13T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-13T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 6,
+    "batter_id": "",
+    "game_id": "oxmfgfm084vlisfi",
+    "half": "",
+    "home_score": 1,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-18T16:22:25Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-18T16:22:25Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "egztj0dsqfzv5cp0",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "egztj0dsqfzv5cp0",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-14T21:38:35",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-14T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-14T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "egztj0dsqfzv5cp0",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-14T21:38:35Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-14T21:38:35Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-08-15T02:03:36Z",
+   "counts_in_standings": true,
+   "game_id": "7sh6ncqvuaz87451",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "7sh6ncqvuaz87451",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-15T02:03:36",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "3",
+     "home": "17"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-14T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-14T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 3,
+    "batter_id": "",
+    "game_id": "7sh6ncqvuaz87451",
+    "half": "",
+    "home_score": 17,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-15T02:03:36Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-15T02:03:36Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "counts_in_standings": true,
+   "game_id": "r4kdaa6824s4wkzd",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "r4kdaa6824s4wkzd",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-15T16:17:16",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-15T17:00:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-15T17:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "r4kdaa6824s4wkzd",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-15T16:17:16Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-15T16:17:16Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "completed_at": "2026-08-15T20:36:41Z",
+   "counts_in_standings": true,
+   "game_id": "kije6tnlnl71eocg",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "kije6tnlnl71eocg",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-22T19:46:06",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "11",
+     "home": "6"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-15T18:00:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-15T18:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 11,
+    "batter_id": "",
+    "game_id": "kije6tnlnl71eocg",
+    "half": "",
+    "home_score": 6,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-22T19:46:06Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-22T19:46:06Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "6kntl8iur69kzthh",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "6kntl8iur69kzthh",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-07-25T01:56:36",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "",
+     "home": ""
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-15T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-15T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "6kntl8iur69kzthh",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-07-25T01:56:36Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-07-25T01:56:36Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-08-16T02:10:21Z",
+   "counts_in_standings": true,
+   "game_id": "20f8lv4g5kfttfg1",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "20f8lv4g5kfttfg1",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-16T02:10:21",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "13",
+     "home": "3"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-15T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-15T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 13,
+    "batter_id": "",
+    "game_id": "20f8lv4g5kfttfg1",
+    "half": "",
+    "home_score": 3,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-16T02:10:21Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-16T02:10:21Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "9xy114plku7zlpny",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "9xy114plku7zlpny",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-15T16:22:44",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "",
+     "home": ""
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-15T23:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-15T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "9xy114plku7zlpny",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-15T16:22:44Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-15T16:22:44Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "counts_in_standings": true,
+   "game_id": "qzt78jrn2rfi1iid",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "qzt78jrn2rfi1iid",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-16T21:51:18",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-16T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-16T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "qzt78jrn2rfi1iid",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-16T21:51:18Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-16T21:51:18Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "completed_at": "2026-08-17T02:10:00Z",
+   "counts_in_standings": true,
+   "game_id": "ppkwakaltuvio20t",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "ppkwakaltuvio20t",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-17T03:07:59",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "9",
+     "home": "7"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-16T23:30:00",
+    "stateCountry": "",
+    "status": "Final - 8 innings",
+    "statusCode": 8,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-16T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 9,
+    "batter_id": "",
+    "game_id": "ppkwakaltuvio20t",
+    "half": "",
+    "home_score": 7,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final - 8 innings",
+    "updated_at": "2026-08-17T03:07:59Z"
+   },
+   "status": "Final - 8 innings",
+   "updated_at": "2026-08-17T03:07:59Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "completed_at": "2026-08-20T02:35:27Z",
+   "counts_in_standings": true,
+   "game_id": "193phvm8rl9cf53w",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "193phvm8rl9cf53w",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": true,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-20T02:39:59",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "11",
+     "home": "8"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-19T22:30:00",
+    "stateCountry": "",
+    "status": "Final - 6 innings - Weather Delay",
+    "statusCode": 6,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-19T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 11,
+    "batter_id": "",
+    "game_id": "193phvm8rl9cf53w",
+    "half": "",
+    "home_score": 8,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final - 6 innings - Weather Delay",
+    "updated_at": "2026-08-20T02:39:59Z"
+   },
+   "status": "Final - 6 innings - Weather Delay",
+   "updated_at": "2026-08-20T02:39:59Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "counts_in_standings": true,
+   "game_id": "frs24bt6e0q2gvyd",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "frs24bt6e0q2gvyd",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-07-25T01:40:40",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "",
+     "home": ""
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-19T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-19T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "frs24bt6e0q2gvyd",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-07-25T01:40:40Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-07-25T01:40:40Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "counts_in_standings": true,
+   "game_id": "zt2mnfuxzjr3dbaw",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "zt2mnfuxzjr3dbaw",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-20T21:28:45",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-20T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-20T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "zt2mnfuxzjr3dbaw",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-20T21:28:45Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-20T21:28:45Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "completed_at": "2026-08-21T02:03:12Z",
+   "counts_in_standings": true,
+   "game_id": "dtksss0az7dpa97f",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "dtksss0az7dpa97f",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-21T02:03:12",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "9",
+     "home": "4"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-20T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-20T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 9,
+    "batter_id": "",
+    "game_id": "dtksss0az7dpa97f",
+    "half": "",
+    "home_score": 4,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-21T02:03:12Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-21T02:03:12Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "counts_in_standings": true,
+   "game_id": "oz6klicfqllbojjf",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "oz6klicfqllbojjf",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-21T21:33:43",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-21T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-21T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "oz6klicfqllbojjf",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-21T21:33:43Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-21T21:33:43Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "completed_at": "2026-08-22T01:47:26Z",
+   "counts_in_standings": true,
+   "game_id": "awbrugq1q63c3uph",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "awbrugq1q63c3uph",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-22T01:47:26",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "6",
+     "home": "8"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-21T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-21T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 6,
+    "batter_id": "",
+    "game_id": "awbrugq1q63c3uph",
+    "half": "",
+    "home_score": 8,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-22T01:47:26Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-22T01:47:26Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "counts_in_standings": true,
+   "game_id": "69h3la78mmhpzecy",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "69h3la78mmhpzecy",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-22T16:56:12",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-22T17:00:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-22T17:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "69h3la78mmhpzecy",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-22T16:56:12Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-22T16:56:12Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "vhubhz8li07tmgq8",
+   "away_team_name": "San Francisco Firebells",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "completed_at": "2026-08-22T20:52:40Z",
+   "counts_in_standings": true,
+   "game_id": "swof9w8fb4z5n6yz",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "swof9w8fb4z5n6yz",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-22T20:52:40",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "12",
+     "home": "5"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-22T18:00:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-22T18:00:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 12,
+    "batter_id": "",
+    "game_id": "swof9w8fb4z5n6yz",
+    "half": "",
+    "home_score": 5,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-22T20:52:40Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-22T20:52:40Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "counts_in_standings": true,
+   "game_id": "1t2wmne1ldb4esv8",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "1t2wmne1ldb4esv8",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-22T16:57:46",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-22T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-22T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "1t2wmne1ldb4esv8",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-22T16:57:46Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-22T16:57:46Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "completed_at": "2026-08-23T02:27:12Z",
+   "counts_in_standings": true,
+   "game_id": "n89hf3ji823n4p07",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "n89hf3ji823n4p07",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-23T02:27:12",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "8",
+     "home": "7"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-22T23:30:00",
+    "stateCountry": "",
+    "status": "Final - 8 innings",
+    "statusCode": 8,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-22T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 8,
+    "batter_id": "",
+    "game_id": "n89hf3ji823n4p07",
+    "half": "",
+    "home_score": 7,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final - 8 innings",
+    "updated_at": "2026-08-23T02:27:12Z"
+   },
+   "status": "Final - 8 innings",
+   "updated_at": "2026-08-23T02:27:12Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "cmwzueyvq91ig4uw",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "cmwzueyvq91ig4uw",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-23T22:15:52",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-23T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-23T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "cmwzueyvq91ig4uw",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-23T22:15:52Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-23T22:15:52Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-08-24T01:52:16Z",
+   "counts_in_standings": true,
+   "game_id": "19k396na7ad9r561",
+   "game_type": "regular",
+   "home_team_id": "9f08or2mffx81409",
+   "home_team_name": "Boston Hunters",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "19k396na7ad9r561",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-24T01:52:16",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "3",
+     "home": "7"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-23T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-23T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 3,
+    "batter_id": "",
+    "game_id": "19k396na7ad9r561",
+    "half": "",
+    "home_score": 7,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-24T01:52:16Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-24T01:52:16Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "counts_in_standings": true,
+   "game_id": "7dpofy9p6e5820n6",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "7dpofy9p6e5820n6",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-26T22:01:43",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-26T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-26T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "7dpofy9p6e5820n6",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-26T22:01:43Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-26T22:01:43Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "completed_at": "2026-08-27T02:05:00Z",
+   "counts_in_standings": true,
+   "game_id": "v4tqgh11vbo55wl3",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "v4tqgh11vbo55wl3",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-27T02:05:00",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "6",
+     "home": "8"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-26T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-26T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 6,
+    "batter_id": "",
+    "game_id": "v4tqgh11vbo55wl3",
+    "half": "",
+    "home_score": 8,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-27T02:05:00Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-27T02:05:00Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "counts_in_standings": true,
+   "game_id": "8p1wb02nn8fmg2bd",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "8p1wb02nn8fmg2bd",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-27T21:48:06",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-27T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-27T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "8p1wb02nn8fmg2bd",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-27T21:48:06Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-27T21:48:06Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "v4gisr4rbgmn67b0",
+   "away_team_name": "Los Angeles Queens",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-08-28T01:56:27Z",
+   "counts_in_standings": true,
+   "game_id": "zpp9h33tj77csmoq",
+   "game_type": "regular",
+   "home_team_id": "fttth861nft1j2s7",
+   "home_team_name": "New York Heights",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "zpp9h33tj77csmoq",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-28T01:56:27",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "4",
+     "home": "12"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-27T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-27T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 4,
+    "batter_id": "",
+    "game_id": "zpp9h33tj77csmoq",
+    "half": "",
+    "home_score": 12,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-28T01:56:27Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-28T01:56:27Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "counts_in_standings": true,
+   "game_id": "oajzrobzkcskphmt",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "oajzrobzkcskphmt",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-28T21:41:28",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-28T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-28T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "oajzrobzkcskphmt",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-28T21:41:28Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-28T21:41:28Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "9f08or2mffx81409",
+   "away_team_name": "Boston Hunters",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "completed_at": "2026-08-29T02:11:53Z",
+   "counts_in_standings": true,
+   "game_id": "aqe6d881m2xt0khm",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "San Francisco Firebells",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "aqe6d881m2xt0khm",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-29T02:11:53",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "6",
+     "home": "14"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-28T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-28T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 6,
+    "batter_id": "",
+    "game_id": "aqe6d881m2xt0khm",
+    "half": "",
+    "home_score": 14,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-29T02:11:53Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-29T02:11:53Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "counts_in_standings": true,
+   "game_id": "dju038v5qxw7qy98",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "dju038v5qxw7qy98",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-29T22:18:02",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-29T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": null,
+     "homeTeam": null
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-29T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "dju038v5qxw7qy98",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-29T22:18:02Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-29T22:18:02Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "New York Heights",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "completed_at": "2026-08-30T01:58:18Z",
+   "counts_in_standings": true,
+   "game_id": "mksw641s8uwrx6vp",
+   "game_type": "regular",
+   "home_team_id": "v4gisr4rbgmn67b0",
+   "home_team_name": "Los Angeles Queens",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "mksw641s8uwrx6vp",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-30T01:58:18",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "6",
+     "home": "10"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-29T23:30:00",
+    "stateCountry": "",
+    "status": "Final",
+    "statusCode": 0,
+    "tba": false,
+    "teams": {
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
+    },
+    "timeZone": "America/Chicago",
+    "timeZoneDisplay": "CDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-29T23:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 6,
+    "batter_id": "",
+    "game_id": "mksw641s8uwrx6vp",
+    "half": "",
+    "home_score": 10,
+    "inning": 0,
+    "outs": 0,
+    "status": "Final",
+    "updated_at": "2026-08-30T01:58:18Z"
+   },
+   "status": "Final",
+   "updated_at": "2026-08-30T01:58:18Z",
+   "venue": ""
+  },
+  {
+   "away_team_id": "fttth861nft1j2s7",
+   "away_team_name": "",
+   "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
+   "counts_in_standings": true,
+   "game_id": "pvp728vuqo0l7sh2",
+   "game_type": "regular",
+   "home_team_id": "vhubhz8li07tmgq8",
+   "home_team_name": "",
+   "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "presto_data": {
+    "address": "",
+    "city": "",
+    "eventId": "pvp728vuqo0l7sh2",
+    "eventType": {
+     "isConference": false,
+     "isDivision": false,
+     "isNational": false,
+     "isNeutral": false,
+     "isOverall": true,
+     "isPostSeason": false,
+     "isRegional": false,
+     "isSuspended": false,
+     "isWeatherDelay": false,
+     "noContest": false,
+     "statsCount": true
+    },
+    "eventTypeCode": "regular",
+    "eventTypeDescription": "Regular Season",
+    "lastUpdatedDateTime": "2026-08-30T21:54:31",
+    "links": null,
+    "notes": "",
+    "ranks": {
+     "conferenceAway": null,
+     "conferenceHome": null,
+     "divisionAway": null,
+     "divisionHome": null,
+     "nationalAway": null,
+     "nationalHome": null,
+     "regionalAway": null,
+     "regionalHome": null
+    },
+    "score": {
+     "away": "0",
+     "home": "0"
+    },
+    "seasonId": "c9sgab9f9yx00z75",
+    "sportId": "bsb",
+    "startDateTime": "2026-08-30T22:30:00",
+    "stateCountry": "",
+    "status": "Not Started",
+    "statusCode": -2,
+    "tba": false,
+    "teams": {
+     "awayTeam": null,
+     "homeTeam": null
+    },
+    "timeZone": "America/New_York",
+    "timeZoneDisplay": "EDT",
+    "venue": "",
+    "zipCode": ""
+   },
+   "provider": "presto",
+   "scheduled_start": "2026-08-30T22:30:00Z",
+   "season_id": "c9sgab9f9yx00z75",
+   "state": {
+    "away_score": 0,
+    "batter_id": "",
+    "game_id": "pvp728vuqo0l7sh2",
+    "half": "",
+    "home_score": 0,
+    "inning": 0,
+    "outs": 0,
+    "status": "Not Started",
+    "updated_at": "2026-08-30T21:54:31Z"
+   },
+   "status": "Not Started",
+   "updated_at": "2026-08-30T21:54:31Z",
+   "venue": ""
+  }
+ ]
+}
