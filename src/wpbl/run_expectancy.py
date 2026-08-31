@@ -7,9 +7,19 @@ into and the runs the team went on to score for the rest of that half-inning,
 including runs on the play itself. Averaging over a state gives its run
 expectancy.
 
-The 8th inning is excluded -- it is a tiebreaker inning starting with a runner
-on second, so its states are not drawn from the same process. Half-innings whose
-narrative runs do not tie out to the line score are excluded too.
+Extra innings are included, not just regulation: an extra half-inning starts
+with a runner already placed on second, nobody out, and its plate appearances
+are pooled into the "_2_" (runner on 2nd) bucket alongside ordinary leadoff
+doubles -- exactly the state most starved for samples otherwise, so this is
+where the extra data actually helps. An extra half-inning is excluded only if
+it did not run its natural course: a walk-off (the home team takes the lead
+batting, ending the game before a third out is needed) or the game being
+called (weather). Using either would understate how many runs a state
+normally goes on to produce, since play stopped the instant the very outcome
+being measured occurred -- the same reasoning already applied to the bottom of
+the 7th in win_probability.py's own half-inning totals. Half-innings whose
+narrative runs do not tie out to the line score are excluded too, regardless
+of inning.
 
 Read the sample sizes before the means. With 24 games this matrix is correctly
 built but thinly populated, and the report prints the diagnostics that say so:
@@ -24,7 +34,7 @@ import pandas as pd
 
 from wpbl.parse import OUT_DIR
 
-LAST_INNING = 7
+LAST_INNING = 7          # regulation length
 MIN_SAMPLE = 50          # below this a cell's mean is not worth reading
 BASE_ORDER = ["___", "1__", "_2_", "__3", "12_", "1_3", "_23", "123"]
 
@@ -42,20 +52,58 @@ def _base_code(play) -> str:
             + ("3" if pd.notna(play.third_base) else "_"))
 
 
+def incomplete_extra_halves(games: pd.DataFrame, plays: pd.DataFrame) -> set[tuple]:
+    """Half-inning keys, matching the (game_id, batting_team_id, inning, half)
+    layout used elsewhere here, for extra-inning halves that did not run their
+    natural course.
+
+    Regulation is untouched by this -- the bottom of the 7th has its own,
+    separate handling where it already lived (win_probability.py excludes it
+    from the half-inning total for the same underlying reason: it is only
+    played when the home team is not already ahead, and it stops the instant
+    a go-ahead run scores). Only extra innings are checked here.
+
+    An extra half-inning's own natural end is: the top always completes (nothing
+    can end the game during the visiting team's turn), and the bottom completes
+    unless the home team takes the lead batting. Both are detectable from the
+    game's own recorded result without needing to trace outs play by play: a
+    half stopped early is, by construction, the very last half-inning the game
+    has any plays for -- if the game continued, something must have followed
+    it and it therefore ran its course.
+    """
+    incomplete = set()
+    for game_id, game_plays in plays.groupby("game_id"):
+        extra = game_plays[game_plays["inning"] > LAST_INNING]
+        if extra.empty:
+            continue
+        game = games.loc[game_id]
+        last = game_plays.sort_values("sequence").iloc[-1]
+        last_inning, last_half = int(last["inning"]), last["half"]
+        if last_inning <= LAST_INNING:
+            continue
+        called = "weather" in str(game.get("status", "")).lower()
+        walked_off = last_half == "bottom" and game["home_score"] > game["away_score"]
+        if called or walked_off:
+            incomplete.add((game_id, last["batting_team_id"], last_inning, last_half))
+    return incomplete
+
+
 def states() -> pd.DataFrame:
     """One row per plate appearance: the state faced, and runs scored from it on."""
     plays = pd.read_parquet(OUT_DIR / "plays.parquet")
     line = pd.read_parquet(OUT_DIR / "line_score.parquet")
-    plays = plays[plays["inning"] <= LAST_INNING].copy()
+    games = pd.read_parquet(OUT_DIR / "games.parquet").set_index("game_id")
+    plays = plays.copy()
 
     key = ["game_id", "batting_team_id", "inning", "half"]
     damaged = set(map(tuple, plays.loc[plays["play_kind"].isin(
-        ["plate_appearance_unknown", "empty", "placed_runner"]), key].values))
+        ["plate_appearance_unknown", "empty"]), key].values))
     narrative = plays.groupby(key)["runs_scored"].sum().rename("narrative").reset_index()
     scored = line.groupby(["game_id", "team_id", "inning"])["runs"].sum().rename("line").reset_index()
     merged = narrative.merge(scored, left_on=["game_id", "batting_team_id", "inning"],
                              right_on=["game_id", "team_id", "inning"])
     damaged |= set(map(tuple, merged.loc[merged["narrative"] != merged["line"], key].values))
+    damaged |= incomplete_extra_halves(games, plays)
 
     plays["half_key"] = list(map(tuple, plays[key].values))
     plays = plays[~plays["half_key"].isin(damaged)]

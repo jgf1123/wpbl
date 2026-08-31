@@ -13,6 +13,7 @@ pixi run scrape      # schedule + box scores (incremental)
 pixi run build       # raw JSON -> parquet tables
 pixi run check       # reconcile the tables against the raw feed
 pixi run refresh     # all three
+pixi run games       # date / teams / score / game_id -> data/games_lookup.csv
 
 pixi run rosters     # who pitched, for whom, in what role
 pixi run timeline    # how each team's use of its players changed over the season
@@ -22,6 +23,7 @@ pixi run re          # run expectancy by base-out state, with its diagnostics
 pixi run wp          # win probability, with structural checks and calibration
 pixi run upsets      # games where a heavily favoured team lost, and the swings
 pixi run pwp         # win probability added per pitcher, by stint on the mound
+pixi run timeline-chart <game_id>   # win probability chart for one game
 ```
 
 `pixi run scrape --activity` also pulls TrackMan tracking. `--force` refetches

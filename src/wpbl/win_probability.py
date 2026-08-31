@@ -92,6 +92,11 @@ class Model:
         frame = frame[~((frame["inning"] == REGULATION) & (frame["half"] == "bottom"))]
         self.full = half_inning_pmf()
         self.state = state_pmfs(frame)
+        # An extra half-inning is a complete trip through the runner-on-second,
+        # nobody-out state, so its run distribution is that state's -- which
+        # now pools genuine extra innings with regulation leadoff doubles,
+        # rather than resting on the four extra half-innings on record.
+        self.extra = self.state[("_2_", 0)]
         self.n_states = frame.groupby(["bases", "outs"]).size().to_dict()
         self.offset = MAX_DIFF
         self.width = 2 * MAX_DIFF + 1
@@ -128,12 +133,25 @@ class Model:
         top[i][d]    = P(home wins) about to start the top of inning i, home
                        leading by d, bases empty, nobody out.
         bottom[i][d] = same, about to start the bottom of inning i.
+
+        Extra innings get their own pair, since they do not start bases empty:
+        extra_top[d] / extra_bottom[d], with a runner already on second.
         """
         diffs = np.arange(-MAX_DIFF, MAX_DIFF + 1)
         self.top, self.bottom = {}, {}
 
-        # End of the bottom of the 7th: the game is over.
+        # A tie surviving the bottom of the 7th goes to extra innings. Both
+        # sides then draw the same distribution from the same placed-runner
+        # state, so the sign of the difference is symmetric and it is exactly
+        # 50/50 -- asserted numerically in validate(), not just assumed.
         end = np.where(diffs > 0, 1.0, np.where(diffs < 0, 0.0, 0.5))
+
+        # An extra inning: away bats from a runner on second, then home does,
+        # and a tie after both sends it to another identical inning -- so the
+        # continuation value of a tie is again 0.5, which closes the recursion
+        # without iterating.
+        self.extra_bottom = self._shift(end, self.extra, +1)
+        self.extra_top = self._shift(self.extra_bottom, self.extra, -1)
 
         # Bottom of the 7th. If the home team already leads it does not bat.
         batted = self._shift(end, self.full, +1)
@@ -154,10 +172,15 @@ class Model:
         """
         pmf = self.state[(bases, outs)]
         if half == "top":
-            # Away batting: their runs cut the home lead, then the bottom follows.
-            return float(sum(p * self._lookup(self.bottom[inning], diff - r)
+            # Away batting: their runs cut the home lead, then the bottom
+            # follows -- an extra inning's bottom if this is an extra inning.
+            after = self.extra_bottom if inning > REGULATION else self.bottom[inning]
+            return float(sum(p * self._lookup(after, diff - r)
                              for r, p in enumerate(pmf) if p))
         if inning >= REGULATION:
+            # Bottom of the 7th or any extra inning: the game is settled once
+            # this half ends, except that a tie sends it to another extra
+            # inning, which is 0.5 either way.
             diffs = np.arange(-MAX_DIFF, MAX_DIFF + 1)
             end = np.where(diffs > 0, 1.0, np.where(diffs < 0, 0.0, 0.5))
             return float(sum(p * self._lookup(end, diff + r) for r, p in enumerate(pmf) if p))
@@ -210,6 +233,13 @@ def validate(model: "Model") -> None:
                         falling += 1
     print(f"  win probability falls as the lead grows: {falling} of 336 curves  "
           f"({'PASS' if falling == 0 else 'FAIL'})")
+
+    # The extra-innings recursion rests on a tie being exactly 50/50. That is
+    # a claim about the arithmetic, not a modelling choice, so check it rather
+    # than assert it in a comment.
+    tied_extra = model._lookup(model.extra_top, 0)
+    print(f"  a tie entering extra innings is 50/50: {tied_extra:.6f}  "
+          f"({'PASS' if abs(tied_extra - 0.5) < 1e-9 else 'FAIL'})")
 
     # Adding a runner must help the batting team. Any breach is inherited base-out
     # noise; what matters is how large it is once future innings damp it.

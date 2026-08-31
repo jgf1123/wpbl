@@ -1,6 +1,6 @@
 """Win probability timeline for a single game, one step per base-out change.
 
-    pixi run timeline-chart -- <game_id>       (defaults to the Aug 1 NY/LA game)
+    pixi run timeline-chart <game_id>       (defaults to the Aug 1 NY/LA game)
 
 A step is any play that changes the base-out state: a plate appearance, a
 stolen base or caught stealing, a wild pitch or passed ball, a balk, or a
@@ -8,16 +8,50 @@ pickoff that actually gets the runner. A failed pickoff attempt, a
 substitution, and a pitching change change nothing about the state a batter
 faces, so they are not steps.
 
-Each step's height is the home team's win probability the instant before that
-play resolves -- the same state-to-win-probability lookup used everywhere else
-in this project. Holding that value until the next step is exactly right at a
-half-inning boundary too: the next step is the first play of the following
-half-inning, already reflecting the updated score and the reset to bases empty,
-nobody out.
+Each step's height is the *eventual winner's* win probability the instant
+before that play resolves -- the same state-to-win-probability lookup used
+everywhere else in this project, read from the winning side. That orientation
+tells the story the right way round: the line climbs toward the team that took
+the game, and its low point is the moment they came closest to losing it,
+rather than tracking a team sliding toward a defeat the reader already knows
+is coming.
+
+Holding that value until the next step is exactly right at a half-inning
+boundary too: the next step is the first play of the following half-inning,
+already reflecting the updated score and the reset to bases empty, nobody out.
+
+The highlighted plays get a numbered marker on the line and their detail in a
+panel below, rather than a text box floating over the plot -- with the run
+differential, base-out state, and pitcher, and without the pitch sequence,
+which is noise for this purpose. They are chosen from two pools: the largest
+win-probability swings, and the largest RE24-style expected-runs values
+(independent of score or inning). WP swing alone concentrates almost
+entirely in the 7th, where win probability is most sensitive to any one play;
+run value finds the plays that matter in the sabermetric sense wherever in
+the game they happen -- a bases-loaded double play in the 2nd, say. Each is
+tagged offense or defense from its run value: whether it helped the team
+batting or the team fielding.
+
+Each half-inning's band is shaded in the batting team's own colour, made more
+saturated and vivid by that half-inning's leverage: the standard deviation of
+the win probability its leadoff plate appearance could produce, over the runs
+that at-bat might score. That is an ex-ante property of the situation -- a
+tied game in the 3rd is high-leverage regardless of what actually happens
+next -- so it is a truer signal than inning number alone, which a decided
+score late would still light up.
+
+Extra innings are drawn like any other, since the model covers them: each one
+starts with a runner already placed on second, and the run distribution for
+that state is what drives it. Only a game called early (weather) is treated
+specially -- nothing that happened on the field ended it, so the tracked line
+simply stops and the actual result is marked with a separate dashed segment
+rather than folded in as a swing, which would make a routine play right before
+the stoppage read as deciding the game by itself.
 """
 
 from __future__ import annotations
 
+import re
 import sys
 
 import matplotlib
@@ -25,10 +59,14 @@ import numpy as np
 import pandas as pd
 
 matplotlib.use("Agg")
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 
 from wpbl.parse import OUT_DIR
+from wpbl.run_expectancy import grid as re_grid
+from wpbl.run_expectancy import pool as re_pool
+from wpbl.run_expectancy import states as re_states
+from wpbl.usage_chart import CODES, label_ink
 from wpbl.win_probability import Model, REGULATION
 
 DEFAULT_GAME = "8alsgvzc90ypwphl"
@@ -39,9 +77,78 @@ DEFAULT_GAME = "8alsgvzc90ypwphl"
 STATE_CHANGING = {"plate_appearance", "plate_appearance_unknown",
                   "baserunning", "baserunning_out", "balk"}
 
-TOP_COLORS = plt.cm.Blues(np.linspace(0.45, 0.85, REGULATION))
-BOTTOM_COLORS = plt.cm.Oranges(np.linspace(0.45, 0.85, REGULATION))
-N_SWINGS = 6
+TEAM_COLORS = {
+    "Boston Hunters": "#2E7D46",            # green
+    "Los Angeles Queens": "#D4A017",        # gold
+    "New York Heights": "#1F5FA8",          # blue
+    "San Francisco Firebells": "#8C2F5C",   # red-violet
+}
+
+BASE_LABEL = {"___": "empty", "1__": "1st", "_2_": "2nd", "__3": "3rd",
+              "12_": "1st & 2nd", "1_3": "1st & 3rd", "_23": "2nd & 3rd", "123": "loaded"}
+
+# Ranking the highlighted plays by |WP swing| alone strongly favours the 7th
+# inning: that's where win probability is most sensitive to any single play.
+# Adding a second pool ranked by |run value| -- the RE24-style expected-runs
+# impact, independent of score or inning -- surfaces the plays WP-swing alone
+# would bury, like a bases-loaded double play in the 2nd.
+N_WP_SWINGS = 5
+N_RUN_SWINGS = 5
+PITCH_SEQUENCE = re.compile(r"\s*\(\d-\d[^)]*\)")
+
+# Leverage (defined below) for a half-inning's leadoff state runs roughly 0 to
+# 0.38 across the season, with the bulk between .06 and .16 (25th-90th
+# percentile). Clipping the visible range at .20 keeps that typical range
+# spread across the ramp instead of compressed near the light end, at the cost
+# of the rare more-extreme moment maxing out rather than going darker still.
+LEVERAGE_CEILING = 0.20
+
+
+def half_inning_leverage(model: Model, inning: int, half: str, diff: int) -> float:
+    """How much a single play at this half-inning's leadoff state could swing
+    the game -- the standard deviation of the win probability the batting
+    team's next plate appearance could produce, over the runs that at-bat
+    might score.
+
+    This is ex-ante: a property of the situation, not of what actually
+    happened. It is what "high leverage" means in the sabermetric sense, and
+    it is a truer signal than inning number alone -- a lopsided score late is
+    lower-leverage than a tied score in the 3rd, and this tells them apart.
+    """
+    # An extra inning does not lead off bases empty -- it starts a runner on
+    # second, which is a materially higher-leverage state.
+    extra = inning > REGULATION
+    pmf = model.state[("_2_", 0)] if extra else model.state[("___", 0)]
+    batting_is_home = half == "bottom"
+    outcomes = []
+    for runs, prob in enumerate(pmf):
+        if prob == 0:
+            continue
+        result_diff = diff + runs if batting_is_home else diff - runs
+        if half == "bottom":
+            wp = (1.0 if result_diff > 0 else (0.5 if result_diff == 0 else 0.0)) \
+                if inning >= REGULATION else model._lookup(model.top[inning + 1], result_diff)
+        elif extra:
+            wp = model._lookup(model.extra_bottom, result_diff)
+        else:
+            wp = model._lookup(model.bottom[inning], result_diff)
+        outcomes.append((prob, wp))
+    mean = sum(p * w for p, w in outcomes)
+    return sum(p * (w - mean) ** 2 for p, w in outcomes) ** 0.5
+
+
+def team_ramp(hex_color: str):
+    """A grey-to-vivid colour scale in one team's own hue: desaturated and
+    pale at 0 (low leverage), fully saturated and bright at 1 (high leverage).
+    Leverage picks the point on it -- darkening toward black reads as murky
+    rather than as "this mattered more," so brightness rises with saturation
+    instead of falling.
+    """
+    hue, sat, val = mcolors.rgb_to_hsv(mcolors.to_rgb(hex_color))
+    sat_lo, sat_hi = 0.10, min(sat * 1.35, 1.0)
+    val_lo, val_hi = 0.93, min(max(val * 1.05, 0.85), 1.0)
+    return lambda t: mcolors.hsv_to_rgb(
+        (hue, sat_lo + t * (sat_hi - sat_lo), val_lo + t * (val_hi - val_lo)))
 
 
 def _bases(play) -> str:
@@ -50,12 +157,66 @@ def _bases(play) -> str:
             + ("3" if pd.notna(play.third_base) else "_"))
 
 
+def name_fixes() -> dict[str, str]:
+    """Word-boundary text replacements for names the feed spells more than one
+    way within the season ('Maggie Fox' once, 'Gabriella Haas' once). Built
+    from the batting table's own player_name vs. its person's canonical name,
+    rather than hardcoded, so it covers whatever the feed does this to."""
+    batting = pd.read_parquet(OUT_DIR / "batting.parquet")
+    mismatched = batting.loc[batting["player_name"] != batting["person_name"],
+                             ["player_name", "person_name"]].drop_duplicates()
+    return dict(zip(mismatched["player_name"], mismatched["person_name"]))
+
+
+def clean_narrative(text: str, fixes: dict[str, str]) -> str:
+    """The play's own clause, spelling-corrected, without the pitch sequence.
+
+    A fielder's choice keeps its out clause. The lead clause names only the
+    batter, who reached safely -- but the run value of the play comes from the
+    *runner* who was retired, so dropping that clause makes a defensive play
+    read like an offensive one.
+    """
+    clauses = [c.strip() for c in str(text or "").split(";")]
+    kept = clauses[:1]
+    if "fielder's choice" in clauses[0].lower():
+        kept += [c for c in clauses[1:] if " out at " in c.lower()]
+    text = ", ".join(kept)
+    text = PITCH_SEQUENCE.sub("", text).strip().rstrip(".")
+    for wrong, right in fixes.items():
+        text = re.sub(rf"\b{re.escape(wrong)}\b", right, text)
+    return text
+
+
+def pooled_run_expectancy() -> pd.DataFrame:
+    """Mean runs remaining in the half-inning, by pooled base group and outs --
+    the same four-group table run_expectancy.py falls back to once it shows
+    the 24-cell matrix isn't reliable at this sample size."""
+    frame = re_states().assign(grp=lambda d: d["bases"].map(re_pool))
+    mean, _, _ = re_grid(frame, "grp")
+    return mean
+
+
+def re_of(re_table: pd.DataFrame, bases: str, outs: int) -> float:
+    """Runs still expected in the half-inning from this base-out state; 0
+    once the inning is over."""
+    return 0.0 if outs >= 3 else float(re_table.loc[re_pool(bases), outs])
+
+
+def diff_label(diff: int, home_code: str, away_code: str) -> str:
+    if diff == 0:
+        return "tied"
+    leader, margin = (home_code, diff) if diff > 0 else (away_code, -diff)
+    return f"{leader} +{margin}"
+
+
 def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
     plays = pd.read_parquet(OUT_DIR / "plays.parquet")
     games = pd.read_parquet(OUT_DIR / "games.parquet").set_index("game_id")
+    people = pd.read_parquet(OUT_DIR / "players.parquet").set_index("player_id")["person_name"]
     game = games.loc[game_id]
+    fixes = name_fixes()
 
-    steps = plays[(plays["game_id"] == game_id) & (plays["inning"] <= REGULATION)
+    steps = plays[(plays["game_id"] == game_id)
                   & (plays["play_kind"].isin(STATE_CHANGING))].sort_values("sequence")
 
     rows = []
@@ -71,99 +232,234 @@ def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
             "bases": _bases(play),
             "diff": diff,
             "wp_home": wp_home,
-            "batter": play.batter_name,
-            "pitcher": play.pitcher_name,
-            "event_type": play.event_type,
-            "narrative": play.narrative,
             "runs_scored": int(play.runs_scored),
+            "pitcher": people.get(play.pitcher_id, play.pitcher_name),
+            "narrative": clean_narrative(play.narrative, fixes),
         })
 
-    # Extend the last step to the settled result, so the chart's final segment
-    # reads as a result rather than trailing off at whatever it last measured.
-    home_won = game["home_score"] > game["away_score"]
-    rows.append({
-        "sequence": rows[-1]["sequence"] + 1, "inning": rows[-1]["inning"],
-        "half": rows[-1]["half"], "outs_before": 3, "bases": "___",
-        "diff": int(game["home_score"] - game["away_score"]),
-        "wp_home": 1.0 if home_won else 0.0,
-        "batter": None, "pitcher": None, "event_type": "final",
-        "narrative": f'Final: {game["away_team_name"]} {int(game["away_score"])}, '
-                    f'{game["home_team_name"]} {int(game["home_score"])}',
-        "runs_scored": 0,
-    })
+    # How the tracked line ends depends on how the game actually finished.
+    # Extra innings are now modelled, so the only case that still cannot be
+    # carried to a result is a game called early: nothing that happened on the
+    # field ended it, so there is no play to attribute the outcome to.
+    played_innings = int(game["innings"]) if pd.notna(game["innings"]) else REGULATION
+    called_early = played_innings < REGULATION
+    if not called_early:
+        home_won = game["home_score"] > game["away_score"]
+        rows.append({
+            "sequence": rows[-1]["sequence"] + 1, "inning": rows[-1]["inning"],
+            "half": rows[-1]["half"], "outs_before": 3, "bases": "___",
+            "diff": int(game["home_score"] - game["away_score"]),
+            "wp_home": 1.0 if home_won else 0.0, "runs_scored": 0, "pitcher": None,
+            "narrative": f'Final {int(game["away_score"])}-{int(game["home_score"])}',
+        })
 
     frame = pd.DataFrame(rows).reset_index(drop=True)
-    frame["swing"] = frame["wp_home"].diff().fillna(0.0)
+
+    # Plot the eventual winner's probability, not the home team's. Both carry
+    # the same information, but this orientation tells the story the right way
+    # round: the line climbs toward the team that took the game, and its low
+    # point is the moment they came closest to losing it -- rather than
+    # tracking a team sliding toward a defeat the reader already knows is
+    # coming. wp_home is kept as the model's native output.
+    home_won = game["home_score"] > game["away_score"]
+    frame["wp"] = frame["wp_home"] if home_won else 1 - frame["wp_home"]
+
+    # The swing a play causes is the move from its own state to the next row's
+    # state -- forward-looking. A backward diff() attributes each transition to
+    # the row after the one that caused it, which is wrong whenever a no-op
+    # play (a substitution, a failed pickoff) sits between two real ones, and
+    # this game has several.
+    frame["swing"] = frame["wp"].shift(-1) - frame["wp"]
+
+    # RE24: the expected-runs value of the play itself, independent of score
+    # or inning -- a bases-loaded double play in the 2nd shows up here even
+    # though it barely moves win probability that early. This is what makes a
+    # good defensive play findable outside the 7th inning.
+    re_table = pooled_run_expectancy()
+    next_bases = frame["bases"].shift(-1)
+    next_outs = frame["outs_before"].shift(-1)
+    same_half = ((frame["inning"] == frame["inning"].shift(-1))
+                & (frame["half"] == frame["half"].shift(-1)))
+    frame["run_value"] = [
+        (re_of(re_table, nb, int(no)) if same and pd.notna(nb) else 0.0) + runs
+        - re_of(re_table, bases, outs)
+        for bases, outs, runs, same, nb, no in zip(
+            frame["bases"], frame["outs_before"], frame["runs_scored"],
+            same_half, next_bases, next_outs)
+    ]
+
     return frame, dict(game)
 
 
-def plot(frame: pd.DataFrame, game: dict, game_id: str, out_path: str) -> None:
-    fig, ax = plt.subplots(figsize=(15, 7))
+def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str) -> None:
+    home_name, away_name = game["home_team_name"], game["away_team_name"]
+    home_won = game["home_score"] > game["away_score"]
+    winner_name = home_name if home_won else away_name
+    loser_name = away_name if home_won else home_name
+    home_color = TEAM_COLORS.get(home_name, "#555555")
+    away_color = TEAM_COLORS.get(away_name, "#999999")
+    home_ramp, away_ramp = team_ramp(home_color), team_ramp(away_color)
+    home_code = CODES.get(home_name, home_name[:3].upper())
+    away_code = CODES.get(away_name, away_name[:3].upper())
+
+    # Pick the highlighted plays before laying out the figure: how many there
+    # are depends on how much the two selection pools overlap, and the panel
+    # has to be sized to hold them rather than squeezing ten entries into a
+    # box built for six.
+    candidates = frame.iloc[:-1] if len(frame) > 1 else frame
+    top_wp = candidates.reindex(
+        candidates["swing"].abs().sort_values(ascending=False, na_position="last").index
+    ).head(N_WP_SWINGS)
+    by_run_value = candidates.reindex(
+        candidates["run_value"].abs().sort_values(ascending=False, na_position="last").index)
+    top_re = by_run_value.head(N_RUN_SWINGS)
+
+    # Ranking by magnitude alone can return an all-offense run-value list, since
+    # a hit moves expected runs further than the typical out does. If it has,
+    # trade its weakest entry for the best defensive play available, so a game
+    # decided partly in the field does not present as if it were all bats.
+    if not (top_re["run_value"] < 0).any():
+        best_def = by_run_value[by_run_value["run_value"] < 0]
+        if len(best_def):
+            top_re = pd.concat([top_re.iloc[:-1], best_def.iloc[:1]])
+
+    chosen = sorted(set(top_wp.index) | set(top_re.index))
+    biggest = candidates.loc[chosen]
+
+    panel_share = 1.6 + 0.28 * len(biggest)
+    fig, (ax, panel) = plt.subplots(
+        2, 1, figsize=(15, 7 + panel_share),
+        gridspec_kw={"height_ratios": [7, panel_share]})
 
     x = np.arange(len(frame))
-    ax.step(x, frame["wp_home"], where="post", color="#333333", linewidth=1.4, zorder=3)
+    ax.step(x, frame["wp"], where="post", color="#2a2a2a", linewidth=1.5, zorder=3)
 
-    # One coloured band per half-inning, so the eye can chunk the game without
-    # reading every tick label.
+    # One band per half-inning, in the batting team's own hue, saturated by
+    # how much a single play there could swing the game -- leverage, not just
+    # inning number, so a decided score late reads as pale, not vivid.
+    #
+    # Band edges must land where drawstyle="steps-post" actually places the
+    # vertical jump between two rows: row i's flat segment runs from x=i to
+    # x=i+1, so a group spanning frame rows [start, end] is drawn over
+    # [start, end + 1), not [start - 0.5, end + 0.5]. The half-width offset
+    # used previously clipped the last column of every band into the next
+    # one's colour.
     half_groups = frame.assign(half_key=list(zip(frame["inning"], frame["half"])))
-    seen = []
-    for key, group in half_groups.groupby("half_key", sort=False):
-        seen.append((key, group.index.min(), group.index.max()))
-    for (inning, half), start, end in seen:
-        color = (TOP_COLORS if half == "top" else BOTTOM_COLORS)[inning - 1]
-        ax.axvspan(start - 0.5, end + 0.5, color=color, alpha=0.35, zorder=0)
-        mid = (start + end) / 2
-        label = f'{"Top" if half == "top" else "Bot"} {inning}'
-        ax.text(mid, 1.035, label, ha="center", va="bottom", fontsize=8.5,
-                color="#555555", clip_on=False)
+    groups = list(half_groups.groupby("half_key", sort=False))
+    for position, ((inning, half), group) in enumerate(groups):
+        ramp = away_ramp if half == "top" else home_ramp
+        entering_diff = int(group.iloc[0]["diff"])
+        leverage = half_inning_leverage(model, inning, half, entering_diff)
+        t = min(leverage / LEVERAGE_CEILING, 1.0)
+        start, end = group.index.min(), group.index.max()
+        left = start - 0.5 if position == 0 else start
+        right = end + 1.5 if position == len(groups) - 1 else end + 1
+        ax.axvspan(left, right, color=ramp(t), alpha=0.55, zorder=0)
+        ax.text((start + end + 1) / 2, 1.035, f'{"Top" if half == "top" else "Bot"} {inning}',
+                ha="center", va="bottom", fontsize=8.5, color="#555555", clip_on=False)
 
     ax.axhline(0.5, color="#999999", linewidth=0.8, linestyle="--", zorder=1)
 
-    # Annotate the largest swings, alternating above/below so labels do not
-    # collide when two big plays land close together.
-    biggest = frame.reindex(frame["swing"].abs().sort_values(ascending=False).index)
-    biggest = biggest[biggest.index > 0].head(N_SWINGS)
-    for rank, (idx, row) in enumerate(biggest.iterrows()):
-        y_before = frame.loc[idx - 1, "wp_home"]
-        y_after = row["wp_home"]
-        y_mid = (y_before + y_after) / 2
-        above = rank % 2 == 0
-        text_y = min(y_mid + 0.16, 0.97) if above else max(y_mid - 0.16, 0.03)
-        note = str(row["narrative"] or row["event_type"])
-        if len(note) > 62:
-            note = note[:59] + "..."
-        ax.annotate(
-            f"{row['swing']:+.2f}  {note}",
-            xy=(idx, y_after), xytext=(idx, text_y),
-            fontsize=8, ha="center",
-            va="bottom" if above else "top",
-            arrowprops=dict(arrowstyle="-", color="#666666", lw=0.8,
-                            shrinkA=0, shrinkB=3),
-            bbox=dict(boxstyle="round,pad=0.25", fc="white", ec="#999999", lw=0.6),
-        )
+    # Numbered markers only -- no floating text on the plot. Full detail sits
+    # in the panel below. The last row is never a real play (it is either the
+    # settled result, the extra-innings placeholder, or -- for a game called
+    # early -- has no "next" state to measure a swing against), so it is
+    # never eligible.
+    offense_wins = defense_wins = 0
+    panel_lines = []
+    for rank, (idx, row) in enumerate(biggest.iterrows(), start=1):
+        y_after = frame.loc[idx + 1, "wp"]
+        batting_is_home = row["half"] == "bottom"
+        # Who a play benefited is a property of the play itself -- its
+        # expected-runs value -- not of the score context, so this drives
+        # both the marker colour and the offense/defense tag, independent of
+        # how much win probability happened to be riding on it.
+        offense_won = row["run_value"] > 0
+        winner_is_home = batting_is_home if offense_won else not batting_is_home
+        marker_color = home_color if winner_is_home else away_color
+        offense_wins += offense_won
+        defense_wins += not offense_won
 
-    ax.set_xlim(-0.5, len(frame) - 0.5)
-    ax.set_ylim(0, 1)
-    ax.set_ylabel(f'{game["home_team_name"]} win probability')
+        ax.scatter([idx + 1], [y_after], s=280, color=marker_color,
+                  edgecolor="white", linewidth=1.3, zorder=5)
+        ax.text(idx + 1, y_after, str(rank), color=label_ink(marker_color),
+               ha="center", va="center", fontsize=9.5, fontweight="bold", zorder=6)
+
+        differential = diff_label(row["diff"], home_code, away_code)
+        situation = f'{row["outs_before"]} out, {BASE_LABEL[row["bases"]]}'
+        half_label = f'{"Top" if row["half"] == "top" else "Bot"} {row["inning"]}'
+        pitcher = f'vs {row["pitcher"].split()[-1]}' if row["pitcher"] else ""
+        tag = "OFF" if offense_won else "DEF"
+        criteria = "+".join(c for c, pool in (("WP", top_wp), ("RUNS", top_re)) if idx in pool.index)
+        panel_lines.append(
+            f'{rank}.  {half_label} · {situation} · {differential} · {pitcher}\n'
+            f'      {row["narrative"]}   ΔWP {row["swing"]:+.2f}  ΔRE {row["run_value"]:+.2f}'
+            f'  [{tag} · {criteria}]')
+
+    ax.set_xlim(-0.5, len(frame) + 0.5)
+    # A marker sitting exactly on 0 or 1 -- a game-ending play -- would be
+    # halfway outside the axes, so leave room for it.
+    ax.set_ylim(-0.04, 1.04)
+    ax.set_ylabel(f"{winner_name} win probability")
     ax.set_xlabel("Base-out state change, in order")
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_yticklabels(["0%", "25%", "50%", "75%", "100%"])
     ax.set_xticks([])
 
-    result = "won" if game["home_score"] > game["away_score"] else "lost"
+    # A game that was called early or went to extra innings needs a visible
+    # break between what the model tracked and what actually happened, rather
+    # than folding the real outcome silently into the line -- that is exactly
+    # what produced a false swing on the last captured play.
+    played_innings = int(game["innings"]) if pd.notna(game["innings"]) else REGULATION
+    ending_note = None
+    if played_innings < REGULATION:
+        # The line tracks the eventual winner, so the settled result is 1.
+        actual = 1.0
+        last_x, last_y = len(frame) - 1, frame["wp"].iloc[-1]
+        ax.plot([last_x, last_x + 1], [last_y, actual], color="#8a8a8a", linewidth=1.3,
+               linestyle=(0, (2, 2)), zorder=4)
+        ax.scatter([last_x + 1], [actual], s=70, color="#8a8a8a", marker="s", zorder=4)
+        reason = game["status"].split(" - ")[-1].lower() if " - " in game["status"] else "called early"
+        ending_note = (f'Called after {played_innings} innings ({reason}) -- dashed segment is the '
+                      f'actual result, not a tracked swing.')
+    elif played_innings > REGULATION:
+        ending_note = (f'Went to extra innings, where both teams start a runner on second. Those '
+                      f'innings are modelled like any other, drawing on the same runner-on-second '
+                      f'run distribution.')
+
+    winner_score = int(game["home_score"] if home_won else game["away_score"])
+    loser_score = int(game["away_score"] if home_won else game["home_score"])
     ax.set_title(
-        f'{game["away_team_name"]} at {game["home_team_name"]}, {game["game_date"]}  '
-        f'({game["home_team_name"]} {result}, '
-        f'{int(game["away_score"])}-{int(game["home_score"])} away-home)',
+        f'{away_name} at {home_name}, {game["game_date"]}  '
+        f'({winner_name} beat {loser_name} {winner_score}-{loser_score})',
         fontsize=13, pad=28)
 
-    legend = [Line2D([0], [0], color=TOP_COLORS[3], lw=6, alpha=0.6,
-                     label=f'{game["away_team_name"]} batting'),
-             Line2D([0], [0], color=BOTTOM_COLORS[3], lw=6, alpha=0.6,
-                     label=f'{game["home_team_name"]} batting')]
-    ax.legend(handles=legend, loc="lower left", fontsize=9, framealpha=0.9)
+    handles = [plt.Rectangle((0, 0), 1, 1, color=away_color, alpha=0.5, label=f"{away_name} batting"),
+              plt.Rectangle((0, 0), 1, 1, color=home_color, alpha=0.5, label=f"{home_name} batting")]
+    ax.legend(handles=handles, loc="lower left", fontsize=9, framealpha=0.9,
+             title="  brighter = higher-leverage half-inning", title_fontsize=8.5,
+             alignment="left")
 
-    fig.tight_layout()
+    # The detail panel: one entry per numbered marker, plus the offense/
+    # defense tally. Baseball is not an even game -- a big hit swings more
+    # win probability than almost any single out -- so expect this to lean
+    # offense; the tally just makes that visible instead of implied.
+    panel.axis("off")
+    panel.set_xlim(0, 1)
+    panel.set_ylim(0, 1)
+    panel.text(0, 1.0, f"Largest plays   —   {offense_wins} offense, {defense_wins} defense",
+              fontsize=10.5, fontweight="bold", va="top", transform=panel.transAxes)
+    top = 0.90
+    if ending_note:
+        panel.text(0, top, ending_note, fontsize=9, va="top", style="italic",
+                  color="#555555", wrap=True, transform=panel.transAxes)
+        top -= 0.08
+    step = top / max(len(panel_lines), 1)
+    for i, line in enumerate(panel_lines):
+        panel.text(0, top - i * step, line, fontsize=9.5, va="top", linespacing=1.5,
+                  family="DejaVu Sans", transform=panel.transAxes)
+
+    fig.tight_layout(rect=(0.01, 0, 1, 1))
     fig.savefig(out_path, dpi=160)
     plt.close(fig)
 
@@ -174,17 +470,16 @@ def main() -> None:
     frame, game = build(model, game_id)
 
     out_path = OUT_DIR.parent / f"timeline_{game_id}.png"
-    plot(frame, game, game_id, str(out_path))
+    plot(model, frame, game, str(out_path))
 
+    home_won = game["home_score"] > game["away_score"]
+    winner = game["home_team_name"] if home_won else game["away_team_name"]
+    low = frame["wp"].idxmin()
     print(f"{len(frame) - 1} state changes -> {out_path}")
-    print(f'peak {game["home_team_name"]} win probability: '
-          f'{frame["wp_home"].max():.3f} at step {frame["wp_home"].idxmax()}')
-    print(f'lowest: {frame["wp_home"].min():.3f} at step {frame["wp_home"].idxmin()}')
-    print("\nlargest swings:")
-    biggest = frame.reindex(frame["swing"].abs().sort_values(ascending=False).index)
-    for idx, row in biggest[biggest.index > 0].head(N_SWINGS).iterrows():
-        print(f'  {row["swing"]:+.3f}  inning {row["inning"]} {row["half"]}  '
-              f'{str(row["narrative"])[:80]}')
+    print(f'{winner} won; their win probability bottomed out at '
+          f'{frame["wp"].min():.3f} in the {frame.loc[low, "half"]} of the '
+          f'{frame.loc[low, "inning"]}')
+    print(f'  ({frame.loc[low, "narrative"]})')
 
 
 if __name__ == "__main__":

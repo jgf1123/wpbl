@@ -6544,13 +6544,13 @@
   },
   {
    "away_team_id": "fttth861nft1j2s7",
-   "away_team_name": "",
+   "away_team_name": "New York Heights",
    "away_team_url": "https://www.womensprobaseballleague.com/teams/new-york/",
    "counts_in_standings": true,
    "game_id": "dju038v5qxw7qy98",
    "game_type": "regular",
    "home_team_id": "v4gisr4rbgmn67b0",
-   "home_team_name": "",
+   "home_team_name": "Los Angeles Queens",
    "home_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
    "presto_data": {
     "address": "",
@@ -6596,8 +6596,68 @@
     "statusCode": -2,
     "tba": false,
     "teams": {
-     "awayTeam": null,
-     "homeTeam": null
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL003&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "fttth861nft1j2s7",
+      "teamName": "New York Heights"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     }
     },
     "timeZone": "America/New_York",
     "timeZoneDisplay": "EDT",
