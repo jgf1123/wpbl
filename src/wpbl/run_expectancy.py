@@ -40,9 +40,22 @@ BASE_ORDER = ["___", "1__", "_2_", "__3", "12_", "1_3", "_23", "123"]
 
 # Adding a runner can never lower the run expectancy of a state. Each key must
 # come out at or below every state it maps to, at equal outs.
+# Two separate monotonicities have to hold, and checking only the first misses
+# most of the breakage. Adding a runner can never lower a state's run
+# expectancy: each key must come out at or below every state it maps to, at
+# equal outs.
 DOMINATED_BY = {
     "___": ["1__", "_2_", "__3"], "1__": ["12_", "1_3"], "_2_": ["12_", "_23"],
     "__3": ["1_3", "_23"], "12_": ["123"], "1_3": ["123"], "_23": ["123"],
+}
+
+# Advancing a runner cannot lower it either -- same runners, each at least as
+# far along and at least one further on. That is a different relation from
+# adding one, and nothing above captures it: 1__ -> _2_ keeps one runner and
+# moves her up, so neither state contains the other.
+ADVANCES_TO = {
+    "1__": ["_2_", "__3"], "_2_": ["__3"],
+    "12_": ["1_3", "_23"], "1_3": ["_23"],
 }
 
 
@@ -109,16 +122,17 @@ def states() -> pd.DataFrame:
     plays = plays[~plays["half_key"].isin(damaged)]
 
     rows = []
-    for _, half in plays.groupby("half_key"):
+    for cluster, (_, half) in enumerate(plays.groupby("half_key")):
         half = half.sort_values("sequence")
         total = half["runs_scored"].sum()
         already = 0
         for play in half.itertuples():
             if play.play_kind == "plate_appearance":
                 rows.append((_base_code(play), int(play.outs_before), total - already,
-                             play.inning, play.half))
+                             play.inning, play.half, cluster))
             already += play.runs_scored
-    frame = pd.DataFrame(rows, columns=["bases", "outs", "runs_rest", "inning", "half"])
+    frame = pd.DataFrame(rows, columns=["bases", "outs", "runs_rest", "inning", "half",
+                                        "half_id"])
     frame.attrs["half_innings"] = plays["half_key"].nunique()
     frame.attrs["excluded"] = len(damaged)
     return frame
@@ -133,22 +147,71 @@ def grid(frame: pd.DataFrame, index: str, order=None):
     return mean, count, 1.96 * sd / np.sqrt(count)
 
 
+BOOTSTRAP = 4000
+BOOTSTRAP_SEED = 20260906
+
+
+def bootstrap_grid(frame: pd.DataFrame, index: str, order=None):
+    """Percentile intervals from resampling half-innings, not plate appearances.
+
+    Two reasons the textbook 1.96*sd/sqrt(n) interval is wrong here. The runs
+    a state goes on to produce are heavily right-skewed and pile up on zero,
+    so a symmetric normal interval misplaces both ends and can reach below
+    zero. More seriously, plate appearances in the same half-inning all
+    inherit that half-inning's remaining runs, so they are not independent
+    observations: eight of them from one big inning carry roughly one
+    inning's worth of information, not eight. Resampling whole half-innings
+    keeps that correlation intact and widens the intervals to something
+    honest.
+    """
+    rng = np.random.default_rng(BOOTSTRAP_SEED)
+    clusters = frame["half_id"].to_numpy()
+    unique = np.unique(clusters)
+    by_cluster = {c: frame.index[clusters == c].to_numpy() for c in unique}
+
+    cells = frame.groupby([index, "outs"]).size().index
+    draws = {cell: np.empty(BOOTSTRAP) for cell in cells}
+    for b in range(BOOTSTRAP):
+        picked = rng.choice(unique, size=len(unique), replace=True)
+        rows = np.concatenate([by_cluster[c] for c in picked])
+        sample = frame.loc[rows]
+        means = sample.groupby([index, "outs"])["runs_rest"].mean()
+        for cell in cells:
+            draws[cell][b] = means.get(cell, np.nan)
+
+    lo = pd.Series({cell: np.nanpercentile(v, 2.5) for cell, v in draws.items()})
+    hi = pd.Series({cell: np.nanpercentile(v, 97.5) for cell, v in draws.items()})
+    lo = lo.unstack()
+    hi = hi.unstack()
+    if order:
+        lo, hi = lo.reindex(order), hi.reindex(order)
+    return lo, hi
+
+
 def impossible_orderings(mean: pd.DataFrame) -> list[str]:
-    """Relationships that must hold in any real run environment. Any that fail
-    are measuring sampling noise, not baseball."""
+    """Every ordering the game's own logic forbids: more outs worth more runs,
+    an added runner worth less, or an advanced runner worth less."""
     broken = []
-    for base in mean.index:
-        for outs in (0, 1):
-            if mean.loc[base, outs] < mean.loc[base, outs + 1]:
-                broken.append(f"{base}: {outs} out ({mean.loc[base, outs]:.2f}) "
-                              f"below {outs + 1} out ({mean.loc[base, outs + 1]:.2f})")
-    for base, better in DOMINATED_BY.items():
-        for state in better:
-            for outs in (0, 1, 2):
-                if mean.loc[state, outs] < mean.loc[base, outs]:
-                    broken.append(f"{outs} out: {state} ({mean.loc[state, outs]:.2f}) "
-                                  f"below {base} ({mean.loc[base, outs]:.2f})")
+    for bases in mean.index:
+        for fewer, more in ((0, 1), (1, 2)):
+            if mean.loc[bases, more] > mean.loc[bases, fewer]:
+                broken.append(f"outs:      {bases} {fewer} out ({mean.loc[bases, fewer]:.2f})"
+                              f" below {more} out ({mean.loc[bases, more]:.2f})")
+    for outs in mean.columns:
+        for base, richer in DOMINATED_BY.items():
+            for other in richer:
+                if mean.loc[other, outs] < mean.loc[base, outs]:
+                    broken.append(f"added runner: {outs} out, {other} "
+                                  f"({mean.loc[other, outs]:.2f}) below {base} "
+                                  f"({mean.loc[base, outs]:.2f})")
+        for base, ahead in ADVANCES_TO.items():
+            for other in ahead:
+                if mean.loc[other, outs] < mean.loc[base, outs]:
+                    broken.append(f"advanced runner: {outs} out, {base} "
+                                  f"({mean.loc[base, outs]:.2f}) -> {other} "
+                                  f"({mean.loc[other, outs]:.2f})")
     return broken
+
 
 
 def pool(bases: str) -> str:
@@ -164,6 +227,18 @@ def pool(bases: str) -> str:
 POOL_ORDER = ["bases empty", "runner on 1st only", "scoring position", "bases loaded"]
 
 
+def interval_table(mean, lo, hi, count, order) -> str:
+    """One cell per state: the estimate with its interval and sample size."""
+    header = f"{'state':20s}" + "".join(f"{str(o) + ' out':>28s}" for o in (0, 1, 2))
+    out = [header]
+    for row in order:
+        cells = [f"{mean.loc[row, o]:5.2f} [{lo.loc[row, o]:4.2f}, {hi.loc[row, o]:4.2f}]"
+                 f" n={int(count.loc[row, o]):4d}" for o in (0, 1, 2)]
+        out.append(f"{row:20s}" + "  ".join(cells))
+    return chr(10).join(out)
+
+
+
 def main() -> None:
     pd.set_option("display.width", 250)
     frame = states()
@@ -171,12 +246,11 @@ def main() -> None:
           f"({frame.attrs['excluded']} half-innings excluded for data loss)\n")
 
     mean, count, ci = grid(frame, "bases", BASE_ORDER)
-    print("=== expected runs, rest of inning ===")
-    print(mean.round(2).to_string())
-    print("\n=== sample size ===")
-    print(count.astype(int).to_string())
-    print("\n=== 95% confidence interval, +/- ===")
-    print(ci.round(2).to_string())
+    lo, hi = bootstrap_grid(frame, "bases", BASE_ORDER)
+    print("=== RE24: expected runs from a state to the end of the half-inning ===")
+    print(f"    estimate [95% interval, {BOOTSTRAP} cluster-bootstrap resamples]")
+    print()
+    print(interval_table(mean, lo, hi, count, BASE_ORDER))
 
     thin = int((count < MIN_SAMPLE).sum().sum())
     broken = impossible_orderings(mean)
@@ -187,12 +261,11 @@ def main() -> None:
 
     frame = frame.assign(pooled=frame["bases"].map(pool))
     pmean, pcount, pci = grid(frame, "pooled", POOL_ORDER)
-    print("\n\n=== pooled (usable at this sample size) ===")
-    print(pmean.round(2).to_string())
-    print("\n=== sample size ===")
-    print(pcount.astype(int).to_string())
-    print("\n=== 95% confidence interval, +/- ===")
-    print(pci.round(2).to_string())
+    plo, phi = bootstrap_grid(frame, "pooled", POOL_ORDER)
+    print()
+    print()
+    print("=== pooled into four groups (usable at this sample size) ===")
+    print(interval_table(pmean, plo, phi, pcount, POOL_ORDER))
 
     print("\n\n=== by outs alone ===")
     outs = frame.groupby("outs")["runs_rest"].agg(["mean", "size", "std"])

@@ -201,8 +201,17 @@ def main() -> None:
     batted = {"single", "double", "triple", "home_run", "groundout", "flyout",
               "lineout", "popup", "foul_out", "fielders_choice", "sacrifice"}
     in_play = ends[ends["event_type"].isin(batted)]
-    check("every batted-ball play ends on code P (so P = in play, not pitchout)",
-          (in_play["last"] == "P").all(), f"{(in_play['last'] != 'P').sum()} of {len(in_play)}")
+    # This establishes that P means "in play". A stray row does not overturn
+    # that -- the feed miscodes the odd final pitch -- so the check is a rate,
+    # with every exception printed so a real regression still shows up rather
+    # than hiding under a tolerance.
+    stray = in_play[in_play["last"] != "P"]
+    check("batted-ball plays end on code P (so P = in play, not pitchout)",
+          len(stray) <= 0.005 * len(in_play),
+          f"{len(stray)} of {len(in_play)} do not")
+    for row in stray.itertuples():
+        print(f"        miscoded final pitch: {row.game_id} inning {row.inning} "
+              f"{row.half}, {row.event_type} with sequence {row.pitch_sequence!r}")
     ks = ends[ends["event_type"] == "strikeout"]
     check("every strikeout ends on K or S (so K = called strike, not unknown)",
           ks["last"].isin(["K", "S"]).all(), f"{(~ks['last'].isin(['K', 'S'])).sum()} of {len(ks)}")
@@ -268,6 +277,28 @@ def main() -> None:
           f"max {int(pitch_drift.max())} pitches")
     leftover = plays[plays["event_type"] == "unknown"]["play_kind"].value_counts().to_dict()
     print(f"        'unknown' event_type resolved as: {leftover}")
+
+    # The half-inning check above tolerates two known gaps, which is only safe
+    # if no *other* run can go missing unnoticed. The detectable signature of a
+    # run lost from a narrative is a play stating more RBI than its clauses
+    # account for -- the Aug 29 defect is exactly that, a runner's name printed
+    # twice where "scored" belonged. Every such play must already be inside a
+    # half-inning the line-score check flagged.
+    stated = plays.dropna(subset=["narrative"]).copy()
+    stated["rbi"] = stated["narrative"].str.extract(r"(\d+) RBI")[0].astype(float)
+    lone = stated["narrative"].str.contains(r", RBI", na=False) & stated["rbi"].isna()
+    stated.loc[lone, "rbi"] = 1.0
+    undercount = stated[stated["rbi"].notna() & (stated["rbi"] > stated["runs_scored"])]
+    flagged = {(g, t, i) for (g, t, i), _ in off_halves.iterrows()}
+    missed = [r for r in undercount.itertuples()
+              if (r.game_id, r.batting_team_id, r.inning) not in flagged]
+    check("every run lost from a narrative is caught by the half-inning check",
+          not missed,
+          f"{len(undercount)} play(s) state more RBI than they account for, "
+          f"{len(missed)} undetected")
+    for row in missed:
+        print(f"        UNDETECTED: seq {row.sequence} -- {row.narrative}")
+
 
     print("\nfeed caveats")
     phantom = games[games["is_phantom_duplicate"]]

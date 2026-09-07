@@ -96,11 +96,71 @@ def _needs_refetch(game: dict, record: dict | None, force: bool) -> bool:
     return not record.get("complete", False)
 
 
+KNOWN_IDS = RAW_DIR / "known_game_ids.json"
+
+
+def known_game_ids(listed: set[str], linked: set[str]) -> set[str]:
+    """Every game id we have ever seen, unioned and persisted.
+
+    Discovery has to be monotonic. The real cause of the missing September
+    games turned out to be pagination -- /games caps a response at 50 and the
+    client was not paging, so a third of the schedule was invisible. That is
+    fixed in api.get_games, but the lesson stands: a run that trusts only what
+    is reachable today can silently forget games it already found, which is
+    exactly what happened when the explorer page began returning 401 and a
+    completed game with its box score on disk vanished from the schedule. Ids
+    therefore accumulate in a file, seeded from anything already downloaded,
+    and nothing is ever dropped.
+    """
+    remembered: set[str] = set()
+    if KNOWN_IDS.exists():
+        remembered |= set(json.loads(KNOWN_IDS.read_text(encoding="utf-8")))
+    # Anything with a box score on disk was real, whatever the feed says now.
+    remembered |= {path.stem for path in (RAW_DIR / "boxscore").glob("*.json")}
+    everything = remembered | listed | linked
+    _write_json(KNOWN_IDS, sorted(everything))
+    return everything
+
+
 def scrape_games() -> list[dict]:
+    """The schedule, from every source we have and everything we remember.
+
+    api.get_games pages to exhaustion, which is what actually makes the list
+    complete. The explorer page and the remembered-id union remain as belt and
+    braces: the Aug 30 game really did appear under an id the schedule did not
+    list at the time, and /games/{id} still serves any such stray.
+    """
     payload = api.get_games()
+    games = list(payload["games"])
+    listed = {game["game_id"] for game in games}
+
+    try:
+        linked = api.get_explorer_game_ids()
+    except api.ApiError as exc:
+        print(f"  ! explorer page unavailable ({exc}); "
+              f"falling back to remembered ids", file=sys.stderr)
+        linked = set()
+
+    recovered = []
+    for game_id in sorted(known_game_ids(listed, linked) - listed):
+        try:
+            recovered.append(api.get_game(game_id))
+        except api.ApiError as exc:
+            print(f"  ! {game_id}: {exc}", file=sys.stderr)
+
+    if recovered:
+        games.extend(recovered)
+        for game in recovered:
+            print(f"  + {game['game_id']} {game.get('scheduled_start', '')[:10]} "
+                  f"{game.get('away_team_name') or '?'} @ {game.get('home_team_name') or '?'}"
+                  f"  [not in /v1/games]")
+
+    payload = {"count": len(games), "games": games,
+               "sources": {"v1_games": len(listed), "recovered": len(recovered)}}
     _write_json(RAW_DIR / "games.json", payload)
-    games = payload["games"]
-    print(f"schedule: {len(games)} games -> {RAW_DIR / 'games.json'}")
+    print(f"schedule: {len(games)} games "
+          f"({len(listed)} from /v1/games, {len(recovered)} recovered) "
+          f"-> {RAW_DIR / 'games.json'}")
     return games
 
 
@@ -125,7 +185,10 @@ def scrape_boxscores(games: list[dict], manifest: dict, force: bool) -> None:
             continue
 
         box = payload.get("boxscore", {})
-        if not (box.get("plays") or box.get("teams", [{}])[0].get("players")):
+        # Plays, not players, are the test. A game in progress publishes both
+        # rosters before a pitch is thrown, so keying on players stores a
+        # zero-play shell that then flows into every table downstream.
+        if not box.get("plays"):
             # Probed a game the feed has not posted yet: nothing to store.
             print(f"  . {game_id} no data yet (feed says {box.get('game_status')!r},"
                   f" last refreshed {box.get('source_updated_at')})")

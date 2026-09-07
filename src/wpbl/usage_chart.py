@@ -5,7 +5,7 @@
 Geometry comes from the box score's innings-pitched figures: a pitcher's outs
 accumulate in appearance order, so her segment spans exactly the outs she was
 responsible for. That agrees with the entry inning derived independently from
-the play-by-play in all 136 appearances, so partial innings are exact rather
+the play-by-play in every appearance, so partial innings are exact rather
 than approximate.
 
 Colour identifies the pitcher. Each team's seven busiest arms by innings take
@@ -90,7 +90,7 @@ def collect() -> list[dict]:
         # is deterministic across rebuilds.
         ranked = (staff_all.groupby("person_name")
                   .agg(outs=("ip_outs", "sum"), app=("game_id", "size"),
-                       gs=("is_starter", "sum"))
+                       gs=("is_starter", "sum"), bf=("bf", "sum"))
                   .reset_index()
                   .sort_values(["outs", "app", "person_name"], ascending=[False, False, True]))
         slots, key = {}, []
@@ -99,7 +99,7 @@ def collect() -> list[dict]:
             slots[row.person_name] = slot
             key.append({"name": row.person_name, "slot": slot, "outs": int(row.outs),
                         "ip": ip_text(int(row.outs)), "app": int(row.app),
-                        "gs": int(row.gs), "named": rank < NAMED})
+                        "gs": int(row.gs), "bf": int(row.bf), "named": rank < NAMED})
 
         games = []
         for _, game in rows.sort_values("gm").iterrows():
@@ -147,6 +147,11 @@ def ordinal(n: int) -> str:
 
 
 def span_text(arm: dict) -> str:
+    if arm["bf"] == 0:
+        # Posted as the starting pitcher, then moved to a fielding position
+        # before anyone came to the plate. Not the same thing as failing to
+        # record an out, and it should not read as though it were.
+        return "announced, never faced a batter"
     if arm["outs"] == 0:
         return f"{ordinal(arm['enteredInning'])}, no outs recorded"
     first = arm["start"] // 3 + 1
@@ -186,6 +191,10 @@ def svg_panel(team: dict) -> str:
 
         for arm in game["arms"]:
             x = GUTTER + arm["start"] * scale
+            if arm["bf"] == 0:
+                # She never took the mound in any real sense; drawing a marker
+                # would put her on the timeline alongside pitchers who did.
+                continue
             if arm["outs"] == 0:
                 # No outs recorded: she occupies no innings, so a block would lie.
                 parts.append(f'<path class="noout s{arm["slot"]}" '
@@ -229,6 +238,8 @@ def key_block(team: dict) -> str:
             role = f'{entry["gs"]} GS'
         else:
             role = f'{relief} RP'
+        if entry["bf"] == 0:
+            role = "never faced a batter"
         items.append(f'<li><span class="sw s{entry["slot"]}"></span>'
                      f'<span class="nm">{html.escape(entry["name"])}</span>'
                      f'<span class="ip">{entry["ip"]}</span>'
@@ -240,6 +251,8 @@ def key_block(team: dict) -> str:
         relief = only["app"] - only["gs"]
         role = (f'{only["gs"]} GS, {relief} RP' if only["gs"] and relief
                 else (f'{only["gs"]} GS' if only["gs"] else f'{relief} RP'))
+        if only["bf"] == 0:
+            role = "never faced a batter"
         items.append(f'<li><span class="sw s{NAMED}"></span>'
                      f'<span class="nm">{html.escape(only["name"])}</span>'
                      f'<span class="ip">{only["ip"]}</span>'
@@ -313,6 +326,8 @@ def render(teams: list[dict]) -> str:
     return (TEMPLATE.replace("{{SERIES_LIGHT}}", light)
             .replace("{{SERIES_DARK}}", dark)
             .replace("{{SERIES_RULES}}", rules)
+            .replace("{{GAMES}}", str(sum(len(t["games"]) for t in teams) // 2))
+            .replace("{{APPEARANCES}}", str(sum(len(g["arms"]) for t in teams for g in t["games"])))
             .replace("{{PANELS}}", "".join(panels)))
 
 
@@ -421,7 +436,7 @@ footer p { margin: 0 0 8px; }
 <div class="wrap">
   <header class="top">
     <h1>Which innings each pitcher covered</h1>
-    <p class="sub">WPBL 2026, all 24 completed games. Every bar is one game, split at the exact out
+    <p class="sub">WPBL 2026, all {{GAMES}} completed games. Every bar is one game, split at the exact out
       each pitcher handed off &mdash; a segment ending two-thirds through the 5th means she was
       pulled with two out. Regulation is seven innings, and the leftmost segment is always the
       starter.</p>
@@ -435,7 +450,7 @@ footer p { margin: 0 0 8px; }
       directly comparable: a short track means a short game, not a short outing.</p>
     <p>Boundaries come from the box score's innings-pitched figures, accumulated in the order
       pitchers appeared. They agree with the entry inning derived independently from the
-      play-by-play in all 136 appearances.</p>
+      play-by-play in all {{APPEARANCES}} appearances.</p>
   </footer>
 </div>
 """

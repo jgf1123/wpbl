@@ -23,6 +23,13 @@ pixi run re          # run expectancy by base-out state, with its diagnostics
 pixi run wp          # win probability, with structural checks and calibration
 pixi run upsets      # games where a heavily favoured team lost, and the swings
 pixi run pwp         # win probability added per pitcher, by stint on the mound
+pixi run blowouts    # half-innings of 4+ runs, and the threshold behind it
+pixi run leverage    # the leverage index, calibrated so an average inning = 1.00
+pixi run bullpen     # kept in or replaced at the inning boundary
+pixi run relievers   # who gets the call, and how good they are
+pixi run depth       # was there a good arm available in high-leverage spots
+pixi run pitches     # pitches per game, per start, per stint
+pixi run batters     # RE24 and context-neutral value per plate appearance
 pixi run timeline-chart <game_id>   # win probability chart for one game
 ```
 
@@ -30,14 +37,14 @@ pixi run timeline-chart <game_id>   # win probability chart for one game
 everything. A game is refetched only when the feed's `updated_at` changes or the
 copy on disk is of a game that had not finished.
 
-## Data as of 2026-08-30
+## Data as of 2026-09-06
 
-50 scheduled games, of which 24 are played and complete, 24 are phantom
-duplicates, and 2 are genuinely unplayed. 4 teams, 70 players, 2,265 plays,
-6,408 pitches. TrackMan tracking exists for 2 games.
+61 scheduled games, of which 29 are played and complete, 31 are phantom
+duplicates, and 1 is unplayed or in progress. 4 teams,
+71 players, 2761 plays, 7828 pitches. TrackMan tracking exists for 2 games.
 
-**Regulation is 7 innings**, not 9 — 20 of the 24 completed games went exactly
-7, three went 8, and one was cut to 6 by weather. Anything that scales with game
+**Regulation is 7 innings**, not 9 — 24 of the 29 completed games went exactly
+7, four went 8, and one was cut to 6 by weather. Anything that scales with game
 length (innings per start, times through the order, bullpen usage) has to be
 read against 7.
 
@@ -178,6 +185,71 @@ Real losses in the feed, not parsing artifacts.
   losing one run.
 - The feed's per-pitcher `pitches` differs by 1–4 from the length of its own
   pitch strings for 3 of 136 pitchers.
+
+## Open judgement: attributing errors and hit-by-pitch
+
+Unsettled, recorded here rather than buried in a constant. It decides the
+middle of the batter table (`pixi run batters`) and nothing at the ends.
+
+Two events are not clearly the batter's doing.
+
+**Reaching on an error** — 51 plate appearances, 2.5%, high because this league
+makes a lot of errors. Three defensible treatments, none obviously right:
+
+| `--error=` | Effect | The claim it makes |
+|---|---|---|
+| `drop` (default for the neutral column) | remove the PA from the rate | we cannot attribute it, so we decline to — understates any real component, since hard contact and speed do generate errors |
+| `credit` | value it at +0.541, near a single | what RE24 does natively — overstates the batter, it is mostly the defence's doing |
+| `out` | value it at −0.557, as wOBA does | the batter earned a debit for a ball the defence muffed — the strongest claim, and not the default |
+
+**Hit by pitch** — 71 plate appearances, 3.4%, roughly triple the major-league
+rate and concentrated: five batters are above 11%. Crediting it is conventional
+and internally consistent, because a walk and a hit batter put the same runner
+on first and force runners identically; crediting walks while dropping HBP
+cannot be justified. So it is credited, and **pooled with walks into one "free
+pass" weight** (+0.400, n=339). Weighted apart they come out +0.462 and +0.384,
+a gap of +0.078 with 95% interval [+0.010, +0.150] — distinguishable, but the
+events cannot differ mechanically, so the gap is situational contamination of a
+71-event weight, not a real difference. `--hbp=split` or `--hbp=drop` to see it
+the other ways.
+
+### Why the two columns get different defaults
+
+RE24 always uses every plate appearance; `--error` governs only the
+context-neutral column. The asymmetry is deliberate and follows from what each
+column is for:
+
+- **RE24 is a ledger.** Every plate appearance's value is charged to someone
+  and the totals reconcile against real scoring. Dropping the 51 error plate
+  appearances would delete **+27.6 runs** of genuine contribution from the books
+  without reassigning it.
+- **Context-neutral is a rate estimate.** There is no ledger to keep, so an
+  unattributable outcome is better left out than guessed at.
+
+This is a judgement, not a result, and the competing view — that both columns
+should cover the same plate appearances — is coherent. Worth knowing before
+re-litigating it: the gap column barely notices. Computing it with both columns
+on all plate appearances versus both on the dropped set differs by **0.005** per
+batter.
+
+### What it actually changes
+
+Rank correlations across the whole option grid stay between **+0.92 and +0.98**.
+The top three (Benites, Whitmore, Lansdell) and bottom three (Blunt, Padgham,
+Eccles) are stable under every combination. Seven batters are not, and the table
+flags them with `!`: Narasaki (moves 0.220), Kim (0.150), Zettlemoyer (0.144),
+Park (0.139), Day-Bédard (0.139), Mackay (0.120), Lahners (0.114).
+
+Lahners in particular swings from +0.156 to +0.042 between the loosest and
+strictest settings — enough to move her from fourth to mid-table.
+
+### The wider problem this is a case of
+
+A linear weight is only context-neutral if that event's mix of situations
+matches the league's. Rare events do not have the occurrences to guarantee it:
+home runs (55), HBP (71), reached-on-error (51). Their weights carry situational
+noise. Pooling walks with HBP is one fix. Re-weighting each event's situations
+to the league distribution would be a more thorough one, and is **not** done.
 
 ## Source
 

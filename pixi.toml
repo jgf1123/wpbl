@@ -19,6 +19,13 @@ upsets = "python -m wpbl.upsets"
 pwp = "python -m wpbl.pitcher_wp"
 timeline-chart = "python -m wpbl.game_timeline"
 games = "python -m wpbl.lookup"
+blowouts = "python -m wpbl.blowouts"
+leverage = "python -m wpbl.leverage"
+bullpen = "python -m wpbl.bullpen"
+relievers = "python -m wpbl.relievers"
+depth = "python -m wpbl.depth"
+pitches = "python -m wpbl.pitch_counts"
+batters = "python -m wpbl.batters"
 refresh = { depends-on = ["scrape", "build", "check"] }
 
 [activation.env]
