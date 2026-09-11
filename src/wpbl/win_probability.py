@@ -68,17 +68,17 @@ def _pmf(values) -> np.ndarray:
 def state_pmfs(frame: pd.DataFrame):
     """Runs from a base-out state to the end of the half-inning, per state.
 
-    A thin cell is shrunk toward its pooled group (bases empty / runner on first
-    only / scoring position / loaded) rather than trusted on its own count.
+    A thin cell is shrunk toward its pooled group rather than trusted on its
+    own count. The grouping is out-dependent; see run_expectancy.POOL_GROUPS.
     """
-    frame = frame.assign(grp=frame["bases"].map(pool))
+    frame = frame.assign(grp=[pool(b, o) for b, o in zip(frame["bases"], frame["outs"])])
     group_pmf = {(g, o): _pmf(sub["runs_rest"].values)
                  for (g, o), sub in frame.groupby(["grp", "outs"])}
     out = {}
     for (bases, outs), sub in frame.groupby(["bases", "outs"]):
         n = len(sub)
         raw = _pmf(sub["runs_rest"].values)
-        prior = group_pmf[(pool(bases), outs)]
+        prior = group_pmf[(pool(bases, outs), outs)]
         out[(bases, outs)] = (n * raw + SHRINK * prior) / (n + SHRINK)
     return out
 
@@ -266,8 +266,9 @@ def validate(model: "Model") -> None:
         print(f"    in the 7th inning: {sum(1 for b in breaches if b[1] == REGULATION)} "
               f"(no later innings left to average the noise away)")
 
-    print("\n=== calibration on the 24 completed games ===")
     frame = observed_states(model)
+    print()
+    print(f"=== calibration on the {frame['game_id'].nunique()} completed games ===")
     frame["bin"] = pd.cut(frame["wp"], np.arange(0, 1.01, 0.1))
     # Weight by game, not by plate appearance: a team that blows a lead racks up
     # plate appearances while ahead, so PA-weighting systematically over-counts

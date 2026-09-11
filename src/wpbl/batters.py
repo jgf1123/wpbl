@@ -1,7 +1,7 @@
 """What each batter's plate appearances were worth, two ways.
 
     pixi run batters
-    pixi run batters --error=credit      # or drop (default) or out
+    pixi run batters --error=drop        # default is credit
     pixi run batters --hbp=split         # or pool (default) or drop
 
 Two columns, and the gap between them is the point.
@@ -28,59 +28,63 @@ batter will do next, and RE24 the better account of what she already did.
 THE ATTRIBUTION DILEMMA
 -----------------------
 
-Two events are not clearly the batter's doing, and what to do with them is
-unsettled. The choice is recorded here rather than buried in a constant,
-because it decides the middle of this table.
+Two events are not clearly the batter's doing. The choice is recorded here
+rather than buried in a constant, because it decides the middle of this table.
 
-Reaching on an error. 51 plate appearances, 2.5% -- high, because this league
-makes a lot of errors. Three defensible treatments:
+Reaching on an error. 54 plate appearances, 2.51% -- one in forty, and roughly
+four to five times the major-league rate, because this league makes a lot of
+errors. Two defensible treatments:
 
-    credit  at its run value, +0.541, close to a single. What RE24 does
-            natively. Overstates the batter: mostly the defence's doing.
-    drop    remove the plate appearance from the rate entirely. Says we cannot
-            attribute it, so we decline to. Understates any real component --
-            hard contact and speed do generate errors.
-    out     price it as an out, -0.557, as wOBA does. Asserts the batter earned
-            a debit for a ball the defence muffed, which is the strongest claim
-            of the three and the one this module does not default to.
+    credit  at its own run value, +0.547 (default). This is what RE24 does
+            natively, and what the original wOBA does: Tango's construction
+            carries a reached-base-on-error term. The familiar public formula
+            omits it, which leaves it an at-bat with no numerator weight and
+            so arithmetically an out -- but that omission is a data-
+            availability compromise, not a judgement that the event is
+            worthless. Reaching on an error is worth 97% of a single here
+            (+0.547 against +0.566), a difference of -0.019 with a 95%
+            interval of [-0.117, +0.079]: not distinguishable from a single.
+    drop    remove the plate appearance from the rate entirely, on the view
+            that it is the fielder's doing and cannot be attributed.
 
-The columns are given different defaults on purpose, because they measure
-different things. RE24 is a ledger: every plate appearance's value is charged
-to someone and the totals reconcile against real scoring, so dropping the 51
-would delete +27.6 runs of genuine contribution from the books without
-reassigning it. The context-neutral column is an estimate of a rate, with no
-ledger to keep, so an unattributable outcome is better left out. Hence RE24
-always uses every plate appearance, and --error governs the neutral column
-alone, defaulting to drop.
+The evidence favours crediting. If reaching on an error were purely the
+defence's doing, batters would differ only by chance -- and they differ by
+more than that. Of the spread between batters, roughly half is real talent
+rather than noise, with a stabilization point near 40 plate appearances, which
+makes it better measured than batting average (90) or walk rate (119). It is
+not a settled result: 18% of bootstrap resamples find no talent spread at all.
+But "partly a batter skill" fits the data better than "not the batter's at
+all", which is what dropping it would assert.
 
-That asymmetry is a judgement, not a result. It is worth re-examining: the
-alternative view, that both columns should cover the same plate appearances,
-is coherent, and the gap column barely notices either way (matched-on-all
-versus matched-on-dropped differ by 0.005 per batter).
-
-Hit by pitch. 71 plate appearances, 3.4% -- roughly triple the major-league
+Hit by pitch. 74 plate appearances, 3.4% -- roughly triple the major-league
 rate, and concentrated: five batters are above 11%. Crediting it is
 conventional and consistent, since a walk and a hit batter put the same runner
 on first and force runners identically; dropping HBP while crediting walks
 cannot be justified. The two are therefore POOLED into one "free pass" weight
-by default. Weighted separately they come out +0.462 and +0.384, a gap of
-+0.078 with a 95% interval of [+0.010, +0.150] -- distinguishable, but the
-events cannot differ mechanically, so that gap is situational contamination of
-a 71-event weight rather than a real difference. Pooling gives n=339.
+by default. Weighted separately they come out +0.455 and +0.389, a gap the
+events cannot produce mechanically, so it is situational contamination of a
+74-event weight rather than a real difference. Pooling gives n=348.
 
-    pool    one weight for walk and HBP together, +0.400 (default)
+    pool    one weight for walk and HBP together (default)
     split   separate weights, as the raw event types come
     drop    remove HBP from the rate, for the view that it is pitcher wildness
 
+Because reaching on an error is credited by default, both columns cover the
+same plate appearances: RE24 keeps its ledger property, every plate
+appearance's value is charged to someone, and the gap between the two columns
+means sequencing alone rather than sequencing plus a difference in which plate
+appearances each column saw.
+
 More generally: a linear weight is only context-neutral if that event's mix of
-situations matches the league's. Rare events -- home runs (55), HBP (71),
-reached-on-error (51) -- do not have enough occurrences to guarantee that, so
+situations matches the league's. Rare events -- home runs (57), HBP (74),
+reached-on-error (54) -- do not have enough occurrences to guarantee that, so
 their weights carry situational noise. Pooling is one fix; re-weighting each
 event's situations to the league distribution would be a more thorough one and
 is not done here.
 
 Batters whose rating moves more than SENSITIVE across the option grid are
 flagged, so a reader can see which figures rest on the judgement call.
+
 
 Identity is keyed on person_id, not the per-game player_id: three people in
 this league carry more than one player_id, and keying on the wrong one splits
@@ -109,7 +113,7 @@ SENSITIVE = 0.10       # rating movement across the option grid worth flagging
 # are not quietly contaminated.
 REACHED = "reached_on_error"
 FREE_PASS = "free_pass"
-ERROR_CHOICES = ("drop", "credit", "out")
+ERROR_CHOICES = ("credit", "drop")
 HBP_CHOICES = ("pool", "split", "drop")
 
 
@@ -179,8 +183,6 @@ def neutral_values(frame: pd.DataFrame, error: str, hbp: str) -> pd.DataFrame:
         kept = kept[kept["event"] != REACHED]
 
     weights = kept.groupby("event")["run_value"].mean()
-    if error == "out":
-        weights[REACHED] = kept.loc[kept["run_value"] < 0, "run_value"].mean()
     return kept.assign(neutral=kept["event"].map(weights)), weights
 
 
@@ -242,6 +244,10 @@ def main() -> None:
     table = pd.DataFrame(rows).sort_values("neutral", ascending=False)
 
     print(f"\n\n=== {len(table)} batters with at least {MIN_PA} plate appearances ===")
+    print("    runs CREATED per plate appearance -- positive is good; a batter's")
+    print("    +0.20 means she added a fifth of a run. A pitcher's +0.20 in the")
+    print("    pitcher table means the opposite physical thing, a fifth of a run")
+    print("    PREVENTED. Both tables read downward from best to worst.")
     print("    sorted by context-neutral.  * interval clear of zero.")
     print(f"    ! rating moves more than {SENSITIVE:.2f} across the attribution options\n")
     print(f"  {'':4s}{'batter':21s}{'PA':>4s}{'RE24':>7s}"

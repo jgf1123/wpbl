@@ -7949,13 +7949,13 @@
   },
   {
    "away_team_id": "v4gisr4rbgmn67b0",
-   "away_team_name": "",
+   "away_team_name": "Los Angeles Queens",
    "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
    "counts_in_standings": true,
    "game_id": "2accdtqwx8iaqw6z",
    "game_type": "regular",
    "home_team_id": "9f08or2mffx81409",
-   "home_team_name": "",
+   "home_team_name": "Boston Hunters",
    "home_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
    "presto_data": {
     "address": "",
@@ -8001,8 +8001,68 @@
     "statusCode": -2,
     "tba": false,
     "teams": {
-     "awayTeam": null,
-     "homeTeam": null
+     "awayTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL002&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "v4gisr4rbgmn67b0",
+      "teamName": "Los Angeles Queens"
+     },
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL001&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "9f08or2mffx81409",
+      "teamName": "Boston Hunters"
+     }
     },
     "timeZone": "America/New_York",
     "timeZoneDisplay": "EDT",
@@ -8176,7 +8236,7 @@
    "game_id": "yw5gv1ay5saolsy6",
    "game_type": "regular",
    "home_team_id": "vhubhz8li07tmgq8",
-   "home_team_name": "",
+   "home_team_name": "San Francisco Firebells",
    "home_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
    "presto_data": {
     "address": "",
@@ -8253,7 +8313,37 @@
       "teamId": "9f08or2mffx81409",
       "teamName": "Boston Hunters"
      },
-     "homeTeam": null
+     "homeTeam": {
+      "apiAccess": [
+       "READ"
+      ],
+      "logo": "https://static.prestosports.com/action/sports/logos?rpi=WPBL004&sport=bsb",
+      "season": {
+       "endDate": "2026-11-15T05:00:00",
+       "organization": {
+        "id": "468csop8qp31ntwr",
+        "name": "Other (unaffiliated) pro baseball leagues",
+        "shortName": "OPB"
+       },
+       "previousSeasonId": "",
+       "seasonId": "c9sgab9f9yx00z75",
+       "seasonName": "Womens Pro Baseball League 2026",
+       "sport": {
+        "rpiSport": {
+         "id": "d5e8rraweyackhgj",
+         "name": "Baseball",
+         "seasonSportId": "bsb"
+        },
+        "sportId": "bsb",
+        "sportName": "Baseball",
+        "statcode": 1
+       },
+       "startDate": "2026-03-01T05:00:00"
+      },
+      "seasonId": "c9sgab9f9yx00z75",
+      "teamId": "vhubhz8li07tmgq8",
+      "teamName": "San Francisco Firebells"
+     }
     },
     "timeZone": "America/New_York",
     "timeZoneDisplay": "EDT",
@@ -8282,6 +8372,7 @@
    "away_team_id": "9f08or2mffx81409",
    "away_team_name": "Boston Hunters",
    "away_team_url": "https://www.womensprobaseballleague.com/teams/boston/",
+   "completed_at": "2026-09-07T02:03:57Z",
    "counts_in_standings": true,
    "game_id": "fzotkodqtxf9gphm",
    "game_type": "regular",
@@ -8307,7 +8398,7 @@
     },
     "eventTypeCode": "regular",
     "eventTypeDescription": "Regular Season",
-    "lastUpdatedDateTime": "2026-09-06T22:52:18",
+    "lastUpdatedDateTime": "2026-09-07T02:03:57",
     "links": null,
     "notes": "",
     "ranks": {
@@ -8321,15 +8412,15 @@
      "regionalHome": null
     },
     "score": {
-     "away": "0",
-     "home": "0"
+     "away": "7",
+     "home": "13"
     },
     "seasonId": "c9sgab9f9yx00z75",
     "sportId": "bsb",
     "startDateTime": "2026-09-06T23:30:00",
     "stateCountry": "",
-    "status": "In Progress - Top of 1st",
-    "statusCode": -1,
+    "status": "Final",
+    "statusCode": 0,
     "tba": false,
     "teams": {
      "awayTeam": {
@@ -8404,18 +8495,18 @@
    "scheduled_start": "2026-09-06T23:30:00Z",
    "season_id": "c9sgab9f9yx00z75",
    "state": {
-    "away_score": 0,
+    "away_score": 7,
     "batter_id": "",
     "game_id": "fzotkodqtxf9gphm",
     "half": "",
-    "home_score": 0,
+    "home_score": 13,
     "inning": 0,
     "outs": 0,
-    "status": "In Progress - Top of 1st",
-    "updated_at": "2026-09-06T22:52:18Z"
+    "status": "Final",
+    "updated_at": "2026-09-07T02:03:57Z"
    },
-   "status": "In Progress - Top of 1st",
-   "updated_at": "2026-09-06T22:52:18Z",
+   "status": "Final",
+   "updated_at": "2026-09-07T02:03:57Z",
    "venue": ""
   }
  ],

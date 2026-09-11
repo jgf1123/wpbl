@@ -300,6 +300,23 @@ def main() -> None:
         print(f"        UNDETECTED: seq {row.sequence} -- {row.narrative}")
 
 
+    # A postseason is scheduled but absent from the feed as of 9 September. Every
+    # published analysis is regular-season only, so a playoff game arriving on a
+    # later scrape must not fold itself silently into "the season". The feed
+    # labels everything game_type='regular' and ignores any game_type filter, so
+    # this leans on the date instead and fails rather than guesses.
+    print()
+    print("regular season boundary")
+    played = games[games["is_final"]]
+    outside = played[~played["is_regular_season"]]
+    check("every completed game is inside the regular season",
+          outside.empty,
+          f"{len(outside)} outside: "
+          f"{outside[['game_id', 'game_date', 'status']].to_dict('records')[:3]}")
+    print(f"        {int(played['is_regular_season'].sum())} completed regular-season games, "
+          f"latest {played['game_date'].max()}")
+
+
     print("\nfeed caveats")
     phantom = games[games["is_phantom_duplicate"]]
     print(f"        phantom duplicate games flagged: {len(phantom)}")

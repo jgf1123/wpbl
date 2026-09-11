@@ -25,7 +25,11 @@ bullpen = "python -m wpbl.bullpen"
 relievers = "python -m wpbl.relievers"
 depth = "python -m wpbl.depth"
 pitches = "python -m wpbl.pitch_counts"
+workload = "python -m wpbl.workload"
 batters = "python -m wpbl.batters"
+positions = "python -m wpbl.positions"
+pitchers = "python -m wpbl.pitchers"
+table = "python -m wpbl.table_image"
 refresh = { depends-on = ["scrape", "build", "check"] }
 
 [activation.env]

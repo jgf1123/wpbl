@@ -214,17 +214,42 @@ def impossible_orderings(mean: pd.DataFrame) -> list[str]:
 
 
 
-def pool(bases: str) -> str:
-    if bases == "___":
-        return "bases empty"
-    if bases == "1__":
-        return "runner on 1st only"
-    if bases == "123":
-        return "bases loaded"
-    return "scoring position"
+# The four groups the 24-cell table is collapsed into, and the one place this
+# project departs from a conventional pooling. The grouping depends on the out
+# count, because which states are worth distinguishing changes with outs.
+#
+# It was chosen by 10-fold cross-validation over half-innings against six
+# alternatives -- the conventional empty/1st/scoring-position/loaded split, a
+# runner count, a lead-runner scheme, two force-play crosses, and the full
+# 24-cell table. This grouping had the lowest out-of-sample error of any of
+# them, and it is the only one that both never contradicts baseball (no state
+# comes out below one it dominates) and keeps every cell above 50 observations
+# -- the smallest here is 54, against 28 for the conventional split.
+#
+# The gain in accuracy over the alternatives is real but not statistically
+# established: it wins about 60% of folds with an interval that still includes
+# zero. The cell sizes are the firmer argument.
+#
+# One deliberate omission: separating "runner on 1st" from "runner on 2nd" at
+# 0 and 2 outs makes the table worse, not better. The two are 0.05 runs apart
+# on this sample, and splitting them exposes an inversion -- 1st appearing to
+# outrank 2nd -- that pooling absorbs. We know a runner on 2nd is worth more;
+# 30 games cannot show it.
+POOL_GROUPS = {
+    0: {"___": "empty", "1__": "low", "_2_": "low", "__3": "medium",
+        "12_": "medium", "1_3": "medium", "_23": "high", "123": "high"},
+    1: {"___": "empty", "1__": "low", "_2_": "low", "12_": "medium",
+        "__3": "medium", "1_3": "medium", "_23": "high", "123": "high"},
+    2: {"___": "empty", "1__": "low", "_2_": "low", "__3": "low",
+        "12_": "medium", "1_3": "medium", "_23": "medium", "123": "high"},
+}
+
+POOL_ORDER = ["empty", "low", "medium", "high"]
 
 
-POOL_ORDER = ["bases empty", "runner on 1st only", "scoring position", "bases loaded"]
+def pool(bases: str, outs: int) -> str:
+    """The group a base-out state belongs to. Depends on outs -- see above."""
+    return POOL_GROUPS[int(outs)][bases]
 
 
 def interval_table(mean, lo, hi, count, order) -> str:
@@ -259,7 +284,7 @@ def main() -> None:
     for line in broken:
         print(f"   {line}")
 
-    frame = frame.assign(pooled=frame["bases"].map(pool))
+    frame = frame.assign(pooled=[pool(b, o) for b, o in zip(frame["bases"], frame["outs"])])
     pmean, pcount, pci = grid(frame, "pooled", POOL_ORDER)
     plo, phi = bootstrap_grid(frame, "pooled", POOL_ORDER)
     print()

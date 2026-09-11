@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import timedelta
+from datetime import date, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -38,6 +38,14 @@ LEAGUE_TZ = ZoneInfo("America/Chicago")
 # The feed reports scheduled_start an hour before the real first pitch for the
 # 2026 season. It is a flat shift -- the whole season is Central with no DST
 # change. Revisit for any later season before trusting it.
+# The 2026 regular season ran 1 August to 6 September: 30 games, every pair of
+# teams meeting five times. A postseason is scheduled but had not appeared in the
+# feed as of 9 September. The feed marks every game game_type='regular' and
+# ignores any game_type filter you send it, so that field cannot be trusted to
+# separate them -- the date is the reliable line, and validate.py fails loudly if
+# a completed game ever lands outside it.
+REGULAR_SEASON_END = date(2026, 9, 6)
+
 START_TIME_SHIFT = {2026: timedelta(hours=1)}
 
 # The feed's pitch_events.type mislabels two codes: it calls "P" a pitchout and
@@ -306,6 +314,9 @@ def build_games(games: list[dict], boxes: dict, tracking: dict) -> pd.DataFrame:
     matchup = ["game_date", "home_team_id", "away_team_id"]
     dupes = df.duplicated(matchup, keep=False)
     df["is_phantom_duplicate"] = dupes & ~df["is_final"]
+    df["is_regular_season"] = (
+        (df["game_type"] == "regular")
+        & (pd.to_datetime(df["game_date"]).dt.date <= REGULAR_SEASON_END))
     return df.sort_values("first_pitch_utc").reset_index(drop=True)
 
 

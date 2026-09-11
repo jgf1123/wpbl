@@ -191,7 +191,8 @@ def pooled_run_expectancy() -> pd.DataFrame:
     """Mean runs remaining in the half-inning, by pooled base group and outs --
     the same four-group table run_expectancy.py falls back to once it shows
     the 24-cell matrix isn't reliable at this sample size."""
-    frame = re_states().assign(grp=lambda d: d["bases"].map(re_pool))
+    frame = re_states()
+    frame = frame.assign(grp=[re_pool(b, o) for b, o in zip(frame["bases"], frame["outs"])])
     mean, _, _ = re_grid(frame, "grp")
     return mean
 
@@ -199,7 +200,7 @@ def pooled_run_expectancy() -> pd.DataFrame:
 def re_of(re_table: pd.DataFrame, bases: str, outs: int) -> float:
     """Runs still expected in the half-inning from this base-out state; 0
     once the inning is over."""
-    return 0.0 if outs >= 3 else float(re_table.loc[re_pool(bases), outs])
+    return 0.0 if outs >= 3 else float(re_table.loc[re_pool(bases, outs), outs])
 
 
 def diff_label(diff: int, home_code: str, away_code: str) -> str:
