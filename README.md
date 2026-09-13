@@ -17,10 +17,14 @@ pixi run games       # date / teams / score / game_id -> data/games_lookup.csv
 
 pixi run rosters     # who pitched, for whom, in what role
 pixi run timeline    # how each team's use of its players changed over the season
+pixi run positions   # games at each position (PH/PR separate; pitching from the pitching table)
 pixi run chart       # data/usage.html - which innings each pitcher covered
 pixi run innings     # runs scored and allowed per inning, by team
 pixi run re          # run expectancy by base-out state, with its diagnostics
+pixi run markov      # the same RE from a base-out transition chain (covers the running game)
 pixi run wp          # win probability, with structural checks and calibration
+pixi run wpq         # win probability for one game state (--before / --during / --after)
+pixi run teams       # team offense and defense, shrunk, for team-adjusted WP
 pixi run upsets      # games where a heavily favoured team lost, and the swings
 pixi run pwp         # win probability added per pitcher, by stint on the mound
 pixi run blowouts    # half-innings of 4+ runs, and the threshold behind it
@@ -31,7 +35,10 @@ pixi run depth       # was there a good arm available in high-leverage spots
 pixi run pitches     # pitches per game, per start, per stint
 pixi run workload    # rolling 7-day pitch load, rest between starts, staff weeks
 pixi run batters     # RE24 and context-neutral value per plate appearance
+pixi run weights     # linear weights behind the context-neutral column, with diagnostics
+pixi run batter-chart out.png       # the batter table as a chart
 pixi run pitchers    # RE24 per batter faced, beside a league-calibrated FIP
+pixi run pitcher-chart out.png      # the pitcher table as a chart
 pixi run timeline-chart <game_id>   # win probability chart for one game
 
 pixi run table out.png table.md     # render a markdown table as a 728px PNG
