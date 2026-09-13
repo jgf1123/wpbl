@@ -1,0 +1,82 @@
+---
+description: resource limits — heavy-job definitions, subset-first defaults, priority, disk hygiene
+globs: **/*.py,**/*.ipynb,pixi.toml
+alwaysApply: false
+---
+
+# Resource governance
+
+Generic guardrails (one heavy job at a time, smallest scope first, announce long runs) are in `resource_pointer.mdc`. This file defines what those rules mean in this project.
+
+## What counts as heavy
+
+Treat these as heavy by default:
+
+- TBD
+
+## Default behavior (unless the user explicitly asks for a full run)
+
+1. **One heavy job at a time.** Never launch two or more heavy commands in parallel (no parallel shell + background fit + rebuild).
+2. **Subset first, full run last.** Develop and debug on a small slice.
+4. **Vectorize or aggregate in SQL-style groupbys.** No full-table `apply(axis=1)` on millions of rows. If row-wise logic is unavoidable, sample or chunk.
+5. **One big dataframe in memory at a time.** Drop intermediates (`del df; gc.collect()`) between stages when scripts process multiple large inputs.
+
+## Process priority (Windows)
+
+For any heavy command expected to run more than ~30 seconds:
+
+- Run at **below-normal priority** so the UI stays responsive.
+- Prefer wrapping the command rather than running it at default priority.
+
+Example pattern (PowerShell):
+
+```
+Start-Process -FilePath "pixi" -ArgumentList "run","python","script.py","--years","2024" -NoNewWindow -Wait -Priority BelowNormal
+```
+
+If Start-Process is awkward in the agent shell, set priority on the running PID immediately after launch:
+
+```
+# After starting a background job, once PID is known:
+wmic process where processid=<PID> CALL setpriority "below normal"
+```
+
+Do not stack multiple below-normal heavy jobs; one is enough.
+
+## Before starting a heavy job
+
+Briefly state in chat:
+
+- What will run (command + data scope)
+- Approximate cost
+- Whether an existing artifact can be reused
+
+If the full run is not required to answer the question, **ask** before doing it.
+
+## Stop and rethink if
+
+- CPU, memory, or disk sits near 100% and the user is likely active
+- A job has run **>5 minutes** without useful progress output
+- The same approach was already interrupted or killed once
+
+Then: switch to a smaller scope, optimize (chunk/vectorize/cache), or ask the user whether to continue overnight / full run.
+
+## Script conventions (for this repo)
+
+Heavy entry points should support resource-safe flags (add if missing):
+
+| Flag           | Purpose                                              |
+| -------------- | ---------------------------------------------------- |
+| foo            | bar                                                  |
+
+Default agent invocations should use the smallest scope that validates the change. Production invocations are explicit user requests.
+
+## Parallelism
+
+- **No parallel heavy shell commands.**
+- Light commands (git status, pytest on unit tests, lint) are fine in parallel.
+- Do not use background agents or background shells to sneak in a second full-data job while another is running.
+
+## Disk
+
+- Clean up `_tmp_*.py` scratch files when done.

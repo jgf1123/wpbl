@@ -101,6 +101,25 @@ def incomplete_extra_halves(games: pd.DataFrame, plays: pd.DataFrame) -> set[tup
     return incomplete
 
 
+HALF_KEY = ["game_id", "batting_team_id", "inning", "half"]
+
+
+def damaged_halves(plays: pd.DataFrame, line: pd.DataFrame,
+                   games: pd.DataFrame) -> set[tuple]:
+    """Half-innings whose play-by-play cannot be trusted, as (game_id,
+    batting_team_id, inning, half) keys: one holding a play the feed lost, one
+    whose narrative runs disagree with the line score, and extra halves that
+    stopped early. Shared with markov.py so both tables rest on the same set."""
+    damaged = set(map(tuple, plays.loc[plays["play_kind"].isin(
+        ["plate_appearance_unknown", "empty"]), HALF_KEY].values))
+    narrative = plays.groupby(HALF_KEY)["runs_scored"].sum().rename("narrative").reset_index()
+    scored = line.groupby(["game_id", "team_id", "inning"])["runs"].sum().rename("line").reset_index()
+    merged = narrative.merge(scored, left_on=["game_id", "batting_team_id", "inning"],
+                             right_on=["game_id", "team_id", "inning"])
+    damaged |= set(map(tuple, merged.loc[merged["narrative"] != merged["line"], HALF_KEY].values))
+    return damaged | incomplete_extra_halves(games, plays)
+
+
 def states() -> pd.DataFrame:
     """One row per plate appearance: the state faced, and runs scored from it on."""
     plays = pd.read_parquet(OUT_DIR / "plays.parquet")
@@ -108,17 +127,8 @@ def states() -> pd.DataFrame:
     games = pd.read_parquet(OUT_DIR / "games.parquet").set_index("game_id")
     plays = plays.copy()
 
-    key = ["game_id", "batting_team_id", "inning", "half"]
-    damaged = set(map(tuple, plays.loc[plays["play_kind"].isin(
-        ["plate_appearance_unknown", "empty"]), key].values))
-    narrative = plays.groupby(key)["runs_scored"].sum().rename("narrative").reset_index()
-    scored = line.groupby(["game_id", "team_id", "inning"])["runs"].sum().rename("line").reset_index()
-    merged = narrative.merge(scored, left_on=["game_id", "batting_team_id", "inning"],
-                             right_on=["game_id", "team_id", "inning"])
-    damaged |= set(map(tuple, merged.loc[merged["narrative"] != merged["line"], key].values))
-    damaged |= incomplete_extra_halves(games, plays)
-
-    plays["half_key"] = list(map(tuple, plays[key].values))
+    damaged = damaged_halves(plays, line, games)
+    plays["half_key"] = list(map(tuple, plays[HALF_KEY].values))
     plays = plays[~plays["half_key"].isin(damaged)]
 
     rows = []

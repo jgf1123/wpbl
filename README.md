@@ -207,7 +207,7 @@ lot of errors. Two defensible treatments:
 
 | `--error=` | The claim it makes |
 |---|---|
-| `credit` (default) | value it at its own run value, +0.547 — what RE24 does natively, and what the original wOBA does |
+| `credit` (default) | value it at its own run value, +0.494 — what RE24 does natively, and what the original wOBA does |
 | `drop` | remove the plate appearance from the rate: the fielder's doing, not attributable to the batter |
 
 A note on the literature, because it is easy to get backwards. Tango's original
@@ -218,23 +218,25 @@ standard historical stat lines, and not a judgement that the event is
 worthless. There is no third option here pricing ROE as an out; an earlier
 draft had one on the strength of that misreading.
 
-Two findings support crediting:
+**The case for crediting rests on value, not skill.** ROE is worth +0.494 runs,
+against +0.585 for a single and −0.554 for an average out — about 85% of a
+single and **1.05 runs better than the out** it is conventionally priced as.
+Pricing all 54 as outs would misassign ~57 runs.
 
-- **It is worth what a single is worth.** +0.547 against a single's +0.566 — a
-  difference of −0.019, 95% interval [−0.117, +0.079]. Not distinguishable.
-- **It is partly a batter skill.** If reaching on an error were purely the
-  defence's doing, batters would differ only by chance. They differ by more:
-  roughly half the observed spread is real, with a stabilization point near
-  **40 plate appearances** — better measured than batting average (90) or walk
-  rate (119). Not settled, though: 18% of bootstrap resamples find no talent
-  spread at all.
+**It is not established as a batter skill**, and an earlier version of this
+section said it was. A variance decomposition finds about half the spread
+between batters to be real, but leave-one-out shows that rests on one player:
+Suzu Narasaki reached on an error 4 times in 20 plate appearances, and without
+her the talent share falls from **48% to 2%**.
 
 **Hit by pitch** — 74 plate appearances, 3.4%, roughly triple the major-league
 rate and concentrated: five batters are above 11%. Crediting it is conventional
 and internally consistent, because a walk and a hit batter put the same runner
 on first and force runners identically; crediting walks while dropping HBP
-cannot be justified. So it is credited and **pooled with walks into one "free
-pass" weight** (n=348). Weighted apart they come out +0.455 and +0.389, a gap
+cannot be justified. Unlike ROE, **HBP holds up as a batter skill**: about 54%
+of the spread between batters is real, and it survives leave-one-out — removing
+any single batter leaves at least 47%. So it is credited and **pooled with walks
+into one "free pass" weight** (n=348). Weighted apart they come out +0.455 and +0.389, a gap
 the events cannot produce mechanically, so it is situational contamination of a
 74-event weight. `--hbp=split` or `--hbp=drop` to see it the other ways.
 

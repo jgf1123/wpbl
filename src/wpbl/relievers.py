@@ -27,7 +27,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from wpbl.game_timeline import pooled_run_expectancy, re_of
+from wpbl.markov import re_of, run_expectancy
 from wpbl.leverage import Leverage
 from wpbl.parse import OUT_DIR
 from wpbl.usage_chart import CODES
@@ -42,7 +42,7 @@ def batter_values() -> pd.DataFrame:
     pitcher, plus whether the batter reached (for WHIP)."""
     plays = pd.read_parquet(OUT_DIR / "plays.parquet")
     people = pd.read_parquet(OUT_DIR / "players.parquet").set_index("player_id")["person_name"]
-    re_table = pooled_run_expectancy()
+    re_table = run_expectancy()
 
     live = (plays[plays["outs_before"] < 3]
             .dropna(subset=["pitching_team_id", "pitcher_id"])

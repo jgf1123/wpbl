@@ -62,10 +62,8 @@ matplotlib.use("Agg")
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
+from wpbl.markov import re_of, run_expectancy
 from wpbl.parse import OUT_DIR
-from wpbl.run_expectancy import grid as re_grid
-from wpbl.run_expectancy import pool as re_pool
-from wpbl.run_expectancy import states as re_states
 from wpbl.usage_chart import CODES, label_ink
 from wpbl.win_probability import Model, REGULATION
 
@@ -187,22 +185,6 @@ def clean_narrative(text: str, fixes: dict[str, str]) -> str:
     return text
 
 
-def pooled_run_expectancy() -> pd.DataFrame:
-    """Mean runs remaining in the half-inning, by pooled base group and outs --
-    the same four-group table run_expectancy.py falls back to once it shows
-    the 24-cell matrix isn't reliable at this sample size."""
-    frame = re_states()
-    frame = frame.assign(grp=[re_pool(b, o) for b, o in zip(frame["bases"], frame["outs"])])
-    mean, _, _ = re_grid(frame, "grp")
-    return mean
-
-
-def re_of(re_table: pd.DataFrame, bases: str, outs: int) -> float:
-    """Runs still expected in the half-inning from this base-out state; 0
-    once the inning is over."""
-    return 0.0 if outs >= 3 else float(re_table.loc[re_pool(bases, outs), outs])
-
-
 def diff_label(diff: int, home_code: str, away_code: str) -> str:
     if diff == 0:
         return "tied"
@@ -276,7 +258,7 @@ def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
     # or inning -- a bases-loaded double play in the 2nd shows up here even
     # though it barely moves win probability that early. This is what makes a
     # good defensive play findable outside the 7th inning.
-    re_table = pooled_run_expectancy()
+    re_table = run_expectancy()
     next_bases = frame["bases"].shift(-1)
     next_outs = frame["outs_before"].shift(-1)
     same_half = ((frame["inning"] == frame["inning"].shift(-1))

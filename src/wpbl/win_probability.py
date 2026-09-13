@@ -12,7 +12,9 @@ half-innings averages the noise down rather than compounding it.
 Assumptions, all of them the ones asked for:
 
 * Both teams draw from the same league-wide run distributions -- no team
-  strength, no platoon, no park.
+  strength, no platoon, no park. Model.matchup lifts the first of those by
+  letting each side bat from its own distributions; team_strength.py fits
+  them.
 * Half-innings are independent and identically distributed, pooled over every
   uncensored half-inning: innings 1-6 plus the top of the 7th. Only the bottom
   of the 7th is left out, being both truncated by walk-offs and conditioned on
@@ -27,9 +29,14 @@ Under those assumptions a tie entering extra innings is exactly 50/50: both
 sides draw the same distribution, so the sign of the difference is symmetric,
 and the home team's ability to stop early cannot change who finishes ahead.
 That closes the recursion without modelling the tiebreaker inning at all.
+Once the two sides bat from different distributions the tie is no longer
+50/50, and its value is solved for instead (Model._tie_value).
 """
 
 from __future__ import annotations
+
+import copy
+from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
@@ -42,8 +49,8 @@ MAX_DIFF = 25          # differential range the grid covers
 SHRINK = 25            # pseudo-observations pulling a thin cell toward its group
 
 
-def half_inning_pmf() -> np.ndarray:
-    """Runs in a complete, uncensored half-inning.
+def uncensored_halves() -> pd.DataFrame:
+    """Runs in every complete, uncensored half-inning, and who batted and fielded.
 
     Innings 1-6 plus the top of the 7th. The top of the 7th is always played and
     never cut short, so it is a clean observation. The bottom of the 7th is the
@@ -52,10 +59,22 @@ def half_inning_pmf() -> np.ndarray:
     Including it would bias the distribution downwards.
     """
     plays = pd.read_parquet("data/tables/plays.parquet")
+    games = pd.read_parquet("data/tables/games.parquet").set_index("game_id")
     key = ["game_id", "batting_team_id", "inning", "half"]
     clean = plays[(plays["inning"] <= 6)
                   | ((plays["inning"] == REGULATION) & (plays["half"] == "top"))]
-    return _pmf(clean.groupby(key)["runs_scored"].sum().values)
+    halves = clean.groupby(key)["runs_scored"].sum().rename("runs").reset_index()
+    # The fielding side is taken from the game rather than the play rows, so a
+    # play row with a blank pitching team cannot split or drop a half-inning.
+    home = halves["game_id"].map(games["home_team_id"])
+    away = halves["game_id"].map(games["away_team_id"])
+    halves["fielding_team_id"] = home.where(halves["batting_team_id"] == away, away)
+    return halves
+
+
+def half_inning_pmf() -> np.ndarray:
+    """Runs in a complete, uncensored half-inning; see uncensored_halves."""
+    return _pmf(uncensored_halves()["runs"].values)
 
 
 def _pmf(values) -> np.ndarray:
@@ -63,6 +82,33 @@ def _pmf(values) -> np.ndarray:
     for v in values:
         pmf[min(int(v), MAX_RUNS)] += 1
     return pmf / pmf.sum()
+
+
+def tilt(pmf: np.ndarray, t: float) -> np.ndarray:
+    """Exponentially tilt a run distribution: p(r) -> p(r) e^(t r), renormalised.
+
+    t > 0 moves mass toward big innings, t < 0 toward empty ones, t = 0 leaves
+    it alone. It keeps the league's shape -- the pile-up on zero, the long tail
+    -- and moves only where it sits, which is about all a team's 97 half-innings
+    can support.
+    """
+    if t == 0:
+        return pmf
+    weights = pmf * np.exp(t * np.arange(len(pmf)))
+    return weights / weights.sum()
+
+
+@dataclass(frozen=True, eq=False)
+class Batting:
+    """The run distributions one side bats from."""
+    full: np.ndarray      # a whole half-inning from bases empty, nobody out
+    state: dict           # (bases, outs) -> runs from there to the end of the half
+    extra: np.ndarray     # an extra half-inning, from the runner placed on second
+
+    def tilted(self, t: float) -> "Batting":
+        return Batting(tilt(self.full, t),
+                       {key: tilt(pmf, t) for key, pmf in self.state.items()},
+                       tilt(self.extra, t))
 
 
 def state_pmfs(frame: pd.DataFrame):
@@ -98,9 +144,37 @@ class Model:
         # rather than resting on the four extra half-innings on record.
         self.extra = self.state[("_2_", 0)]
         self.n_states = frame.groupby(["bases", "outs"]).size().to_dict()
+        # Which distributions each half bats from. Both sides share the
+        # league's here; matchup() gives each its own.
+        league = Batting(self.full, self.state, self.extra)
+        self.batting = {"top": league, "bottom": league}
         self.offset = MAX_DIFF
         self.width = 2 * MAX_DIFF + 1
         self._solve()
+
+    def matchup(self, away: Batting, home: Batting) -> "Model":
+        """A copy of this model in which each side bats from its own distributions.
+
+        Cheap: the data is not reread, only the backward induction redone.
+        """
+        other = copy.copy(self)
+        other.batting = {"top": away, "bottom": home}
+        other._solve()
+        return other
+
+    def _tie_value(self) -> float:
+        """P(home wins) from a tie entering an extra inning.
+
+        Each extra inning is an independent trial from the same placed-runner
+        start: home ends it ahead, away does, or it is tied again and the next
+        one is the same trial. So v = P(home ahead) + P(tied) * v. The home
+        side stopping the moment it leads cannot change who finishes ahead,
+        so its early exit does not enter. With one shared distribution
+        P(home ahead) = P(away ahead) and v is exactly 1/2.
+        """
+        joint = np.outer(self.batting["top"].extra, self.batting["bottom"].extra)
+        home_ahead = np.triu(joint, 1).sum()      # joint[away runs, home runs]
+        return float(home_ahead / (1.0 - np.trace(joint)))
 
     def _shift(self, wins: np.ndarray, pmf: np.ndarray, sign: int) -> np.ndarray:
         """Expected win probability after the batting team scores r ~ pmf.
@@ -138,29 +212,31 @@ class Model:
         extra_top[d] / extra_bottom[d], with a runner already on second.
         """
         diffs = np.arange(-MAX_DIFF, MAX_DIFF + 1)
+        away, home = self.batting["top"], self.batting["bottom"]
         self.top, self.bottom = {}, {}
 
-        # A tie surviving the bottom of the 7th goes to extra innings. Both
-        # sides then draw the same distribution from the same placed-runner
-        # state, so the sign of the difference is symmetric and it is exactly
-        # 50/50 -- asserted numerically in validate(), not just assumed.
-        end = np.where(diffs > 0, 1.0, np.where(diffs < 0, 0.0, 0.5))
+        # A tie surviving the bottom of the 7th goes to extra innings, worth
+        # self.tie to the home team. With both sides on the league
+        # distribution that is exactly 50/50 -- asserted numerically in
+        # validate(), not just assumed.
+        self.tie = self._tie_value()
+        self.end = np.where(diffs > 0, 1.0, np.where(diffs < 0, 0.0, self.tie))
 
         # An extra inning: away bats from a runner on second, then home does,
         # and a tie after both sends it to another identical inning -- so the
-        # continuation value of a tie is again 0.5, which closes the recursion
-        # without iterating.
-        self.extra_bottom = self._shift(end, self.extra, +1)
-        self.extra_top = self._shift(self.extra_bottom, self.extra, -1)
+        # continuation value of a tie is again self.tie, which closes the
+        # recursion without iterating.
+        self.extra_bottom = self._shift(self.end, home.extra, +1)
+        self.extra_top = self._shift(self.extra_bottom, away.extra, -1)
 
         # Bottom of the 7th. If the home team already leads it does not bat.
-        batted = self._shift(end, self.full, +1)
+        batted = self._shift(self.end, home.full, +1)
         self.bottom[REGULATION] = np.where(diffs > 0, 1.0, batted)
-        self.top[REGULATION] = self._shift(self.bottom[REGULATION], self.full, -1)
+        self.top[REGULATION] = self._shift(self.bottom[REGULATION], away.full, -1)
 
         for inning in range(REGULATION - 1, 0, -1):
-            self.bottom[inning] = self._shift(self.top[inning + 1], self.full, +1)
-            self.top[inning] = self._shift(self.bottom[inning], self.full, -1)
+            self.bottom[inning] = self._shift(self.top[inning + 1], home.full, +1)
+            self.top[inning] = self._shift(self.bottom[inning], away.full, -1)
 
     def _lookup(self, table: np.ndarray, diff: int) -> float:
         return float(table[int(np.clip(diff + self.offset, 0, self.width - 1))])
@@ -170,7 +246,7 @@ class Model:
 
         `half` is "top" or "bottom"; `bases` is a code like "_2_" or "123".
         """
-        pmf = self.state[(bases, outs)]
+        pmf = self.batting[half].state[(bases, outs)]
         if half == "top":
             # Away batting: their runs cut the home lead, then the bottom
             # follows -- an extra inning's bottom if this is an extra inning.
@@ -180,10 +256,9 @@ class Model:
         if inning >= REGULATION:
             # Bottom of the 7th or any extra inning: the game is settled once
             # this half ends, except that a tie sends it to another extra
-            # inning, which is 0.5 either way.
-            diffs = np.arange(-MAX_DIFF, MAX_DIFF + 1)
-            end = np.where(diffs > 0, 1.0, np.where(diffs < 0, 0.0, 0.5))
-            return float(sum(p * self._lookup(end, diff + r) for r, p in enumerate(pmf) if p))
+            # inning, worth self.tie.
+            return float(sum(p * self._lookup(self.end, diff + r)
+                             for r, p in enumerate(pmf) if p))
         return float(sum(p * self._lookup(self.top[inning + 1], diff + r)
                          for r, p in enumerate(pmf) if p))
 
@@ -198,6 +273,14 @@ DOMINATED_BY = {
 
 def observed_states(model: "Model") -> pd.DataFrame:
     """Every real plate appearance, with the win probability the model gives it."""
+    frame = plate_appearances()
+    frame["wp"] = [model.win_probability(r.inning, r.half, r.outs, r.bases, r.diff)
+                   for r in frame.itertuples()]
+    return frame
+
+
+def plate_appearances() -> pd.DataFrame:
+    """Every real plate appearance in regulation: the state it began in, and who won."""
     plays = pd.read_parquet("data/tables/plays.parquet")
     games = pd.read_parquet("data/tables/games.parquet")
     home_won = (games.set_index("game_id")
@@ -213,8 +296,11 @@ def observed_states(model: "Model") -> pd.DataFrame:
         half = "bottom" if play.batting_team_id == home_id[play.game_id] else "top"
         rows.append({
             "game_id": play.game_id,
-            "wp": model.win_probability(play.inning, half, int(play.outs_before), bases,
-                                        int(play.home_score_before - play.away_score_before)),
+            "inning": int(play.inning),
+            "half": half,
+            "outs": int(play.outs_before),
+            "bases": bases,
+            "diff": int(play.home_score_before - play.away_score_before),
             "home_won": home_won[play.game_id],
         })
     return pd.DataFrame(rows)

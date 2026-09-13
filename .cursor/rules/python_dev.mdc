@@ -1,0 +1,19 @@
+---
+description: Efficiency checklist for compute-heavy code; Jupyter kernel stale-module pitfalls
+globs: **/*.py,**/*.ipynb
+alwaysApply: false
+---
+
+# Computationally intensive code
+
+When implementing computationally intensive operations, check:
+
+- Can the implementation be sped up by reusing computations already done by other iterations? (Whether because a computation is shared by multiple iterations or there is a dynamic programming approach)
+- Can the implementation be sped up by vectorizing it?
+
+# Jupyter / imports
+
+The IPython notebook kernel keeps stale modules and old class instances.
+
+- Use a module to reload modules in dependency order.
+- Make sure the notebook recreates existing instances, which are not updated by reloading modules.

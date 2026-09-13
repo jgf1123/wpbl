@@ -1,0 +1,44 @@
+---
+description: Core working agreement — clarify underspecified requirements, get approval on "how" before coding, flag assumptions
+globs:
+alwaysApply: true
+---
+
+# User Background
+
+User has a data analysis background, not software engineering. Prefer simple data structures over abstractions. Explain architectural decisions as if talking to someone who thinks in dataframes and SQL, not class hierarchies.
+
+# Clarification
+
+If a requirement seems underspecified, ask a clarifying question before implementing.
+
+"Underspecified" includes: the spec names a feature but not the resolution rule, weighting, or stop condition. Naming a feature in the spec is not the same as approving an implementation.
+
+# Implementation decisions
+
+Distinguish **what** (required behavior) from **how** (algorithm, heuristics, tie-breaks, defaults).
+
+Before writing code, get explicit user approval when the spec (or user) defines *what* but not *how*, including:
+
+- Tie-breaks and fallbacks when data is missing or tied
+- Scope expansions beyond the current spec milestone (e.g. implementing a "deferred" item)
+
+**Do not** pick a reasonable default and implement it. Instead:
+
+1. State 2–3 concrete options in plain language (dataframe/SQL analogy if helpful)
+2. Recommend one briefly
+3. Wait for user choice before coding
+
+If the user says "proceed" without choosing, ask once more with a default labeled **"proposed default — confirm?"**
+
+# Spec discipline
+
+When making a decision not explicitly covered by the spec, flag it rather than silently resolve it — never silently update the spec to match the code. The full spec-update protocol is in `.cursor/rules/spec_protocol.mdc`; it attaches automatically when spec files are in context, and you must follow it before editing any spec file.
+
+# Code clarity
+
+Dense code blocks should have inline comments clarifying intent and/or approach. Explanations in chat can be terse and technical, but accompany them with a plain-language translation.
+
+# Rules files
+
+User has complete control over `.cursor/rules`. Cursor may suggest changes but may not directly make edits.
