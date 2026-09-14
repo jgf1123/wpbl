@@ -3,7 +3,7 @@
     pixi run pitcher-chart data/img/pitchers.png
 
 Same numbers as `pixi run pitchers`. Each row carries the team, pitcher,
-batters faced, RE24 total, FIP and her strikeout and walk rates as text, then
+RE24 total, ERA, FIP and her strikeout and walk rates as text, then
 two ratings on a shared axis: FIP restated as runs saved per batter faced, and
 RE24 per batter faced, each a dot with its 95% interval.
 
@@ -39,14 +39,14 @@ def main() -> None:
 
     table = pitcher_table(charged(), np.random.default_rng(SEED))
     rows = table.to_dict("records")
-    cells = [(r["tm"], r["pitcher"], str(r["bf"]), signed(r["total"], 1),
+    cells = [(r["tm"], r["pitcher"], signed(r["total"], 1), f"{r['era']:.2f}",
               f"{r['fip']:.2f}", f"{r['k9']:.1f}", f"{r['bb9']:.1f}") for r in rows]
     series = [("FIP as runs/BF", MODELLED, table["fip_bf"].to_numpy(),
                table["fip_bf_lo"].to_numpy(), table["fip_bf_hi"].to_numpy()),
               ("RE24/BF", SITUATIONAL, table["re24_bf"].to_numpy(),
                table["lo"].to_numpy(), table["hi"].to_numpy())]
 
-    height = draw(out, ("Tm", "Pitcher", "BF", "RE24", "FIP", "K/7", "BB/7"),
+    height = draw(out, ("Tm", "Pitcher", "RE24", "ERA", "FIP", "K/7", "BB/7"),
                   (False, False, True, True, True, True, True), cells, series)
     print(f"wrote {out}  (728x{height}px, {len(rows)} pitchers)")
 

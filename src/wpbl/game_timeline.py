@@ -1,6 +1,7 @@
 """Win probability timeline for a single game, one step per base-out change.
 
-    pixi run timeline-chart <game_id>       (defaults to the Aug 1 NY/LA game)
+    pixi run timeline-chart <game_id>                 (defaults to the Aug 1 NY/LA game)
+    pixi run timeline-chart <game_id> --n-swings 8    (how many plays each highlight pool keeps)
 
 A step is any play that changes the base-out state: a plate appearance, a
 stolen base or caught stealing, a wild pitch or passed ball, a balk, or a
@@ -89,9 +90,9 @@ BASE_LABEL = {"___": "empty", "1__": "1st", "_2_": "2nd", "__3": "3rd",
 # inning: that's where win probability is most sensitive to any single play.
 # Adding a second pool ranked by |run value| -- the RE24-style expected-runs
 # impact, independent of score or inning -- surfaces the plays WP-swing alone
-# would bury, like a bases-loaded double play in the 2nd.
-N_WP_SWINGS = 5
-N_RUN_SWINGS = 5
+# would bury, like a bases-loaded double play in the 2nd. Both pools keep the
+# same count by default; --n-swings changes both together.
+N_SWINGS = 5
 PITCH_SEQUENCE = re.compile(r"\s*\(\d-\d[^)]*\)")
 
 # Leverage (defined below) for a half-inning's leadoff state runs roughly 0 to
@@ -274,7 +275,8 @@ def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
     return frame, dict(game)
 
 
-def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str) -> None:
+def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str,
+         n_swings: int = N_SWINGS) -> None:
     home_name, away_name = game["home_team_name"], game["away_team_name"]
     home_won = game["home_score"] > game["away_score"]
     winner_name = home_name if home_won else away_name
@@ -288,14 +290,15 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str) -> None:
     # Pick the highlighted plays before laying out the figure: how many there
     # are depends on how much the two selection pools overlap, and the panel
     # has to be sized to hold them rather than squeezing ten entries into a
-    # box built for six.
+    # box built for six. Both pools use n_swings -- they were sized together
+    # on purpose, and one knob keeps them that way.
     candidates = frame.iloc[:-1] if len(frame) > 1 else frame
     top_wp = candidates.reindex(
         candidates["swing"].abs().sort_values(ascending=False, na_position="last").index
-    ).head(N_WP_SWINGS)
+    ).head(n_swings)
     by_run_value = candidates.reindex(
         candidates["run_value"].abs().sort_values(ascending=False, na_position="last").index)
-    top_re = by_run_value.head(N_RUN_SWINGS)
+    top_re = by_run_value.head(n_swings)
 
     # Ranking by magnitude alone can return an all-offense run-value list, since
     # a hit moves expected runs further than the typical out does. If it has,
@@ -321,12 +324,11 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str) -> None:
     # how much a single play there could swing the game -- leverage, not just
     # inning number, so a decided score late reads as pale, not vivid.
     #
-    # Band edges must land where drawstyle="steps-post" actually places the
-    # vertical jump between two rows: row i's flat segment runs from x=i to
-    # x=i+1, so a group spanning frame rows [start, end] is drawn over
-    # [start, end + 1), not [start - 0.5, end + 0.5]. The half-width offset
-    # used previously clipped the last column of every band into the next
-    # one's colour.
+    # With steps-post, row i's flat runs [i, i+1) and its result marker sits at
+    # i+1. A half spanning rows [start, end] therefore ends on a play whose
+    # marker is at end+1 -- the same x as the next half's first row. Put the
+    # colour boundary halfway between those two plays (end+1.5 / start+0.5)
+    # so it falls in the gap rather than on the out that ended the half.
     half_groups = frame.assign(half_key=list(zip(frame["inning"], frame["half"])))
     groups = list(half_groups.groupby("half_key", sort=False))
     for position, ((inning, half), group) in enumerate(groups):
@@ -335,10 +337,10 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str) -> None:
         leverage = half_inning_leverage(model, inning, half, entering_diff)
         t = min(leverage / LEVERAGE_CEILING, 1.0)
         start, end = group.index.min(), group.index.max()
-        left = start - 0.5 if position == 0 else start
-        right = end + 1.5 if position == len(groups) - 1 else end + 1
+        left = start - 0.5 if position == 0 else start + 0.5
+        right = end + 1.5
         ax.axvspan(left, right, color=ramp(t), alpha=0.55, zorder=0)
-        ax.text((start + end + 1) / 2, 1.035, f'{"Top" if half == "top" else "Bot"} {inning}',
+        ax.text((left + right) / 2, 1.035, f'{"Top" if half == "top" else "Bot"} {inning}',
                 ha="center", va="bottom", fontsize=8.5, color="#555555", clip_on=False)
 
     ax.axhline(0.5, color="#999999", linewidth=0.8, linestyle="--", zorder=1)
@@ -437,10 +439,21 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str) -> None:
         panel.text(0, top, ending_note, fontsize=9, va="top", style="italic",
                   color="#555555", wrap=True, transform=panel.transAxes)
         top -= 0.08
-    step = top / max(len(panel_lines), 1)
-    for i, line in enumerate(panel_lines):
-        panel.text(0, top - i * step, line, fontsize=9.5, va="top", linespacing=1.5,
-                  family="DejaVu Sans", transform=panel.transAxes)
+    # Each play is two lines. Place them with an explicit rhythm rather than
+    # one text() call at linespacing 1.5: that left a moderate gap inside a
+    # play and almost none between plays. Slot each play evenly, put the
+    # narrative less than halfway down the slot so the between-play gap is
+    # at least as large as the within-play one.
+    n = max(len(panel_lines), 1)
+    step = top / n
+    within = 0.42 * step
+    for i, entry in enumerate(panel_lines):
+        header, detail = entry.split("\n", 1)
+        y = top - i * step
+        panel.text(0, y, header, fontsize=9.5, va="top",
+                   family="DejaVu Sans", transform=panel.transAxes)
+        panel.text(0, y - within, detail, fontsize=9.5, va="top",
+                   family="DejaVu Sans", transform=panel.transAxes)
 
     fig.tight_layout(rect=(0.01, 0, 1, 1))
     fig.savefig(out_path, dpi=160)
@@ -448,12 +461,30 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str) -> None:
 
 
 def main() -> None:
-    game_id = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_GAME
+    game_id = DEFAULT_GAME
+    n_swings = N_SWINGS
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg == "--n-swings":
+            if i + 1 >= len(args):
+                sys.exit("--n-swings needs a value")
+            n_swings = int(args[i + 1])
+            if n_swings < 1:
+                sys.exit("--n-swings must be at least 1")
+            i += 2
+            continue
+        if arg.startswith("-"):
+            sys.exit(f"unknown option: {arg}")
+        game_id = arg
+        i += 1
+
     model = Model()
     frame, game = build(model, game_id)
 
     out_path = OUT_DIR.parent / f"timeline_{game_id}.png"
-    plot(model, frame, game, str(out_path))
+    plot(model, frame, game, str(out_path), n_swings=n_swings)
 
     home_won = game["home_score"] > game["away_score"]
     winner = game["home_team_name"] if home_won else game["away_team_name"]

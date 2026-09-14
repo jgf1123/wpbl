@@ -14,7 +14,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from wpbl.parse import OUT_DIR, RAW_DIR, ip_to_outs
+# Validation checks the full build, every game the raw JSON holds, whatever
+# scope analyses are reading.
+from wpbl.parse import ALL_DIR as OUT_DIR, RAW_DIR, ip_to_outs
 
 FAILURES: list[str] = []
 
@@ -300,20 +302,20 @@ def main() -> None:
         print(f"        UNDETECTED: seq {row.sequence} -- {row.narrative}")
 
 
-    # A postseason is scheduled but absent from the feed as of 9 September. Every
-    # published analysis is regular-season only, so a playoff game arriving on a
-    # later scrape must not fold itself silently into "the season". The feed
-    # labels everything game_type='regular' and ignores any game_type filter, so
-    # this leans on the date instead and fails rather than guesses.
+    # Analyses cover the regular season and the postseason together -- all four
+    # teams made the playoffs, so nothing about the postseason selects for
+    # quality. Anything else that turns up on a later scrape (an exhibition, a
+    # new season) must not fold itself silently into the numbers, so fail on it.
     print()
-    print("regular season boundary")
+    print("season boundary")
     played = games[games["is_final"]]
-    outside = played[~played["is_regular_season"]]
-    check("every completed game is inside the regular season",
+    outside = played[~(played["is_regular_season"] | played["is_postseason"])]
+    check("every completed game is 2026 regular season or postseason",
           outside.empty,
           f"{len(outside)} outside: "
           f"{outside[['game_id', 'game_date', 'status']].to_dict('records')[:3]}")
-    print(f"        {int(played['is_regular_season'].sum())} completed regular-season games, "
+    print(f"        {int(played['is_regular_season'].sum())} regular-season and "
+          f"{int(played['is_postseason'].sum())} postseason games, "
           f"latest {played['game_date'].max()}")
 
 

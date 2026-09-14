@@ -22,6 +22,7 @@ Tables
 from __future__ import annotations
 
 import json
+import os
 import re
 from datetime import date, timedelta
 from pathlib import Path
@@ -31,7 +32,20 @@ import pandas as pd
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 RAW_DIR = DATA_DIR / "raw"
-OUT_DIR = DATA_DIR / "tables"
+
+# The build writes every table twice. ALL_DIR holds every game the feed has --
+# regular season and postseason -- and is what validate.py checks against the
+# raw JSON. REGULAR_DIR holds the regular season alone. Analyses read OUT_DIR,
+# which is the regular season unless WPBL_GAMES=all is set: published work so
+# far is regular-season only, and a playoff game must not slip into it just
+# because a later scrape picked one up.
+ALL_DIR = DATA_DIR / "tables"
+REGULAR_DIR = ALL_DIR / "regular"
+GAME_SCOPES = {"regular": REGULAR_DIR, "all": ALL_DIR}
+GAMES = os.environ.get("WPBL_GAMES", "regular")
+if GAMES not in GAME_SCOPES:
+    raise SystemExit(f"WPBL_GAMES must be one of {', '.join(GAME_SCOPES)}, not {GAMES!r}")
+OUT_DIR = GAME_SCOPES[GAMES]
 
 LEAGUE_TZ = ZoneInfo("America/Chicago")
 
@@ -39,11 +53,12 @@ LEAGUE_TZ = ZoneInfo("America/Chicago")
 # 2026 season. It is a flat shift -- the whole season is Central with no DST
 # change. Revisit for any later season before trusting it.
 # The 2026 regular season ran 1 August to 6 September: 30 games, every pair of
-# teams meeting five times. A postseason is scheduled but had not appeared in the
-# feed as of 9 September. The feed marks every game game_type='regular' and
-# ignores any game_type filter you send it, so that field cannot be trusted to
-# separate them -- the date is the reliable line, and validate.py fails loudly if
-# a completed game ever lands outside it.
+# teams meeting five times. The postseason followed from 9 September under its
+# own season_id, and those games do carry game_type='postSeason' (the feed still
+# ignores any game_type filter you send it). Analyses use both: all four teams
+# made the playoffs, so a postseason game is the same league playing itself, not
+# a subset selected for quality. The two flags keep them separable for anything
+# that needs one alone, and validate.py fails loudly on a game that is neither.
 REGULAR_SEASON_END = date(2026, 9, 6)
 
 START_TIME_SHIFT = {2026: timedelta(hours=1)}
@@ -93,6 +108,16 @@ PA_IN_UNKNOWN = re.compile(r"\breached\b|\binfield fly\b")
 RATE_FIELDS = {"obp", "ops", "slg", "whip", "era"}
 DECISION_FIELDS = {"win", "loss", "save"}
 TEXT_FIELDS = {"ip"} | RATE_FIELDS | DECISION_FIELDS
+
+
+# Names confirmed by hand, keyed on person_id, for people the feed spells more
+# than one way with no majority to decide it. New York's O'Sullivan carries two
+# player_ids, one registered as "Claire" and one as "Catherine"; with one row
+# each, the modal spelling was a coin flip that changed between builds. Her name
+# is Claire.
+NAME_OVERRIDES = {
+    "kfli26dz84mtz2rh": "Claire O'Sullivan",
+}
 
 
 def modal_name(series: pd.Series):
@@ -317,6 +342,9 @@ def build_games(games: list[dict], boxes: dict, tracking: dict) -> pd.DataFrame:
     df["is_regular_season"] = (
         (df["game_type"] == "regular")
         & (pd.to_datetime(df["game_date"]).dt.date <= REGULAR_SEASON_END))
+    df["is_postseason"] = (
+        (df["game_type"] == "postSeason")
+        & (pd.to_datetime(df["game_date"]).dt.date > REGULAR_SEASON_END))
     return df.sort_values("first_pitch_utc").reset_index(drop=True)
 
 
@@ -610,7 +638,6 @@ def build_tracking(tracking: dict) -> pd.DataFrame:
 
 
 def main() -> None:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
     games, boxes, tracking = load_raw()
 
     id_index = build_id_index(boxes)
@@ -626,6 +653,7 @@ def main() -> None:
     for frame in (batting, pitching, fielding, players):
         frame.insert(0, "person_id", frame["player_id"].map(person_index))
     canonical = players.groupby("person_id")["player_name"].agg(modal_name)
+    canonical.update(pd.Series(NAME_OVERRIDES))
     for frame in (batting, pitching, fielding, players):
         frame.insert(1, "person_name", frame["person_id"].map(canonical))
 
@@ -648,13 +676,20 @@ def main() -> None:
         "pitch_events": pitch_events,
         "tracking": build_tracking(tracking),
     }
-    for name, frame in tables.items():
-        if frame.empty:
-            print(f"  {name:16s} (empty, skipped)")
-            continue
-        path = OUT_DIR / f"{name}.parquet"
-        frame.to_parquet(path, index=False)
-        print(f"  {name:16s} {len(frame):6d} rows x {len(frame.columns):3d} cols -> {path.name}")
+    regular = set(games_df.loc[games_df["is_regular_season"], "game_id"])
+    for directory, keep in ((ALL_DIR, None), (REGULAR_DIR, regular)):
+        directory.mkdir(parents=True, exist_ok=True)
+        print(f"\n  data/{directory.relative_to(DATA_DIR).as_posix()}/")
+        for name, frame in tables.items():
+            # Tables without a game_id -- the player registry -- are the same
+            # in both copies; everything per-game is cut to the scope.
+            if keep is not None and "game_id" in frame.columns:
+                frame = frame[frame["game_id"].isin(keep)]
+            if frame.empty:
+                print(f"  {name:16s} (empty, skipped)")
+                continue
+            frame.to_parquet(directory / f"{name}.parquet", index=False)
+            print(f"  {name:16s} {len(frame):6d} rows x {len(frame.columns):3d} cols")
 
 
 if __name__ == "__main__":

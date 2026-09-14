@@ -35,6 +35,8 @@ markov = "python -m wpbl.markov"
 positions = "python -m wpbl.positions"
 pitchers = "python -m wpbl.pitchers"
 pitcher-chart = "python -m wpbl.pitcher_chart"
+defense = "python -m wpbl.defense"
+running = "python -m wpbl.running_game"
 table = "python -m wpbl.table_image"
 refresh = { depends-on = ["scrape", "build", "check"] }
 

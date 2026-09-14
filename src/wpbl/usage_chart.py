@@ -12,15 +12,31 @@ Colour identifies the pitcher. Each team's seven busiest arms by innings take
 the first seven categorical slots; everyone below them shares the eighth. Slots
 are assigned per team, so the same colour means a different person in a
 different panel -- each panel carries its own key.
+
+Postseason games are included. The feed reminted every team's id for the
+playoffs and dropped accents on a few names; the chart groups by team name and
+folds accents so those appearances land on the same colour as the regular
+season rather than crashing or splitting a pitcher in two.
 """
 
 from __future__ import annotations
 
 import html
+import unicodedata
 
 import pandas as pd
 
 from wpbl.parse import OUT_DIR
+
+
+def fold_name(name: str) -> str:
+    """Accent-insensitive key so Maïka/Maika share a colour slot.
+
+    The postseason feed dropped accents on a few names and minted new player
+    ids; without folding, the same pitcher would take two slots.
+    """
+    return "".join(c for c in unicodedata.normalize("NFKD", name)
+                   if not unicodedata.combining(c)).casefold()
 
 OUTPUT = OUT_DIR.parent / "usage.html"
 
@@ -85,18 +101,28 @@ def collect() -> list[dict]:
 
     teams = []
     for team_name, rows in team_games.groupby("team_name"):
-        staff_all = pitching[pitching["team_id"] == rows["team_id"].iloc[0]]
-        # Rank by innings, then appearances, then name, so the colour assignment
-        # is deterministic across rebuilds.
-        ranked = (staff_all.groupby("person_name")
+        # Postseason reminted every team's id; group on the name, not the first
+        # id of the season, or the playoff staff never joins the colour key.
+        staff_all = pitching[pitching["team_name"] == team_name].copy()
+        staff_all["fold"] = staff_all["person_name"].map(fold_name)
+        # Rank by innings, then appearances, then folded name, so the colour
+        # assignment is deterministic across rebuilds. Display name is the
+        # spelling that threw the most outs (keeps the accented form when both
+        # appear).
+        display = (staff_all.groupby(["fold", "person_name"])["ip_outs"].sum()
+                   .reset_index()
+                   .sort_values(["ip_outs", "person_name"], ascending=[False, True])
+                   .groupby("fold")["person_name"].first())
+        ranked = (staff_all.groupby("fold")
                   .agg(outs=("ip_outs", "sum"), app=("game_id", "size"),
                        gs=("is_starter", "sum"), bf=("bf", "sum"))
                   .reset_index()
-                  .sort_values(["outs", "app", "person_name"], ascending=[False, False, True]))
+                  .sort_values(["outs", "app", "fold"], ascending=[False, False, True]))
+        ranked["person_name"] = ranked["fold"].map(display)
         slots, key = {}, []
         for rank, row in enumerate(ranked.itertuples(index=False)):
             slot = min(rank, NAMED)
-            slots[row.person_name] = slot
+            slots[row.fold] = slot
             key.append({"name": row.person_name, "slot": slot, "outs": int(row.outs),
                         "ip": ip_text(int(row.outs)), "app": int(row.app),
                         "gs": int(row.gs), "bf": int(row.bf), "named": rank < NAMED})
@@ -109,9 +135,10 @@ def collect() -> list[dict]:
             for _, arm in staff.iterrows():
                 lookup = (arm["game_id"], arm["team_id"], arm["player_id"])
                 entered = entry.loc[lookup] if lookup in entry.index else None
+                fold = fold_name(arm["person_name"])
                 arms.append({
-                    "name": arm["person_name"],
-                    "slot": slots[arm["person_name"]],
+                    "name": display.get(fold, arm["person_name"]),
+                    "slot": slots[fold],
                     "start": int(arm["start_out"]),
                     "outs": int(arm["ip_outs"]),
                     "ip": arm["ip"],
