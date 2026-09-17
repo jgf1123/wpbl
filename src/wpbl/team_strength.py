@@ -53,6 +53,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from wpbl import tables
 from wpbl.win_probability import MAX_RUNS, Model, plate_appearances, uncensored_halves
 
 TAU_MAX = 0.4        # top of the flat prior on each spread, in tilt units: about
@@ -65,7 +66,7 @@ RUNS = np.arange(MAX_RUNS + 1)
 
 
 def team_names() -> dict[str, str]:
-    games = pd.read_parquet("data/tables/games.parquet")
+    games = tables.read("games", "training")
     pairs = pd.concat([
         games[["home_team_id", "home_team_name"]].set_axis(["id", "name"], axis=1),
         games[["away_team_id", "away_team_name"]].set_axis(["id", "name"], axis=1)])
@@ -351,7 +352,7 @@ def cross_validate(ts: TeamStrength) -> None:
     held-out game, so this compares only what the team effects add.
     """
     model, h = ts.model, ts.halves
-    games = pd.read_parquet("data/tables/games.parquet").set_index("game_id")
+    games = tables.read("games", "training").set_index("game_id")
     pas = plate_appearances()
     pas["league"] = [model.win_probability(r.inning, r.half, r.outs, r.bases, r.diff)
                      for r in pas.itertuples()]

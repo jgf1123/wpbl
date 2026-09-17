@@ -18,7 +18,8 @@ import re
 
 import pandas as pd
 
-from wpbl.win_probability import Model, REGULATION
+from wpbl import tables
+from wpbl.win_probability import Model
 
 # Errors and misplays as the narrative writes them.
 ERROR = re.compile(r"\berror\b|muffed|\bE\d\b", re.I)
@@ -28,19 +29,21 @@ COLLAPSE_THRESHOLD = 0.65
 
 
 def timeline(model: Model) -> pd.DataFrame:
-    """Win probability for the eventual loser, at every plate appearance."""
-    plays = pd.read_parquet("data/tables/plays.parquet")
-    games = pd.read_parquet("data/tables/games.parquet").set_index("game_id")
+    """Win probability for the eventual loser, at every live play."""
+    plays = tables.read("plays")
+    games = tables.read("games").set_index("game_id")
 
     rows = []
     # Every play, not only plate appearances: a wild pitch or a stolen base
     # moves the game too, and scoring only at plate appearances would credit
-    # its effect to whichever batter happened to follow.
-    live = plays[(plays["inning"] <= REGULATION)
-                 # Roster moves are sometimes logged after the third out, when
-                 # the half-inning is already over and there is no live state.
-                 & (plays["outs_before"] < 3)].dropna(
-        subset=["batting_team_id"]).sort_values(["game_id", "sequence"])
+    # its effect to whichever batter happened to follow. Extra innings count;
+    # cutting at regulation used to dump a finished extras game's entire
+    # remaining loser-WP onto the last play of the 7th.
+    live = plays[
+        # Roster moves are sometimes logged after the third out, when
+        # the half-inning is already over and there is no live state.
+        (plays["outs_before"] < 3)
+    ].dropna(subset=["batting_team_id"]).sort_values(["game_id", "sequence"])
     for play in live.itertuples():
         game = games.loc[play.game_id]
         home_won = game["home_score"] > game["away_score"]
@@ -77,16 +80,26 @@ def timeline(model: Model) -> pd.DataFrame:
         })
     frame = pd.DataFrame(rows)
     # The swing a play caused is the move from the state before it to the state
-    # before the next play. The last play of a game runs to the settled result,
-    # which for the losing team is zero.
+    # before the next play. Only when the game is over does the last play run
+    # to the settled result (0 for the loser) -- not merely the last row we
+    # happened to keep.
     following = frame.groupby("game_id")["loser_wp"].shift(-1)
-    frame["swing"] = following.fillna(0.0) - frame["loser_wp"]
+    frame["swing"] = following - frame["loser_wp"]
+    ended = frame["game_id"].map(games["is_final"]).fillna(False).astype(bool)
+    last = following.isna()
+    frame.loc[last & ended, "swing"] = -frame.loc[last & ended, "loser_wp"]
     return frame
 
 
 BASE_LABEL = {"___": "empty", "1__": "1st", "_2_": "2nd", "__3": "3rd",
               "12_": "1st & 2nd", "1_3": "1st & 3rd", "_23": "2nd & 3rd", "123": "loaded"}
-ORDINAL = {1: "1st", 2: "2nd", 3: "3rd", 4: "4th", 5: "5th", 6: "6th", 7: "7th"}
+
+
+def _inning_label(n: int) -> str:
+    # ponytail: English ordinals; 11-13 stay "th", extras included.
+    if 11 <= (n % 100) <= 13:
+        return f"{n}th"
+    return {1: f"{n}st", 2: f"{n}nd", 3: f"{n}rd"}.get(n % 10, f"{n}th")
 
 
 def describe(row) -> str:
@@ -101,7 +114,7 @@ def describe(row) -> str:
     batting = (row["half"] == "bottom") == bool(row["loser_is_home"])
     side = "bot" if row["half"] == "bottom" else "top"
     return (f'{margin}, {"batting" if batting else "fielding"} '
-            f'{side} {ORDINAL[row["inning"]]}, {row["outs"]} out, '
+            f'{side} {_inning_label(row["inning"])}, {row["outs"]} out, '
             f'{BASE_LABEL[row["bases"]]}')
 
 
@@ -176,7 +189,7 @@ def main() -> None:
     peak = pd.DataFrame(picks).sort_values("loser_wp", ascending=False)
 
     table = pd.DataFrame({
-        "peak": peak["loser_wp"].round(3),
+        "peak": peak["loser_wp"].round(2),
         "date": peak["date"].astype(str),
         "lost": peak["loser"],
         "beaten by": peak["winner"],
@@ -200,7 +213,9 @@ def main() -> None:
         n = int((peak["loser_wp"] >= threshold).sum())
         print(f"  reached {threshold:.2f} and still lost: {n} of {len(peak)} games")
 
-    biggest = frame.reindex(frame["swing"].abs().sort_values(ascending=False).index).head(8)
+    ranked = frame.dropna(subset=["swing"])
+    biggest = ranked.reindex(
+        ranked["swing"].abs().sort_values(ascending=False).index).head(8)
     collapses(frame, peak)
 
     print("\n=== largest single-play swings ===\n")

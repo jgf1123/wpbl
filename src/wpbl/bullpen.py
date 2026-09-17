@@ -22,18 +22,19 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from wpbl import tables
 from wpbl.leverage import Leverage
-from wpbl.parse import OUT_DIR
 from wpbl.usage_chart import CODES
 
 BATTING_ORDER = 9      # batters faced per time through the order
 
 
 def decisions(lev: Leverage) -> pd.DataFrame:
-    """One row per inning-boundary decision about the incumbent pitcher."""
-    plays = pd.read_parquet(OUT_DIR / "plays.parquet")
-    people = pd.read_parquet(OUT_DIR / "players.parquet").set_index("player_id")["person_name"]
-    pitching = pd.read_parquet(OUT_DIR / "pitching.parquet")
+    """One row per inning-boundary decision about the incumbent pitcher, from
+    the training games: this is the data the logistic model is fit on."""
+    plays = tables.read("plays", "training")
+    people = tables.read("players", "training").set_index("player_id")["person_name"]
+    pitching = tables.read("pitching", "training")
     starters = set(zip(pitching.loc[pitching["is_starter"], "game_id"],
                        pitching.loc[pitching["is_starter"], "person_id"]))
 
@@ -81,7 +82,8 @@ def decisions(lev: Leverage) -> pd.DataFrame:
             for pitcher_id in order:
                 block_for = block[block["pitcher_id"] == pitcher_id]
                 got = thrown.setdefault(pitcher_id, [0, 0, 0])
-                got[0] += int(block_for["n_pitches"].sum())
+                # Estimated where the feed cut pitch strings short.
+                got[0] += float(block_for["n_pitches_est"].sum())
                 got[1] += int(block_for["is_plate_appearance"].sum())
             # Outs are only known for the whole half-inning, so credit the
             # pitcher who finished it with completing it.

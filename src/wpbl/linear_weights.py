@@ -96,9 +96,9 @@ def signed(value: float) -> str:
 def main() -> None:
     error = option("error", ERROR_CHOICES, sys.argv[1:])
     hbp = option("hbp", HBP_CHOICES, sys.argv[1:])
-    frame = plate_appearances()
+    frame = plate_appearances("training")
 
-    print(f"{len(frame)} plate appearances.  --error={error}  --hbp={hbp}")
+    print(f"{len(frame)} training plate appearances.  --error={error}  --hbp={hbp}")
     print("\n=== feed label -> contact outcome ===")
     for (event, outcome), n in frame.groupby(["event", "outcome"]).size().items():
         mark = "" if event == outcome else "   <- reclassified"

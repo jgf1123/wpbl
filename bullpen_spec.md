@@ -47,7 +47,7 @@ The unit of time is the calendar day, and fatigue recovers per day.
 | series | dates | source |
 |---|---|---|
 | Semi SF–BOS | 9, 11 Sep; G3 would be 13 Sep | feed. SF won 2–0 in reality |
-| Semi NYH–LAQ | 10, 12 Sep; G3 14 Sep? | feed through 12 Sep. **ASSUMPTION**: G3 on the next alternate day |
+| Semi NYH–LAQ | 10, 12 Sep; G3 14 Sep? | LAQ won G1 10–3, NYH won G2 9–7. G3 is not in the feed's schedule (scrape of 14 Sep). **ASSUMPTION**: G3 on the next alternate day |
 | Final | 16, 17, 19, 20, 22 Sep | user |
 
 Why the final is hard (regular season, `pixi run workload` / `pixi run pitches`):
@@ -204,6 +204,77 @@ cost, plus a decision log showing the leverage index at each change.
 - Checks: a Python self-check that the λ = 0 chain matches `markov`, and an
   in-page debug button that simulates 10k half-innings.
 
+## First use: NYH semifinal G1 counterfactual
+
+Question: when Saiki came out of G1, was saving NYH's better relievers better
+for the series than using them to try to win G1?
+
+**Cutoff (user).** Everything before play 42 of `j4uofrn55sr4wnlt` (10 Sep,
+LAQ at NYH): "London Studer to p for Emi Saiki." At that point: top 5, 1 out,
+runner on 2nd, LAQ up 4–0, Saiki at 85 pitches. Nothing after it is used to
+fit anything. `pixi run wpq --during "top 5" --outs 1 --bases 2 --away 4
+--home 0 --away-team LA --home-team NY --cutoff j4uofrn55sr4wnlt:42` gives
+NYH 17.9% there (team-adjusted, 90% interval 11–27%) and 55.6% at first pitch.
+
+**Worlds.**
+
+- A: NYH relief scripted as it happened: Studer, then Izumi.
+- B: NYH relieves from Eccles, O'Sullivan and Reynolds, best m_i first
+  (**ASSUMPTION** on order). Reynolds was available (user). Lee is injured.
+- Both worlds: NYH starts Kim in G2 (user).
+- From the cutoff on, both worlds simulate the rest of G1, G2 (12 Sep) and G3.
+  The real G2 result is not used.
+- Both worlds share each replicate's hidden θ draw and its random numbers per
+  (game, half-inning, PA).
+
+**LAQ's closer (user, checked against her log).** Meidlinger's recovery is the
+anchor for LAQ's side:
+
+| date | IP | pitches | days since last | next |
+|---|---|---|---|---|
+| 21 Aug | 1.0 | 14 | 6 | pitched the next day, her only back-to-back |
+| 22 Aug | 3.0 | 60 | 1 | her only 3-IP outing; sat out 23 Aug, next pitched 26 Aug |
+| 10 Sep | 2.0 | 27 | 5 | pitched the 7th of G2 two days later |
+| 12 Sep | 1.0 | 23 | 2 | entered the 7th tied, allowed 2 R; NYH won |
+
+The user wrote 25 Aug; the log says 26 Aug. LAQ had no game on 24–25 Aug, so
+the log shows one skipped game, not a measured three-day recovery. User's
+rule: 2 IP in G1, as she threw, still lets her close G2; 3 IP would not. The
+fatigue settings must reproduce that. So if a closer G1 in world B pulls a
+third inning out of her, LAQ loses its G2 closer. LAQ's autopilot manages
+LAQ in both worlds and reacts to the game in front of it (user), including
+the rest of G1.
+
+**Shimano (open, user).** LAQ's starting SS has pitched 3 times: 23 Aug start
+(4.2 IP, 85 pitches), 29 Aug relief (3 IP, 41 pitches, 0 R), 5 Sep relief
+(1 IP, 39 pitches, 4 R), moving from SS to the mound both times in relief. She
+has not pitched in the semifinal: she started G1 at SS and only pinch-hit in
+G2 (Eynon played SS). Why is still unexplained.
+
+**Break-even, no simulator needed.** With w = NYH's G1 win probability after
+the change and p2, p3 its G2 and G3 probabilities:
+
+    P(series) = w (p2 + p3 − p2 p3) + (1 − w) p2 p3
+
+At w = 0.18 and p = 0.57: ∂/∂w = 0.49 and ∂/∂p2 = ∂/∂p3 = 0.55. World B is
+better exactly when G2 cost + G3 cost < 0.9 × G1 gain. For scale, a bullpen
+that allowed nothing after the change lifts G1 only to about 35% (league
+half-inning runs, no team adjustment). That caps the G1 gain near 17 points.
+
+**Report.**
+
+- P(NYH wins series) in each world, the difference, and its simulation error.
+- The split into G1 gain vs. G2/G3 cost, which must agree with the identity.
+- Short-rest fatigue is invented (C6), so show the difference as a curve over
+  fatigue strength, with the break-even marked. The conclusion reads:
+  "trying to win was better unless short rest costs more than X."
+
+**Checks.** With fatigue off, B ≥ A. With B scripted the same as A, the
+difference is exactly 0.
+
+**Engine needs beyond v1.** Start from a mid-game state. Script one team's
+manager for part of one game.
+
 ## Calibration tasks (before game code)
 
 | # | Task | Target quantity |
@@ -215,7 +286,7 @@ cost, plus a decision log showing the leverage index at each change.
 | C5 | Decline with pitch count | RE24/BF by today's pitch-count bucket. Report only: managers pull pitchers who struggle, which biases it |
 | C6 | Short rest | appearances on 0 or 1 days' rest: how many, pitches, RE24/BF |
 | C7 | AI coefficients | export `bullpen.py` logistic fit |
-| C8 | Semifinal G3 | re-scrape the feed (network; needs the user's go-ahead) |
+| C8 | Semifinal G3 | re-scraped 14 Sep by the user; G3 not scheduled in the feed yet |
 
 ## Data notes
 
@@ -223,9 +294,35 @@ cost, plus a decision log showing the leverage index at each change.
   `r622…` in the postseason). Join teams by name or through a mapping.
 - `plays.parquet` and `pitching.parquet` now contain postseason rows. Every
   calibration step filters `game_type == 'regular'`.
-- The README says `validate.py` fails when a completed game falls outside the
-  regular season. Postseason games are now in the tables, so confirm whether
-  `pixi run check` still passes.
+- `pixi run check` accepts postseason games. SF–BOS semifinal G1
+  (`ucwyhv1ki318nni5`) is a known gap in the pitch-code check
+  (`validate.PITCH_STRING_GAPS`): the feed recorded incomplete pitch strings
+  through about the 5th inning. The box-score pitch counts come from the same
+  strings, so **Blunt's and Whitmore's 9 Sep pitch counts are too low**. That
+  matters when seeding SF and BOS fatigue for the final. The build now
+  estimates them (`parse.estimate_pitch_counts`, user decision 15 Sep):
+  `pitching.pitches_est`, `pitching_stints.pitches_est` and
+  `plays.n_pitches_est` (flag `n_pitches_estimated`) sit beside the feed's
+  counts. Blunt 66 → ~99, Whitmore 70 → ~101, Bricker 30 → ~35; game total
+  ~283. **Seed fatigue from the `_est` columns.** `workload`, `pitch_counts`
+  and `bullpen` already use them.
+- `tables.read()` with `tables.set_cutoff("GAME_ID:SEQUENCE")` gives every
+  game before a play plus the finished half-innings of that game, with
+  postseason team_ids mapped to regular-season ones. It drops the half-inning
+  in progress, so fatigue seeding must read the cutoff game's plays directly.
+- Semifinal G3 (14 Sep, `r1slo258zh4c0mwg`) is **excluded from training data
+  except for pitcher fatigue** (user decision, 15 Sep): it is in
+  `tables.TRAINING_EXCLUDED`, so `tables.read(name, "training")` drops it and
+  `tables.read(name, "all")` keeps it. Why: both bullpens were exhausted (high
+  OBP, 26 runs), so it would skew league and team averages. For the same
+  reason it is the best evidence of how fatigued pitchers perform, so it
+  belongs in fatigue seeding **and** in fitting the fatigue term (φ_fatigue);
+  P0, pitcher quality and every other calibration leave it out. The other four
+  playoff games are training data. This supersedes "regular-season plays only"
+  and the `game_type == 'regular'` filter above for model fits
+  (**FLAGGED** for the spec owner to reconcile).
+- The feed calls O'Sullivan "Catherine" throughout semifinal G2.
+  `parse.RAW_NAME_FIXES` corrects it in every string.
 
 ## Open questions / known unknowns *(user-controlled)*
 

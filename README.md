@@ -25,7 +25,11 @@ pixi run markov      # the same RE from a base-out transition chain (covers the 
 pixi run wp          # win probability, with structural checks and calibration
 pixi run wpq         # win probability for one game state (--before / --during / --after)
 pixi run teams       # team offense and defense, shrunk, for team-adjusted WP
+pixi run team-chart  # runs a game from each offense's tilted distribution -> data/img/team_offense_runs_per_game.png
 pixi run upsets      # games where a heavily favoured team lost, and the swings
+pixi run rollercoaster          # games ranked by total win-probability movement
+pixi run rollercoaster --halves # half-innings: movement, and back-and-forth (movement minus net)
+pixi run rollercoaster --pairs  # the same for two consecutive half-innings (--top N for more)
 pixi run pwp         # win probability added per pitcher, by stint on the mound
 pixi run blowouts    # half-innings of 4+ runs, and the threshold behind it
 pixi run leverage    # the leverage index, calibrated so an average inning = 1.00
@@ -39,9 +43,10 @@ pixi run weights     # linear weights behind the context-neutral column, with di
 pixi run batter-chart out.png       # the batter table as a chart
 pixi run pitchers    # RE24 per batter faced, beside a league-calibrated FIP
 pixi run pitcher-chart out.png      # the pitcher table as a chart
-pixi run timeline-chart <game_id>   # win probability chart for one game
+pixi run timeline-chart <game_id>   # WP chart -> data/timeline_YYYYMMDD_<id>.png
 
 pixi run table out.png table.md     # render a markdown table as a 728px PNG
+pixi run table table.md             # same; writes table.png next to the md
 ```
 
 `pixi run scrape --activity` also pulls TrackMan tracking. `--force` refetches
@@ -114,25 +119,70 @@ team-games, and no pitcher ever re-entered after leaving.
 `pitching_stints` adds what the box score cannot: the inning, out, and score at
 which each reliever entered, and how many runners were already on.
 
-### Estimating on 30 games
+### Which games each analysis reads
+
+`tables.read(name, scope)` has three scopes:
+
+| scope | games | used by |
+| --- | --- | --- |
+| `default` | `WPBL_GAMES`: regular season unless set to `all` | descriptive season tables |
+| `training` | every game except `tables.TRAINING_EXCLUDED` | model fits: run expectancy, Markov chain, win probability, team strength, leverage calibration, linear weights, FIP weights and constant, the bullpen logistic model, the blowout threshold |
+| `all` | every game | pitcher workload and pitch counts (fatigue) |
+
+`TRAINING_EXCLUDED` holds semifinal G3 (14 Sep, `r1slo258zh4c0mwg`, LAQ 15–11).
+Both bullpens were exhausted, which shows in the high on-base rate and run total,
+so it would skew league and team averages and is kept out of every model fit.
+For the same reason it is useful data on how fatigued pitchers perform: its
+pitches count toward workload, and fatigue work should read it. Training therefore covers 34 games, the 30-game regular
+season plus four of the five playoff games.
+
+Where a report is both a fit and a season table, only the fit moves. The batter
+and pitcher tables, the defense split and the blowout list still report
+regular-season plays, but price them with weights, run expectancy and league
+constants fit on the training games. The bullpen report is the logistic model's
+own data, so all of it uses the training games.
+
+### Estimating on 34 games
 
 `run_expectancy.py` builds the standard 24-cell matrix and then prints the
-reasons not to trust it: 8 cells hold fewer than 50 observations, and ten
+reasons not to trust it: 7 cells hold fewer than 50 observations, and ten
 orderings are logically impossible (more outs cannot raise expected runs, and
 neither adding a runner nor advancing one can lower them),
 so those cells are measuring sampling noise. Use the pooled four-group table it
 also prints, and treat differences under ~0.3 runs as indistinguishable.
 
-`win_probability.py` is where the thin matrix stops mattering. The base-out
+`win_probability.py` confines the thin matrix to one half-inning. The base-out
 state only affects the half-inning in progress; every later half-inning starts
-bases-empty and is drawn from one distribution estimated on 288 half-innings.
-Backward induction over half-inning boundaries then averages the base-out noise
-down instead of compounding it -- the residual breaches of "a runner must help"
-have a median size of 0.0045, and the five above 0.01 are all in the 7th, where
-no future innings remain to damp them.
+bases-empty and is drawn from one distribution estimated on 441 half-innings.
+Within the half-inning in progress, runs to its end come from the Markov chain
+(`markov.run_distributions`), the same chain behind the run expectancy used
+everywhere else, rather than from each state's own record blended toward its
+group. In 10-fold cross-validation by game on the 30 regular-season games, the
+chain predicted held-out runs-to-end-of-inning better than that blend at any
+strength (by about 146 log points over 2,056 plate appearances against the best
+blend, SE 51), and blending it back toward each state's own record only made it
+worse.
+
+One state is exempt. Bases empty, nobody out *is* a fresh half-inning, so it uses
+the 441 observed half-innings rather than the chain's estimate of the same thing:
+they agree within sampling error (49.9% scoreless against the chain's 51.9%, on a
+standard error of 2.4), leave-one-game-out win probability cannot tell them apart
+(Brier 0.1744 against 0.1739, SE 0.0006), and the direct measurement needs no
+memorylessness assumption. Holding a single distribution for that state also keeps
+the model coherent. While the boundary tables used the observed half-innings and a
+query rebuilt the same inning from the chain, P(home wins) and P(away wins) with
+the teams swapped did not sum to 1. `validate()` now checks that a query at the
+start of a half-inning returns exactly the boundary table's value.
+
+"A runner must help" still fails in 8 of 462 comparisons, 7 of them in the 7th,
+where one run decides the game and the chance of scoring at least once matters
+more than the average. The largest, 0.042, is the bottom of the 7th with 1 out,
+where a runner on third outranks first and third. The chain cannot fix this
+because a state's first step still rests on its own plays: runner on third with
+nobody out has 9, and none was an out with the runner holding.
 
 Note the run environment before importing any outside table: this league scores
-about 1.08 runs per half-inning from bases empty and nobody out, roughly double
+about 1.10 runs per half-inning from bases empty and nobody out, roughly double
 a major-league figure, so an MLB run-expectancy or win-probability table would be
 wrong here by about a factor of two.
 
@@ -182,6 +232,28 @@ recovered. Three roster names never carry an id anywhere and never played.
 **Every played game has a phantom duplicate.** A stale never-played copy with
 the same date and matchup, stuck on "Not Started". `games.is_phantom_duplicate`
 flags all 24; filter on it or on `is_final`.
+
+**Pitch strings are cut short in one game.** In SF–BOS semifinal G1 (9 Sep,
+`ucwyhv1ki318nni5`, listed in `parse.PITCH_STRING_GAPS`) 32 of 66 plate
+appearances carry a string that cannot have produced their result (a walk
+without four balls, a ball in play not ending on P), mostly in innings 1–4. The
+box-score pitch counts come from the same strings, so they are too low.
+`parse.estimate_pitch_counts` fills each cut-off plate appearance with the mean
+length of complete strings from other games with the same kind of result and at
+least as many pitches as were recorded. The estimates sit beside the feed's
+counts, never replacing them: `plays.n_pitches_est` (flag
+`n_pitches_estimated`), `pitching.pitches_est`, `pitching_stints.pitches_est`.
+Blunt 66 → ~99, Whitmore 70 → ~101, Bricker 30 → ~35; the game ~283 pitches
+against a league mean of 267. Workload, pitch counts and the bullpen model read
+the estimates; `pixi run check` checks the feed's own counts.
+
+**Handedness contradicts itself between games.** Every box-score player row
+carries `bats` and `throws`, but 10 of 80 players are listed more than one way:
+Jordan Eyster is R/R in some games and L/L in others. Both columns are resolved
+to the person's most-used value, like a misspelled name, and stamped on
+`players`, `batting`, `pitching` and `fielding`, so a matchup can be read off
+any of them. The league is 54 right / 17 left / 2 switch at the plate and 61
+right / 12 left on the mound.
 
 **The box score's tracking is capped at 200 events.** `/games/{id}/activity` is
 the uncapped source and adds hit distance. The `tracking` table comes from

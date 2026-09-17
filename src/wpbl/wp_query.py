@@ -5,6 +5,8 @@
     pixi run wpq --during "top 5" --outs 1 --bases 13 --away 4 --home 4
     pixi run wpq --after "top 3" --away 2 --home 0 --away-team LA --home-team NY
     pixi run wpq --pregame --away-team Boston --home-team SF
+    pixi run wpq --during "top 5" --outs 1 --bases 2 --away 4 --home 0 \
+        --away-team LA --home-team NY --cutoff j4uofrn55sr4wnlt:42
 
     from outside the repo:  pixi run --manifest-path wpbl/pixi.toml wpq ...
 
@@ -28,6 +30,7 @@ import re
 import numpy as np
 import pandas as pd
 
+from wpbl import tables
 from wpbl.team_strength import TeamStrength, expected_runs
 from wpbl.win_probability import REGULATION, Model
 
@@ -80,9 +83,19 @@ def game_over(inning: int, half: str, diff: int, start: bool) -> str | None:
 
 
 def data_note() -> str:
-    games = pd.read_parquet("data/tables/games.parquet")
+    games = tables.read("games", "training")
     done = games[games["is_final"] & ~games["is_phantom_duplicate"]]
-    return f"{len(done)} completed games through {done['game_date'].max()}"
+    note = (f"{len(done)} completed games ({int(done['is_regular_season'].sum())} regular season) "
+            f"through {done['game_date'].max()}, excluding {len(tables.TRAINING_EXCLUDED)} "
+            f"(tables.TRAINING_EXCLUDED)")
+    cut = tables.cutoff_play()
+    if cut is None:
+        return note
+    game = tables.read("games", "all").set_index("game_id").loc[cut["game_id"]]
+    return (f"{note}, plus {game['away_team_name']} at {game['home_team_name']} on "
+            f"{cut['game_date']} up to the {cut['half']} of the {ordinal(int(cut['inning']))}.\n"
+            f"       Cutoff is before play {cut['sequence']}: {cut['narrative']!r}; "
+            f"that half-inning is left out")
 
 
 def main() -> None:
@@ -98,7 +111,10 @@ def main() -> None:
     p.add_argument("--bases", help="occupied bases: 13, 1_3, 123, empty, loaded, ...")
     p.add_argument("--away-team", help='away team, loosely: "LA", "Queens", "boston"')
     p.add_argument("--home-team", help="home team, same")
+    p.add_argument("--cutoff", metavar="GAME_ID:SEQUENCE",
+                   help="fit on what had happened before this play, postseason included")
     args = p.parse_args()
+    tables.set_cutoff(args.cutoff)
 
     if args.pregame:
         inning, half, away, home = 1, "top", 0, 0

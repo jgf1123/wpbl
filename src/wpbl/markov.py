@@ -41,7 +41,7 @@ from functools import lru_cache
 import numpy as np
 import pandas as pd
 
-from wpbl.parse import OUT_DIR
+from wpbl import tables
 from wpbl.run_expectancy import (BASE_ORDER, HALF_KEY, MIN_SAMPLE, _base_code,
                                  damaged_halves, grid, impossible_orderings, states)
 
@@ -53,9 +53,9 @@ SLOT = {state: i for i, state in enumerate(CHAIN)}
 
 def transitions() -> pd.DataFrame:
     """Every play as a move between base-out states, with runs scored on it."""
-    plays = pd.read_parquet(OUT_DIR / "plays.parquet")
-    line = pd.read_parquet(OUT_DIR / "line_score.parquet")
-    games = pd.read_parquet(OUT_DIR / "games.parquet").set_index("game_id")
+    plays = tables.read("plays", "training")
+    line = tables.read("line_score", "training")
+    games = tables.read("games", "training").set_index("game_id")
     damaged = damaged_halves(plays, line, games)
     plays = plays.copy()
     plays["half_key"] = list(map(tuple, plays[HALF_KEY].values))
@@ -99,6 +99,49 @@ def solve(start: np.ndarray, target: np.ndarray, runs: np.ndarray) -> np.ndarray
     immediate = np.zeros(n)
     immediate[seen] = scored[seen] / visits[seen]
     return np.linalg.solve(np.eye(n) - probability, immediate)
+
+
+def run_distributions(moves: pd.DataFrame, max_runs: int) -> dict:
+    """Runs from each state to the end of the half-inning, as a distribution
+    rather than an average: P(k more runs | state) for k = 0..max_runs, with
+    anything beyond max_runs lumped into the last entry.
+
+    The same chain as solve(), keeping the runs on each transition instead of
+    only their mean:
+
+        D(s)[k] = sum over plays from s of P(play) * D(t)[k - runs on the play]
+
+    with D(3 outs) = certainly zero more runs. Iterated to a fixed point, which
+    it reaches because every path ends in the third out. Win probability needs
+    the whole distribution -- whether a team scores enough, not how many it
+    expects -- which is why this exists beside solve().
+    """
+    n, absorb = len(CHAIN), len(CHAIN)
+    start = moves["start"].to_numpy()
+    target = np.where(moves["target"].to_numpy() < 0, absorb, moves["target"].to_numpy())
+    runs = np.minimum(moves["runs"].to_numpy().astype(int), max_runs)
+    visits = np.bincount(start, minlength=n).astype(float)
+    step = np.zeros((n, n + 1, max_runs + 1))            # [from, to, runs on the play]
+    np.add.at(step, (start, target, runs), 1.0)
+    seen = visits > 0
+    step[seen] /= visits[seen, None, None]
+
+    dist = np.zeros((n + 1, max_runs + 1))
+    dist[absorb, 0] = 1.0
+    for _ in range(10_000):
+        new = np.zeros_like(dist)
+        new[absorb, 0] = 1.0
+        for r in np.unique(runs):
+            shifted = np.zeros_like(dist)                # r runs banked on the play
+            shifted[:, r:] = dist[:, :max_runs + 1 - r]
+            if r:
+                shifted[:, max_runs] += dist[:, max_runs + 1 - r:].sum(1)
+            new[:n] += step[:, :, r] @ shifted
+        done = np.abs(new - dist).max() < 1e-13
+        dist = new
+        if done:
+            break
+    return {state: dist[i] for state, i in SLOT.items()}
 
 
 def as_table(values: np.ndarray) -> pd.DataFrame:

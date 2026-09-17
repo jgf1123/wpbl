@@ -29,6 +29,7 @@ import sys
 import numpy as np
 import pandas as pd
 
+from wpbl import tables
 from wpbl.parse import OUT_DIR
 from wpbl.usage_chart import CODES
 
@@ -36,11 +37,14 @@ DEFAULT_THRESHOLD = 4
 HALF_KEY = ["game_id", "batting_team_id", "inning", "half"]
 
 
-def half_innings() -> pd.DataFrame:
-    """Every half-inning a team actually batted, with the runs it scored."""
-    plays = pd.read_parquet(OUT_DIR / "plays.parquet")
-    line = pd.read_parquet(OUT_DIR / "line_score.parquet")
-    games = pd.read_parquet(OUT_DIR / "games.parquet").set_index("game_id")
+def half_innings(scope: str = "default") -> pd.DataFrame:
+    """Every half-inning a team actually batted, with the runs it scored.
+
+    The threshold is fit on scope="training"; the list reports the default
+    scope (see tables.read)."""
+    plays = tables.read("plays", scope)
+    line = tables.read("line_score", scope)
+    games = tables.read("games", scope).set_index("game_id")
 
     batted = (plays.dropna(subset=["batting_team_id"]).groupby(HALF_KEY)
               .size().rename("plays").reset_index()
@@ -96,8 +100,9 @@ def main() -> None:
     pd.set_option("display.width", 250)
     threshold = int(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_THRESHOLD
 
+    training = half_innings("training")
+    thresholds(training.loc[~training["censored"], "runs"])
     frame = half_innings()
-    thresholds(frame.loc[~frame["censored"], "runs"])
 
     plays = pd.read_parquet(OUT_DIR / "plays.parquet")
     people = pd.read_parquet(OUT_DIR / "players.parquet").set_index("player_id")["person_name"]

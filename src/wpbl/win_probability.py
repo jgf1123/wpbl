@@ -2,12 +2,21 @@
 
     pixi run wp
 
-The idea that makes this work on 24 games: the base-out state only affects the
+The idea that makes this work on 30 games: the base-out state only affects the
 half-inning in progress. Every later half-inning starts bases-empty, nobody out,
-and is drawn from one distribution estimated on 288 half-innings. So the thinly
-sampled 24-cell part contributes at most one inning of variance, and the rest of
-the game is carried by the well-estimated piece. Accumulating over the remaining
-half-innings averages the noise down rather than compounding it.
+and is drawn from one distribution estimated on 389 half-innings. So the thinly
+sampled base-out part covers at most one half-inning, and the rest of the game
+is carried by the well-estimated piece.
+
+That base-out part -- runs from a state to the end of its half-inning -- comes
+from the Markov chain of base-out transitions (markov.run_distributions), the
+same chain behind the run expectancy the rest of the repo uses. It replaced
+blending each state's own record toward its pooled group: in 10-fold
+cross-validation by game, the chain predicted held-out runs-to-end-of-inning
+better than that blend at any strength, and blending the chain back toward each
+state's own record only made it worse. It does not cure every thin state: a
+state's first step still rests on its own plays (runner on third, nobody out,
+has 9), which is what the remaining "a runner must help" breaches trace to.
 
 Assumptions, all of them the ones asked for:
 
@@ -41,12 +50,11 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from wpbl.run_expectancy import pool, states
+from wpbl import markov, tables
 
 REGULATION = 7
 MAX_RUNS = 12          # per half-inning; the observed maximum is 7
 MAX_DIFF = 25          # differential range the grid covers
-SHRINK = 25            # pseudo-observations pulling a thin cell toward its group
 
 
 def uncensored_halves() -> pd.DataFrame:
@@ -58,8 +66,8 @@ def uncensored_halves() -> pd.DataFrame:
     leads -- and selected, since it happens only when the home team is not ahead.
     Including it would bias the distribution downwards.
     """
-    plays = pd.read_parquet("data/tables/plays.parquet")
-    games = pd.read_parquet("data/tables/games.parquet").set_index("game_id")
+    plays = tables.read("plays", "training")
+    games = tables.read("games", "training").set_index("game_id")
     key = ["game_id", "batting_team_id", "inning", "half"]
     clean = plays[(plays["inning"] <= 6)
                   | ((plays["inning"] == REGULATION) & (plays["half"] == "top"))]
@@ -111,39 +119,45 @@ class Batting:
                        tilt(self.extra, t))
 
 
-def state_pmfs(frame: pd.DataFrame):
-    """Runs from a base-out state to the end of the half-inning, per state.
+def state_moves() -> pd.DataFrame:
+    """The base-out transitions the state distributions are fit on.
 
-    A thin cell is shrunk toward its pooled group rather than trusted on its
-    own count. The grouping is out-dependent; see run_expectancy.POOL_GROUPS.
+    The bottom of the 7th is dropped, for the same reason the full half-inning
+    distribution drops it: whether it runs its course depends on how many runs
+    score in it. markov.transitions() already censors the walk-off play itself,
+    but that removes a run-scoring play from exactly the late states it came
+    from, so the whole half-inning goes.
     """
-    frame = frame.assign(grp=[pool(b, o) for b, o in zip(frame["bases"], frame["outs"])])
-    group_pmf = {(g, o): _pmf(sub["runs_rest"].values)
-                 for (g, o), sub in frame.groupby(["grp", "outs"])}
-    out = {}
-    for (bases, outs), sub in frame.groupby(["bases", "outs"]):
-        n = len(sub)
-        raw = _pmf(sub["runs_rest"].values)
-        prior = group_pmf[(pool(bases, outs), outs)]
-        out[(bases, outs)] = (n * raw + SHRINK * prior) / (n + SHRINK)
-    return out
+    moves = markov.transitions()
+    bottom_7th = [key[2] == REGULATION and key[3] == "bottom" for key in moves["half"]]
+    return moves[~np.array(bottom_7th, dtype=bool)]
 
 
 class Model:
     def __init__(self):
-        frame = states()
-        # Drop the bottom of the 7th here too, for the same reason the full
-        # half-inning distribution does: it is truncated the moment the home
-        # team leads, so it understates how much a state is worth.
-        frame = frame[~((frame["inning"] == REGULATION) & (frame["half"] == "bottom"))]
+        moves = state_moves()
         self.full = half_inning_pmf()
-        self.state = state_pmfs(frame)
+        self.state = markov.run_distributions(moves, MAX_RUNS)
+        # A whole half-inning IS the bases-empty, nobody-out state, so there is
+        # one distribution for it, not two. The observed half-innings are that
+        # distribution: they measure exactly this quantity, 441 times, with no
+        # modelling assumption, and the chain's own estimate of the same thing
+        # agrees within sampling error (51.9% scoreless against 49.9%, on a
+        # standard error of 2.4). Leave-one-game-out win probability cannot
+        # tell the two apart (Brier 0.1739 against 0.1744, SE 0.0006), and the
+        # chain rests on a memorylessness assumption this state does not need.
+        # Keeping two estimates was a bug, not a choice: a query at the start
+        # of a half-inning rebuilt the inning from the state distribution while
+        # the backward induction used the empirical one, so P(home wins) and
+        # P(away wins) in the reversed matchup did not sum to 1.
+        self.state[("___", 0)] = self.full
         # An extra half-inning is a complete trip through the runner-on-second,
         # nobody-out state, so its run distribution is that state's -- which
-        # now pools genuine extra innings with regulation leadoff doubles,
-        # rather than resting on the four extra half-innings on record.
+        # draws on every play from that state and everything downstream of it,
+        # rather than on the four extra half-innings on record.
         self.extra = self.state[("_2_", 0)]
-        self.n_states = frame.groupby(["bases", "outs"]).size().to_dict()
+        visits = moves["start"].value_counts()
+        self.n_states = {state: int(visits.get(i, 0)) for state, i in markov.SLOT.items()}
         # Which distributions each half bats from. Both sides share the
         # league's here; matchup() gives each its own.
         league = Batting(self.full, self.state, self.extra)
@@ -281,8 +295,8 @@ def observed_states(model: "Model") -> pd.DataFrame:
 
 def plate_appearances() -> pd.DataFrame:
     """Every real plate appearance in regulation: the state it began in, and who won."""
-    plays = pd.read_parquet("data/tables/plays.parquet")
-    games = pd.read_parquet("data/tables/games.parquet")
+    plays = tables.read("plays", "training")
+    games = tables.read("games", "training")
     home_won = (games.set_index("game_id")
                 .apply(lambda r: r["home_score"] > r["away_score"], axis=1).to_dict())
     home_id = games.set_index("game_id")["home_team_id"].to_dict()
@@ -319,6 +333,17 @@ def validate(model: "Model") -> None:
                         falling += 1
     print(f"  win probability falls as the lead grows: {falling} of 336 curves  "
           f"({'PASS' if falling == 0 else 'FAIL'})")
+
+    # The start of a half-inning is the same thing the backward induction
+    # already solved for, so asking for it must not rebuild it from a
+    # different distribution. When it did, P(home wins) and P(away wins) in
+    # the reversed matchup stopped summing to 1.
+    gaps = [abs(model.win_probability(inning, half, 0, "___", d)
+                - model._lookup(model.top[inning] if half == "top" else model.bottom[inning], d))
+            for inning in range(1, REGULATION + 1) for half in ("top", "bottom")
+            for d in range(-8, 9)]
+    print(f"  a half-inning's first batter matches the boundary table: "
+          f"worst gap {max(gaps):.2e}  ({'PASS' if max(gaps) < 1e-9 else 'FAIL'})")
 
     # The extra-innings recursion rests on a tie being exactly 50/50. That is
     # a claim about the arithmetic, not a modelling choice, so check it rather
@@ -379,13 +404,18 @@ def main() -> None:
     pd.set_option("display.width", 250)
     model = Model()
 
-    print("half-inning run distribution (innings 1-6 and top of the 7th):")
+    print("half-inning run distribution, the observed half-innings themselves:")
     print("  " + "  ".join(f"{r}:{p:.3f}" for r, p in enumerate(model.full[:8])))
     print(f"  mean {sum(r * p for r, p in enumerate(model.full)):.3f}")
+    chain = markov.run_distributions(state_moves(), MAX_RUNS)[("___", 0)]
+    print("  what the chain says about the same state, for comparison (not an input):")
+    print("  " + "  ".join(f"{r}:{p:.3f}" for r, p in enumerate(chain[:8])))
+    print(f"  mean {sum(r * p for r, p in enumerate(chain)):.3f}")
 
     start = model.win_probability(1, "top", 0, "___", 0)
     print(f"\nhome win probability at first pitch: {start:.3f}")
-    print("  (batting last is the only asymmetry; no team, park or travel term)")
+    print("  (with both sides on the league distribution there is no home edge at")
+    print("   all: batting last cannot change who finishes ahead)")
 
     print("\n=== P(home wins), tied game, nobody out ===")
     rows = {}

@@ -76,6 +76,11 @@ PITCH_CODES = {
     "H": ("hit_by_pitch", False, False),
 }
 
+# Games whose pitch strings the feed recorded incompletely, so the pitch counts
+# built from them are too low. validate.py keeps them out of the pitch-code rate;
+# estimate_pitch_counts() fills in their cut-off plate appearances.
+PITCH_STRING_GAPS = {"ucwyhv1ki318nni5"}    # SF-BOS semifinal G1, 9 Sep
+
 # event_type "unknown" lumps real plate appearances in with roster moves and
 # baserunning notes. These patterns split them back apart off the narrative.
 NON_PA_PATTERNS = [
@@ -110,14 +115,25 @@ DECISION_FIELDS = {"win", "loss", "save"}
 TEXT_FIELDS = {"ip"} | RATE_FIELDS | DECISION_FIELDS
 
 
-# Names confirmed by hand, keyed on person_id, for people the feed spells more
-# than one way with no majority to decide it. New York's O'Sullivan carries two
-# player_ids, one registered as "Claire" and one as "Catherine"; with one row
-# each, the modal spelling was a coin flip that changed between builds. Her name
-# is Claire.
-NAME_OVERRIDES = {
-    "kfli26dz84mtz2rh": "Claire O'Sullivan",
+# Misspellings confirmed by hand, fixed in every raw string -- roster names,
+# base runners, narratives -- before anything reads the box score, so no table
+# or column can disagree with another. New York's O'Sullivan is "Catherine"
+# throughout semifinal G2 and "Claire" everywhere else. Her name is Claire.
+RAW_NAME_FIXES = {
+    "Catherine O'Sullivan": "Claire O'Sullivan",
 }
+
+
+def _fix_names(value):
+    if isinstance(value, str):
+        for wrong, right in RAW_NAME_FIXES.items():
+            value = value.replace(wrong, right)
+        return value
+    if isinstance(value, list):
+        return [_fix_names(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _fix_names(v) for k, v in value.items()}
+    return value
 
 
 def modal_name(series: pd.Series):
@@ -289,7 +305,7 @@ def load_raw():
     games = json.loads((RAW_DIR / "games.json").read_text(encoding="utf-8"))["games"]
     boxes, tracking = {}, {}
     for path in sorted((RAW_DIR / "boxscore").glob("*.json")):
-        boxes[path.stem] = json.loads(path.read_text(encoding="utf-8"))["boxscore"]
+        boxes[path.stem] = _fix_names(json.loads(path.read_text(encoding="utf-8"))["boxscore"])
     for path in sorted((RAW_DIR / "activity").glob("*.json")):
         events = json.loads(path.read_text(encoding="utf-8"))["activity"]
         if events:
@@ -463,7 +479,11 @@ def build_team_and_player_tables(boxes: dict, games_df: pd.DataFrame, id_index: 
                .agg(player_name=("player_name", modal_name),
                     short_name=("short_name", first_known),
                     team_id=("team_id", "last"), team_name=("team_name", "last"),
-                    bats=("bats", first_known), throws=("throws", first_known),
+                    # The feed contradicts itself on handedness for 10 of 80
+                    # players (Jordan Eyster is R/R in some games and L/L in
+                    # others), so take the most-used value rather than the
+                    # first game's, exactly as for a misspelled name.
+                    bats=("bats", modal_name), throws=("throws", modal_name),
                     profile_url=("profile_url", first_known),
                     id_ever_from_feed=("player_id_source", lambda s: (s == "feed").any()),
                     games=("game_id", "nunique")))
@@ -619,6 +639,7 @@ def build_stints(plays: pd.DataFrame, pitching: pd.DataFrame) -> pd.DataFrame:
         plays=("sequence", "count"),
         batters_faced=("is_plate_appearance", "sum"),
         pitches=("n_pitches", "sum"),
+        pitches_est=("n_pitches_est", "sum"),
         runs_allowed=("runs_scored", "sum"),
         hits_allowed=("is_hit", "sum"),
         entry_pitching_score=("pitching_team_score_before", "first"),
@@ -630,6 +651,66 @@ def build_stints(plays: pd.DataFrame, pitching: pd.DataFrame) -> pd.DataFrame:
     roles = pitching.set_index(["game_id", "player_id"])["role"].to_dict()
     stints["box_role"] = [roles.get((g, p)) for g, p in zip(stints["game_id"], stints["pitcher_id"])]
     return stints.sort_values(["game_id", "pitching_team_id", "stint_id"]).reset_index(drop=True)
+
+
+def _pitch_string_complete(sequence: str, event_type: str) -> bool:
+    """Whether a plate appearance's pitch string can have produced its result:
+    a walk needs four balls ending on one, a strikeout a third strike, a hit
+    batter an H, and anything else a ball put in play (P)."""
+    if not sequence:
+        return False
+    if event_type == "walk":
+        return sequence.count("B") == 4 and sequence[-1] == "B"
+    if event_type == "strikeout":
+        strikes = 0
+        for code in sequence:
+            if code in "KS" or (code == "F" and strikes < 2):
+                strikes += 1
+        return sequence[-1] in "KS" and strikes >= 3
+    if event_type == "hit_by_pitch":
+        return sequence[-1] == "H"
+    return sequence[-1] == "P"
+
+
+def estimate_pitch_counts(plays: pd.DataFrame, pitching: pd.DataFrame) -> None:
+    """Add estimated pitch counts beside the feed's, in place.
+
+    In PITCH_STRING_GAPS games the feed cut pitch strings short, so a string's
+    length is only a floor on the pitches thrown. A plate appearance whose
+    string cannot have produced its result is taken as cut off, and its count
+    is estimated as the mean length of complete strings elsewhere with the same
+    kind of result (walk, strikeout, hit batter, in play) and at least as many
+    pitches as were recorded. Every other plate appearance keeps its own count.
+
+    plays.n_pitches_est / n_pitches_estimated and pitching.pitches_est hold the
+    result (build_stints sums n_pitches_est into pitching_stints.pitches_est);
+    n_pitches and pitches stay as the feed sent them, which is what validate.py
+    checks.
+    """
+    kind = plays["event_type"].where(
+        plays["event_type"].isin(["walk", "strikeout", "hit_by_pitch"]), "in_play")
+    sequence = plays["pitch_sequence"].fillna("")
+    real_pa = plays["play_kind"] == "plate_appearance"
+    complete = pd.Series([_pitch_string_complete(s, e) for s, e in
+                          zip(sequence, plays["event_type"])], index=plays.index)
+    reference = pd.DataFrame({"kind": kind, "n": plays["n_pitches"]})[
+        real_pa & complete & ~plays["game_id"].isin(PITCH_STRING_GAPS)]
+
+    cut_off = real_pa & ~complete & plays["game_id"].isin(PITCH_STRING_GAPS)
+    estimate = plays["n_pitches"].astype(float)
+    for i in plays.index[cut_off]:
+        pool = reference.loc[(reference["kind"] == kind[i])
+                             & (reference["n"] >= max(plays.at[i, "n_pitches"], 1)), "n"]
+        if len(pool):
+            estimate[i] = pool.mean()
+    plays["n_pitches_est"] = estimate
+    plays["n_pitches_estimated"] = cut_off
+
+    added = (plays.assign(extra=estimate - plays["n_pitches"])
+             .groupby(["game_id", "pitcher_id"])["extra"].sum())
+    pitching["pitches_est"] = (pitching["pitches"] + [
+        added.get((g, p), 0.0) for g, p in zip(pitching["game_id"], pitching["player_id"])]
+    ).round()
 
 
 def build_tracking(tracking: dict) -> pd.DataFrame:
@@ -646,6 +727,7 @@ def main() -> None:
     team_games, line_score, batting, pitching, fielding, players = \
         build_team_and_player_tables(boxes, games_df, id_index)
     plays, pitch_events = build_plays(boxes, games_df, id_index)
+    estimate_pitch_counts(plays, pitching)
     stints = build_stints(plays, pitching)
 
     # player_id is per-team: a trade mints a new one. person_id is the stable
@@ -653,9 +735,17 @@ def main() -> None:
     for frame in (batting, pitching, fielding, players):
         frame.insert(0, "person_id", frame["player_id"].map(person_index))
     canonical = players.groupby("person_id")["player_name"].agg(modal_name)
-    canonical.update(pd.Series(NAME_OVERRIDES))
     for frame in (batting, pitching, fielding, players):
         frame.insert(1, "person_name", frame["person_id"].map(canonical))
+
+    # Handedness belongs to the person, not to the per-team player_id, so a
+    # traded player carries one value across both of her ids. Every per-game
+    # row is stamped with it as well, so a matchup can be read off batting or
+    # pitching alone.
+    for column in ("bats", "throws"):
+        hand = players.groupby("person_id")[column].agg(modal_name)
+        for frame in (batting, pitching, fielding, players):
+            frame[column] = frame["person_id"].map(hand)
 
     # A handful of play rows come through with no narrative and no event at all
     # -- one game is missing a whole half-inning. Flag it rather than hide it.

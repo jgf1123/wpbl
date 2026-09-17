@@ -85,6 +85,7 @@ import re
 import numpy as np
 import pandas as pd
 
+from wpbl import tables
 from wpbl.batters import neutral_values, plate_appearances
 from wpbl.markov import re_of, run_expectancy
 from wpbl.parse import OUT_DIR
@@ -159,13 +160,14 @@ def charged() -> pd.DataFrame:
 def fip_weights() -> tuple[dict, float, float]:
     """Run values per nine innings for the three true outcomes, plus the
     constant that puts league FIP on league ERA."""
-    frame = plate_appearances()
+    frame = plate_appearances("training")
     _, weights = neutral_values(frame, "drop", "pool")
     per_nine = {"hr": weights["home_run"] * INNINGS,
                 "bb": weights["free_pass"] * INNINGS,
                 "so": weights["strikeout"] * INNINGS}
 
-    pitching = pd.read_parquet(OUT_DIR / "pitching.parquet")
+    # Calibration, so the training games, like the weights above.
+    pitching = tables.read("pitching", "training")
     pitching = pitching[pitching["bf"] > 0]
     innings = pitching["ip_outs"].sum() / 3
     raw = (per_nine["hr"] * pitching["hr"].sum()
@@ -215,9 +217,11 @@ def pitcher_table(frame: pd.DataFrame, rng, weights=None) -> pd.DataFrame:
     defence turns more batters into outs should not have her FIP stretched for
     it, since escaping the defence is the whole point of the measure."""
     per_game, constant, league_era = weights if weights else fip_weights()
+    league = tables.read("pitching", "training")
+    league = league[league["bf"] > 0]
+    per_inning = league["bf"].sum() / (league["ip_outs"].sum() / 3)
     pitching = pd.read_parquet(OUT_DIR / "pitching.parquet")
     pitching = pitching[pitching["bf"] > 0]
-    per_inning = pitching["bf"].sum() / (pitching["ip_outs"].sum() / 3)
     totals = pitching.groupby("person_id").agg(
         ip_outs=("ip_outs", "sum"), hr=("hr", "sum"), bb=("bb", "sum"),
         hbp=("hbp", "sum"), so=("so", "sum"), er=("er", "sum"), r=("r", "sum"),

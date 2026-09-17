@@ -39,20 +39,27 @@ import sys
 import numpy as np
 import pandas as pd
 
-from wpbl.parse import OUT_DIR
+from wpbl import tables
 from wpbl.usage_chart import CODES
 
 
 def stints() -> pd.DataFrame:
-    """Every real pitching appearance, flagged for censoring and entry inning."""
-    pitching = (pd.read_parquet(OUT_DIR / "pitching.parquet")
+    """Every real pitching appearance, flagged for censoring and entry inning.
+
+    Every game the feed has, TRAINING_EXCLUDED games included: pitch counts
+    feed pitcher workload and fatigue, which count every pitch thrown.
+    """
+    pitching = (tables.read("pitching", "all")
                 .sort_values(["game_id", "team_id", "appear_order"]))
     real = pitching[pitching["bf"] > 0].copy()
+    # The feed's count, corrected where it cut pitch strings short
+    # (parse.estimate_pitch_counts).
+    real["pitches"] = real["pitches_est"]
 
     last = real.groupby(["game_id", "team_id"])["appear_order"].transform("max")
     real["censored"] = real["appear_order"] == last
 
-    starts = pd.read_parquet(OUT_DIR / "pitching_stints.parquet")
+    starts = tables.read("pitching_stints", "all")
     entered = starts.set_index(
         ["game_id", "pitching_team_id", "pitcher_id"])["entered_inning"].to_dict()
     real["entered"] = [entered.get((g, t, p)) for g, t, p

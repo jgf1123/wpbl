@@ -33,7 +33,8 @@ def main() -> None:
     error = option("error", ERROR_CHOICES, sys.argv[1:])
     hbp = option("hbp", HBP_CHOICES, sys.argv[1:])
 
-    table, _, _ = batter_table(plate_appearances(), error, hbp, np.random.default_rng(SEED))
+    table, _, _ = batter_table(plate_appearances(), error, hbp, np.random.default_rng(SEED),
+                               plate_appearances("training"))
     rows = table.to_dict("records")
     cells = [(r["tm"], r["batter"] + (" †" if r["swing"] > SENSITIVE else ""),
               str(r["pa"]), signed(r["re24"], 1)) for r in rows]

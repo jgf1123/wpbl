@@ -2,6 +2,7 @@
 
     pixi run table out.png < table.md      # paste a markdown table in
     pixi run table out.png table.md        # or point at a file
+    pixi run table table.md                # same, writes table.png beside it
     ... | pixi run table out.png           # or pipe anything tab-separated
 
 Reads a markdown or tab-separated table on stdin (or from a file argument) and
@@ -186,12 +187,23 @@ def main() -> None:
     args = [a for a in sys.argv[1:] if a]
     if not args:
         raise SystemExit("usage: pixi run table OUT.png [INPUT]   "
-                         "(input defaults to stdin)")
-    out = args[0]
-    if len(args) > 1:
-        text = Path(args[1]).read_text(encoding="utf-8")
+                         "(input defaults to stdin)\n"
+                         "       pixi run table table.md         "
+                         "(writes table.png beside the markdown)")
+    # One markdown/tsv path and no OUT.png: treat it as the input and write
+    # <stem>.png next to it. Otherwise a lone `pixi run table foo.md` hangs
+    # forever on stdin with foo.md used as the output path.
+    if len(args) == 1 and Path(args[0]).suffix.lower() in {".md", ".tsv", ".txt", ".csv"}:
+        src = Path(args[0])
+        if not src.is_file():
+            raise SystemExit(f"no such input file: {src}")
+        out, text = str(src.with_suffix(".png")), src.read_text(encoding="utf-8")
     else:
-        text = sys.stdin.buffer.read().decode("utf-8", "replace")
+        out = args[0]
+        if len(args) > 1:
+            text = Path(args[1]).read_text(encoding="utf-8")
+        else:
+            text = sys.stdin.buffer.read().decode("utf-8", "replace")
     header, rows = parse(text)
     written = render(out, header, rows)
     print(f"{len(rows)} rows x {len(header)} columns -> {written}")

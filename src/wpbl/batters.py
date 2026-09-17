@@ -120,8 +120,8 @@ import sys
 import numpy as np
 import pandas as pd
 
+from wpbl import tables
 from wpbl.markov import re_of, run_expectancy
-from wpbl.parse import OUT_DIR
 from wpbl.usage_chart import CODES
 
 BOOTSTRAP = 4000
@@ -226,10 +226,14 @@ def contact(event_type: str, narrative: str) -> str:
     return event
 
 
-def plate_appearances() -> pd.DataFrame:
-    """One row per plate appearance, with the run value credited to the batter."""
-    plays = pd.read_parquet(OUT_DIR / "plays.parquet")
-    players = pd.read_parquet(OUT_DIR / "players.parquet")
+def plate_appearances(scope: str = "default") -> pd.DataFrame:
+    """One row per plate appearance, with the run value credited to the batter.
+
+    scope="default" is the regular season the batter table reports on;
+    scope="training" is the wider set the linear weights are fit on (see
+    tables.read)."""
+    plays = tables.read("plays", scope)
+    players = tables.read("players", scope)
     person = players.set_index("player_id")["person_id"].to_dict()
     unique = players.drop_duplicates("person_id").set_index("person_id")
     re_table = run_expectancy()
@@ -266,10 +270,8 @@ def plate_appearances() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def neutral_values(frame: pd.DataFrame, error: str, hbp: str) -> pd.DataFrame:
-    """The frame restricted to attributable plate appearances, with a linear
-    weight attached to each. Weights are recomputed on whatever set survives,
-    so they always describe the population being averaged."""
+def attributable(frame: pd.DataFrame, error: str, hbp: str) -> pd.DataFrame:
+    """The plate appearances the attribution options keep, outcomes relabelled."""
     kept = frame.copy()
     if hbp == "pool":
         kept["outcome"] = kept["outcome"].replace({"walk": FREE_PASS,
@@ -278,8 +280,18 @@ def neutral_values(frame: pd.DataFrame, error: str, hbp: str) -> pd.DataFrame:
         kept = kept[kept["outcome"] != "hit_by_pitch"]
     if error == "drop":
         kept = kept[kept["outcome"] != REACHED]
+    return kept
 
-    weights = kept.groupby("outcome")["run_value"].mean()
+
+def neutral_values(frame: pd.DataFrame, error: str, hbp: str,
+                   fit: pd.DataFrame | None = None) -> pd.DataFrame:
+    """The frame restricted to attributable plate appearances, with a linear
+    weight attached to each. The weights are fit on `fit` (the training plate
+    appearances) under the same attribution options, or on the frame itself
+    when no fit set is given."""
+    kept = attributable(frame, error, hbp)
+    source = kept if fit is None else attributable(fit, error, hbp)
+    weights = source.groupby("outcome")["run_value"].mean()
     return kept.assign(neutral=kept["outcome"].map(weights)), weights
 
 
@@ -288,25 +300,27 @@ def interval(values: np.ndarray, rng) -> tuple[float, float]:
     return float(np.percentile(draws, 2.5)), float(np.percentile(draws, 97.5))
 
 
-def sensitivity(frame: pd.DataFrame, keep: set) -> pd.Series:
+def sensitivity(frame: pd.DataFrame, keep: set, fit: pd.DataFrame | None = None) -> pd.Series:
     """How far a batter's context-neutral rating moves across every option."""
     ratings = {}
     for error, hbp in itertools.product(ERROR_CHOICES, HBP_CHOICES):
-        kept, _ = neutral_values(frame, error, hbp)
+        kept, _ = neutral_values(frame, error, hbp, fit)
         kept = kept[kept["person_id"].isin(keep)]
         ratings[(error, hbp)] = kept.groupby("person_id")["neutral"].mean()
     grid = pd.DataFrame(ratings)
     return (grid.max(axis=1) - grid.min(axis=1)).rename("swing")
 
 
-def batter_table(frame: pd.DataFrame, error: str, hbp: str, rng):
+def batter_table(frame: pd.DataFrame, error: str, hbp: str, rng,
+                 fit: pd.DataFrame | None = None):
     """One row per qualified batter: RE24, both per-PA ratings with intervals,
     and how far the rating swings across the attribution options. Returns the
-    table plus the attributable plate appearances and the weights used."""
-    kept, weights = neutral_values(frame, error, hbp)
+    table plus the attributable plate appearances and the weights used, which
+    are fit on `fit` when given."""
+    kept, weights = neutral_values(frame, error, hbp, fit)
     sizes = frame.groupby("person_id").size()
     keep = set(sizes[sizes >= MIN_PA].index)
-    swing = sensitivity(frame, keep)
+    swing = sensitivity(frame, keep, fit)
 
     rows = []
     for pid, group in frame.groupby("person_id"):
@@ -337,13 +351,14 @@ def main() -> None:
     rng = np.random.default_rng(SEED)
 
     frame = plate_appearances()
-    table, kept, weights = batter_table(frame, error, hbp, rng)
+    fit = plate_appearances("training")
+    table, kept, weights = batter_table(frame, error, hbp, rng, fit)
 
     print(f"{len(frame)} plate appearances.  --error={error}  --hbp={hbp}")
     print(f"  RE24 always uses every plate appearance (it is a ledger).")
     print(f"  context-neutral uses {len(kept)} of them.\n")
-    print("=== linear weights ===")
-    counts = kept["outcome"].value_counts()
+    print(f"=== linear weights (fit on {len(fit)} training plate appearances) ===")
+    counts = attributable(fit, error, hbp)["outcome"].value_counts()
     for event, weight in weights.sort_values(ascending=False).items():
         n = counts.get(event, 0)
         print(f"   {event:18s}{weight:+7.3f}   n={n:4d}")

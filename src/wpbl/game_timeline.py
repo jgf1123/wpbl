@@ -3,6 +3,9 @@
     pixi run timeline-chart <game_id>                 (defaults to the Aug 1 NY/LA game)
     pixi run timeline-chart <game_id> --n-swings 8    (how many plays each highlight pool keeps)
 
+Looks up game_id in data/tables/ (all games, including postseason). The WP model
+still trains on the default analysis scope (usually regular season).
+
 A step is any play that changes the base-out state: a plate appearance, a
 stolen base or caught stealing, a wild pitch or passed ball, a balk, or a
 pickoff that actually gets the runner. A failed pickoff attempt, a
@@ -64,7 +67,7 @@ import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
 from wpbl.markov import re_of, run_expectancy
-from wpbl.parse import OUT_DIR
+from wpbl.parse import ALL_DIR, DATA_DIR
 from wpbl.usage_chart import CODES, label_ink
 from wpbl.win_probability import Model, REGULATION
 
@@ -161,7 +164,8 @@ def name_fixes() -> dict[str, str]:
     way within the season ('Maggie Fox' once, 'Gabriella Haas' once). Built
     from the batting table's own player_name vs. its person's canonical name,
     rather than hardcoded, so it covers whatever the feed does this to."""
-    batting = pd.read_parquet(OUT_DIR / "batting.parquet")
+    # ALL_DIR: postseason spellings too, even when the WP model is regular-only.
+    batting = pd.read_parquet(ALL_DIR / "batting.parquet")
     mismatched = batting.loc[batting["player_name"] != batting["person_name"],
                              ["player_name", "person_name"]].drop_duplicates()
     return dict(zip(mismatched["player_name"], mismatched["person_name"]))
@@ -194,9 +198,14 @@ def diff_label(diff: int, home_code: str, away_code: str) -> str:
 
 
 def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
-    plays = pd.read_parquet(OUT_DIR / "plays.parquet")
-    games = pd.read_parquet(OUT_DIR / "games.parquet").set_index("game_id")
-    people = pd.read_parquet(OUT_DIR / "players.parquet").set_index("player_id")["person_name"]
+    # A named game_id is looked up in the full tables so postseason (and any
+    # other game outside the default regular-season OUT_DIR) still resolves.
+    # The win-probability model itself stays on OUT_DIR -- usually regular.
+    plays = pd.read_parquet(ALL_DIR / "plays.parquet")
+    games = pd.read_parquet(ALL_DIR / "games.parquet").set_index("game_id")
+    people = pd.read_parquet(ALL_DIR / "players.parquet").set_index("player_id")["person_name"]
+    if game_id not in games.index:
+        raise SystemExit(f"No game {game_id} in {ALL_DIR / 'games.parquet'}")
     game = games.loc[game_id]
     fixes = name_fixes()
 
@@ -224,10 +233,12 @@ def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
     # How the tracked line ends depends on how the game actually finished.
     # Extra innings are now modelled, so the only case that still cannot be
     # carried to a result is a game called early: nothing that happened on the
-    # field ended it, so there is no play to attribute the outcome to.
+    # field ended it, so there is no play to attribute the outcome to. An
+    # in-progress game is the same: do not invent a Final row from the live score.
     played_innings = int(game["innings"]) if pd.notna(game["innings"]) else REGULATION
     called_early = played_innings < REGULATION
-    if not called_early:
+    finished = bool(game["is_final"]) and not called_early
+    if finished:
         home_won = game["home_score"] > game["away_score"]
         rows.append({
             "sequence": rows[-1]["sequence"] + 1, "inning": rows[-1]["inning"],
@@ -244,9 +255,13 @@ def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
     # round: the line climbs toward the team that took the game, and its low
     # point is the moment they came closest to losing it -- rather than
     # tracking a team sliding toward a defeat the reader already knows is
-    # coming. wp_home is kept as the model's native output.
-    home_won = game["home_score"] > game["away_score"]
-    frame["wp"] = frame["wp_home"] if home_won else 1 - frame["wp_home"]
+    # coming. wp_home is kept as the model's native output. In progress (or
+    # tied), fall back to the side currently ahead, else home.
+    if game["home_score"] != game["away_score"]:
+        home_leading = game["home_score"] > game["away_score"]
+        frame["wp"] = frame["wp_home"] if home_leading else 1 - frame["wp_home"]
+    else:
+        frame["wp"] = frame["wp_home"]
 
     # The swing a play causes is the move from its own state to the next row's
     # state -- forward-looking. A backward diff() attributes each transition to
@@ -278,9 +293,14 @@ def build(model: Model, game_id: str) -> tuple[pd.DataFrame, dict]:
 def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str,
          n_swings: int = N_SWINGS) -> None:
     home_name, away_name = game["home_team_name"], game["away_team_name"]
-    home_won = game["home_score"] > game["away_score"]
-    winner_name = home_name if home_won else away_name
-    loser_name = away_name if home_won else home_name
+    final = bool(game["is_final"])
+    home_ahead = game["home_score"] > game["away_score"]
+    tied = game["home_score"] == game["away_score"]
+    # Side the line is drawn for: eventual winner if final, else current leader
+    # (home when tied).
+    focus_is_home = True if tied else home_ahead
+    focus_name = home_name if focus_is_home else away_name
+    other_name = away_name if focus_is_home else home_name
     home_color = TEAM_COLORS.get(home_name, "#555555")
     away_color = TEAM_COLORS.get(away_name, "#999999")
     home_ramp, away_ramp = team_ramp(home_color), team_ramp(away_color)
@@ -291,8 +311,12 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str,
     # are depends on how much the two selection pools overlap, and the panel
     # has to be sized to hold them rather than squeezing ten entries into a
     # box built for six. Both pools use n_swings -- they were sized together
-    # on purpose, and one knob keeps them that way.
-    candidates = frame.iloc[:-1] if len(frame) > 1 else frame
+    # on purpose, and one knob keeps them that way. Rows with no successor
+    # (the synthetic Final, or the last live play of an in-progress game)
+    # have no swing and are not candidates.
+    candidates = frame[frame["swing"].notna()]
+    if candidates.empty:
+        candidates = frame.iloc[:0]
     top_wp = candidates.reindex(
         candidates["swing"].abs().sort_values(ascending=False, na_position="last").index
     ).head(n_swings)
@@ -346,10 +370,8 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str,
     ax.axhline(0.5, color="#999999", linewidth=0.8, linestyle="--", zorder=1)
 
     # Numbered markers only -- no floating text on the plot. Full detail sits
-    # in the panel below. The last row is never a real play (it is either the
-    # settled result, the extra-innings placeholder, or -- for a game called
-    # early -- has no "next" state to measure a swing against), so it is
-    # never eligible.
+    # in the panel below. Rows without a successor (Final, or the last live
+    # play of an in-progress game) have no swing and are already excluded.
     offense_wins = defense_wins = 0
     panel_lines = []
     for rank, (idx, row) in enumerate(biggest.iterrows(), start=1):
@@ -385,7 +407,7 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str,
     # A marker sitting exactly on 0 or 1 -- a game-ending play -- would be
     # halfway outside the axes, so leave room for it.
     ax.set_ylim(-0.04, 1.04)
-    ax.set_ylabel(f"{winner_name} win probability")
+    ax.set_ylabel(f"{focus_name} win probability")
     ax.set_xlabel("Base-out state change, in order")
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_yticklabels(["0%", "25%", "50%", "75%", "100%"])
@@ -397,7 +419,7 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str,
     # what produced a false swing on the last captured play.
     played_innings = int(game["innings"]) if pd.notna(game["innings"]) else REGULATION
     ending_note = None
-    if played_innings < REGULATION:
+    if final and played_innings < REGULATION:
         # The line tracks the eventual winner, so the settled result is 1.
         actual = 1.0
         last_x, last_y = len(frame) - 1, frame["wp"].iloc[-1]
@@ -407,16 +429,23 @@ def plot(model: Model, frame: pd.DataFrame, game: dict, out_path: str,
         reason = game["status"].split(" - ")[-1].lower() if " - " in game["status"] else "called early"
         ending_note = (f'Called after {played_innings} innings ({reason}) -- dashed segment is the '
                       f'actual result, not a tracked swing.')
-    elif played_innings > REGULATION:
+    elif final and played_innings > REGULATION:
         ending_note = (f'Went to extra innings, where both teams start a runner on second. Those '
                       f'innings are modelled like any other, drawing on the same runner-on-second '
                       f'run distribution.')
+    elif not final:
+        ending_note = "Game still in progress -- line tracks the side currently ahead (home if tied)."
 
-    winner_score = int(game["home_score"] if home_won else game["away_score"])
-    loser_score = int(game["away_score"] if home_won else game["home_score"])
+    focus_score = int(game["home_score"] if focus_is_home else game["away_score"])
+    other_score = int(game["away_score"] if focus_is_home else game["home_score"])
+    if final:
+        score_bit = f'{focus_name} beat {other_name} {focus_score}-{other_score}'
+    elif tied:
+        score_bit = f'in progress, tied {focus_score}-{other_score}'
+    else:
+        score_bit = f'in progress, {focus_name} leads {focus_score}-{other_score}'
     ax.set_title(
-        f'{away_name} at {home_name}, {game["game_date"]}  '
-        f'({winner_name} beat {loser_name} {winner_score}-{loser_score})',
+        f'{away_name} at {home_name}, {game["game_date"]}  ({score_bit})',
         fontsize=13, pad=28)
 
     handles = [plt.Rectangle((0, 0), 1, 1, color=away_color, alpha=0.5, label=f"{away_name} batting"),
@@ -483,14 +512,21 @@ def main() -> None:
     model = Model()
     frame, game = build(model, game_id)
 
-    out_path = OUT_DIR.parent / f"timeline_{game_id}.png"
+    # Sort-friendly filenames: timeline_YYYYMMDD_<game_id>.png
+    date_tag = pd.Timestamp(game["game_date"]).strftime("%Y%m%d")
+    out_path = DATA_DIR / f"timeline_{date_tag}_{game_id}.png"
     plot(model, frame, game, str(out_path), n_swings=n_swings)
 
-    home_won = game["home_score"] > game["away_score"]
-    winner = game["home_team_name"] if home_won else game["away_team_name"]
+    final = bool(game["is_final"])
+    home_ahead = game["home_score"] > game["away_score"]
+    tied = game["home_score"] == game["away_score"]
+    focus = (game["home_team_name"] if tied or home_ahead
+             else game["away_team_name"])
     low = frame["wp"].idxmin()
-    print(f"{len(frame) - 1} state changes -> {out_path}")
-    print(f'{winner} won; their win probability bottomed out at '
+    n_steps = int(frame["swing"].notna().sum())
+    print(f"{n_steps} state changes -> {out_path}")
+    verb = "won" if final else ("leads" if not tied else "tied; tracking")
+    print(f'{focus} {verb}; win probability bottomed out at '
           f'{frame["wp"].min():.3f} in the {frame.loc[low, "half"]} of the '
           f'{frame.loc[low, "inning"]}')
     print(f'  ({frame.loc[low, "narrative"]})')

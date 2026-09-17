@@ -32,7 +32,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from wpbl.parse import OUT_DIR
+from wpbl import tables
 
 LAST_INNING = 7          # regulation length
 MIN_SAMPLE = 50          # below this a cell's mean is not worth reading
@@ -122,9 +122,9 @@ def damaged_halves(plays: pd.DataFrame, line: pd.DataFrame,
 
 def states() -> pd.DataFrame:
     """One row per plate appearance: the state faced, and runs scored from it on."""
-    plays = pd.read_parquet(OUT_DIR / "plays.parquet")
-    line = pd.read_parquet(OUT_DIR / "line_score.parquet")
-    games = pd.read_parquet(OUT_DIR / "games.parquet").set_index("game_id")
+    plays = tables.read("plays", "training")
+    line = tables.read("line_score", "training")
+    games = tables.read("games", "training").set_index("game_id")
     plays = plays.copy()
 
     damaged = damaged_halves(plays, line, games)

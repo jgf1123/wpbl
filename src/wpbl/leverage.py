@@ -20,7 +20,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from wpbl.parse import OUT_DIR
+from wpbl import tables
 from wpbl.win_probability import Model, REGULATION
 
 LEADOFF_BASES = "___"
@@ -74,7 +74,7 @@ def calibrate(model: Model, half_starts: pd.DataFrame) -> float:
 
 def half_inning_starts() -> pd.DataFrame:
     """One row per half-inning actually batted, with the score at its start."""
-    plays = pd.read_parquet(OUT_DIR / "plays.parquet")
+    plays = tables.read("plays", "training")
     live = (plays[plays["outs_before"] < 3]
             .dropna(subset=["batting_team_id", "pitching_team_id"])
             .sort_values(["game_id", "sequence"]))

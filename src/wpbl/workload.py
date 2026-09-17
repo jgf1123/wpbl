@@ -30,7 +30,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from wpbl.parse import OUT_DIR
+from wpbl import tables
 from wpbl.usage_chart import CODES
 
 WINDOW = 7          # days; the natural unit for a once-a-week rotation
@@ -38,9 +38,17 @@ MIN_APPEARANCES = 3  # below this a "peak" is one outing, not a workload
 
 
 def appearances() -> pd.DataFrame:
-    """Every real outing, with the 7-day load the pitcher was carrying."""
-    pitching = pd.read_parquet(OUT_DIR / "pitching.parquet")
+    """Every real outing, with the 7-day load the pitcher was carrying.
+
+    Every game the feed has, postseason included and TRAINING_EXCLUDED games
+    too: an arm carries the pitches it threw whether or not the game is fit to
+    train a model on.
+    """
+    pitching = tables.read("pitching", "all")
     pitching = pitching[pitching["bf"] > 0].copy()
+    # The feed's count, corrected where it cut pitch strings short
+    # (parse.estimate_pitch_counts): a tired arm threw the pitches either way.
+    pitching["pitches"] = pitching["pitches_est"]
     pitching["date"] = pd.to_datetime(pitching["game_date"])
 
     # The window is INCLUSIVE of the outing being measured: the seven days
@@ -132,7 +140,7 @@ def main() -> None:
         print(f"    >= {threshold:3d} pitches in {WINDOW} days: {n:2d} of {len(peak)}")
 
     print("\n\n=== what a staff throws in a full three-game week ===")
-    team_games = pd.read_parquet(OUT_DIR / "team_games.parquet")
+    team_games = tables.read("team_games", "all")
     team_games["date"] = pd.to_datetime(team_games["game_date"])
     rows = []
     for team, side in frame.groupby("team_name"):

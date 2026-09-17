@@ -16,7 +16,7 @@ import pandas as pd
 
 # Validation checks the full build, every game the raw JSON holds, whatever
 # scope analyses are reading.
-from wpbl.parse import ALL_DIR as OUT_DIR, RAW_DIR, ip_to_outs
+from wpbl.parse import ALL_DIR as OUT_DIR, PITCH_STRING_GAPS, RAW_DIR, ip_to_outs
 
 FAILURES: list[str] = []
 
@@ -206,13 +206,19 @@ def main() -> None:
     # This establishes that P means "in play". A stray row does not overturn
     # that -- the feed miscodes the odd final pitch -- so the check is a rate,
     # with every exception printed so a real regression still shows up rather
-    # than hiding under a tolerance.
+    # than hiding under a tolerance. One game is a known gap and stays out of
+    # the rate: in SF-BOS semifinal G1 (9 Sep) the feed kept incomplete pitch
+    # strings through about the 5th inning, so its box score pitch counts are
+    # short too.
     stray = in_play[in_play["last"] != "P"]
+    gap = stray["game_id"].isin(PITCH_STRING_GAPS)
+    rated = in_play[~in_play["game_id"].isin(PITCH_STRING_GAPS)]
     check("batted-ball plays end on code P (so P = in play, not pitchout)",
-          len(stray) <= 0.005 * len(in_play),
-          f"{len(stray)} of {len(in_play)} do not")
+          (~gap).sum() <= 0.005 * len(rated),
+          f"{(~gap).sum()} of {len(rated)} do not, plus {gap.sum()} in known-gap games")
     for row in stray.itertuples():
-        print(f"        miscoded final pitch: {row.game_id} inning {row.inning} "
+        label = "known gap" if row.game_id in PITCH_STRING_GAPS else "miscoded final pitch"
+        print(f"        {label}: {row.game_id} inning {row.inning} "
               f"{row.half}, {row.event_type} with sequence {row.pitch_sequence!r}")
     ks = ends[ends["event_type"] == "strikeout"]
     check("every strikeout ends on K or S (so K = called strike, not unknown)",

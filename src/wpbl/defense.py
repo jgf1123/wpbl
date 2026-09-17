@@ -73,7 +73,7 @@ def team_games() -> pd.DataFrame:
                       + plays["third_base"].notna().map({True: "3", False: "_"}))
 
     # Balls in play, priced at the context-neutral weights.
-    _, weights = neutral_values(plate_appearances(), "credit", "pool")
+    _, weights = neutral_values(plate_appearances("training"), "credit", "pool")
     pa = plays[plays["is_plate_appearance"] & plays["batter_id"].notna()
                & (plays["outs_before"] < 3)].copy()
     pa["event"] = [classify(e, n) for e, n in zip(pa["event_type"], pa["narrative"])]
