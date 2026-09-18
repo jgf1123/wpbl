@@ -247,6 +247,26 @@ Blunt 66 → ~99, Whitmore 70 → ~101, Bricker 30 → ~35; the game ~283 pitche
 against a league mean of 267. Workload, pitch counts and the bullpen model read
 the estimates; `pixi run check` checks the feed's own counts.
 
+**A pitcher is sometimes named "/".** Championship G2 (17 Sep,
+`3q3q8b72pszobk7b`) names the pitcher "/" for the seven plays of the top of the
+7th after Andreanne Leblanc took the mound; her box-score line (6 batters faced,
+3 outs) matches them exactly. Any pitcher name that resolves to nobody is taken
+to be whoever was last on the mound that half-inning. `plays.pitcher_inherited`
+flags those rows, `plays.pitcher_name_feed` keeps what the feed said, and
+`pixi run check` lists every one. The rule is re-applied on each build, so a
+corrected feed simply stops triggering it.
+
+**Postseason box scores sometimes drop accents or misspell names.**
+Postseason games carry new player ids, and ids join only through a shared
+spelling, so "Ela Day-Bedard", "Maika Dumais" and "Thaima Maximiliana" each
+became a second person. Roster entries in six games also spell Suzu Narasaki
+"Naraski", and single games misspell five more (Alexi Jorge, Gabriella Haas,
+Maggie Fox, Emi Saki, Isabella Villareal) under the right ids. All are corrected
+in `parse.RAW_NAME_FIXES`, matching whole names only, so "Maggie Fox" never
+turns "Maggie Foxx" into "Foxxx". `pixi run check` fails if two people ever
+share a name apart from accents; a pairwise edit-distance sweep of every
+spelling in the tables (17 Sep) found nothing further within three letters.
+
 **Handedness contradicts itself between games.** Every box-score player row
 carries `bats` and `throws`, but 10 of 80 players are listed more than one way:
 Jordan Eyster is R/R in some games and L/L in others. Both columns are resolved

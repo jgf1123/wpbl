@@ -10,6 +10,7 @@ plausible-looking number.
 from __future__ import annotations
 
 import json
+import unicodedata
 from pathlib import Path
 
 import pandas as pd
@@ -148,6 +149,11 @@ def main() -> None:
     unresolved_b = plays["batter_name"].notna() & blank(plays["batter_id"])
     check("every named pitcher in the play-by-play resolves to an id",
           not unresolved_p.any(), f"{unresolved_p.sum()} plays")
+    inherited = plays[plays["pitcher_inherited"]]
+    for (game_id, inning, half, feed, name), n in inherited.groupby(
+            ["game_id", "inning", "half", "pitcher_name_feed", "pitcher_name"]).size().items():
+        print(f"        pitcher inherited: {game_id} {half} {inning}, feed says {feed!r} "
+              f"on {n} plays -> {name}")
     check("every named batter in the play-by-play resolves to an id",
           not unresolved_b.any(), f"{unresolved_b.sum()} plays")
 
@@ -172,6 +178,14 @@ def main() -> None:
     both_sides = batting.groupby(["game_id", "person_id"])["team_id"].nunique()
     check("no person appears for both teams in one game", (both_sides <= 1).all(),
           f"{(both_sides > 1).sum()} cases")
+    # The reverse error: one person split in two because some box scores drop
+    # her accents (postseason ids are new, so only a shared spelling joins them).
+    # Fix with parse.RAW_NAME_FIXES.
+    folded = players["person_name"].map(lambda s: "".join(
+        c for c in unicodedata.normalize("NFKD", s) if not unicodedata.combining(c)).lower())
+    split = folded.groupby(folded).transform(lambda s: players.loc[s.index, "person_id"].nunique()) > 1
+    check("no two people share a name apart from accents", not split.any(),
+          f"{sorted(set(players.loc[split, 'person_name']))}")
     spans = players.groupby("person_id")["team_id"].nunique()
     moved = players[players["person_id"].isin(spans[spans > 1].index)]
     print(f"        {players['player_id'].nunique()} player_ids collapse to "
