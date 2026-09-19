@@ -45,6 +45,8 @@ pixi run pitchers    # RE24 per batter faced, beside a league-calibrated FIP
 pixi run pitcher-chart out.png      # the pitcher table as a chart
 pixi run timeline-chart <game_id>   # WP chart -> data/timeline_YYYYMMDD_<id>.png
 
+pixi run dice        # dice-game player cards -> data/dice/cards_{batters,pitchers}.csv (dice_game_spec.md s3)
+
 pixi run table out.png table.md     # render a markdown table as a 728px PNG
 pixi run table table.md             # same; writes table.png next to the md
 ```
