@@ -119,16 +119,30 @@ TEXT_FIELDS = {"ip"} | RATE_FIELDS | DECISION_FIELDS
 # base runners, narratives -- before anything reads the box score, so no table
 # or column can disagree with another. New York's O'Sullivan is "Catherine"
 # throughout semifinal G2 and "Claire" everywhere else. Her name is Claire.
+# Narasaki is "Naraski" in the roster entries of six games (never in a
+# narrative), enough extra rows to win the most-used-spelling vote. Some
+# postseason box scores drop accents; postseason ids are new, and ids only
+# union through a shared spelling, so each of these split a person in two.
 RAW_NAME_FIXES = {
     "Catherine O'Sullivan": "Claire O'Sullivan",
+    "Suzu Naraski": "Suzu Narasaki",
+    "Ela Day-Bedard": "Ela Day-Bédard",
+    "Maika Dumais": "Maïka Dumais",
+    "Thaima Maximiliana": "Tháima Maximiliana",
+    # One game each; the ids are right, only the strings differ.
+    "Alexi Jorge": "Alexia Jorge",
+    "Gabriella Haas": "Gabrielle Haas",
+    "Maggie Fox": "Maggie Foxx",
+    "Emi Saki": "Emi Saiki",
+    "Isabella Villareal": "Isabella Villarreal",
 }
+# Whole names only: "Maggie Fox" must not match inside "Maggie Foxx".
+_NAME_FIX_RE = re.compile(r"\b(" + "|".join(map(re.escape, RAW_NAME_FIXES)) + r")\b")
 
 
 def _fix_names(value):
     if isinstance(value, str):
-        for wrong, right in RAW_NAME_FIXES.items():
-            value = value.replace(wrong, right)
-        return value
+        return _NAME_FIX_RE.sub(lambda m: RAW_NAME_FIXES[m.group(1)], value)
     if isinstance(value, list):
         return [_fix_names(v) for v in value]
     if isinstance(value, dict):
@@ -534,6 +548,7 @@ def build_plays(boxes: dict, games_df: pd.DataFrame, id_index: dict):
         completed = {home_id: 0, away_id: 0}
         current_half: tuple | None = None
         in_half = 0
+        on_mound: tuple | None = None       # (name, id) of the last resolved pitcher this half
 
         for play in box["plays"]:
             batting_id = play.get("team_id") or ""
@@ -548,7 +563,19 @@ def build_plays(boxes: dict, games_df: pd.DataFrame, id_index: dict):
                     prev_inning, _, prev_batting = current_half
                     completed[prev_batting] = (completed.get(prev_batting, 0)
                                                + line.get((prev_batting, prev_inning), 0))
-                current_half, in_half = half, 0
+                current_half, in_half, on_mound = half, 0, None
+
+            # A named pitcher who resolves to nobody (the feed wrote "/" for seven
+            # plays of championship G2) is whoever was last on the mound this
+            # half-inning. Flagged, so `pixi run check` still lists every one; a
+            # corrected feed simply stops triggering it on the next build.
+            pitcher_name = play.get("pitcher_name") or None
+            pitcher_id = resolve(pitching_id, pitcher_name)
+            inherited = bool(pitcher_name and pitcher_id is None and on_mound)
+            if inherited:
+                pitcher_name, pitcher_id = on_mound
+            elif pitcher_id is not None:
+                on_mound = (pitcher_name, pitcher_id)
             fielding_score = completed.get(pitching_id, 0)
             batting_score = completed.get(batting_id, 0) + in_half
             in_half += runs
@@ -563,8 +590,10 @@ def build_plays(boxes: dict, games_df: pd.DataFrame, id_index: dict):
                 "pitching_team_id": pitching_id if batting_id else None,
                 "batter_name": play.get("batter_name") or None,
                 "batter_id": resolve(batting_id, play.get("batter_name")),
-                "pitcher_name": play.get("pitcher_name") or None,
-                "pitcher_id": resolve(pitching_id, play.get("pitcher_name")),
+                "pitcher_name": pitcher_name,
+                "pitcher_id": pitcher_id,
+                "pitcher_name_feed": play.get("pitcher_name") or None,
+                "pitcher_inherited": inherited,
                 "outs_before": play.get("outs"),
                 "first_base": play.get("first_base") or None,
                 "second_base": play.get("second_base") or None,
@@ -602,8 +631,8 @@ def build_plays(boxes: dict, games_df: pd.DataFrame, id_index: dict):
                     "pitch_number": pitch.get("sequence"),
                     "inning": play.get("inning"),
                     "half": play.get("half"),
-                    "pitcher_name": play.get("pitcher_name") or None,
-                    "pitcher_id": resolve(pitching_id, play.get("pitcher_name")),
+                    "pitcher_name": pitcher_name,
+                    "pitcher_id": pitcher_id,
                     "batter_name": play.get("batter_name") or None,
                     "batter_id": resolve(batting_id, play.get("batter_name")),
                     "code": code,

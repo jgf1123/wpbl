@@ -40,6 +40,7 @@ pitcher-chart = "python -m wpbl.pitcher_chart"
 defense = "python -m wpbl.defense"
 running = "python -m wpbl.running_game"
 table = "python -m wpbl.table_image"
+dice = "python -m wpbl.dice"
 refresh = { depends-on = ["scrape", "build", "check"] }
 
 [activation.env]
