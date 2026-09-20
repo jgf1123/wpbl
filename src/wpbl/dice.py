@@ -246,7 +246,24 @@ def cards(side: str = "B") -> tuple[pd.DataFrame, pd.Series]:
             pd.Series(hbp_share, index=ids))
 
 
-CARD_VERSION = "v0.1.0"                 # keep in step with data/dice/dice_version.md
+def league_card(pa: pd.DataFrame) -> tuple[pd.Series, float]:
+    """The league's own line as a card, plus its HBP share of free passes.
+
+    The same numbers serve as the average batter and the average pitcher: every
+    plate appearance has one of each, so grouping the season by batter or by
+    pitcher gives the same distribution. It is not the mean of the player cards,
+    which differs on each side and is not what "average" should mean here --
+    this card is the L that flat log5 divides by (section 4 of the spec), so a
+    player who faces it keeps her own card exactly, which is the point of an
+    average opponent.
+    """
+    share = pa["line"].value_counts(normalize=True).reindex(LINES, fill_value=0)
+    card = pd.Series({l: share["BB"] + share["HBP"] if l == "FP" else share[l]
+                      for l in CARD_LINES})
+    return card, float(share["HBP"] / (share["BB"] + share["HBP"]))
+
+
+CARD_VERSION = "v0.1.1"                 # keep in step with data/dice/dice_version.md
 REPORT_TO = "https://github.com/jgf1123/wpbl/issues"
 
 
@@ -318,6 +335,23 @@ def main() -> None:
         if side == "B":
             print(f"home runs the cards produce over the same PAs: {hr_total:.1f} (actual {int(X['HR'].sum())})")
         print(table.head(12).to_string(index=False))
+    lg, lg_hbp = league_card(pa)
+    check(lg.to_numpy()[None, :], np.array([lg_hbp]))
+    league = pd.DataFrame([["League average batter", "-", len(pa)],
+                           ["League average pitcher", "-", len(pa)]],
+                          columns=["player", "team", "PA/BF"])
+    for col in CARD_LINES:
+        league[col] = round(100 * lg[col], 1)
+    league["HBP share of FP"] = round(100 * lg_hbp, 1)
+    out = OUT_DIR / "cards_league.csv"
+    with out.open("w", encoding="utf-8", newline="") as fh:
+        fh.write("\n".join(stamp) + "\n")
+        fh.write("# The two rows are identical by construction: every plate appearance has a\n"
+                 "# batter and a pitcher, so the season's outcomes are one distribution. A\n"
+                 "# player facing this card keeps her own card exactly under flat log5.\n")
+        league.to_csv(fh, index=False, lineterminator="\n")
+    print(f"\n=== league average -> {out} ===")
+    print(league.to_string(index=False))
     print("\ncheck passed: every card sums to 100%, every line is at least 1%, every free-pass split is inside (0, 1)")
     print("\n" + "\n".join(stamp))
 

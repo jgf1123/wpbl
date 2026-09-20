@@ -123,6 +123,16 @@ ground-ball entry is dropped. **DECISION (17 Sep).**
 `data/dice/cards_batters.csv` and `data/dice/cards_pitchers.csv`. The tuning
 runs behind the constants below are analysis, not part of the module.
 
+**League average.** `data/dice/cards_league.csv` holds an average batter and an
+average pitcher, for a player with no card and as the baseline a real card is
+read against. Both are the league's own line over every training PA, so the two
+rows are identical: each PA has a batter and a pitcher, so the season is one
+distribution. It is deliberately not the mean of the player cards, which differs
+by side and is not what "average" should mean here. Under flat log5 (section 4)
+this card is the L the matchup divides by, so a player who faces it keeps her
+own card exactly -- verified for all 104 players, to 1e-6 of a percentage point.
+The mean of the cards would move her by up to 1.9 points. **DECISION (20 Sep).**
+
 ### 3.1 Smoothing in steps
 
 Outcomes are split step by step. Each step divides a group of outcomes and is

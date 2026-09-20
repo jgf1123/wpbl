@@ -1,3 +1,11 @@
+2026-09-20: v0.1.1
+  - Adds cards_league.csv: a league-average batter and a league-average pitcher
+  - Both are the league's own line over every PA, so they are identical: each
+    PA has a batter and a pitcher, so the season is one distribution
+  - Not the mean of the player cards. Under flat log5 this card is the L the
+    matchup divides by, so a player facing it keeps her own card exactly;
+    the mean of the cards would shift her by up to 1.9 points
+
 2026-09-20: v0.1.0
   - First public set of player cards
   - Cards forecast unseen games; they do not replay 2026, so a card will not
