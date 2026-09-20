@@ -1,8 +1,8 @@
 {
  "boxscore": {
-  "fetched_at": "2026-08-20T02:40:35.29406616Z",
+  "fetched_at": "2026-09-15T19:58:26.797362326Z",
   "game_id": "193phvm8rl9cf53w",
-  "game_status": "Final - 6 innings - Weather Delay",
+  "game_status": "Final - 6 innings",
   "plays": [
    {
     "balls": 4,
@@ -3672,7 +3672,7 @@
    }
   ],
   "provider": "presto",
-  "source_updated_at": "2026-08-20T02:35:27Z",
+  "source_updated_at": "2026-09-15T17:41:19Z",
   "status": {
    "away_runs": 11,
    "balls": 0,

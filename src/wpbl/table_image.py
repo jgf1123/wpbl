@@ -10,6 +10,10 @@ writes a PNG. Nothing is transcribed: copy the table, pipe it in, get an image.
 Markdown emphasis is stripped rather than rendered, and the |---| separator row
 is discarded, so a table copied straight out of a chat window works.
 
+A cell may contain two backslashes (\\\\) to force a line break inside the
+same row -- so a long line can wrap without becoming a second zebra-striped
+row. Width uses the longest line in the cell; the row grows taller to fit.
+
 Every image comes out exactly WIDTH_PX wide, because Substack resizes uploads
 to 728px and an image that arrives at some other width gets resampled -- which
 is what makes screenshotted tables look soft. The table is measured, scaled to
@@ -55,10 +59,16 @@ CELL_GAP_EMS = 1.8
 ROW_PAD_PX = 9          # vertical padding within a row
 FONT_PX = 13.0          # target type size before any shrink-to-fit
 MIN_FONT_PX = 7.5       # below this a table is unreadable; let it clip instead
+# Explicit wrap inside one cell / one zebra row. In the .md file, type two
+# backslashes where the line should break (shown in editors as \\).
+LINE_BREAK = "\\\\"
 
 INK = "#101310"
 RULE = "#c9cec9"
 BAND = "#f4f6f4"
+# Letterbox behind a narrow table; the table itself sits on white.
+PAD = "#171717"
+PAPER = "white"
 PROPORTIONAL = FontProperties(family="DejaVu Sans")
 MONOSPACE = FontProperties(family="DejaVu Sans Mono")
 # Headers are drawn bold, and in a numeric column they are drawn monospaced
@@ -78,6 +88,11 @@ def _numeric(value: str) -> bool:
     return bool(NUMBER.match(str(value).strip().replace("·", "").strip()))
 
 
+def _lines(cell: str) -> list[str]:
+    """Split on LINE_BREAK; empty segments dropped so 'a \\\\ b' is two lines."""
+    return [part.strip() for part in str(cell).split(LINE_BREAK) if part.strip()] or [""]
+
+
 def _text_width(text: str, font: FontProperties) -> float:
     """Width of a string at font size 1, in the same units as the size.
 
@@ -87,6 +102,10 @@ def _text_width(text: str, font: FontProperties) -> float:
     if not text:
         return 0.0
     return TextPath((0, 0), text, size=1.0, prop=font).get_extents().width
+
+
+def _cell_width(cell: str, font: FontProperties) -> float:
+    return max((_text_width(line, font) for line in _lines(cell)), default=0.0)
 
 
 def parse(text: str) -> tuple[list[str], list[list[str]]]:
@@ -116,15 +135,17 @@ def render(path: str | Path, header: list[str], rows: list[list]) -> Path:
     """Draw the table at exactly WIDTH_PX and save it."""
     body = [[str(cell) for cell in row] for row in rows]
     columns = len(header)
-    right = [all(_numeric(row[i]) for row in body if row[i].strip())
+    # Numerics are single-token cells; a wrapped cell is never numeric.
+    right = [all(_numeric(row[i]) and LINE_BREAK not in row[i]
+                 for row in body if row[i].strip())
              for i in range(columns)]
     fonts = [MONOSPACE if r else PROPORTIONAL for r in right]
     head_fonts = [MONOSPACE_BOLD if r else PROPORTIONAL_BOLD for r in right]
 
-    # Widest cell in each column, per unit of font size. The header counts, in
+    # Widest line in each column, per unit of font size. The header counts, in
     # the face and weight it will actually be drawn in.
-    unit = [max([_text_width(header[i], head_fonts[i])]
-                + [_text_width(row[i], fonts[i]) for row in body])
+    unit = [max([_cell_width(header[i], head_fonts[i])]
+                + [_cell_width(row[i], fonts[i]) for row in body])
             for i in range(columns)]
 
     # Solve for the type size with the gap included, since the gap scales with
@@ -133,52 +154,74 @@ def render(path: str | Path, header: list[str], rows: list[list]) -> Path:
     font_px = min(FONT_PX, usable / (sum(unit) + columns * CELL_GAP_EMS))
     font_px = max(MIN_FONT_PX, font_px)
     gap = CELL_GAP_EMS * font_px
+    line_px = font_px * 1.25          # stacked lines need a little leading
 
     widths = [u * font_px + gap for u in unit]
     table_px = sum(widths)
     left = max(MARGIN_PX, (WIDTH_PX - table_px) / 2)      # centre it
 
-    row_px = font_px + 2 * ROW_PAD_PX
-    height_px = row_px * (len(body) + 1) + 2 * MARGIN_PX
+    def row_height(cells: list[str]) -> float:
+        n = max(len(_lines(c)) for c in cells)
+        return n * line_px + 2 * ROW_PAD_PX
+
+    head_h = row_height(header)
+    body_h = [row_height(row) for row in body]
+    height_px = head_h + sum(body_h) + 2 * MARGIN_PX
 
     fig = plt.figure(figsize=(WIDTH_PX / DPI, height_px / DPI), dpi=DPI)
-    fig.patch.set_facecolor("white")
+    fig.patch.set_facecolor(PAD)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, WIDTH_PX)
     ax.set_ylim(0, height_px)
     ax.axis("off")
+    ax.set_facecolor(PAD)
+    # White paper under the table plus its MARGIN_PX breathing room. Any
+    # leftover width from centering a narrow table stays PAD.
+    paper_left = left - MARGIN_PX
+    paper_width = table_px + 2 * MARGIN_PX
+    ax.add_patch(plt.Rectangle(
+        (paper_left, 0), paper_width, height_px,
+        color=PAPER, zorder=-1))
 
     edges = [left]
     for w in widths:
         edges.append(edges[-1] + w)
     points = font_px * 72 / DPI          # matplotlib wants points, not pixels
 
-    def draw(cells, centre, bold=False):
+    def draw(cells, top, height, bold=False):
+        # Vertically centre the whole line stack in the row band.
         for i, cell in enumerate(cells):
+            lines = _lines(cell)
+            block = len(lines) * line_px
+            y0 = top - (height - block) / 2 - line_px / 2
             if right[i]:
                 x, align = edges[i + 1] - gap / 2, "right"
             else:
                 x, align = edges[i] + gap / 2, "left"
-            ax.text(x, centre, cell, fontsize=points, va="center", ha=align,
-                    color=INK, weight="bold" if bold else "normal",
-                    fontproperties=(MONOSPACE if right[i] else PROPORTIONAL))
+            face = MONOSPACE if right[i] else PROPORTIONAL
+            for k, line in enumerate(lines):
+                ax.text(x, y0 - k * line_px, line, fontsize=points,
+                        va="center", ha=align, color=INK,
+                        weight="bold" if bold else "normal",
+                        fontproperties=face)
 
     y = height_px - MARGIN_PX
-    draw(header, y - row_px / 2, bold=True)
-    y -= row_px
+    draw(header, y, head_h, bold=True)
+    y -= head_h
     ax.plot([left, left + table_px], [y, y], color=INK, lw=1.0)
 
     for n, row in enumerate(body):
+        h = body_h[n]
         if n % 2 == 1:
-            ax.add_patch(plt.Rectangle((left, y - row_px), table_px, row_px,
+            ax.add_patch(plt.Rectangle((left, y - h), table_px, h,
                                        color=BAND, zorder=0))
-        draw(row, y - row_px / 2)
-        y -= row_px
+        draw(row, y, h)
+        y -= h
     ax.plot([left, left + table_px], [y, y], color=RULE, lw=0.8)
 
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=DPI, facecolor="white")
+    fig.savefig(path, dpi=DPI, facecolor=PAD)
     plt.close(fig)
     return path
 

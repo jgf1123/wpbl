@@ -124,9 +124,9 @@
  "boxscore": {
   "193phvm8rl9cf53w": {
    "complete": true,
-   "fetched_at": "2026-08-30T18:38:03.874595+00:00",
+   "fetched_at": "2026-09-20T01:28:02.249810+00:00",
    "plays": 83,
-   "source_updated_at": "2026-08-20T02:39:59Z"
+   "source_updated_at": "2026-09-15T17:41:19Z"
   },
   "19k396na7ad9r561": {
    "complete": true,
@@ -145,6 +145,12 @@
    "fetched_at": "2026-08-30T18:38:01.170120+00:00",
    "plays": 90,
    "source_updated_at": "2026-08-16T02:10:21Z"
+  },
+  "3q3q8b72pszobk7b": {
+   "complete": true,
+   "fetched_at": "2026-09-20T01:28:06.265659+00:00",
+   "plays": 99,
+   "source_updated_at": "2026-09-18T01:59:25Z"
   },
   "5x0sxr7m1ntzd1z4": {
    "complete": true,
@@ -200,6 +206,12 @@
    "plays": 96,
    "source_updated_at": "2026-08-21T02:03:12Z"
   },
+  "dv41r0nfyyt0vbse": {
+   "complete": true,
+   "fetched_at": "2026-09-20T03:06:56.529010+00:00",
+   "plays": 88,
+   "source_updated_at": "2026-09-20T01:28:38Z"
+  },
   "fzotkodqtxf9gphm": {
    "complete": true,
    "fetched_at": "2026-09-09T00:01:48.852883+00:00",
@@ -254,6 +266,12 @@
    "plays": 98,
    "source_updated_at": "2026-08-18T16:22:25Z"
   },
+  "pmt2nj85es91zxhx": {
+   "complete": true,
+   "fetched_at": "2026-09-20T01:28:04.943079+00:00",
+   "plays": 90,
+   "source_updated_at": "2026-09-17T02:01:03Z"
+  },
   "ppkwakaltuvio20t": {
    "complete": true,
    "fetched_at": "2026-08-30T18:38:02.498546+00:00",
@@ -274,9 +292,9 @@
   },
   "r1slo258zh4c0mwg": {
    "complete": true,
-   "fetched_at": "2026-09-15T02:14:59.305832+00:00",
+   "fetched_at": "2026-09-20T01:28:03.630412+00:00",
    "plays": 108,
-   "source_updated_at": "2026-09-15T02:09:04Z"
+   "source_updated_at": "2026-09-15T20:35:55Z"
   },
   "rr37bu1ieptkbzhp": {
    "complete": true,
@@ -333,5 +351,5 @@
    "source_updated_at": "2026-08-28T01:56:27Z"
   }
  },
- "updated_at": "2026-09-15T02:14:59.306270+00:00"
+ "updated_at": "2026-09-20T07:28:19.779283+00:00"
 }

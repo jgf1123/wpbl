@@ -1,5 +1,8 @@
-"""The 20 players with 17+ games: where their batting lines differ most from league,
-by z-score and by run effect, and what the four-step card does to them."""
+"""The regulars (17+ games): where their batting lines differ most from league,
+by z-score and by run effect, and what the four-step card does to them.
+
+The list is computed, not fixed: it was 20 names on the 36-game data and is 16 on
+the 37-game data, so a hard-coded list goes stale without anyone noticing."""
 import numpy as np
 import pandas as pd
 
@@ -10,10 +13,9 @@ exec(SRC[:SRC.index("\ngids = sorted(")])
 __file__ = _here
 pd.set_option("display.width", 250)
 
-REGULARS = ["Ashton Lansdell", "Jamie Mackay", "Amanda Gianelloni", "Andreanne Leblanc", "Joely Leguizamon",
-            "Kelsie Whitmore", "Denae Benites", "Jua Park", "Maggie Foxx", "Mo'ne Davis", "Natsuki Yonetani",
-            "Sarah Edwards", "Skylar Kaplan", "Alexia Jorge", "Amira Hondras", "Caitlin Eynon", "Diana Ibarra",
-            "Kylee Lahners", "Samaria Benitez", "Ticara Geldenhuis"]
+MIN_GAMES = 17
+_played = pa.groupby("B")["game_id"].nunique()
+REGULARS = [name.get(i, i) for i in _played[_played >= MIN_GAMES].index]
 LABEL = {"K": "K", "BB": "BB", "HBP": "HBP", "HR": "HR", "1B": "1B", "2B": "2B", "ROE": "ROE", "OUT": "out in play"}
 
 X = counts(pa, "B")
@@ -44,7 +46,8 @@ for nm in REGULARS:
 out = pd.DataFrame(rows).sort_values("raw total", ascending=False)
 print(f"league rates %: " + ", ".join(f"{LABEL[l]} {100 * L[j]:.1f}" for j, l in enumerate(ALL)))
 print(f"run value above an average PA: " + ", ".join(f"{LABEL[l]} {w[j] - w_avg:+.2f}" for j, l in enumerate(ALL)))
-print("\n=== 20 regulars (runs above average per PA x1000; training games, G3 excluded) ===")
+print(f"\n=== {len(REGULARS)} regulars, {MIN_GAMES}+ games "
+      "(runs above average per PA x1000; training games, G3 excluded) ===")
 print(out.to_string(index=False))
 
 print("\n=== z-score by line ===")
@@ -53,5 +56,6 @@ print("\n=== run effect by line (x1000 per PA) ===")
 print(pd.DataFrame(rt, index=[LABEL[l] for l in ALL]).T.loc[out["player"]].round(0).to_string())
 zz = pd.DataFrame(zt, index=ALL).T
 print("\nhow often each line is a player's most extreme:", zz.abs().idxmax(axis=1).map(LABEL).value_counts().to_dict())
-print("lines with |z| >= 2 across the 20:", {LABEL[l]: int((zz[l].abs() >= 2).sum()) for l in ALL},
-      f"(by chance alone expect about {0.046 * 20:.1f} per line)")
+print(f"lines with |z| >= 2 across the {len(REGULARS)}:",
+      {LABEL[l]: int((zz[l].abs() >= 2).sum()) for l in ALL},
+      f"(by chance alone expect about {0.046 * len(REGULARS):.1f} per line)")
