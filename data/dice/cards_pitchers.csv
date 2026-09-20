@@ -1,5 +1,5 @@
 # WPBL dice-game player cards -- v0.1.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
-# Built from 37 games through 2026-09-19 (2663 plate appearances); code 02aa7ef + uncommitted changes.
+# Built from 37 games through 2026-09-19 (2663 plate appearances); code 63b15fb + uncommitted changes.
 # These FORECAST how a player would do in games we have not seen. They do not
 # replay 2026: a card is pulled toward players her team used about as much, so it
 # will not match her season line, by design (dice_game_spec.md section 3).
