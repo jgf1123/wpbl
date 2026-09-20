@@ -1,6 +1,6 @@
 {
  "boxscore": {
-  "fetched_at": "2026-09-15T02:14:21.36539389Z",
+  "fetched_at": "2026-09-15T20:36:53.770465111Z",
   "game_id": "r1slo258zh4c0mwg",
   "game_status": "Final - Weather Delay",
   "plays": [
@@ -73,7 +73,7 @@
     "inning": 1,
     "is_hit": true,
     "is_scoring_play": false,
-    "narrative": "Ayuri Shimano singled (2-1 SBB); Samaria Benitez advanced to second.",
+    "narrative": "Ayuri Shimano singled to right field (2-1 SBB); Samaria Benitez advanced to second.",
     "outs": 0,
     "pitch_events": [
      {
@@ -125,7 +125,7 @@
     "inning": 1,
     "is_hit": true,
     "is_scoring_play": true,
-    "narrative": "Ashton Lansdell homered, 3 RBI (2-1 BFB); Ayuri Shimano scored; Samaria Benitez scored.",
+    "narrative": "Ashton Lansdell homered to center field, 3 RBI (2-1 BFB); Ayuri Shimano scored; Samaria Benitez scored.",
     "outs": 0,
     "pitch_events": [
      {
@@ -174,7 +174,7 @@
     "inning": 1,
     "is_hit": true,
     "is_scoring_play": false,
-    "narrative": "Jamie Mackay singled (0-2 KF).",
+    "narrative": "Jamie Mackay singled to left field (0-2 KF).",
     "outs": 0,
     "pitch_events": [
      {
@@ -396,7 +396,7 @@
     "inning": 1,
     "is_hit": true,
     "is_scoring_play": false,
-    "narrative": "Natsuki Yonetani tripled (3-2 BBBKKF).",
+    "narrative": "Natsuki Yonetani tripled down the rf line (3-2 BBBKKF).",
     "outs": 0,
     "pitch_events": [
      {
@@ -465,7 +465,7 @@
     "inning": 1,
     "is_hit": true,
     "is_scoring_play": true,
-    "narrative": "Denae Benites homered, 2 RBI (1-1 KB); Natsuki Yonetani scored.",
+    "narrative": "Denae Benites homered to left field, 2 RBI (1-1 KB); Natsuki Yonetani scored.",
     "outs": 0,
     "pitch_events": [
      {
@@ -549,7 +549,7 @@
     "balls": 2,
     "bases_loaded": false,
     "bases_occupied": [],
-    "batter_name": "Catherine O'Sullivan",
+    "batter_name": "Claire O'Sullivan",
     "event_type": "single",
     "first_base": "",
     "fouls": 1,
@@ -557,7 +557,7 @@
     "inning": 1,
     "is_hit": true,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan singled to center field (2-2 BBKSF).",
+    "narrative": "Claire O'Sullivan singled to center field (2-2 BBKSF).",
     "outs": 1,
     "pitch_events": [
      {
@@ -614,7 +614,7 @@
     ],
     "batter_name": "Kylee Lahners",
     "event_type": "strikeout",
-    "first_base": "Catherine O'Sullivan",
+    "first_base": "Claire O'Sullivan",
     "fouls": 1,
     "half": "bottom",
     "inning": 1,
@@ -671,7 +671,7 @@
     ],
     "batter_name": "Val Perez",
     "event_type": "flyout",
-    "first_base": "Catherine O'Sullivan",
+    "first_base": "Claire O'Sullivan",
     "fouls": 0,
     "half": "bottom",
     "inning": 1,
@@ -708,7 +708,7 @@
     "inning": 2,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Rakyung Kim to dh for Catherine O'Sullivan.",
+    "narrative": "Rakyung Kim to dh for Claire O'Sullivan.",
     "outs": 0,
     "pitch_sequence": "",
     "pitcher_name": "Rakyung Kim",
@@ -731,7 +731,7 @@
     "inning": 2,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan to p for Rakyung Kim.",
+    "narrative": "Claire O'Sullivan to p for Rakyung Kim.",
     "outs": 0,
     "pitch_sequence": "",
     "pitcher_name": "Rakyung Kim",
@@ -757,7 +757,7 @@
     "narrative": "Mo'ne Davis grounded out to ss (0-0).",
     "outs": 0,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 17,
@@ -812,7 +812,7 @@
      }
     ],
     "pitch_sequence": "KFFBP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 18,
@@ -861,7 +861,7 @@
      }
     ],
     "pitch_sequence": "BBFP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 19,
@@ -912,7 +912,7 @@
      }
     ],
     "pitch_sequence": "BBBB",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Ayuri Shimano",
     "sequence": 20,
@@ -928,17 +928,17 @@
      2
     ],
     "batter_name": "Jamie Mackay",
-    "event_type": "out",
+    "event_type": "fielders_choice",
     "first_base": "Ashton Lansdell",
     "fouls": 0,
     "half": "top",
     "inning": 2,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Jamie Mackay out at first ss to 2b (0-0).",
+    "narrative": "Jamie Mackay reached on a fielder's choice to shortstop (0-0); Ashton Lansdell out at second ss to 2b.",
     "outs": 2,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Ayuri Shimano",
     "sequence": 21,
@@ -1249,7 +1249,7 @@
     "inning": 3,
     "is_hit": true,
     "is_scoring_play": false,
-    "narrative": "Caitlin Eynon homered, RBI (1-1 BK).",
+    "narrative": "Caitlin Eynon homered to center field, RBI (1-1 BK).",
     "outs": 0,
     "pitch_events": [
      {
@@ -1272,7 +1272,7 @@
      }
     ],
     "pitch_sequence": "BKP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 28,
@@ -1327,7 +1327,7 @@
      }
     ],
     "pitch_sequence": "BBBKB",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 29,
@@ -1372,7 +1372,7 @@
      }
     ],
     "pitch_sequence": "KBP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 30,
@@ -1395,10 +1395,10 @@
     "inning": 3,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Sarah Edwards reached on a fielder's choice (0-0); Isabella Villareal out at third 1b to ss.",
+    "narrative": "Sarah Edwards reached on a fielder's choice to first base (0-0); Isabella Villareal out at third 1b to ss to p to ss.",
     "outs": 0,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Isabella Villareal",
     "sequence": 31,
@@ -1421,10 +1421,10 @@
     "inning": 3,
     "is_hit": true,
     "is_scoring_play": true,
-    "narrative": "Mo'ne Davis singled, RBI (0-0); Sarah Edwards advanced to second; Amira Hondras scored.",
+    "narrative": "Mo'ne Davis singled to center field, RBI (0-0); Sarah Edwards advanced to second; Amira Hondras scored.",
     "outs": 1,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 1,
     "second_base": "",
     "sequence": 32,
@@ -1488,7 +1488,7 @@
      }
     ],
     "pitch_sequence": "BBKBFH",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Sarah Edwards",
     "sequence": 33,
@@ -1512,7 +1512,7 @@
     "inning": 3,
     "is_hit": true,
     "is_scoring_play": true,
-    "narrative": "Ayuri Shimano homered, 4 RBI (2-0 BB); Samaria Benitez scored; Mo'ne Davis scored; Sarah Edwards scored.",
+    "narrative": "Ayuri Shimano homered to left field, 4 RBI (2-0 BB); Samaria Benitez scored; Mo'ne Davis scored; Sarah Edwards scored.",
     "outs": 1,
     "pitch_events": [
      {
@@ -1535,7 +1535,7 @@
      }
     ],
     "pitch_sequence": "BBP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 3,
     "second_base": "Mo'ne Davis",
     "sequence": 34,
@@ -1578,7 +1578,7 @@
      }
     ],
     "pitch_sequence": "BKP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 35,
@@ -1621,7 +1621,7 @@
      }
     ],
     "pitch_sequence": "BKP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 36,
@@ -1641,7 +1641,7 @@
     "inning": 3,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "/  for Catherine O'Sullivan.",
+    "narrative": "/  for Claire O'Sullivan.",
     "outs": 0,
     "pitch_sequence": "",
     "pitcher_name": "Michelle Roche",
@@ -1664,7 +1664,7 @@
     "inning": 3,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan to p for Rakyung Kim.",
+    "narrative": "Claire O'Sullivan to p for Rakyung Kim.",
     "outs": 0,
     "pitch_sequence": "",
     "pitcher_name": "Michelle Roche",
@@ -1679,7 +1679,7 @@
     "balls": 2,
     "bases_loaded": false,
     "bases_occupied": [],
-    "batter_name": "Catherine O'Sullivan",
+    "batter_name": "Claire O'Sullivan",
     "event_type": "groundout",
     "first_base": "",
     "fouls": 0,
@@ -1687,7 +1687,7 @@
     "inning": 3,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan grounded out to 2b (2-1 BKB).",
+    "narrative": "Claire O'Sullivan grounded out to 2b (2-1 BKB).",
     "outs": 0,
     "pitch_events": [
      {
@@ -1761,7 +1761,7 @@
     "inning": 3,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Val Perez reached on a fielder's choice (0-2 KF); Kylee Lahners out at second ss to 2b.",
+    "narrative": "Val Perez reached on a fielder's choice to shortstop (0-2 KF); Kylee Lahners out at second ss to 2b.",
     "outs": 1,
     "pitch_events": [
      {
@@ -1845,14 +1845,14 @@
      2
     ],
     "batter_name": "Madison Willan",
-    "event_type": "unknown",
+    "event_type": "fielders_choice",
     "first_base": "Claire Eccles",
     "fouls": 0,
     "half": "bottom",
     "inning": 3,
     "is_hit": false,
     "is_scoring_play": true,
-    "narrative": "Madison Willan reached first on an error by ss, RBI (2-2 KBKB); Claire Eccles advanced to third; Val Perez scored, unearned.",
+    "narrative": "Madison Willan reached on a fielder's choice to shortstop (2-2 KBKB); Claire Eccles advanced to second on a throwing error by ss, advanced to third on the error; Val Perez advanced to third, scored on the error, unearned.",
     "outs": 2,
     "pitch_events": [
      {
@@ -1903,14 +1903,14 @@
      3
     ],
     "batter_name": "Emi Saki",
-    "event_type": "unknown",
+    "event_type": "single",
     "first_base": "Madison Willan",
     "fouls": 3,
     "half": "bottom",
     "inning": 3,
-    "is_hit": false,
+    "is_hit": true,
     "is_scoring_play": true,
-    "narrative": "Emi Saki reached first on an error by p, RBI (3-2 KBBKFFBF); Madison Willan advanced to third; Claire Eccles scored, unearned.",
+    "narrative": "Emi Saki singled to first base, RBI (3-2 KBBKFFBF); Madison Willan advanced to third; Claire Eccles scored, unearned.",
     "outs": 2,
     "pitch_events": [
      {
@@ -2121,7 +2121,7 @@
     "narrative": "Caitlin Eynon singled to left field (0-0).",
     "outs": 0,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 49,
@@ -2166,7 +2166,7 @@
      }
     ],
     "pitch_sequence": "BBP",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "",
     "sequence": 50,
@@ -2189,10 +2189,10 @@
     "inning": 4,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan to 1b.",
+    "narrative": "Claire O'Sullivan to 1b.",
     "outs": 0,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Caitlin Eynon",
     "sequence": 51,
@@ -2218,7 +2218,7 @@
     "narrative": "Kylee Lahners to 3b.",
     "outs": 0,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Caitlin Eynon",
     "sequence": 52,
@@ -2244,7 +2244,7 @@
     "narrative": "Val Perez to ss.",
     "outs": 0,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Caitlin Eynon",
     "sequence": 53,
@@ -2270,7 +2270,7 @@
     "narrative": "Emi Saki to p.",
     "outs": 0,
     "pitch_sequence": "",
-    "pitcher_name": "Catherine O'Sullivan",
+    "pitcher_name": "Claire O'Sullivan",
     "runs_scored": 0,
     "second_base": "Caitlin Eynon",
     "sequence": 54,
@@ -2293,7 +2293,7 @@
     "inning": 4,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Isabella Villareal grounded into double play 3b to 1b (2-0 BB); Caitlin Eynon out on the play.",
+    "narrative": "Isabella Villareal grounded into double play 3b to 1b (2-0 BB); Amira Hondras advanced to second; Caitlin Eynon out on the play.",
     "outs": 0,
     "pitch_events": [
      {
@@ -2328,11 +2328,11 @@
     "balls": 0,
     "bases_loaded": false,
     "bases_occupied": [
-     1
+     2
     ],
     "batter_name": "Sarah Edwards",
     "event_type": "groundout",
-    "first_base": "Amira Hondras",
+    "first_base": "",
     "fouls": 0,
     "half": "top",
     "inning": 4,
@@ -2343,7 +2343,7 @@
     "pitch_sequence": "",
     "pitcher_name": "Emi Saki",
     "runs_scored": 0,
-    "second_base": "",
+    "second_base": "Amira Hondras",
     "sequence": 56,
     "strikes": 0,
     "team_id": "e1u35z4hgkmddl84",
@@ -2474,7 +2474,7 @@
     "bases_occupied": [
      3
     ],
-    "batter_name": "Catherine O'Sullivan",
+    "batter_name": "Claire O'Sullivan",
     "event_type": "double",
     "first_base": "",
     "fouls": 0,
@@ -2482,7 +2482,7 @@
     "inning": 4,
     "is_hit": true,
     "is_scoring_play": true,
-    "narrative": "Catherine O'Sullivan doubled to right field, RBI (0-0); Denae Benites scored.",
+    "narrative": "Claire O'Sullivan doubled to right field, RBI (0-0); Denae Benites scored.",
     "outs": 1,
     "pitch_sequence": "",
     "pitcher_name": "Michelle Roche",
@@ -2512,7 +2512,7 @@
     "pitch_sequence": "",
     "pitcher_name": "Michelle Roche",
     "runs_scored": 0,
-    "second_base": "Catherine O'Sullivan",
+    "second_base": "Claire O'Sullivan",
     "sequence": 61,
     "strikes": 0,
     "team_id": "07xl5m9s98ckxth4",
@@ -2537,7 +2537,7 @@
     "pitch_sequence": "",
     "pitcher_name": "Ayuri Shimano",
     "runs_scored": 0,
-    "second_base": "Catherine O'Sullivan",
+    "second_base": "Claire O'Sullivan",
     "sequence": 62,
     "strikes": 0,
     "team_id": "07xl5m9s98ckxth4",
@@ -2562,7 +2562,7 @@
     "pitch_sequence": "",
     "pitcher_name": "Ayuri Shimano",
     "runs_scored": 0,
-    "second_base": "Catherine O'Sullivan",
+    "second_base": "Claire O'Sullivan",
     "sequence": 63,
     "strikes": 0,
     "team_id": "07xl5m9s98ckxth4",
@@ -2582,12 +2582,12 @@
     "inning": 4,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan advanced to third on a wild pitch.",
+    "narrative": "Claire O'Sullivan advanced to third on a wild pitch.",
     "outs": 1,
     "pitch_sequence": "",
     "pitcher_name": "Ayuri Shimano",
     "runs_scored": 0,
-    "second_base": "Catherine O'Sullivan",
+    "second_base": "Claire O'Sullivan",
     "sequence": 64,
     "strikes": 0,
     "team_id": "07xl5m9s98ckxth4",
@@ -2654,7 +2654,7 @@
     "sequence": 65,
     "strikes": 3,
     "team_id": "07xl5m9s98ckxth4",
-    "third_base": "Catherine O'Sullivan"
+    "third_base": "Claire O'Sullivan"
    },
    {
     "balls": 4,
@@ -2711,7 +2711,7 @@
     "sequence": 66,
     "strikes": 1,
     "team_id": "07xl5m9s98ckxth4",
-    "third_base": "Catherine O'Sullivan"
+    "third_base": "Claire O'Sullivan"
    },
    {
     "balls": 1,
@@ -2769,7 +2769,7 @@
     "sequence": 67,
     "strikes": 2,
     "team_id": "07xl5m9s98ckxth4",
-    "third_base": "Catherine O'Sullivan"
+    "third_base": "Claire O'Sullivan"
    },
    {
     "balls": 1,
@@ -2942,14 +2942,14 @@
      3
     ],
     "batter_name": "Jamie Mackay",
-    "event_type": "flyout",
+    "event_type": "sacrifice",
     "first_base": "",
     "fouls": 2,
     "half": "top",
     "inning": 5,
     "is_hit": false,
     "is_scoring_play": true,
-    "narrative": "Jamie Mackay flied out to cf, SAC, RBI (0-2 SFF); Ayuri Shimano scored.",
+    "narrative": "Jamie Mackay flied out to cf, sacrifice fly, RBI (0-2 SFF); Ayuri Shimano scored.",
     "outs": 1,
     "pitch_events": [
      {
@@ -3308,7 +3308,7 @@
     "bases_occupied": [
      2
     ],
-    "batter_name": "Catherine O'Sullivan",
+    "batter_name": "Claire O'Sullivan",
     "event_type": "hit_by_pitch",
     "first_base": "",
     "fouls": 2,
@@ -3316,7 +3316,7 @@
     "inning": 5,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan hit by pitch (3-2 BFBBFB).",
+    "narrative": "Claire O'Sullivan hit by pitch (3-2 BFBBFB).",
     "outs": 2,
     "pitch_events": [
      {
@@ -3374,13 +3374,13 @@
     ],
     "batter_name": "Kylee Lahners",
     "event_type": "home_run",
-    "first_base": "Catherine O'Sullivan",
+    "first_base": "Claire O'Sullivan",
     "fouls": 1,
     "half": "bottom",
     "inning": 5,
     "is_hit": true,
     "is_scoring_play": true,
-    "narrative": "Kylee Lahners homered, 3 RBI (2-1 BFB); Catherine O'Sullivan scored; London Studer scored.",
+    "narrative": "Kylee Lahners homered down the lf line, 3 RBI (2-1 BFB); Claire O'Sullivan scored; London Studer scored.",
     "outs": 2,
     "pitch_events": [
      {
@@ -3735,14 +3735,14 @@
     "bases_loaded": false,
     "bases_occupied": [],
     "batter_name": "Claire Eccles",
-    "event_type": "flyout",
+    "event_type": "foul_out",
     "first_base": "",
     "fouls": 1,
     "half": "bottom",
     "inning": 6,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Claire Eccles flied out to p (2-2 BSSFB).",
+    "narrative": "Claire Eccles fouled out to p (2-2 BSSFB).",
     "outs": 0,
     "pitch_events": [
      {
@@ -4490,7 +4490,7 @@
     "inning": 7,
     "is_hit": true,
     "is_scoring_play": false,
-    "narrative": "London Studer doubled to left field (1-0 B).",
+    "narrative": "London Studer doubled down the rf line (1-0 B).",
     "outs": 2,
     "pitch_events": [
      {
@@ -4521,7 +4521,7 @@
     "bases_occupied": [
      2
     ],
-    "batter_name": "Catherine O'Sullivan",
+    "batter_name": "Claire O'Sullivan",
     "event_type": "foul_out",
     "first_base": "",
     "fouls": 2,
@@ -4529,7 +4529,7 @@
     "inning": 7,
     "is_hit": false,
     "is_scoring_play": false,
-    "narrative": "Catherine O'Sullivan fouled out to 1b (3-2 KBFBFB).",
+    "narrative": "Claire O'Sullivan fouled out to 1b (3-2 KBFBFB).",
     "outs": 2,
     "pitch_events": [
      {
@@ -4586,7 +4586,7 @@
    }
   ],
   "provider": "presto",
-  "source_updated_at": "2026-09-15T02:09:04Z",
+  "source_updated_at": "2026-09-15T17:46:27Z",
   "status": {
    "away_runs": 15,
    "balls": 0,
@@ -4915,6 +4915,7 @@
       "hitting": {
        "ab": "4",
        "double": "1",
+       "gdp": "1",
        "ground": "1",
        "h": "3",
        "hitdp": "1",
@@ -5020,7 +5021,7 @@
       "bats": "R",
       "fielding": {
        "a": "2",
-       "e": "1",
+       "e": "0",
        "po": "1"
       },
       "hitting": {
@@ -5044,7 +5045,7 @@
        "fly": "1",
        "ground": "7",
        "gs": "1",
-       "h": "8",
+       "h": "9",
        "hbp": "1",
        "hr": "1",
        "ip": "3.1",
@@ -5053,7 +5054,7 @@
        "so": "2",
        "strikes": "46",
        "triple": "1",
-       "whip": "2.90",
+       "whip": "3.23",
        "wp": "2"
       },
       "position": "p",
@@ -5186,7 +5187,7 @@
       "cs": "0",
       "double": "3",
       "fly": "11",
-      "gdp": "0",
+      "gdp": "1",
       "ground": "8",
       "h": "15",
       "hbp": "3",
@@ -5204,11 +5205,11 @@
       "so": "1",
       "triple": "0"
      },
-     "errors": 2,
+     "errors": 1,
      "fielding": {
       "a": "11",
       "ci": "0",
-      "e": "2",
+      "e": "1",
       "indp": "1",
       "pb": "0",
       "po": "21"
@@ -5225,7 +5226,7 @@
       "fly": "5",
       "gdp": "1",
       "ground": "10",
-      "h": "12",
+      "h": "13",
       "hbp": "2",
       "hr": "2",
       "ibb": "1",
@@ -5368,7 +5369,7 @@
      {
       "bats": "R",
       "fielding": {
-       "a": "0",
+       "a": "1",
        "e": "0",
        "indp": "1",
        "po": "4"
@@ -5387,7 +5388,7 @@
        "slg": ".750"
       },
       "id": "kfli26dz84mtz2rh",
-      "name": "Catherine O'Sullivan",
+      "name": "Claire O'Sullivan",
       "pitching": {
        "ab": "13",
        "appear": "2",
@@ -5408,7 +5409,7 @@
        "whip": "4.50"
       },
       "position": "dh/1b",
-      "short_name": "Catherine O'Sullivan",
+      "short_name": "Claire O'Sullivan",
       "spot": "4",
       "throws": "R",
       "uniform": "18"
@@ -5571,7 +5572,7 @@
        "obp": ".250",
        "ops": ".250",
        "r": "2",
-       "rbi": "1",
+       "rbi": "0",
        "slg": ".000",
        "so": "2"
       },
@@ -5587,7 +5588,7 @@
      {
       "bats": "L",
       "fielding": {
-       "a": "2",
+       "a": "3",
        "e": "0",
        "po": "1"
       },
@@ -5595,12 +5596,12 @@
        "ab": "3",
        "bb": "1",
        "ground": "1",
-       "h": "1",
-       "obp": ".500",
-       "ops": ".833",
+       "h": "2",
+       "obp": ".750",
+       "ops": "1.417",
        "r": "0",
        "rbi": "1",
-       "slg": ".333"
+       "slg": ".667"
       },
       "id": "n0gb2fusndobpf7p",
       "name": "Emi Saki",
@@ -5612,6 +5613,7 @@
        "double": "1",
        "er": "2",
        "fly": "3",
+       "gdp": "1",
        "ground": "4",
        "h": "3",
        "ip": "3.0",
@@ -5735,7 +5737,7 @@
       "uniform": "5"
      },
      {
-      "name": "Catherine O'Sullivan",
+      "name": "Claire O'Sullivan",
       "position": "dh",
       "spot": "4",
       "uniform": "18"
@@ -5787,7 +5789,7 @@
       "fly": "5",
       "gdp": "1",
       "ground": "10",
-      "h": "12",
+      "h": "13",
       "hbp": "2",
       "hitdp": "1",
       "hittp": "0",
@@ -5796,7 +5798,7 @@
       "kl": "1",
       "picked": "0",
       "r": "11",
-      "rbi": "10",
+      "rbi": "9",
       "sb": "0",
       "sf": "0",
       "sh": "0",
@@ -5805,14 +5807,14 @@
      },
      "errors": 0,
      "fielding": {
-      "a": "8",
+      "a": "10",
       "ci": "0",
       "e": "0",
       "indp": "1",
       "pb": "0",
       "po": "21"
      },
-     "hits": 12,
+     "hits": 13,
      "left_on_base": 8,
      "pitching": {
       "ab": "33",
@@ -5822,7 +5824,7 @@
       "double": "3",
       "er": "15",
       "fly": "11",
-      "gdp": "0",
+      "gdp": "1",
       "ground": "8",
       "h": "15",
       "hbp": "3",

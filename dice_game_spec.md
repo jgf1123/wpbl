@@ -7,8 +7,8 @@ precede or replace the bullpen simulator (`bullpen_spec.md`). **DECISION
 (user, 17 Sep).**
 
 Status: design; player cards built (`pixi run dice`, section 3). Numbers are
-from this repo's training scope: 36 games (the 30-game regular season,
-semifinal G1-G2 of both series, and championship G1-G2). Semifinal G3 (14 Sep)
+from this repo's training scope: 37 games (the 30-game regular season,
+semifinal G1-G2 of both series, and championship G1-G3). Semifinal G3 (14 Sep)
 is excluded because both bullpens were exhausted (`tables.TRAINING_EXCLUDED`);
 later championship games join training unless the same happens, decided game by
 game. **DECISION (user, 17 Sep).** Items marked **ASSUMPTION** are choices, not
@@ -24,16 +24,35 @@ A play is a transition between base-out states, as in `markov.py`. The engine
 needs nothing else: state is inning, half, outs, which bases are occupied,
 score, and each pitcher's fatigue.
 
-Design rule: **fidelity stops where the data stops.** 2,584 plate appearances
+Design rule: **fidelity stops where the data stops.** 2,663 plate appearances
 cannot support runner-by-runner advancement rules, so runner movement is fixed
 per outcome line, with one variant line where the data shows a real coin flip.
 
 ## 2. Outcome lines
 
-Lines are defined by what happens to the base-out state, not by the play's
-label. **DECISION (user, 17 Sep).** Labels hid the defect this fixes: the
-15 Sep table priced 53 fielder's choices and 6 singles with a runner thrown
-out as singles, losing 59 outs (roughly one run per team per game too many).
+Two different jobs, kept apart:
+
+1. **Card lines** come from the feed's play labels, consolidated from 15 to 7
+   by `batters.contact()`. Counts are the 37 training games:
+
+| Card line | Feed labels |
+|---|---|
+| K | strikeout 314; generic "out" 3 (batter's interference: an out with no ball in play) |
+| FP (free pass) | walk 336, hit by pitch 94; one card line, plus the player's own walk / HBP split (section 3.1) |
+| HR | home run 69 |
+| 1B | single 562; fielder's choice 1 (the ball got through to the outfield) |
+| 2B | double 121 (triples included; none this season) |
+| ROE | reached on error 59 |
+| Out | groundout 367, flyout 282, popup 114, fielder's choice 95, lineout 91, generic "out" 70, foul out 54, sacrifice 31 |
+
+2. **What an outcome does to the runners** (the out flavors and Single+ below)
+   comes from base-out transitions. It is league-wide, not on the cards.
+   **DECISION (user, 17 Sep).**
+
+The 15 Sep line table mixed the two: it counted outcomes by where the batter
+ended up, not by label. That filed 53 fielder's choices and 6 singles with a
+runner thrown out as singles, losing 59 outs (roughly one run per team per game
+too many), and counted the 14 errors that put the batter on 2nd as doubles too.
 
 **Outs** come in three flavors, each with an optional + modifier:
 
@@ -44,12 +63,13 @@ out as singles, losing 59 outs (roughly one run per team per game too many).
 | FB | batter and runner from 1st out, other forced runners advance one | as B |
 | + | unforced runners also advance one (B+: every runner advances one) | |
 
-Evidence (36 training games): of 497 PAs with runners on, <2 outs and an out
-made, these lines reproduce 468 (94%).
+Evidence (37 training games): of 514 PAs with runners on, <2 outs and an out
+made, these lines reproduce 482 (94%).
 
-- F uses the force at 2nd: of 27 fielder's choices with 2+ forced runners,
-  18 took the runner from 1st and 9 the lead runner. A lead-runner fielder's
-  choice leaves the same base-out state as B, so both kinds are covered.
+- F uses the force at 2nd: of 30 fielder's choices with 2+ forced runners, 20
+  took the runner from 1st, 9 the lead runner and 1 a middle runner. A
+  lead-runner fielder's choice leaves the same base-out state as B, so both
+  kinds are covered.
 - FB: 10 of 11 nobody-out double plays retired the batter and the runner from
   1st; in all 9 ground-ball double plays from 1st and 2nd, the runner from 2nd
   reached 3rd.
@@ -57,12 +77,30 @@ made, these lines reproduce 468 (94%).
 - The other unreproduced plays (hits with a runner thrown out, non-force double
   plays) map to the line nearest in run value. **DECISION (user).**
 
-**Singles:** Single+ (the runner from 2nd scores) is 40% of singles with 0-1
-out; with 2 outs, every single is a Single+. Notation: Single+ rows, plus Single
-rows marked "acts as Single+ with 2 outs". **DECISION (user, 17 Sep).**
+**Singles:** Single+ (the runner from 2nd scores) is 42% of singles with 0-1
+out; with 2 outs it is 67%, and the game treats every two-out single as a
+Single+. Notation: Single+ rows, plus Single rows marked "acts as Single+ with
+2 outs". **DECISION (user, 17 Sep).** **OPEN:** the rule was chosen when the
+two-out figure read 76% on 36 games; at 67% (`pixi run advance`) "always" is a
+larger rounding than it was.
 
 **Errors:** ROE is its own line, by label, and is excluded from Single and
-Double. The 15 Sep table counted the 14 ROE that put the batter on 2nd twice.
+Double.
+
+**Which outcomes share a line** is tested, not assumed: two outcomes stay apart
+only if that predicts held-out games better (runs error, log5 matchup, 20 game
+splits; `analysis/dice/merge_log5.py`).
+- 1B and ROE stay apart: merging them is worse by 2.4 SE (+58, SE 24). ROE
+  mostly reflects the fielders behind the pitcher, singles the batter.
+- BB and HBP merge into one free pass: keeping them apart is no better (merged
+  -81, SE 71). They do the same thing on the bases. Each card carries the
+  player's own walk / HBP split, read off an extra d10 when a free pass comes
+  up, so batters' mixes and pitch counts survive. **DECISION (user, 19 Sep).**
+- All outs share one line: their differences are the league-wide out flavors
+  above, and a batter's ground-ball tendency moved her double-play odds by
+  about one dice cell. Nor is any batter measurably better or worse at the +
+  (section 3.6), so the flavor and its + come off the extra d10 at league
+  rates.
 
 **Doubles** include triples (none in the training games). **Running plays**
 (wild pitch, passed ball, balk) remain a league line: every runner advances one,
@@ -74,8 +112,9 @@ bands (fire rates, as in the 15 Sep table) or fractions of each matchup's outs.
 
 ## 3. Player cards
 
-Every pitcher and batter has a full card: K, BB, HBP, HR, 1B, 2B, ROE, Out,
-summing to 100%. Smoothing decides how far each player differs from her
+Every pitcher and batter has a full card: K, FP (free pass), HR, 1B, 2B, ROE,
+Out, summing to 100%, plus her share of free passes that are HBP (the d10
+split, section 2). Smoothing decides how far each player differs from her
 cohort; no line is left off a card by rule. This replaces the 15 Sep rule that
 an entry exists only if its league spread exceeds one dice cell, and the batter
 ground-ball entry is dropped. **DECISION (17 Sep).**
@@ -100,13 +139,13 @@ she did not make. **DECISION (user, 18 Sep).**
 
 | Step | Split | k | Tuned inside build halves: median (middle half) |
 |---|---|---|---|
-| 1 | true outcomes (K+BB+HBP+HR) \| in park (1B+2B+ROE+Out) | 45 | 16 (6-197) |
-| 2 | HBP \| K+BB+HR | 2 | 7 (3-1448) |
-| 3 | HR \| K+BB | 5.7 | 6 (3-9) |
-| 4 | K \| BB | 16 | 13 (8-23) |
-| 5 | 1B \| 2B+ROE+Out | 64 | 64 (32-304) |
-| 6 | Out \| 2B+ROE | 256 | 64 (32-inf) |
-| 7 | ROE \| 2B | 16 | inf (1-inf) |
+| 1 | true outcomes (K+FP+HR) \| in park (1B+2B+ROE+Out) | 45 | 16 (6-45) |
+| 2 | HR \| K+FP | 8 | 7 (3-11) |
+| 3 | K \| FP | 11 | 11 (8-45) |
+| 4 | FP: BB \| HBP (the d10 split) | 8 | within 1 SE: 6-11 |
+| 5 | 1B \| 2B+ROE+Out | 45 | 45 (32-128) |
+| 6 | Out \| 2B+ROE | 181 | 128 (32-inf) |
+| 7 | ROE \| 2B | 32 | 38 (1-inf) |
 
 Inside each branch, two-way splits run in order of increasing k (the most
 individual outcome first).
@@ -116,19 +155,29 @@ individual outcome first).
 | Step | Split | k | Tuned inside build halves: median (middle half) |
 |---|---|---|---|
 | 1 | K \| not K | 45 | 32 (21-64) |
-| 2 | BB / HBP / in play | 256 | 64 (21-inf) |
-| 3 | Out / ROE / hit | 181 | 362 (91-inf) |
-| 4 | HR / 1B / 2B | inf (the cohort's mix) | inf (83-inf) |
+| 2 | FP \| in play | 256 | not rerun (the 8-line BB / HBP / in play step: 64, 21-inf) |
+| 3 | FP: BB \| HBP (the d10 split) | 16 | within 1 SE: 8-23 |
+| 4 | Out / ROE / hit | 256 | 362 (91-inf) |
+| 5 | HR / 1B / 2B | inf (the cohort's mix) | inf (83-inf) |
 
 The k column is each step's best score on all 20 game splits (section 3.4).
 The last column is the same tuning repeated inside each build half of the
 nested test: a narrow middle half means the step's k is well determined (batter
-HR \| K+BB, K \| BB; pitcher K), and one spanning most of the grid means almost
-any value fits equally well (ROE \| 2B: both rare, with no measurable batter
-signal, so its 16 is noise).
+HR \| K+FP; pitcher K), and one spanning most of the grid means almost any value
+fits equally well (ROE \| 2B: both rare, with no measurable batter signal, so
+its 32 is noise).
 
-Every line is floored at 1%; lines raised to the floor take their extra share
-from the other lines in proportion, so the card still sums to 100%.
+The walk \| HBP split is invisible to the runs score (a walk is worth 0.45 runs,
+an HBP 0.49), so its k was chosen on held-out free passes by two objectives:
+log-likelihood of walk vs HBP, and squared error of the actual pitch count.
+Batters: log-likelihood 8 (6-11 within 1 SE), pitches 11 (4-inf); a cohort-only
+split is 2.8 SE worse. Pitchers: log-likelihood 16 (8-23), pitches flat (16-inf);
+cohort-only is 2.4 SE worse. The log-likelihood value is used.
+(`analysis/dice/split_k.py`)
+
+Every card line (the seven above, FP as one) is floored at 1%; lines raised to
+the floor take their extra share from the other lines in proportion, so the card
+still sums to 100%.
 (Renormalizing the whole card would push the raised lines back under 1%.)
 
 ### 3.2 Cohorts
@@ -167,8 +216,10 @@ the rest of the league shows no measurable HR spread. **DECISION (user,
 |---|---|
 | per-line smoothing (8 k, renormalized) minus 4-step tree | +159 (316): tie |
 | chain (HBP, K, BB, HR \| contact, hit \| fielded, 2B \| 1B, ROE \| out) minus tree | -169 (413): tie |
-| true outcomes first, then increasing-k chains (above) minus chain | **-360 (193)** |
+| true outcomes first, then increasing-k chains (8 lines) minus chain | **-360 (193)** |
 | true outcomes first, other branch orders minus chain | +129 to +290: chain better |
+| free pass, HR \| K+FP then K \| FP (above) minus the 8-line version | -78 (79): tie |
+| free pass, FP \| K+HR or K \| FP+HR minus the 8-line version | -19 (163), +49 (163): tie |
 | HR grouped with hits minus chain | +272 (357): chain better |
 
   For pitchers, every chain tried ties or trails the tree (pitcher-ordered
@@ -184,10 +235,11 @@ the rest of the league shows no measurable HR spread. **DECISION (user,
   Grouping HR with hits instead, the other reading of the same correlations,
   lost to the chain.
 - **Why it works:** the true-outcome rate is among the most stable batter
-  traits (tuned k about 16, middle half 6-197). Once that total is smoothed,
-  the mix inside it needs little smoothing (HR \| K+BB about 6, middle half
-  3-9; K \| BB 13, middle half 8-23).
-- **Caveats:** the correlations and the in-branch order used all 36 games,
+  traits (tuned k about 16, middle half 6-45). Once that total is smoothed,
+  the mix inside it needs little smoothing (HR \| K+FP about 7, middle half
+  3-11; K \| FP 11, middle half 8-45). With walks and HBP as one free pass,
+  testing all three places for it confirmed the increasing-k order.
+- **Caveats:** the correlations and the in-branch order used all training games,
   including those later scored. A rule that picks the most reliable split
   automatically, fully inside each build half, ties it (+180, SE 252) but picks
   a different structure in every half. So this structure is among the best and
@@ -207,13 +259,13 @@ Runs above an average PA, x1000:
 
 | | Raw | Card |
 |---|---|---|
-| Benites | 359 | 279 |
-| Whitmore | 177 | 202 |
-| Lansdell | 199 | 108 |
-| Jorge | 136 | 85 |
+| Benites | 356 | 279 |
+| Whitmore | 172 | 192 |
+| Lansdell | 187 | 109 |
+| Jorge | 128 | 79 |
 
-- Spread among batters with 25+ PA: 128 raw, 76 on cards.
-- Home runs the batter cards produce: 71.4 against 67 actual. **OPEN:** whether
+- Spread among batters with 25+ PA: 125 raw, 78 on cards.
+- Home runs the batter cards produce: 72.4 against 69 actual. **OPEN:** whether
   cards must preserve league totals.
 - **OPEN:** optional fan-facing "replay" cards with k shifted toward raw.
 
@@ -246,7 +298,11 @@ parentheses, against the comparison named.
 | | true outcomes first; increasing-k branches | **better than chain by 1.9 SE: -360 (193); chosen** | `tto_c.py` |
 | | automatic most-reliable-split-first | tie with chosen structure: +180 (252); a different structure in each of 40 halves | `greedy_cv.py` |
 | Sluggers | protected vs treated like everyone | protected leans better (0.9 SE) and keeps league HR near actual | `tree_compare.py` |
-| Pitcher structure | 4-step tree | **chosen** | `trees_cv.py` |
+| Lines | 1B and ROE merged | worse by 2.4 SE: +58 (24) | `merge_log5.py` |
+| | BB and HBP merged into a free pass | no worse: -81 (71); **chosen**, with a per-player d10 split | `merge_log5.py`, `freepass_cv.py` |
+| | free pass split by a league-wide d10 instead | loses batters' walk / HBP mixes (Jorge's HBP 16.2% -> 5.7%) | `replayness.py` |
+| Out flavors | rating batters on the + (does her out advance a runner) | no real spread either way: measured directly, SD 0 (90% 0 to 0.105, 19 batters, 187 chances); from her out-type mix, 0.028 (0 to 0.046, 19 batters, 562 outs). A + is worth 0.331 runs and a batter gets about 13 chances a season, so even the top of the range is 0.2 runs. **Stays league-wide** | `out_plus.py` |
+| Pitcher structure | 4-step tree (free pass at step 2 since 19 Sep: tie, -8 (11)) | **chosen** | `trees_cv.py`, `freepass_cv.py` |
 | | chain ordered HBP first | worse than tree by 1.5 SE: +252 (169) | `chain_cv.py` |
 | | chain ordered K first | tie: -66 (111), +137 (142) | `pchain_cv.py`, `cchain_cv.py` |
 | | K first, HR grouped with hits | tie with K-first chain: +16 (52) | `cchain_cv.py` |
@@ -302,7 +358,8 @@ The game's central mechanic, and the least supported by data.
 
 - **Pitch counting comes free from the outcome line.** Measured pitches per
   result: walk 5.4, strikeout 4.9, out 3.3, hit 3.2, hit by pitch 3.1. A track
-  advances by the line's cost, so a strikeout-and-walk pitcher tires faster.
+  advances by the line's cost, so a strikeout-and-walk pitcher tires faster. A
+  free pass costs a walk's or an HBP's pitches according to its d10 split.
 - **Usage targets to reproduce:** starts average about 70 pitches, relief about
   35; the median 7-day load is 45 pitches for relief-only weeks and 85 for weeks
   with a start.
@@ -319,6 +376,11 @@ The game's central mechanic, and the least supported by data.
 
 **DECISION (user, 17 Sep):** cells are 1 percentage point. Even with more than
 two d10, a roll is read against tables no finer than that.
+
+**DECISION (user, 19 Sep):** an extra d10 settles splits within a card line when
+one comes up, starting with a free pass's walk or HBP (the player's own split).
+It is expected to serve other splits too, such as the kind of out and the number
+of pitches.
 
 Candidate schemes, all resolving a plate appearance in one throw:
 
@@ -363,7 +425,7 @@ Before anyone plays:
 - Out flavors: fixed dice bands or fractions of each matchup's outs (section 2).
 - Predict vs replay: optional fan cards with smaller k; fans may not accept
   Benites's card dropping about a fifth (her 65.5% hits per ball in play).
-- Whether cards must preserve league totals (home runs run 71 against 67).
+- Whether cards must preserve league totals (home runs run 72 against 69).
 - The dice scheme (section 8).
 - Catcher and runner ratings for the steal game.
 - Fatigue shape, size, and how readiness is reported.
