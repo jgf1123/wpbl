@@ -47,6 +47,8 @@ Run from the repo root:
 | `cohort_cards.py` | Sliding cohort ranked by PA share | rejected: sorts regulars by lineup spot |
 | `cohort_cards2.py` | Ranked by starts share; slugger exception; per-line cards | basis of later scripts |
 | `cohort_cv.py` <- `greedy_cv.py` | Cohort 150 / 300 / 600 (nested) | batters: 150 worse by 2.3 SE; pitchers insensitive |
+| `cohort_grid.py` <- `greedy_cv.py` | The same test on a finer grid, 150 to 600 in eight steps | batters bottom out at 250; pitchers flat from 250 up. 250 chosen for both |
+| `retune_k.py` <- `freepass_cv.py` | Best k per step for the shipped structures at a given cohort target (default 250) | 4 of 10 step k values moved when the target went to 250 |
 
 ## Choosing k (section 3.4)
 

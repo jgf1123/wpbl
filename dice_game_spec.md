@@ -149,12 +149,12 @@ she did not make. **DECISION (user, 18 Sep).**
 
 | Step | Split | k | Tuned inside build halves: median (middle half) |
 |---|---|---|---|
-| 1 | true outcomes (K+FP+HR) \| in park (1B+2B+ROE+Out) | 45 | 16 (6-45) |
+| 1 | true outcomes (K+FP+HR) \| in park (1B+2B+ROE+Out) | 64 | 16 (6-45) |
 | 2 | HR \| K+FP | 8 | 7 (3-11) |
-| 3 | K \| FP | 11 | 11 (8-45) |
+| 3 | K \| FP | 23 | 11 (8-45) |
 | 4 | FP: BB \| HBP (the d10 split) | 8 | within 1 SE: 6-11 |
 | 5 | 1B \| 2B+ROE+Out | 45 | 45 (32-128) |
-| 6 | Out \| 2B+ROE | 181 | 128 (32-inf) |
+| 6 | Out \| 2B+ROE | inf | 128 (32-inf) |
 | 7 | ROE \| 2B | 32 | 38 (1-inf) |
 
 Inside each branch, two-way splits run in order of increasing k (the most
@@ -165,9 +165,9 @@ individual outcome first).
 | Step | Split | k | Tuned inside build halves: median (middle half) |
 |---|---|---|---|
 | 1 | K \| not K | 45 | 32 (21-64) |
-| 2 | FP \| in play | 256 | not rerun (the 8-line BB / HBP / in play step: 64, 21-inf) |
+| 2 | FP \| in play | 1024 | not rerun (the 8-line BB / HBP / in play step: 64, 21-inf) |
 | 3 | FP: BB \| HBP (the d10 split) | 16 | within 1 SE: 8-23 |
-| 4 | Out / ROE / hit | 256 | 362 (91-inf) |
+| 4 | Out / ROE / hit | 512 | 362 (91-inf) |
 | 5 | HR / 1B / 2B | inf (the cohort's mix) | inf (83-inf) |
 
 The k column is each step's best score on all 20 game splits (section 3.4).
@@ -197,11 +197,16 @@ still sums to 100%.
   faced. **DECISION (user, 17 Sep).**
 - Share is measured over the player's tenure with each team; a traded player's
   tenure splits at her first game for the new team. **ASSUMPTION.**
-- Cohort = nearest players by share, excluding her, until they total 300 PA
-  (batters) or 300 BF (pitchers). Tied players enter together, so the 8
-  everyday starters form one group. **DECISION (user).** Tested (nested): for
-  batters 150 is worse than 300 by 2.3 SE and 600 is no better; pitchers are
-  insensitive to the size.
+- Cohort = nearest players by share, excluding her, until they total 250 PA
+  (batters) or 250 BF (pitchers). Tied players enter together, so the 8
+  everyday starters form one group, and the cohort a player actually gets is
+  usually larger than the target (median 360 PA for batters at a 250 target).
+  **DECISION (user, 20 Sep).** Tested (nested) on 150 / 200 / 250 / 300 / 350 /
+  400 / 500 / 600: batters dip to a minimum at 250 (-344, SE 204, against 300)
+  and rise on both sides; pitchers are flat from 250 up and worse below it. One
+  size serves both, since 250 costs pitchers nothing (+77, SE 162). The 250 edge
+  is 1.7 SE and is the best of seven comparisons, so it locates the optimum at
+  roughly 250-400 rather than proving 250.
 - Absences (jobs, exams, injury) count as non-use: box-score rosters list
   everyone, so availability cannot be measured.
 
@@ -291,7 +296,9 @@ parentheses, against the comparison named.
 | | halves of PA, straight line between (quartile anchors) | rates not linear in PA (K steps down after the bench; HR jumps at the sluggers) | `followups.py`, `deciles.py` |
 | | sliding cohort ranked by PA share | sorts everyday players by lineup spot | `cohort_cards.py` |
 | | ranked by quality (context-neutral runs, FIP) | not run: circular | |
-| | cohort 150 / 300 / 600 | batters: 150 worse by 2.3 SE, 600 no better; pitchers insensitive | `cohort_cv.py` |
+| | cohort 150 / 300 / 600 | batters: 150 worse by 2.3 SE, 600 no better; pitchers insensitive. Too coarse: it steps over the minimum | `cohort_cv.py` |
+| | cohort 150 / 200 / 250 / 300 / 350 / 400 / 500 / 600 | batters bottom out at 250 (-344, SE 204 against 300); 200 -232, 350 -144, 500 +252, 600 +238. Pitchers flat from 250 up (250 +77, SE 162), worse below (200 +350, 150 +747). **250 chosen for both** | `cohort_grid.py` |
+| | k re-tuned at the 250 cohort | 4 of 10 step k values moved: batter true outcomes 45 to 64, K-vs-FP 11 to 23, Out-vs-2B+ROE 181 to inf; pitcher FP-vs-in-play 256 to 1024, Out/ROE/hit 256 to 512. The d10 split k is unchanged (batters 8, pitchers 16) | `retune_k.py`, `split_k.py` |
 | k | method of moments (15 Sep spec) | k = inf replaced whole lines (batter BB, 2B, ROE) though real spread is plausible | `k_uncertainty.py` |
 | | smallest k within 2 SE of best (never a user rule) | near-raw cards for tiny samples | `k_cv.py`, `k_best.py` |
 | | smallest k within 1 SE | little gain; only flat steps can move | `k_cv2.py`, `k_best2.py` |

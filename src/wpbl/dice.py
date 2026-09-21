@@ -41,8 +41,9 @@ Players are ranked by how much their team used them -- batters by the share of
 team games started, pitchers by the share of team batters faced, both over
 their tenure with each team (a traded player's tenure splits at her first game
 for the new team). A player's cohort is her nearest neighbours in that ranking,
-excluding herself, until they hold 300 plate appearances; tied players enter
-together. Ranking by performance would be circular.
+excluding herself, until they hold 250 plate appearances; tied players enter
+together, so the cohort she actually gets is usually larger than the target.
+Ranking by performance would be circular.
 
 Benites and Whitmore (12 HR each, next best 6) are a named exception: at the
 step that splits off home runs, each is smoothed toward the other plus Lansdell
@@ -72,7 +73,7 @@ CARD_LINES = ["K", "FP", "HR", "1B", "2B", "ROE", "OUT"]             # lines pri
 TO_LINE = {"strikeout": "K", "walk": "BB", "hit_by_pitch": "HBP", "home_run": "HR",
            "single": "1B", "double": "2B", "triple": "2B", "reached_on_error": "ROE"}
 MIN_RATE = 0.01
-COHORT_PA = 300
+COHORT_PA = 250
 SLUGGERS = ("Denae Benites", "Kelsie Whitmore")
 SLUGGER_COHORT = SLUGGERS + ("Ashton Lansdell", "Jamie Mackay")
 OUT_DIR = ALL_DIR.parent / "dice"
@@ -93,7 +94,7 @@ BATTER_STEPS = [
     (("2B", "ROE", "OUT"), [("OUT",), ("2B", "ROE")]),
     (("2B", "ROE"), [("ROE",), ("2B",)]),
 ]
-BATTER_K = [2 ** 5.5, 2 ** 3, 2 ** 3.5, 2 ** 3, 2 ** 5.5, 2 ** 7.5, 2 ** 5]    # freepass_cv, split_k; 19 Sep
+BATTER_K = [2 ** 6, 2 ** 3, 2 ** 4.5, 2 ** 3, 2 ** 5.5, np.inf, 2 ** 5]    # retune_k at cohort 250, split_k; 20 Sep
 PITCHER_STEPS = [
     (PA, [("K",), FP + CONTACT]),
     (FP + CONTACT, [FP, CONTACT]),
@@ -101,7 +102,7 @@ PITCHER_STEPS = [
     (CONTACT, [("OUT",), ("ROE",), ("HR", "1B", "2B")]),
     (("HR", "1B", "2B"), [("HR",), ("1B",), ("2B",)]),
 ]
-PITCHER_K = [2 ** 5.5, 2 ** 8, 2 ** 4, 2 ** 8, np.inf]                          # freepass_cv, split_k; 19 Sep
+PITCHER_K = [2 ** 5.5, 2 ** 10, 2 ** 4, 2 ** 9, np.inf]                         # retune_k at cohort 250, split_k; 20 Sep
 
 
 def plate_appearances() -> pd.DataFrame:
@@ -263,7 +264,7 @@ def league_card(pa: pd.DataFrame) -> tuple[pd.Series, float]:
     return card, float(share["HBP"] / (share["BB"] + share["HBP"]))
 
 
-CARD_VERSION = "v0.1.1"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.2.0"                 # keep in step with data/dice/dice_version.md
 REPORT_TO = "https://github.com/jgf1123/wpbl/issues"
 
 
