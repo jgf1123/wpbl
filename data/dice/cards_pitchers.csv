@@ -1,44 +1,44 @@
-# WPBL dice-game player cards -- v0.2.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
-# Built from 37 games through 2026-09-19 (2663 plate appearances); code 5a069e4 + uncommitted changes.
+# WPBL dice-game player cards -- v0.3.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
+# Built from 37 games through 2026-09-19 (2663 plate appearances); code b184465 + uncommitted changes.
 # These FORECAST how a player would do in games we have not seen. They do not
 # replay 2026: a card is pulled toward players her team used about as much, so it
 # will not match her season line, by design (dice_game_spec.md section 3).
 # A card that looks wrong is worth reporting: https://github.com/jgf1123/wpbl/issues
-player,team,BF,K,FP,HR,1B,2B,ROE,OUT,HBP share of FP
-Kelsie Whitmore,SFF,165,11.7,11.0,2.9,21.9,6.0,2.0,44.4,11.3
-Ayami Sato,LAQ,158,13.0,9.7,2.3,24.5,4.2,1.5,44.8,17.0
-Gigi Schiano,BOS,152,8.1,9.7,3.1,26.2,4.6,2.0,46.3,14.1
-Michelle Roche,LAQ,149,9.2,12.4,2.5,25.7,5.1,2.4,42.8,27.2
-Liz Gilder,SFF,134,11.6,18.5,1.6,19.3,4.0,3.0,42.0,25.0
-Niki Eckert,SFF,134,13.4,16.8,1.0,22.1,3.3,3.3,40.1,28.4
-Rakyung Kim,NYH,129,14.7,14.2,1.6,20.4,3.7,2.7,42.7,30.0
-Kate Blunt,BOS,103,9.8,16.5,2.7,24.1,5.1,3.2,38.5,19.8
-Jamie Mackay,LAQ,100,15.0,15.7,2.8,21.3,4.3,3.1,37.8,34.7
-Alli Schroder,BOS,99,11.2,15.6,2.4,23.6,4.7,3.5,39.1,21.1
-Claire O'Sullivan,NYH,97,10.7,15.9,2.3,22.7,6.0,3.1,39.2,25.5
-Maïka Dumais,BOS,88,13.7,13.3,3.7,22.3,4.8,2.7,39.5,34.7
-Paloma Benach,BOS,86,9.4,17.7,2.5,21.1,6.6,3.3,39.4,25.6
-Jaida Lee,NYH,84,22.4,13.7,3.2,19.0,4.4,3.2,34.1,36.4
-Meggie Meidlinger,LAQ,79,16.4,12.0,3.3,19.1,4.3,2.7,42.2,19.5
-Emi Saiki,NYH,76,14.8,12.0,3.4,19.3,3.7,2.2,44.7,32.9
-Peyton Coria,SFF,76,15.0,15.0,2.6,18.7,4.8,1.9,42.2,11.5
-Jill Albayati,SFF,75,16.5,15.8,2.4,17.7,5.9,1.8,39.8,15.6
-Ela Day-Bédard,SFF,66,9.3,20.6,2.5,20.2,6.1,1.1,40.2,29.6
-Jacqui Reynolds,NYH,63,12.8,19.1,3.6,19.6,4.7,1.8,38.4,19.9
-London Studer,NYH,62,13.7,16.0,3.9,19.6,5.3,2.0,39.6,15.9
-Isabella Villarreal,LAQ,53,11.4,19.6,3.9,18.2,5.4,1.4,40.0,25.8
-Raine Padgham,BOS,52,12.2,21.5,2.5,20.8,4.3,1.0,37.7,29.4
-Claire Eccles,NYH,51,16.6,19.4,3.2,19.9,5.4,1.0,34.6,24.3
-Olivia Bricker,BOS,49,6.5,21.7,4.5,19.4,4.9,1.0,41.8,25.0
-Ayuri Shimano,LAQ,42,12.5,19.9,2.6,20.2,4.0,1.0,39.8,17.2
-Tháima Maximiliana,LAQ,40,7.9,21.4,3.6,20.2,3.6,1.0,42.2,17.8
-Amira Hondras,LAQ,36,8.3,21.6,3.2,19.8,3.6,1.0,42.5,19.0
-Keira Izumi,NYH,35,5.2,21.4,3.0,21.5,3.7,1.1,44.2,11.4
-Rosi del Castillo,SFF,31,11.8,23.7,3.0,19.9,2.3,1.0,38.4,15.7
-Alyssa Zettlemoyer,NYH,31,7.4,24.7,3.2,19.4,3.6,1.0,40.6,16.2
-Jua Park,SFF,16,8.2,26.2,3.4,17.3,3.8,1.0,40.1,16.1
-Suzu Narasaki,LAQ,14,8.4,27.4,3.4,16.5,3.8,1.0,39.5,11.4
-Andreanne Leblanc,SFF,12,8.7,27.1,3.3,17.3,3.7,1.0,38.9,11.4
-Maggie Foxx,LAQ,12,10.1,26.6,2.9,17.6,3.6,1.0,38.2,11.4
-Brittany Apgar,LAQ,7,7.8,26.8,2.9,18.2,3.6,1.0,39.7,11.0
-Adelaide Frank,LAQ,7,7.8,26.5,3.3,18.1,3.6,1.0,39.7,10.6
+player,team,BF,K,BB,HBP,HR,1B,2B,ROE,OUT
+Kelsie Whitmore,SFF,165,11.8,9.9,1.3,2.9,22.3,4.5,2.3,45.0
+Ayami Sato,LAQ,158,13.3,8.0,1.6,2.1,23.2,4.5,1.2,45.9
+Gigi Schiano,BOS,152,7.9,8.4,1.4,3.3,27.7,4.5,2.0,44.9
+Michelle Roche,LAQ,149,8.8,9.1,3.4,2.6,26.8,4.5,2.6,42.0
+Liz Gilder,SFF,134,11.2,13.8,4.6,1.6,19.0,4.5,2.8,42.4
+Niki Eckert,SFF,134,13.3,11.9,4.7,0.7,22.5,4.5,3.4,38.9
+Rakyung Kim,NYH,129,14.9,9.8,4.2,1.6,19.9,4.5,2.7,42.4
+Kate Blunt,BOS,103,9.6,13.4,3.3,2.8,24.9,4.5,3.2,38.3
+Jamie Mackay,LAQ,100,15.0,10.3,5.4,2.5,22.0,4.5,3.3,36.9
+Alli Schroder,BOS,99,11.3,12.3,3.3,2.3,23.3,4.5,3.7,39.3
+Claire O'Sullivan,NYH,97,10.5,12.0,4.1,2.4,23.2,4.5,3.1,40.2
+Maïka Dumais,BOS,88,13.6,8.7,4.6,3.8,22.7,4.5,2.3,39.7
+Paloma Benach,BOS,86,8.4,13.6,4.7,2.6,21.8,4.5,3.4,41.0
+Jaida Lee,NYH,84,23.6,8.6,4.9,3.1,18.7,4.5,3.4,33.1
+Meggie Meidlinger,LAQ,79,16.6,9.6,2.3,3.4,19.5,4.5,2.7,41.4
+Emi Saiki,NYH,76,14.1,8.0,3.9,3.4,19.3,4.5,2.0,44.7
+Peyton Coria,SFF,76,15.0,13.3,1.7,2.5,18.5,4.5,1.8,42.7
+Jill Albayati,SFF,75,16.2,13.6,2.5,2.5,18.4,4.5,1.8,40.4
+Ela Day-Bédard,SFF,66,8.7,14.9,6.3,2.6,20.5,4.5,1.1,41.4
+Jacqui Reynolds,NYH,63,13.2,15.3,3.8,3.6,19.4,4.5,1.8,38.4
+London Studer,NYH,62,14.0,13.5,2.5,3.8,19.6,4.5,2.1,39.9
+Isabella Villarreal,LAQ,53,10.9,15.1,5.1,3.4,18.6,4.5,1.3,41.2
+Raine Padgham,BOS,52,12.9,15.0,6.3,2.4,20.1,4.5,1.0,37.7
+Claire Eccles,NYH,51,17.5,14.7,4.7,3.2,20.4,4.5,1.0,34.0
+Olivia Bricker,BOS,49,5.5,16.6,5.5,4.6,19.7,4.5,0.8,42.7
+Ayuri Shimano,LAQ,42,13.1,16.3,3.4,2.7,20.4,4.5,0.7,38.9
+Tháima Maximiliana,LAQ,40,7.8,17.5,3.8,3.6,20.1,4.5,1.1,41.6
+Amira Hondras,LAQ,36,8.3,17.3,4.1,3.2,19.4,4.5,1.1,42.2
+Keira Izumi,NYH,35,4.5,18.9,2.4,2.9,21.4,4.5,1.1,44.2
+Rosi del Castillo,SFF,31,12.6,19.5,3.6,2.9,19.3,4.5,0.3,37.3
+Alyssa Zettlemoyer,NYH,31,5.9,19.4,3.7,3.0,20.9,4.5,1.0,41.5
+Jua Park,SFF,16,7.9,22.0,4.2,3.4,17.2,4.5,0.4,40.4
+Suzu Narasaki,LAQ,14,8.2,24.3,3.1,3.3,16.4,4.5,0.4,39.8
+Andreanne Leblanc,SFF,12,8.6,24.0,3.1,3.3,17.2,4.5,0.4,38.9
+Maggie Foxx,LAQ,12,10.5,23.4,3.0,2.9,17.5,4.5,0.4,37.9
+Brittany Apgar,LAQ,7,7.4,23.9,2.9,2.9,18.2,4.5,0.4,39.7
+Adelaide Frank,LAQ,7,7.4,23.8,2.8,3.3,18.2,4.5,0.4,39.7

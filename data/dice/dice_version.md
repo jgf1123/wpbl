@@ -1,3 +1,16 @@
+2026-09-21: v0.3.0
+  - Walks and hit-by-pitches are separate card lines again. They were merged
+    because runs could not tell them apart (0.45 vs 0.49), but that test was
+    blind by construction. Asked whose card a line should be read from, they
+    are opposites: walks want the pitcher (a=0.70), HBP wants the batter (0.20)
+  - Doubles are a fixed 4.54% band on neither card: a flat league rate predicts
+    better than the batter's own (3.9 SE) and the pitcher is worse still
+  - The 1% floor moved to the END, after batter and pitcher are combined. The
+    combined distribution is what a d100 represents; flooring the cards too
+    floored twice
+  - Card structures lost their 2B steps and k was re-tuned. Batter HR step 8->4
+  - League home runs now 68.2 against 69 actual, from 72.3
+
 2026-09-20: v0.2.0
   - Cohort target 300 -> 250 PA/BF, for batters and pitchers alike
   - Chosen on a finer grid (150 to 600 in eight steps): batters bottom out at

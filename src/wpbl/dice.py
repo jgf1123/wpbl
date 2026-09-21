@@ -2,14 +2,22 @@
 
     pixi run dice
 
-A card is seven lines -- K, free pass (FP: a walk or a hit by pitch), HR, 1B,
-2B, ROE, Out -- summing to 100%, plus the player's share of free passes that are
-hit-by-pitches, which the game reads off an extra d10 when a free pass comes up.
-Walks and HBP do the same thing on the bases, and keeping them as separate card
-lines did not predict unseen games any better (spec section 3.4). Each player's raw record is too thin to print as it stands (a regular has ~80
+A card is eight lines -- K, BB, HBP, HR, 1B, 2B, ROE, Out -- summing to 100%.
+Each player's raw record is too thin to print as it stands (a regular has ~80
 plate appearances), so each card is pulled toward the record of a cohort of
 players her team used about as much, by an amount chosen on held-out games.
 dice_game_spec.md section 3 holds the design and the evidence for every choice.
+
+Two lines are not what they look like:
+
+  2B   a fixed league band, the same on every card and on neither player's.
+       A flat rate predicts held-out doubles better than the batter's own
+       record (by 3.9 SE) and the pitcher is worse still, so doubles carry no
+       player information worth printing.
+  BB / HBP  separate lines, not one free pass. They were merged because runs
+       cannot tell them apart (0.45 against 0.49), but that made the test blind
+       to the difference that matters: asked whose card a line should be read
+       from, walks want the pitcher and hit-by-pitches want the batter.
 
 HOW A CARD IS BUILT
 
@@ -22,12 +30,14 @@ A card line is the product of the shares along its path, so a card sums to
 100% by construction and a hole in one outcome can only be filled from within
 its own step. k = inf means the step takes the cohort's split outright.
 
-  batters: true outcomes (K, FP, HR) | in-park contact; then two-way splits in
-    order of increasing k inside each branch --
-    HR | K+FP;  K | FP;  and  1B | rest;  out | 2B+ROE;  ROE | 2B
+  batters: true outcomes (K, BB, HBP, HR) | in-park contact (1B, ROE, Out);
+    then two-way splits inside each branch --
+    HR | K+BB+HBP;  K | BB+HBP;  BB | HBP;  and  1B | ROE+Out;  Out | ROE
   pitchers, a tree:
-    K | not K;  FP | in play;  out / ROE / hit;  HR / 1B / 2B
-  both: a free pass then splits walk | HBP, the player's own d10 split.
+    K | not K;  BB+HBP | in play;  BB | HBP;  out / ROE / hit;  HR | 1B
+
+Doubles sit outside both trees, so every step answers "given it was not a
+double, what happened?" and the tree's shares are scaled by 1 - the band.
 
 The k values were chosen by cross-validation over game halves, scored on the
 squared error of each plate appearance's expected run value. Runs cannot see the
@@ -51,8 +61,10 @@ and Mackay, and neither is in anyone else's cohort for that step. It is a rule
 about their hitting, so it applies only to the batter cards; Whitmore also
 pitches, and her pitcher card is built like anyone else's.
 
-Every card line is floored at 1%; the lines raised to the floor take their extra
-share from the other lines in proportion, so the card still sums to 100%.
+The 1% floor is NOT applied to a card. A card is half of a matchup; the
+distribution a d100 has to represent is the one left after a batter and a
+pitcher are combined, and that is where `floor()` belongs. Flooring both the
+cards and the result would floor twice.
 """
 
 from __future__ import annotations
@@ -69,7 +81,8 @@ from wpbl.usage_chart import CODES
 
 LINES = ["K", "BB", "HBP", "HR", "1B", "2B", "ROE", "OUT"]          # outcomes counted
 IX = {line: i for i, line in enumerate(LINES)}
-CARD_LINES = ["K", "FP", "HR", "1B", "2B", "ROE", "OUT"]             # lines printed on a card
+CARD_LINES = ["K", "BB", "HBP", "HR", "1B", "2B", "ROE", "OUT"]      # lines printed on a card
+TREE_LINES = [l for l in CARD_LINES if l != "2B"]   # 2B is a fixed band, built outside the tree
 TO_LINE = {"strikeout": "K", "walk": "BB", "hit_by_pitch": "HBP", "home_run": "HR",
            "single": "1B", "double": "2B", "triple": "2B", "reached_on_error": "ROE"}
 MIN_RATE = 0.01
@@ -82,27 +95,29 @@ OUT_DIR = ALL_DIR.parent / "dice"
 # k values sit on the tuning grid, powers of sqrt(2): 2 ** 5.5 is the "45" of the analysis.
 PA = tuple(LINES)
 FP = ("BB", "HBP")
-CONTACT = ("HR", "1B", "2B", "ROE", "OUT")
+CONTACT = ("HR", "1B", "ROE", "OUT")
 TRUE_OUTCOMES = ("K", "BB", "HBP", "HR")
-IN_PARK = ("1B", "2B", "ROE", "OUT")
+IN_PARK = ("1B", "ROE", "OUT")
+NO_2B = tuple(l for l in LINES if l != "2B")
 BATTER_STEPS = [
-    (PA, [TRUE_OUTCOMES, IN_PARK]),
+    (NO_2B, [TRUE_OUTCOMES, IN_PARK]),
     (TRUE_OUTCOMES, [("HR",), ("K",) + FP]),
     (("K",) + FP, [("K",), FP]),
-    (FP, [("BB",), ("HBP",)]),                      # the player's d10 split
-    (IN_PARK, [("1B",), ("2B", "ROE", "OUT")]),
-    (("2B", "ROE", "OUT"), [("OUT",), ("2B", "ROE")]),
-    (("2B", "ROE"), [("ROE",), ("2B",)]),
+    (FP, [("BB",), ("HBP",)]),
+    (IN_PARK, [("1B",), ("ROE", "OUT")]),
+    (("ROE", "OUT"), [("OUT",), ("ROE",)]),
 ]
-BATTER_K = [2 ** 6, 2 ** 3, 2 ** 4.5, 2 ** 3, 2 ** 5.5, np.inf, 2 ** 5]    # retune_k at cohort 250, split_k; 20 Sep
+# Runs cannot see BB | HBP (0.45 vs 0.49 a time), so a runs search leaves that step
+# unidentified and returns a tie. Its k comes from split_k.py's log-likelihood instead.
+BATTER_K = [2 ** 6, 2 ** 2, 2 ** 4, 2 ** 3, 2 ** 6, 2 ** 5.5]      # 21 Sep; step 4 from split_k
 PITCHER_STEPS = [
-    (PA, [("K",), FP + CONTACT]),
+    (NO_2B, [("K",), FP + CONTACT]),
     (FP + CONTACT, [FP, CONTACT]),
-    (FP, [("BB",), ("HBP",)]),                      # the player's d10 split
-    (CONTACT, [("OUT",), ("ROE",), ("HR", "1B", "2B")]),
-    (("HR", "1B", "2B"), [("HR",), ("1B",), ("2B",)]),
+    (FP, [("BB",), ("HBP",)]),
+    (CONTACT, [("OUT",), ("ROE",), ("HR", "1B")]),
+    (("HR", "1B"), [("HR",), ("1B",)]),
 ]
-PITCHER_K = [2 ** 5.5, 2 ** 10, 2 ** 4, 2 ** 9, np.inf]                         # retune_k at cohort 250, split_k; 20 Sep
+PITCHER_K = [2 ** 5, 2 ** 10, 2 ** 4, np.inf, np.inf]              # 21 Sep; step 3 from split_k
 
 
 def plate_appearances() -> pd.DataFrame:
@@ -168,13 +183,15 @@ def cohorts(share: np.ndarray, n: np.ndarray, exclude: np.ndarray) -> list[np.nd
 
 
 def build(X: np.ndarray, names: list[str], share: np.ndarray, steps, ks,
-          sluggers: tuple[str, ...] = ()) -> tuple[np.ndarray, np.ndarray]:
+          sluggers: tuple[str, ...] = (), two_b: float = 0.0) -> np.ndarray:
     """Cards (players x CARD_LINES) and each player's HBP share of free passes, from
     counts X (players x LINES), smoothing each step toward the cohort.
 
     `sluggers` names the players who take the exception at the home-run step. It is a
     batting rule, so callers pass it for batters only -- matching on name alone would
     otherwise catch a two-way player on her pitcher card as well."""
+    X = X.copy()
+    X[:, IX["2B"]] = 0.0                     # doubles are a fixed band for everyone
     n = X.sum(axis=1)
     slug = np.isin(names, sluggers)
     everyone = cohorts(share, n, np.zeros(len(n), bool))
@@ -182,7 +199,7 @@ def build(X: np.ndarray, names: list[str], share: np.ndarray, steps, ks,
     in_slug_cohort = np.isin(names, SLUGGER_COHORT)
     hr_step = next(s for s, (_, parts) in enumerate(steps) if ("HR",) in parts)
 
-    prob = {PA: np.ones(len(n))}
+    prob = {NO_2B: np.ones(len(n))}
     for s, ((group, parts), k) in enumerate(zip(steps, ks)):
         C = np.column_stack([X[:, [IX[l] for l in part]].sum(axis=1) for part in parts])
         T = np.zeros_like(C)
@@ -197,14 +214,23 @@ def build(X: np.ndarray, names: list[str], share: np.ndarray, steps, ks,
         share_s = T if np.isinf(k) else (C + k * T) / np.maximum(m + k, 1e-12)
         for j, part in enumerate(parts):
             prob[part] = prob[group] * share_s[:, j]
-    cards = np.column_stack([prob[FP] if l == "FP" else prob[(l,)] for l in CARD_LINES])
-    return floor(cards), prob[("HBP",)] / prob[FP]
+    tree = np.column_stack([prob[(l,)] for l in TREE_LINES])
+    tree *= (1.0 - two_b)                    # the tree covers everything that is not a double
+    out = np.zeros((len(n), len(CARD_LINES)))
+    for j, l in enumerate(CARD_LINES):
+        out[:, j] = two_b if l == "2B" else tree[:, TREE_LINES.index(l)]
+    return out
 
 
 def floor(cards: np.ndarray) -> np.ndarray:
-    """Raise every line to at least MIN_RATE and take the excess from the other lines
-    in proportion, so the card still sums to 100%. Dividing the whole card by its new
-    sum would push the raised lines back under the floor."""
+    """Raise every line to at least MIN_RATE, taking the excess from the other lines
+    in proportion so the row still sums to 100%. Dividing the whole row by its new
+    sum would push the raised lines back under the floor.
+
+    This belongs at the END, once a batter and a pitcher have been combined -- that
+    combined distribution is what a d100 has to represent. Flooring the cards as well
+    would floor twice, and a line can only be rounded up once.
+    """
     cards = cards.copy()
     for row in cards:
         low = np.zeros(len(row), bool)
@@ -218,20 +244,21 @@ def floor(cards: np.ndarray) -> np.ndarray:
     return cards
 
 
-def check(cards: np.ndarray, hbp_share: np.ndarray) -> None:
+def check(cards: np.ndarray) -> None:
+    """Cards are not floored any more, so the only invariants left are these."""
     assert np.allclose(cards.sum(axis=1), 1.0), "a card does not sum to 100%"
-    assert (cards >= MIN_RATE - 1e-12).all(), "a card line is below the 1% floor"
-    assert ((hbp_share > 0) & (hbp_share < 1)).all(), "a free-pass split is not strictly between 0 and 1"
+    assert (cards >= -1e-12).all(), "a card line is negative"
 
 
 @lru_cache(maxsize=2)
-def cards(side: str = "B") -> tuple[pd.DataFrame, pd.Series]:
-    """Every card on one side of the ball, as probabilities indexed by person_id,
-    with each player's share of free passes that are hit by pitches.
+def cards(side: str = "B") -> pd.DataFrame:
+    """Every card on one side of the ball, as probabilities indexed by person_id.
 
     `main()` prints and writes these; anything that needs a card to reason with
     -- a lineup, a simulated inning -- should call this instead of reading the
     csv back, which is keyed by name and rounded to a tenth of a percent.
+    Cards are NOT floored: the 1% floor belongs after a batter and a pitcher have
+    been combined.
     """
     pa = plate_appearances()
     steps, ks, slug = ((BATTER_STEPS, BATTER_K, SLUGGERS) if side == "B"
@@ -240,14 +267,21 @@ def cards(side: str = "B") -> tuple[pd.DataFrame, pd.Series]:
     counts = pd.crosstab(pa[side], pa["line"]).reindex(columns=LINES, fill_value=0)
     ids = counts.index.to_numpy()
     names = [players["person_name"].get(i, i) for i in ids]
-    built, hbp_share = build(counts.to_numpy().astype(float), names,
-                             usage(pa)[side].reindex(ids).fillna(0.0).to_numpy(), steps, ks, slug)
-    check(built, hbp_share)
-    return (pd.DataFrame(built, columns=CARD_LINES, index=ids),
-            pd.Series(hbp_share, index=ids))
+    built = build(counts.to_numpy().astype(float), names,
+                  usage(pa)[side].reindex(ids).fillna(0.0).to_numpy(), steps, ks, slug,
+                  two_b=float(band_2b(pa)))
+    check(built)
+    return pd.DataFrame(built, columns=CARD_LINES, index=ids)
 
 
-def league_card(pa: pd.DataFrame) -> tuple[pd.Series, float]:
+def band_2b(pa: pd.DataFrame) -> float:
+    """The fixed doubles band. Held-out games say a flat league rate predicts better
+    than either card: the batter's own rate loses to it by 3.9 SE and the pitcher is
+    worse still (analysis/dice/mixture_eight.py)."""
+    return float((pa["line"] == "2B").mean())
+
+
+def league_card(pa: pd.DataFrame) -> pd.Series:
     """The league's own line as a card, plus its HBP share of free passes.
 
     The same numbers serve as the average batter and the average pitcher: every
@@ -259,12 +293,10 @@ def league_card(pa: pd.DataFrame) -> tuple[pd.Series, float]:
     average opponent.
     """
     share = pa["line"].value_counts(normalize=True).reindex(LINES, fill_value=0)
-    card = pd.Series({l: share["BB"] + share["HBP"] if l == "FP" else share[l]
-                      for l in CARD_LINES})
-    return card, float(share["HBP"] / (share["BB"] + share["HBP"]))
+    return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.2.0"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.3.0"                 # keep in step with data/dice/dice_version.md
 REPORT_TO = "https://github.com/jgf1123/wpbl/issues"
 
 
@@ -310,6 +342,8 @@ def main() -> None:
     print("league: " + "  ".join(f"{l} {100 * league[l]:.1f}%" for l in LINES))
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     stamp = provenance(pa)
+    two_b = band_2b(pa)
+    print(f"doubles: a fixed {100 * two_b:.2f}% band for every player, off both cards")
 
     for side, label, steps, ks, team_col in (("B", "batters", BATTER_STEPS, BATTER_K, "B_team"),
                                             ("P", "pitchers", PITCHER_STEPS, PITCHER_K, "P_team")):
@@ -317,12 +351,12 @@ def main() -> None:
         X = pd.crosstab(pa[side], pa["line"]).reindex(columns=LINES, fill_value=0)
         ids = X.index.to_numpy()
         names = [players["person_name"].get(i, i) for i in ids]
-        cards, hbp_share = build(X.to_numpy().astype(float), names,
-                                 shares[side].reindex(ids).fillna(0.0).to_numpy(), steps, ks, slug)
-        check(cards, hbp_share)
+        cards = build(X.to_numpy().astype(float), names,
+                      shares[side].reindex(ids).fillna(0.0).to_numpy(), steps, ks, slug,
+                      two_b=two_b)
+        check(cards)
         last_team = pa.sort_values("date").groupby(side)[team_col].last()
         table = pd.DataFrame(100 * cards, columns=CARD_LINES, index=ids).round(1)
-        table["HBP share of FP"] = (100 * hbp_share).round(1)
         table.insert(0, "PA" if side == "B" else "BF", X.sum(axis=1).to_numpy())
         table.insert(0, "team", [CODES.get(last_team.get(i), "?") for i in ids])
         table.insert(0, "player", names)
@@ -336,14 +370,13 @@ def main() -> None:
         if side == "B":
             print(f"home runs the cards produce over the same PAs: {hr_total:.1f} (actual {int(X['HR'].sum())})")
         print(table.head(12).to_string(index=False))
-    lg, lg_hbp = league_card(pa)
-    check(lg.to_numpy()[None, :], np.array([lg_hbp]))
+    lg = league_card(pa)
+    check(lg.to_numpy()[None, :])
     league = pd.DataFrame([["League average batter", "-", len(pa)],
                            ["League average pitcher", "-", len(pa)]],
                           columns=["player", "team", "PA/BF"])
     for col in CARD_LINES:
         league[col] = round(100 * lg[col], 1)
-    league["HBP share of FP"] = round(100 * lg_hbp, 1)
     out = OUT_DIR / "cards_league.csv"
     with out.open("w", encoding="utf-8", newline="") as fh:
         fh.write("\n".join(stamp) + "\n")
@@ -353,7 +386,8 @@ def main() -> None:
         league.to_csv(fh, index=False, lineterminator="\n")
     print(f"\n=== league average -> {out} ===")
     print(league.to_string(index=False))
-    print("\ncheck passed: every card sums to 100%, every line is at least 1%, every free-pass split is inside (0, 1)")
+    print("\ncheck passed: every card sums to 100% and no line is negative "
+          "(the 1% floor now applies after batter and pitcher are combined)")
     print("\n" + "\n".join(stamp))
 
 
