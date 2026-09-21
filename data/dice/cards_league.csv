@@ -1,0 +1,12 @@
+# WPBL dice-game player cards -- v0.2.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
+# Built from 37 games through 2026-09-19 (2663 plate appearances); code 5a069e4 + uncommitted changes.
+# These FORECAST how a player would do in games we have not seen. They do not
+# replay 2026: a card is pulled toward players her team used about as much, so it
+# will not match her season line, by design (dice_game_spec.md section 3).
+# A card that looks wrong is worth reporting: https://github.com/jgf1123/wpbl/issues
+# The two rows are identical by construction: every plate appearance has a
+# batter and a pitcher, so the season's outcomes are one distribution. A
+# player facing this card keeps her own card exactly under flat log5.
+player,team,PA/BF,K,FP,HR,1B,2B,ROE,OUT,HBP share of FP
+League average batter,-,2663,11.9,16.1,2.6,21.1,4.5,2.2,41.5,21.9
+League average pitcher,-,2663,11.9,16.1,2.6,21.1,4.5,2.2,41.5,21.9

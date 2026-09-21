@@ -41,8 +41,9 @@ Players are ranked by how much their team used them -- batters by the share of
 team games started, pitchers by the share of team batters faced, both over
 their tenure with each team (a traded player's tenure splits at her first game
 for the new team). A player's cohort is her nearest neighbours in that ranking,
-excluding herself, until they hold 300 plate appearances; tied players enter
-together. Ranking by performance would be circular.
+excluding herself, until they hold 250 plate appearances; tied players enter
+together, so the cohort she actually gets is usually larger than the target.
+Ranking by performance would be circular.
 
 Benites and Whitmore (12 HR each, next best 6) are a named exception: at the
 step that splits off home runs, each is smoothed toward the other plus Lansdell
@@ -72,7 +73,7 @@ CARD_LINES = ["K", "FP", "HR", "1B", "2B", "ROE", "OUT"]             # lines pri
 TO_LINE = {"strikeout": "K", "walk": "BB", "hit_by_pitch": "HBP", "home_run": "HR",
            "single": "1B", "double": "2B", "triple": "2B", "reached_on_error": "ROE"}
 MIN_RATE = 0.01
-COHORT_PA = 300
+COHORT_PA = 250
 SLUGGERS = ("Denae Benites", "Kelsie Whitmore")
 SLUGGER_COHORT = SLUGGERS + ("Ashton Lansdell", "Jamie Mackay")
 OUT_DIR = ALL_DIR.parent / "dice"
@@ -93,7 +94,7 @@ BATTER_STEPS = [
     (("2B", "ROE", "OUT"), [("OUT",), ("2B", "ROE")]),
     (("2B", "ROE"), [("ROE",), ("2B",)]),
 ]
-BATTER_K = [2 ** 5.5, 2 ** 3, 2 ** 3.5, 2 ** 3, 2 ** 5.5, 2 ** 7.5, 2 ** 5]    # freepass_cv, split_k; 19 Sep
+BATTER_K = [2 ** 6, 2 ** 3, 2 ** 4.5, 2 ** 3, 2 ** 5.5, np.inf, 2 ** 5]    # retune_k at cohort 250, split_k; 20 Sep
 PITCHER_STEPS = [
     (PA, [("K",), FP + CONTACT]),
     (FP + CONTACT, [FP, CONTACT]),
@@ -101,7 +102,7 @@ PITCHER_STEPS = [
     (CONTACT, [("OUT",), ("ROE",), ("HR", "1B", "2B")]),
     (("HR", "1B", "2B"), [("HR",), ("1B",), ("2B",)]),
 ]
-PITCHER_K = [2 ** 5.5, 2 ** 8, 2 ** 4, 2 ** 8, np.inf]                          # freepass_cv, split_k; 19 Sep
+PITCHER_K = [2 ** 5.5, 2 ** 10, 2 ** 4, 2 ** 9, np.inf]                         # retune_k at cohort 250, split_k; 20 Sep
 
 
 def plate_appearances() -> pd.DataFrame:
@@ -246,7 +247,24 @@ def cards(side: str = "B") -> tuple[pd.DataFrame, pd.Series]:
             pd.Series(hbp_share, index=ids))
 
 
-CARD_VERSION = "v0.1.0"                 # keep in step with data/dice/dice_version.md
+def league_card(pa: pd.DataFrame) -> tuple[pd.Series, float]:
+    """The league's own line as a card, plus its HBP share of free passes.
+
+    The same numbers serve as the average batter and the average pitcher: every
+    plate appearance has one of each, so grouping the season by batter or by
+    pitcher gives the same distribution. It is not the mean of the player cards,
+    which differs on each side and is not what "average" should mean here --
+    this card is the L that flat log5 divides by (section 4 of the spec), so a
+    player who faces it keeps her own card exactly, which is the point of an
+    average opponent.
+    """
+    share = pa["line"].value_counts(normalize=True).reindex(LINES, fill_value=0)
+    card = pd.Series({l: share["BB"] + share["HBP"] if l == "FP" else share[l]
+                      for l in CARD_LINES})
+    return card, float(share["HBP"] / (share["BB"] + share["HBP"]))
+
+
+CARD_VERSION = "v0.2.0"                 # keep in step with data/dice/dice_version.md
 REPORT_TO = "https://github.com/jgf1123/wpbl/issues"
 
 
@@ -318,6 +336,23 @@ def main() -> None:
         if side == "B":
             print(f"home runs the cards produce over the same PAs: {hr_total:.1f} (actual {int(X['HR'].sum())})")
         print(table.head(12).to_string(index=False))
+    lg, lg_hbp = league_card(pa)
+    check(lg.to_numpy()[None, :], np.array([lg_hbp]))
+    league = pd.DataFrame([["League average batter", "-", len(pa)],
+                           ["League average pitcher", "-", len(pa)]],
+                          columns=["player", "team", "PA/BF"])
+    for col in CARD_LINES:
+        league[col] = round(100 * lg[col], 1)
+    league["HBP share of FP"] = round(100 * lg_hbp, 1)
+    out = OUT_DIR / "cards_league.csv"
+    with out.open("w", encoding="utf-8", newline="") as fh:
+        fh.write("\n".join(stamp) + "\n")
+        fh.write("# The two rows are identical by construction: every plate appearance has a\n"
+                 "# batter and a pitcher, so the season's outcomes are one distribution. A\n"
+                 "# player facing this card keeps her own card exactly under flat log5.\n")
+        league.to_csv(fh, index=False, lineterminator="\n")
+    print(f"\n=== league average -> {out} ===")
+    print(league.to_string(index=False))
     print("\ncheck passed: every card sums to 100%, every line is at least 1%, every free-pass split is inside (0, 1)")
     print("\n" + "\n".join(stamp))
 

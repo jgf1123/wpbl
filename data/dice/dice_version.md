@@ -1,3 +1,21 @@
+2026-09-20: v0.2.0
+  - Cohort target 300 -> 250 PA/BF, for batters and pitchers alike
+  - Chosen on a finer grid (150 to 600 in eight steps): batters bottom out at
+    250, pitchers are flat from 250 up and worse below. The old grid was
+    150/300/600, which stepped over the minimum
+  - Smoothing k re-tuned at the new target: 4 of 10 step values moved. The
+    walk/HBP d10 split is unchanged (batters 8, pitchers 16)
+  - Cards move little: the largest line change is 4 points, and most of the
+    movement is in the HBP share, the entry with the least data behind it
+
+2026-09-20: v0.1.1
+  - Adds cards_league.csv: a league-average batter and a league-average pitcher
+  - Both are the league's own line over every PA, so they are identical: each
+    PA has a batter and a pitcher, so the season is one distribution
+  - Not the mean of the player cards. Under flat log5 this card is the L the
+    matchup divides by, so a player facing it keeps her own card exactly;
+    the mean of the cards would shift her by up to 1.9 points
+
 2026-09-20: v0.1.0
   - First public set of player cards
   - Cards forecast unseen games; they do not replay 2026, so a card will not
