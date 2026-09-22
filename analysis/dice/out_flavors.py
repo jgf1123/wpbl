@@ -96,6 +96,10 @@ print(out.to_string())
 print("  The family share is solid: the feed's label decides it. The + rate is not,")
 print("  for F and FB -- those rest on a handful of plays, because with a runner")
 print("  forced out the + usually changes nothing visible.")
+fp = vis[vis["family"].isin(["F", "FB"])]
+print(f"  So F and FB are POOLED: {int(fp['plus'].sum())} of {len(fp)} = "
+      f"{fp['plus'].mean():.3f}. An F is a double-play attempt whose relay did not")
+print("  retire the batter, so the other runners do the same thing on both.")
 
 print("\n=== family by whether a force at 1st was on ===")
 for force, grp in t.groupby("force"):
@@ -136,7 +140,13 @@ for force, grp in t.groupby("force"):
     vis_g = grp[grp["plus"].notna()]
     for f in ["B", "F", "FB"]:
         share_f = fam_g.get(f, 0) / len(grp)
-        sub = vis_g[vis_g["family"] == f]
+        # F and FB share one + rate: an F is a double-play attempt whose relay did
+        # not retire the batter (45 of 56 read "out at second", none mentions 1b),
+        # so the other runners do the same thing on both. Measured apart they are
+        # 1 of 2 and 9 of 11 -- no evidence of a difference -- and pooling puts the
+        # rate on 13 plays instead of 2. DECISION (user, 21 Sep).
+        sub = vis_g[vis_g["family"].isin(["F", "FB"]) if f in ("F", "FB")
+                    else vis_g["family"] == f]
         pr = float(sub["plus"].mean()) if len(sub) else np.nan
         raw.append({"runner on 1st": bool(force), "family": f,
                     "family share": round(share_f, 5), "plays": int(fam_g.get(f, 0)),
@@ -152,7 +162,9 @@ HEADER = [
     "# Family comes from the feed's label (fielder's choice, double play); only",
     "# the + is inferred from the base-out change.",
     "# With nobody on 1st, F and FB act as B, so only the + matters there.",
-    "# The + rates for F and FB rest on very few plays -- see plus visible on.",
+    "# F and FB share one + rate, pooled: an F is a double-play attempt whose",
+    "# relay did not get the batter, so the runners behave the same on both.",
+    "# That rate still rests on 13 plays -- see plus visible on.",
 ]
 NL = chr(10)
 with out_csv.open("w", encoding="utf-8", newline="") as fh:
