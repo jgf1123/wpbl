@@ -154,6 +154,13 @@ diagnostics around it.
 | `running_k.py` | Sweeping k for the running-play rate, where k = inf IS the flat band | best k against the league 1024, beating the band by 0.48 SE; the usage cohort is worse than ignoring pitcher identity |
 | `engine_transitions.py` | Where the engine's base-out transitions differ from the season's, each state judged against its own sampling noise | excess distance 0.019 after the steal-timing fix, from 0.059 before. **Found a bug run expectancy could not see** |
 
+## Handedness (section 5)
+
+| Script | Question | Result |
+|---|---|---|
+| `handedness.py` | Does a platoon adjustment, fitted on the build half and shrunk toward zero, predict held-out games better than none? Cards rebuilt per fold | **worse at every strength**: +75.8 (SE 25.5) on runs at quarter, +405.8 (SE 101.9) at full. The shrinkage curve rises monotonically from zero, which is the signature of noise |
+| `handedness_re24.py` | The same question asked of RE24 -- one number per plate appearance instead of eight | outcome mix identical (-0.002, 0.07 SE); only situational timing differs (+0.035, 1.08 SE). Detectable effect is 0.7 SD of the batter population: no evidence, not no effect |
+
 ## Players and other checks
 
 | Script | Question |

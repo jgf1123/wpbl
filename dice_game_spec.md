@@ -459,6 +459,8 @@ parentheses, against the comparison named; rows scored on log loss instead say s
 | | one-cell floor on pitchers only | costs 2% on league HR and closes every hole by itself. **Chosen** | `hr_floor_options.py` |
 | | sub-cell lines sharing one cell in twelfths | more work at the table than the error it saves | `hr_floor_options.py` |
 | | no floor at all | 47 batter entries and 5 pitcher entries at zero; some matchups cannot produce a home run | `hr_floor_options.py` |
+| Handedness | RE24, situational and state-demeaned, against the context-neutral outcome mix | outcome mix identical (-0.002, 0.07 SE); only situational timing differs (+0.035, 1.08 SE). Detectable effect is 0.7 SD of the batter population, so: no evidence, not no effect | `handedness_re24.py` |
+| Handedness | a platoon adjustment, fitted on held-out games at five strengths | worse than none on runs at every strength: +75.8 (SE 25.5) at quarter, +405.8 (SE 101.9) at full. The walk/HBP split, the one axis with a story, is 1.0 SE better at best. **No platoon mechanic** (section 5) | `handedness.py` |
 | BB \| HBP k | one shared value for both sides | the full 18x18 grid returns 2.83 on each side independently; the shared value costs +0.000, so it is a result, not a simplification | `split_k_final.py` |
 
 ## 4. Combining pitcher and batter: the d100 table
@@ -576,22 +578,83 @@ are put together -- never to a card (section 3).
 
 Handedness rides on every batting and pitching row (`parse.py`, modal per
 person; the feed contradicts itself for 10 of 80 players). The league is 54
-right / 17 left / 2 switch at the plate, 61 right / 12 left on the mound.
+right / 17 left / 2 switch at the plate, 61 right / 12 left on the mound. Of
+2,663 plate appearances, 1,668 are same-handed and 995 opposite (switch hitters
+counted as opposite).
 
-Handedness lives in the **league table**, not on the cards: certain cells read
-one way when the hands match and another when they oppose. **DECISION (user).**
+**DECISION (22 Sep): the game has no platoon mechanic.** Handedness is recorded
+and carried in the data, and nothing on the table or the cards reads differently
+for it.
 
-| | Same hand | Opposite | Gap |
+That reverses the earlier design, which put platoon cells on the K/out and
+out/single boundaries. It was never tested the way every card choice is tested;
+when it was, it failed.
+
+**The gaps did not survive the data growing.** On 36 games the spec quoted K
+2.5 points, hits 2.1 and BB+HBP 0.9. On 37:
+
+| line | opposite - same | SE | gap / SE |
 |---|---|---|---|
-| K | 12.8% | 10.3% | 2.5 points |
-| Hits | 27.2% | 29.3% | 2.1 points |
-| BB+HBP | 16.6% | 15.7% | 0.9 points |
+| HBP | -1.62 | 0.70 | -2.31 |
+| BB | +2.64 | 1.36 | 1.94 |
+| K | -1.35 | 1.28 | -1.05 |
+| 1B | +0.91 | 1.64 | 0.55 |
+| OUT | +0.72 | 1.97 | 0.37 |
+| HR, 2B, ROE | under 0.5 | | under 0.9 |
 
-So a few cells on the K/out boundary and the out/single boundary switch
-meaning. Home runs get no platoon cell: the measured gap points the wrong way,
-which on 64 home runs is noise. Switch hitters always take the opposite-hand
-reading. **ASSUMPTION**: the platoon gap is real at roughly this size; our
-opposite-hand cell holds 846 plate appearances (±2 points on K).
+The K gap halved, the hits gap vanished (+0.10 across 1B, 2B and HR) and BB+HBP
+flipped sign. The two lines the mechanic was built on are now the weakest, and
+with eight lines tested a largest |z| of 2.31 is not significant.
+
+**And an adjustment predicts held-out games worse, at every strength**
+(`handedness.py`). The baseline is the mixture of the two cards, which already
+knows each player's own rates; a platoon shift has to earn its keep on top of
+that by predicting the part that depends on the matchup. Fitted on the build
+half, shrunk toward zero by a factor, and scored on the other half, with cards
+rebuilt per fold so neither side sees the test games:
+
+| strength | runs error, vs none | log loss, vs none |
+|---|---|---|
+| 0.25 | +75.8 (SE 25.5) | -0.004 (SE 0.265) |
+| 0.50 | +168.8 (SE 51.0) | +0.510 (SE 0.544) |
+| 1.00 | +405.8 (SE 101.9) | +4.919 (SE 1.467) |
+
+Worse on runs at 3.0 SE even at quarter strength, and 4.0 SE at full.
+
+**The one axis with a physical story is the one runs cannot see.** BB and HBP
+move in opposite directions, so the free-pass total barely shifts (+1.01) while
+the split inside it shifts a lot: hit-by-pitches are 26.2% of free passes in
+same-handed matchups and 15.0% in opposite, which is what a breaking ball
+running in on the batter would do. Scored on log loss, as section 9.0 requires
+for a choice between outcomes of near-equal run value, it is 1.0 SE better at
+best (-2.40, SE 2.44, on 430 free passes). Not enough to print.
+
+**RE24 agrees, and sharpens it** (`handedness_re24.py`). The line-by-line test
+asks eight noisy questions; RE24 asks one, so it has far more power per plate
+appearance. Same minus opposite: situational RE24 +0.0349 (SE 0.0322), the same
+with each base-out state's mean removed +0.0350 (SE 0.0325), and the
+context-neutral run value -0.0021 (SE 0.0293). The last is the informative one --
+**the outcome mix is identical**, and what little RE24 difference exists is in
+when those outcomes happened, not what they were. A card produces outcomes and
+the game supplies the situation, so there is nothing there for a card to carry.
+(The situations do differ slightly: same-handed matchups sit in states worth
++0.042 runs before the play, 1.30 SE, which is what bringing a same-handed
+reliever into a tight spot would look like.)
+
+**What these tests can and cannot say.** Two SE on the RE24 test is 0.059 runs
+per plate appearance, and section 3.5 puts the spread across batters with 25+ PA
+at 0.080 on cards -- so the smallest platoon effect detectable here is about 0.7
+SD of the entire batter population. That rules out a split the size of the gap
+between an average and a good hitter; it does not rule out an ordinary one. So
+the finding is **no evidence**, not **no effect**.
+
+The decision rests on the stronger half of the evidence rather than on the
+absence: a mechanic has to earn its complexity, and acting on the measured gaps
+made held-out predictions worse at every strength. **ASSUMPTION.**
+
+**OPEN:** revisit when the league has more games. The HBP split is where to look
+first, and it needs free passes rather than plate appearances, so it will be
+slow to resolve.
 
 ## 6. Running plays and steals
 
@@ -824,6 +887,8 @@ than a sixth unmodelled mechanism.
   out and reached first on the wild pitch. No card line covers a strikeout that
   puts a runner on, and at one occurrence it does not earn a cell -- recorded so
   it is a decision rather than an oversight.
+- Handedness: revisit when there are more games (section 5). The walk/HBP split
+  is the place to look, and it needs free passes, so it resolves slowly.
 - **Situational pitcher quality** (section 9.1). Weak pitchers populate the
   states with runners on, and a card carries one rate for every situation, so
   the game cannot reproduce it. Whether that matters enough to model is open.
