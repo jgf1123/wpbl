@@ -1,3 +1,26 @@
+2026-09-21: v0.5.0
+  - The d100 gains a RUNNING-PLAY block: 00-32 pitcher, 33-36 double, 37-38
+    error, 39-44 running play, 45-99 batter. A wild pitch, passed ball or balk
+    advances every runner and the roll is taken again
+  - Those six cells do not end a plate appearance, so a card is now a
+    distribution over the 94 cells that do. Bands divide by 94: doubles 4/94 =
+    4.26%, errors 2/94 = 2.13%
+  - Six cells, not the four "4.2% of rolls" implied. All 117 running plays on
+    record happened with a runner on, so the block is dead 39% of the time and
+    must be larger to land the same rate. Four cells would give 69 plays a
+    season against 117
+  - The line is on neither card. Best k against the league is 1024, beating the
+    flat band by 0.48 SE; smoothing toward the usage cohort is worse than
+    ignoring pitcher identity entirely
+  - Balks kept at the post-changepoint rate. The balk rate falls 3.6x after game
+    22, consistent with an umpire being replaced, though only at p = 0.17. Both
+    ways of acting on that give 6 cells; keeping all 18 balks gives 7
+  - Blocks 35/58 -> 33/55, so alpha = 33/88 = 0.375 exactly, up from 0.3763. The
+    move is 0.003 inside a flat region, so k was not refitted
+  - Counts corrected to 87 wild pitches / 12 passed balls / 18 balks: six were
+    folded into a plate-appearance narrative rather than given their own row
+  - League home runs: cards 69.3, printed table 71.3, actual 69
+
 2026-09-21: v0.4.0
   - Cards are now printed as d100 CELLS, not just percentages. One roll of a
     d100 resolves a plate appearance: 00-34 read the pitcher's card, 35-39 a

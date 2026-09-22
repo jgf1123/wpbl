@@ -25,6 +25,7 @@ head = SRC[:SRC.index("# ---------------- A: quartiles")]
 start = SRC.index("# ---------------- B: out types by base-out transition")
 exec(head + SRC[start:SRC.index("obs = []")])          # loaders, occ(), move(), candidates()
 __file__ = _here
+from wpbl.dice import OUT_DIR                                           # noqa: E402
 from wpbl.run_expectancy import states                                  # noqa: E402
 
 pd.set_option("display.width", 220)
@@ -33,13 +34,26 @@ OUT_EVENTS = {"groundout", "flyout", "popup", "lineout", "foul_out", "sacrifice"
               "fielders_choice", "out"}
 RE = states().pivot_table(index="bases", columns="outs", values="runs_rest", aggfunc="mean")
 
-# ---- measured distribution, from out_flavors.py: family by label, + within family ----
-FAMILY = {False: {"B": .964, "F": .009, "FB": .027},          # no runner on 1st
-          True: {"B": .635, "F": .191, "FB": .174}}           # runner on 1st
-PLUS = {"B": .371, "F": .500, "FB": .818}                     # F and FB rest on 2 and 11 plays
+# ---- measured distribution, read from out_flavors.py's output ----
+# Not hardcoded: these moved once already, when F and FB were pooled, and a copy
+# here silently kept the old split. The + rate is taken PER FORCE STATE, because
+# it differs a lot -- a B advances a runner 56% of the time with nobody on 1st
+# and 26% with a force on, which one blended number was hiding. Where a force
+# state has no measurable + rate (F and FB with nobody on 1st, which act as B
+# anyway and so carry the same run value), the other state's rate stands in.
+_fl = pd.read_csv(OUT_DIR / "out_flavors.csv", comment="#")
+FAMILY, PLUS = {}, {}
+for force, grp in _fl.groupby("runner on 1st"):
+    g = grp.set_index("family")
+    FAMILY[bool(force)] = {f: float(g.loc[f, "family share"]) for f in ("B", "F", "FB")}
+    PLUS[bool(force)] = {f: g.loc[f, "plus rate"] for f in ("B", "F", "FB")}
+for force in PLUS:
+    for f, v in PLUS[force].items():
+        if pd.isna(v):
+            PLUS[force][f] = float(PLUS[not force][f])
 TRUE = {}
 for force, fam in FAMILY.items():
-    TRUE[force] = {f + ("+" if p else ""): fam[f] * (PLUS[f] if p else 1 - PLUS[f])
+    TRUE[force] = {f + ("+" if p else ""): fam[f] * (PLUS[force][f] if p else 1 - PLUS[force][f])
                    for f in fam for p in (0, 1)}
 
 # ---- how often each base-out state carries an out, by force ----

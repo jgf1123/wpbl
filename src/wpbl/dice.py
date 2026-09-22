@@ -110,17 +110,30 @@ BATTER_STEPS = [
 # --- the table ---------------------------------------------------------------
 # One d100 roll resolves a plate appearance. The cells are split in fixed blocks:
 #
-#   00-34  read the PITCHER's card      35 cells
-#   35-39  double                        5 cells   league band, on neither card
-#   40-41  reached on error              2 cells   league band, on neither card
-#   42-99  read the BATTER's card       58 cells
+#   00-32  read the PITCHER's card      33 cells
+#   33-36  double                        4 cells   league band, on neither card
+#   37-38  reached on error              2 cells   league band, on neither card
+#   39-44  RUNNING PLAY                  6 cells   not a plate appearance at all
+#   45-99  read the BATTER's card       55 cells
 #
 # Reading one card or the other IS the combination rule: it sums to 100% because
 # exactly one card is read, needs no arithmetic, and beat log5, the additive
 # shortcut and every zero-sum shift on held-out games (analysis/dice/mixture.py).
-P_CELLS, B_CELLS = 35, 58
-BAND_CELLS = {"2B": 5, "ROE": 2}
-MIX_ALPHA = P_CELLS / (P_CELLS + B_CELLS)      # 0.3763: the pitcher's share of the tree
+#
+# The running-play block is the odd one out: a wild pitch, passed ball or balk
+# advances every runner and the roll is TAKEN AGAIN, so those six cells do not
+# resolve a plate appearance. A card is therefore a distribution over the 94
+# cells that do, not over all 100 -- which is why the bands divide by PA_CELLS.
+# With the bases empty the block is a plain reroll, about once every 43 plate
+# appearances. Six cells, not the four the old "4.2% of rolls" implied: every
+# one of the 117 running plays on record happened with a runner on, so the
+# block is dead 39% of the time and has to be bigger to land the same rate
+# (analysis/dice/running_plays.py).
+P_CELLS, B_CELLS = 33, 55
+BAND_CELLS = {"2B": 4, "ROE": 2}
+RUN_CELLS = 6                                  # wild pitch / passed ball / balk
+PA_CELLS = P_CELLS + B_CELLS + sum(BAND_CELLS.values())   # 94: the cells that end a PA
+MIX_ALPHA = P_CELLS / (P_CELLS + B_CELLS)      # 0.375 exactly: the pitcher's share of the tree
 # Runs cannot see BB | HBP (a walk is worth 0.45, an HBP 0.49), so that step's k is
 # fitted on log loss (spec 9.0); every other k is fitted on runs at MIX_ALPHA. The
 # two interact -- mixing is itself shrinkage -- so they were fitted together by
@@ -360,11 +373,15 @@ def bands(pa: pd.DataFrame) -> dict[str, float]:
     pitcher's apparent edge was his cohort's usage tier, not his own fielders
     (analysis/dice/line_owner.py).
 
-    The printed levels are whole cells, 5 and 2, not the measured 4.54% and 2.22%.
-    Rounding each to its nearer whole cell PREDICTS BETTER than the measured rate
-    (doubles by 0.4 SE, errors by 0.8 SE), so the round table costs nothing
+    The printed levels are whole cells, 4 and 2, against the measured 4.54% and
+    2.22%. They divide by PA_CELLS, not by 100: the six running-play cells do not
+    end a plate appearance, so a card is a distribution over the 94 that do. That
+    puts doubles at 4/94 = 4.26% and errors at 2/94 = 2.13%. Flat levels in this
+    region score no worse than the measured rate and nominally better (flat 4%
+    -0.007, SE 0.490; flat 5% -0.151, SE 0.348; errors at 2% -0.236, SE 0.308),
+    and marking a bonus group of doublers is worse at every size
     (analysis/dice/band_two_level.py)."""
-    return {l: BAND_CELLS[l] / 100.0 for l in FIXED}
+    return {l: BAND_CELLS[l] / PA_CELLS for l in FIXED}
 
 
 def league_card(pa: pd.DataFrame) -> pd.Series:
@@ -384,7 +401,7 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.4.0"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.5.0"                 # keep in step with data/dice/dice_version.md
 REPORT_TO = "https://github.com/jgf1123/wpbl/issues"
 
 
@@ -446,7 +463,7 @@ def main() -> None:
         check(cards)
         last_team = pa.sort_values("date").groupby(side)[team_col].last()
         block = P_CELLS if side == "P" else B_CELLS
-        start = 0 if side == "P" else P_CELLS + sum(BAND_CELLS.values())
+        start = 0 if side == "P" else P_CELLS + sum(BAND_CELLS.values()) + RUN_CELLS
         cells = to_cells(cards, block, W_LINE, floor_one=(side == "P"))
         assert (cells.sum(axis=1) == block).all(), "a card does not fill its block"
         if side == "P":
@@ -488,7 +505,7 @@ def main() -> None:
         league[f"{col} %"] = round(100 * lg[col], 2)
     for j, l in enumerate(TREE_LINES):
         league[f"{l} cells"] = [lg_cells["B"][j], lg_cells["P"][j]]
-        league[l] = [ranges(lg_cells["B"], P_CELLS + sum(BAND_CELLS.values()))[j],
+        league[l] = [ranges(lg_cells["B"], P_CELLS + sum(BAND_CELLS.values()) + RUN_CELLS)[j],
                      ranges(lg_cells["P"], 0)[j]]
     for l, n in BAND_CELLS.items():
         league[f"{l} cells"] = n
