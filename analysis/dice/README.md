@@ -9,11 +9,21 @@ Run from the repo root:
 
     pixi run python analysis/dice/<script>.py
 
-- Results quoted here were run on 17-20 Sep. The training set grew from 36 to 37
+- Results quoted here were run on 17-21 Sep. The training set grew from 36 to 37
   games on 20 Sep, so older numbers in this table may not reproduce; rerun rather
   than trust them. Numbers will keep moving as games are added.
-- Many scripts load another script's code from this folder by file name, so
-  don't rename them. Those dependencies are listed below.
+- Many of the older scripts load another script's code from this folder by file
+  name, so don't rename them. Those dependencies are listed below as `<-`. The
+  scripts written from 20 Sep on import `wpbl.dice` instead and have no such
+  dependency.
+- **Eight scripts no longer run as written.** They expect a merged `FP` (free
+  pass) line, which `wpbl.dice` dropped at v0.3.0 when walks and hit-by-pitches
+  split back apart, so they raise `KeyError: 'FP'`: `mixture.py`,
+  `mixture_per_line.py`, `mixture_eight.py`, `log5_fit.py`,
+  `additive_vs_log5.py`, `hybrid_rules.py`, `quantize_cards.py` and
+  `log5_hr.py`. Their results are quoted in the spec with that provenance.
+  Porting them is not automatic: under eight lines they ask a slightly
+  different question, which is the point the split was making.
 - The nested cross-validation runs take several minutes each. Run them at
   below-normal priority, one at a time.
 
@@ -26,14 +36,16 @@ Run from the repo root:
 | `label_map.py` | How the feed's 15 play labels map onto card lines | Table in spec section 2 |
 | `label_vs_line.py` <- `proposals.py` | Same label, different base-out result (ground balls, lineouts) | 176 ground-ball outs: 37 / 78 / 17 / 38 / 6 |
 | `out_plus.py` <- `proposals.py` | Are some batters better or worse at advancing runners on an out (the + modifier)? Direct rate, the rate implied by each batter's out-type mix, and what a + is worth | no real spread either way; worth 0.1-0.2 runs a season |
+| `out_flavors.py` <- `proposals.py` | League rates for the six flavors, family from the feed's label and only the + inferred. Writes `data/dice/out_flavors.csv` | B 72.7% / F 14.0% / FB 13.3%; F and FB share one + rate, pooled 10 of 13 |
+| `out_quantize.py` <- `proposals.py` | Which die resolves the out flavors without costing runs | feeds the d12 assumption in spec section 8 |
 
 ## Which outcomes share a card line (section 2)
 
 | Script | Question | Result |
 |---|---|---|
-| `merge_log5.py` | Does keeping 1B / ROE or BB / HBP apart improve the log5 matchup? (Now rebuilds 8 lines from the free-pass cards; the spec's result came from the 8-line module, commit d175b22.) | 1B / ROE apart: better by 2.4 SE; BB / HBP: no |
+| `merge_log5.py` | Does keeping 1B / ROE or BB / HBP apart improve the log5 matchup? (Now rebuilds 8 lines from the free-pass cards; the spec's result came from the 8-line module, commit d175b22.) | 1B / ROE apart: better by 2.4 SE. BB / HBP: no -- but the test is blind by construction, and `mixture_per_line.py` reversed it |
 | `freepass_cv.py` <- `chain_cv.py` | Free pass: best k for three placements; nested vs 8 lines; log5 matchup | HR \| K+FP then K \| FP; ties the 8-line cards |
-| `split_k.py` <- `freepass_cv.py` | k for each player's walk \| HBP split (log-likelihood and pitch counts); S2 k stability | batters 8, pitchers 16 |
+| `split_k.py` <- `freepass_cv.py` | k for each player's walk \| HBP split (log-likelihood and pitch counts); S2 k stability | batters 8, pitchers 16 -- superseded by `split_k_final.py` |
 | `replayness.py` <- `freepass_cv.py` | How close to season lines: 8-line cards vs a league-wide free-pass split | league split erases batters' mixes |
 
 ## Targets and cohorts (section 3.2)
@@ -77,11 +89,64 @@ Run from the repo root:
 | `tto_c.py` <- `chain_cv.py` | True outcomes first, increasing-k branches (current batter structure) | better than chain by 1.9 SE |
 | `greedy_cv.py` <- `chain_cv.py` | Automatic "most reliable split first", fully nested | ties; different structure every half |
 
+## Combining the two cards (section 4)
+
+The long line of attack was log5 and its shortcuts; it ended when the mixture
+turned out to beat all of them. Kept in order, because the dead ends are the
+argument for what shipped.
+
+| Script | Question | Result |
+|---|---|---|
+| `combine_fullpos.py` | Combination rules x card sets: additive, flat log5, two-level log5, averaging | three tie within 0.7 SE; averaging halves player differences |
+| `log5_fit.py` | Is log5 the right rule at all, line by line, against league / batter / pitcher alone? | the best rule differs by line: log5 for K, the batter alone for HR / 1B / Out, the league for 2B, the pitcher for ROE |
+| `additive_vs_log5.py` | How far B + P - L drifts from flat log5, reported in d100 cells | |
+| `hybrid_rules.py` <- `log5_fit.py` | Rules that sum to 100% without renormalising, since a per-line best does not | the shift rules all give the offset back from Out |
+| `quantize_cards.py` | Four rules for rounding a card to 100 cells, and what log5's sum-to-100 shortfall costs | superseded by `layout_round.py`, which rounds a block rather than a whole card |
+
+The mixture -- the roll picks which card to read:
+
+| Script | Question | Result |
+|---|---|---|
+| `mixture.py` | Does a mixture work as a combination rule? Plain cards and compensated cards (print B' so the mixture reproduces B exactly) | **chosen**: better than no mixing by 4.5 SE, and beats log5, additive and every zero-sum shift. Compensated cards are not printable |
+| `mixture_per_line.py` | Line by line, what share should be read off the pitcher's card? Each line gets a league control, so the gap is what the pitcher's identity is worth | walks want the pitcher (0.70), hit-by-pitches the batter (0.20) |
+| `mixture_eight.py` | The same with walks and HBP kept apart | the evidence that reversed the free-pass merge |
+| `line_owner.py` | Who owns each line: real share of spread, k, and fitted weight, all per plate appearance so the two sides compare | 2B and ROE have no real spread on either side; sets the sort order |
+
+Bins -- one weight per band of the d100, rather than one overall:
+
+| Script | Question | Result |
+|---|---|---|
+| `bins.py` | How wide must a bin be, and what fills the rest of it? | a bin needs a filler line to absorb the slack, and its width must clear every player's total |
+| `bin_alpha.py` | Fit the ten bin weights, given the cards | |
+| `bin_nested.py` <- `bin_alpha.py` | Do ten fitted weights beat one, when the weights are held out too? | no -- a superset that cannot use its extra freedom |
+| `bin_spread.py` | What each bin actually holds across every card, not just the average one | a bin that is one line on the average card is two or three on a real one |
+
+The weight and the smoothing together -- they interact, because mixing is
+itself shrinkage:
+
+| Script | Question | Result |
+|---|---|---|
+| `alpha_sweep.py` | Sweep the weight under both metrics, for a card set built to be read alone and one built to be mixed | runs bottom near 0.15-0.20, log loss near 0.375-0.43, both curves flat |
+| `alpha_cost.py` | What a weight other than the runs-optimal one costs, priced on both metrics with standard errors | turns the disagreement into a number |
+| `fit_cards.py` | Alternating tuner: k on runs, the weight on log loss, until neither moves | **rejected.** Alternating two objectives descends on nothing; it drifted to a fixed point worse than its start on both scores. Kept as the record of why `joint_runs.py` uses one objective |
+| `joint_runs.py` | k and the weight together on runs alone, by coordinate descent from six starts | one fixed point from every start; the shipped k |
+| `k_given_mixing.py` | If a card will be mixed with the opponent's, what k should build it? | k falls: the mixing supplies the smoothing |
+| `k_alpha_nested.py` | Does the joint fit survive nesting, against sequential tuning and against no mixing? | |
+| `split_k_final.py` | The BB \| HBP k with both sides free on the full grid, on log loss | 2.83 on each side independently; the best shared value costs +0.000 |
+| `band_two_level.py` <- `line_owner.py` | A round band plus a marked bonus group, vs one flat rate, for 2B and ROE | flat 5% and 2% chosen; the bonus group is worse at every size |
+
+## The printed d100 table (section 4.1)
+
+| Script | Question | Result |
+|---|---|---|
+| `layout_cells.py` | Lay the real cards into 35 pitcher and 58 batter cells: does a line vanish from a matchup, and how far does the realised weight drift? | |
+| `layout_round.py` | Four rounding rules judged on runs, including what the home-run floor costs separately | nearest, then spend the difference where \|run error\| is smallest |
+| `hr_floor_options.py` | Cards whose home-run line rounds to nothing: no floor, per card, per pair, or a shared cell split by the d12 | pitcher-only floor: 2% on league HR, and it closes every hole by itself |
+
 ## Players and other checks
 
 | Script | Question |
 |---|---|
-| `combine_fullpos.py` | Combination rules x card sets (section 4) |
 | `sluggers.py` | Where Benites's and Whitmore's HR come from; do rosters show availability? |
 | `hr_quality.py` <- `cohort_cards2.py` | Sluggers' HR by pitcher tier; context-neutral raw vs card |
 | `regulars.py` <- `trees_cv.py` | The regulars' (17+ games) most extreme lines and run effects. The list is computed, not fixed: 20 names on 36 games, 16 on 37. Card totals here come from the old 4-step tree, so they are not the blog's Table 3 |
@@ -90,16 +155,19 @@ Run from the repo root:
 | `regress10.py` | Table 2 of the blog: the top 10 in one set of odd/even games, and the same 10 in their other set. Three selection methods compared; the post uses "rank in each set, read the other, both directions" |
 | `cohort_who.py` | Whose comparison group a batter is in, and who is in hers, at the ordinary steps and at the home-run step (`--who=`) |
 | `log5_hr.py` | Whether the HR gap between pitcher tiers beats noise, and how far flat log5 moves a batter's HR chance across pitcher cards |
-| `post_numbers.py` | Player numbers quoted in the blog draft, from the current cards. Calls `dice.build` directly, so it must pass `dice.SLUGGERS` for batters |
+| `post_numbers.py` | The player numbers in the published blog post, recomputed from the current cards -- so it shows how far the post has drifted, not what it says. Reads `dice.cards()`; it used to call `dice.build` by hand, which stopped working when the card became eight lines |
 | `post_facts.py` | The blog's non-card numbers: season totals, the extreme cases, the sluggers, the signatures |
 | `post_facts2.py` | Everyday starters, who counts as a regular, and whether a single scored the runner from 2nd |
 | `post_facts3.py` | Season shape: regular season vs postseason, and which finished games are excluded |
 
 ## Figures for the blog
 
-Written to `data/img/` (gitignored, so they are regenerated rather than committed).
+Written to `data/img/` (gitignored, so they are regenerated rather than
+committed). **The blog post is already published**, and it shows the figures as
+they were under the seven-line card. These scripts have moved on, so rerunning
+them does not reproduce the published images -- they are here for the next post.
 
 | Script | Figure |
 |---|---|
-| `fig_k_curve.py` <- `k_curves.csv` | Figure 1: prediction error against k for all seven batter steps, the two in-play splits coloured. Reads the cached sweep, so run `sharpness.py` first when the data changes |
-| `fig_card_tree.py` | Figure 2: the batter tree with one player's numbers, raw then card, each a share of the group to its left (`--who=`). Reads `data/dice/cards_batters.csv`, so run `pixi run dice` first |
+| `fig_k_curve.py` <- `k_curves.csv` | Figure 1: prediction error against k for every batter step, the two in-play splits coloured. Reads the cached `k_curves.csv`, which is still a sweep of the **old seven-step tree** -- its legend names two steps (`1B \| 2B+ROE+out`, `out \| 2B+ROE`) that no longer exist. Refreshing it means porting `sharpness.py` to the five-step tree and sweeping at the mixing weight |
+| `fig_card_tree.py` | Figure 2: the batter tree with one player's numbers, raw then card, each a share of the group to its left (`--who=`). Ported to the five-step tree: the root is now "not a double or an error", since those are league bands outside it. Reads `dice.cards()`, not the csv, which no longer carries percentages |

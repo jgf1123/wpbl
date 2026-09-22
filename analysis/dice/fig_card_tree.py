@@ -12,10 +12,10 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from wpbl import tables
 from wpbl.batters import contact
+from wpbl.dice import cards as dice_cards
 from wpbl.parse import DATA_DIR
 
 INK, MUTED, GRID = "#222222", "#666666", "#c9c9c9"
@@ -39,14 +39,18 @@ pa["B"] = pa["batter_id"].map(person).fillna(pa["batter_id"])
 pid = next(k for k, v in name.items() if v == who)
 mine = pa[pa["B"] == pid]
 raw = (100 * mine["line"].value_counts().reindex(ALL).fillna(0) / len(mine)).to_dict()
-row = pd.read_csv(DATA_DIR / "dice" / "cards_batters.csv").set_index("player").loc[who]
-hs = row["HBP share of FP"] / 100
-card = {"K": row["K"], "BB": row["FP"] * (1 - hs), "HBP": row["FP"] * hs, "HR": row["HR"],
-        "1B": row["1B"], "2B": row["2B"], "ROE": row["ROE"], "OUT": row["OUT"]}
+# From the module, not the csv: the csv is keyed by name and now prints cells
+# rather than percentages, and dice.cards() is what anything reasoning with a
+# card is supposed to read.
+card = (100 * dice_cards("B").loc[pid]).to_dict()
 
-TTO, PARK = ["K", "BB", "HBP", "HR"], ["1B", "2B", "ROE", "OUT"]
-FP, KFP, REST = ["BB", "HBP"], ["K", "BB", "HBP"], ["2B", "ROE", "OUT"]
-T = {"label": "Every plate appearance", "of": ALL, "kids": [
+# 2B and ROE are fixed league bands on neither card, so they sit outside the tree
+# and every step reads "given it was not a double or an error, what happened?".
+# Raw shares are taken over the same six lines, so the two numbers compare.
+TREE = ["K", "BB", "HBP", "HR", "1B", "OUT"]
+TTO, PARK = ["K", "BB", "HBP", "HR"], ["1B", "OUT"]
+FP, KFP = ["BB", "HBP"], ["K", "BB", "HBP"]
+T = {"label": "Not a double or an error", "of": TREE, "kids": [
     {"label": "No ball in play", "of": TTO, "kids": [
         {"label": "Home run", "of": ["HR"]},
         {"label": "Strikeout or free pass", "of": KFP, "kids": [
@@ -56,11 +60,7 @@ T = {"label": "Every plate appearance", "of": ALL, "kids": [
                 {"label": "Hit by pitch", "of": ["HBP"]}]}]}]},
     {"label": "Ball in play", "of": PARK, "kids": [
         {"label": "Single", "of": ["1B"]},
-        {"label": "Not a single", "of": REST, "kids": [
-            {"label": "Out", "of": ["OUT"]},
-            {"label": "Double or error", "of": ["2B", "ROE"], "kids": [
-                {"label": "Double", "of": ["2B"]},
-                {"label": "Error", "of": ["ROE"]}]}]}]}]}
+        {"label": "Out", "of": ["OUT"]}]}]}
 
 LEAF_GAP = 1.55            # vertical room for a label plus its two numbers
 counter = [0]
@@ -81,8 +81,8 @@ def place(node, depth, parent_of):
     return node
 
 
-place(T, 0, ALL)
-fig, ax = plt.subplots(figsize=(7.28, 5.9), dpi=200)
+place(T, 0, TREE)
+fig, ax = plt.subplots(figsize=(7.28, 4.6), dpi=200)
 
 
 def draw(node, root=False):
@@ -109,14 +109,16 @@ def draw(node, root=False):
 
 
 draw(T, root=True)
-ax.set_xlim(-0.30, 5.05)
-ax.set_ylim(-7 * LEAF_GAP - 0.95, 1.05)
+ax.set_xlim(-0.30, 4.80)
+ax.set_ylim(-(counter[0] - 1) * LEAF_GAP - 0.95, 1.05)
 ax.axis("off")
 fig.suptitle(f"A card is built in steps: {who}'s", x=0.02, ha="left",
              fontsize=12, color=INK, y=0.985)
 fig.text(0.02, 0.935, "Each percentage is a share of the group just to its left, her own record "
          "then her card. Smoothing takes\nnearly a fifth off her singles (orange) and leaves the "
-         "split above almost where it was (blue).",
+         "split above almost where it was (blue)." \
+         "\nDoubles and errors are fixed league "
+         "bands, so they sit outside the tree.",
          ha="left", va="top", fontsize=8.5, color=MUTED)
 fig.tight_layout(rect=(0, 0, 1, 0.90))
 fig.savefig(out)
