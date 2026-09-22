@@ -884,7 +884,7 @@ because she is tired. A mechanic that accumulates linearly with pitches would ge
 this shape wrong.
 
 **Bucket by innings, never by pitches.** The same paired test bucketed by pitches
-thrown says the opposite -- -0.085 at 25-49 pitches, -0.091 at 50-74, both about
+thrown says the opposite -- -0.085 at 25-49 pitches, -0.132 at 50-74, both about
 2 SE -- and it is wrong. Pitches consumed depend on how badly she pitched: a
 struggling inning is a long inning, so "her first 24 pitches" disproportionately
 covers innings where she was struggling, and the next bucket regresses upward
