@@ -1,44 +1,44 @@
-# WPBL dice-game player cards -- v0.4.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
-# Built from 37 games through 2026-09-19 (2663 plate appearances); code a3ccabb + uncommitted changes.
+# WPBL dice-game player cards -- v0.5.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
+# Built from 37 games through 2026-09-19 (2663 plate appearances); code 02f4418 + uncommitted changes.
 # These FORECAST how a player would do in games we have not seen. They do not
 # replay 2026: a card is pulled toward players her team used about as much, so it
 # will not match her season line, by design (dice_game_spec.md section 3).
 # A card that looks wrong is worth reporting: https://github.com/jgf1123/wpbl/issues
 player,team,BF,K cells,K,BB cells,BB,HBP cells,HBP,HR cells,HR,1B cells,1B,OUT cells,OUT
-Kelsie Whitmore,SFF,165,4,00-03,4,04-07,1,08,1,09,8,10-17,17,18-34
-Ayami Sato,LAQ,158,5,00-04,2,05-06,1,07,1,08,9,09-17,17,18-34
-Gigi Schiano,BOS,152,3,00-02,4,03-06,1,07,1,08,10,09-18,16,19-34
-Michelle Roche,LAQ,149,3,00-02,4,03-06,1,07,1,08,10,09-18,16,19-34
-Liz Gilder,SFF,134,4,00-03,5,04-08,1,09,1,10,7,11-17,17,18-34
-Niki Eckert,SFF,134,5,00-04,4,05-08,2,09-10,1,11,8,12-19,15,20-34
-Rakyung Kim,NYH,129,6,00-05,4,06-09,2,10-11,1,12,7,13-19,15,20-34
-Kate Blunt,BOS,103,3,00-02,5,03-07,1,08,1,09,10,10-19,15,20-34
-Jamie Mackay,LAQ,100,6,00-05,4,06-09,2,10-11,1,12,8,13-20,14,21-34
-Alli Schroder,BOS,99,4,00-03,5,04-08,1,09,1,10,9,11-19,15,20-34
-Claire O'Sullivan,NYH,97,4,00-03,5,04-08,2,09-10,1,11,8,12-19,15,20-34
-Maïka Dumais,BOS,88,5,00-04,4,05-08,3,09-11,1,12,8,13-20,14,21-34
-Paloma Benach,BOS,86,2,00-01,5,02-06,1,07,1,08,9,09-17,17,18-34
-Jaida Lee,NYH,84,10,00-09,3,10-12,2,13-14,1,15,7,16-22,12,23-34
-Meggie Meidlinger,LAQ,79,7,00-06,2,07-08,1,09,1,10,8,11-18,16,19-34
-Emi Saiki,NYH,76,5,00-04,2,05-06,2,07-08,1,09,8,10-17,17,18-34
-Peyton Coria,SFF,76,6,00-05,5,06-10,1,11,1,12,7,13-19,15,20-34
-Jill Albayati,SFF,75,6,00-05,4,06-09,1,10,1,11,7,12-18,16,19-34
-Ela Day-Bédard,SFF,66,2,00-01,5,02-06,3,07-09,1,10,8,11-18,16,19-34
-Jacqui Reynolds,NYH,63,5,00-04,5,05-09,1,10,2,11-12,7,13-19,15,20-34
-London Studer,NYH,62,5,00-04,7,05-11,1,12,1,13,7,14-20,14,21-34
-Isabella Villarreal,LAQ,53,4,00-03,6,04-09,2,10-11,1,12,7,13-19,15,20-34
-Raine Padgham,BOS,52,5,00-04,5,05-09,3,10-12,1,13,7,14-20,14,21-34
-Claire Eccles,NYH,51,8,00-07,6,08-13,2,14-15,1,16,7,17-23,11,24-34
-Olivia Bricker,BOS,49,1,00,6,01-06,1,07,2,08-09,8,10-17,17,18-34
-Ayuri Shimano,LAQ,42,7,00-06,6,07-12,1,13,1,14,7,15-21,13,22-34
-Tháima Maximiliana,LAQ,40,3,00-02,6,03-08,2,09-10,1,11,8,12-19,15,20-34
-Amira Hondras,LAQ,36,3,00-02,6,03-08,2,09-10,1,11,7,12-18,16,19-34
-Keira Izumi,NYH,35,1,00,9,01-09,1,10,1,11,8,12-19,15,20-34
-Rosi del Castillo,SFF,31,6,00-05,7,06-12,1,13,1,14,7,15-21,13,22-34
-Alyssa Zettlemoyer,NYH,31,1,00,8,01-08,1,09,1,10,8,11-18,16,19-34
-Jua Park,SFF,16,2,00-01,10,02-11,2,12-13,1,14,6,15-20,14,21-34
-Suzu Narasaki,LAQ,14,3,00-02,9,03-11,1,12,1,13,6,14-19,15,20-34
-Andreanne Leblanc,SFF,12,3,00-02,9,03-11,1,12,1,13,6,14-19,15,20-34
-Maggie Foxx,LAQ,12,6,00-05,8,06-13,1,14,1,15,6,16-21,13,22-34
-Brittany Apgar,LAQ,7,1,00,11,01-11,1,12,1,13,7,14-20,14,21-34
-Adelaide Frank,LAQ,7,1,00,11,01-11,1,12,1,13,7,14-20,14,21-34
+Kelsie Whitmore,SFF,165,4,00-03,3,04-06,1,07,1,08,8,09-16,16,17-32
+Ayami Sato,LAQ,158,5,00-04,2,05-06,1,07,1,08,8,09-16,16,17-32
+Gigi Schiano,BOS,152,2,00-01,5,02-06,1,07,1,08,9,09-17,15,18-32
+Michelle Roche,LAQ,149,3,00-02,3,03-05,1,06,1,07,10,08-17,15,18-32
+Liz Gilder,SFF,134,4,00-03,4,04-07,1,08,1,09,7,10-16,16,17-32
+Niki Eckert,SFF,134,5,00-04,4,05-08,2,09-10,1,11,7,12-18,14,19-32
+Rakyung Kim,NYH,129,6,00-05,4,06-09,2,10-11,1,12,6,13-18,14,19-32
+Kate Blunt,BOS,103,3,00-02,5,03-07,1,08,1,09,9,10-18,14,19-32
+Jamie Mackay,LAQ,100,6,00-05,3,06-08,2,09-10,1,11,8,12-19,13,20-32
+Alli Schroder,BOS,99,4,00-03,5,04-08,1,09,1,10,8,11-18,14,19-32
+Claire O'Sullivan,NYH,97,4,00-03,4,04-07,2,08-09,1,10,8,11-18,14,19-32
+Maïka Dumais,BOS,88,5,00-04,4,05-08,3,09-11,1,12,7,13-19,13,20-32
+Paloma Benach,BOS,86,2,00-01,4,02-05,1,06,1,07,8,08-15,17,16-32
+Jaida Lee,NYH,84,10,00-09,2,10-11,2,12-13,1,14,6,15-20,12,21-32
+Meggie Meidlinger,LAQ,79,6,00-05,3,06-08,1,09,1,10,7,11-17,15,18-32
+Emi Saiki,NYH,76,4,00-03,2,04-05,2,06-07,1,08,7,09-15,17,16-32
+Peyton Coria,SFF,76,5,00-04,5,05-09,1,10,1,11,6,12-17,15,18-32
+Jill Albayati,SFF,75,6,00-05,3,06-08,1,09,1,10,7,11-17,15,18-32
+Ela Day-Bédard,SFF,66,2,00-01,5,02-06,3,07-09,1,10,7,11-17,15,18-32
+Jacqui Reynolds,NYH,63,5,00-04,5,05-09,1,10,1,11,7,12-18,14,19-32
+London Studer,NYH,62,5,00-04,7,05-11,1,12,1,13,6,14-19,13,20-32
+Isabella Villarreal,LAQ,53,4,00-03,5,04-08,1,09,1,10,7,11-17,15,18-32
+Raine Padgham,BOS,52,5,00-04,4,05-08,3,09-11,1,12,7,13-19,13,20-32
+Claire Eccles,NYH,51,8,00-07,5,08-12,2,13-14,1,15,6,16-21,11,22-32
+Olivia Bricker,BOS,49,1,00,5,01-05,1,06,2,07-08,8,09-16,16,17-32
+Ayuri Shimano,LAQ,42,6,00-05,6,06-11,1,12,1,13,7,14-20,12,21-32
+Tháima Maximiliana,LAQ,40,2,00-01,6,02-07,2,08-09,1,10,7,11-17,15,18-32
+Amira Hondras,LAQ,36,3,00-02,5,03-07,2,08-09,1,10,7,11-17,15,18-32
+Keira Izumi,NYH,35,1,00,7,01-07,1,08,1,09,8,10-17,15,18-32
+Rosi del Castillo,SFF,31,6,00-05,7,06-12,1,13,1,14,6,15-20,12,21-32
+Alyssa Zettlemoyer,NYH,31,1,00,7,01-07,1,08,1,09,8,10-17,15,18-32
+Jua Park,SFF,16,2,00-01,9,02-10,2,11-12,1,13,6,14-19,13,20-32
+Suzu Narasaki,LAQ,14,2,00-01,9,02-10,1,11,1,12,6,13-18,14,19-32
+Andreanne Leblanc,SFF,12,3,00-02,9,03-11,1,12,1,13,6,14-19,13,20-32
+Maggie Foxx,LAQ,12,5,00-04,8,05-12,1,13,1,14,6,15-20,12,21-32
+Brittany Apgar,LAQ,7,1,00,9,01-09,1,10,1,11,7,12-18,14,19-32
+Adelaide Frank,LAQ,7,1,00,11,01-11,1,12,1,13,6,14-19,13,20-32

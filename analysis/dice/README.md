@@ -143,6 +143,17 @@ itself shrinkage:
 | `layout_round.py` | Four rounding rules judged on runs, including what the home-run floor costs separately | nearest, then spend the difference where \|run error\| is smallest |
 | `hr_floor_options.py` | Cards whose home-run line rounds to nothing: no floor, per card, per pair, or a shared cell split by the d12 | pitcher-only floor: 2% on league HR, and it closes every hole by itself |
 
+## The engine and the league check (section 9.1)
+
+`pixi run engine` (`src/wpbl/engine.py`) plays the printed game. These are the
+diagnostics around it.
+
+| Script | Question | Result |
+|---|---|---|
+| `running_plays.py` | Do wild pitches, passed balls and balks vary by pitcher or catcher for real? | no spread clears sampling noise; the line is a league band. A blocked pitch never enters the data, so the spread is censored, not absent |
+| `running_k.py` | Sweeping k for the running-play rate, where k = inf IS the flat band | best k against the league 1024, beating the band by 0.48 SE; the usage cohort is worse than ignoring pitcher identity |
+| `engine_transitions.py` | Where the engine's base-out transitions differ from the season's, each state judged against its own sampling noise | excess distance 0.019 after the steal-timing fix, from 0.059 before. **Found a bug run expectancy could not see** |
+
 ## Players and other checks
 
 | Script | Question |
