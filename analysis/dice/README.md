@@ -154,6 +154,15 @@ diagnostics around it.
 | `running_k.py` | Sweeping k for the running-play rate, where k = inf IS the flat band | best k against the league 1024, beating the band by 0.48 SE; the usage cohort is worse than ignoring pitcher identity |
 | `engine_transitions.py` | Where the engine's base-out transitions differ from the season's, each state judged against its own sampling noise | excess distance 0.019 after the steal-timing fix, from 0.059 before. **Found a bug run expectancy could not see** |
 
+## Fatigue and pitcher state (section 7)
+
+| Script | Question | Result |
+|---|---|---|
+| `fatigue.py` | Does a pitcher decline within an appearance, conditioning on survivors? And does workload carried in from previous days predict? | within an appearance, nothing: the pitch and times-through cuts disagree in sign at about 1 SE each. Across days, 25+ pitches in the prior three gives +0.050 against -0.025 rested, 1.69 SE |
+| `fatigue_from_end.py` | The same question with appearances aligned on the REMOVAL, paired within one outing | **+0.078 (SE 0.035), 2.2 SE** in the inning before she was pulled, excluding the inning the removal happened in. Prints the pooled version too, with a warning: its buckets hold different appearances |
+| `pitcher_state.py` | Do Deadball's and History Maker's in-game rules appear -- STRUGGLER, ACE, FRESH tiers? | none of them. HMB's tiers do not even apply: a starter's 7th inning of work has zero plate appearances in a seven-inning league |
+| `roles.py` | Do relievers pitch at a higher ceiling, and burn faster? | ceiling yes, measured within the pitcher: 13 of 19 better in relief, mean -0.058 (1.7 SE). Burn untestable -- relievers rarely reach the three innings the paired test needs |
+
 ## Handedness (section 5)
 
 | Script | Question | Result |

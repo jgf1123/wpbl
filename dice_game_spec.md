@@ -833,6 +833,74 @@ The game's central mechanic, and the least supported by data.
   pitcher already tires fastest**, and she is the pitcher who is not making
   progress. **DECISION (22 Sep): the track uses the measured costs.**
 
+### 7.1 Starters and relievers
+
+**A reliever throws nearer her ceiling.** Measured within the pitcher -- a card
+pools her starts and her relief, so any comparison across pitchers is muted by
+construction -- 13 of the 19 who did enough of both are better in relief, mean
+**-0.058 runs per batter faced** (about 1.7 SE). Jaida Lee, who has described
+the move from starting to relief herself, is among the largest: -0.177 in relief
+against -0.024 starting. (`roles.py`)
+
+**Whether she burns through it faster cannot be tested here.** By pitches thrown
+relievers appear to *improve* -- -0.005 early, -0.068 at 25-49, -0.118 at 50+ --
+which is survivorship, and worse for relievers than anyone, since a reliever
+still in at 50 pitches is one who is dominating. The paired end-aligned fix needs
+three innings, which relievers almost never reach: median 8 batters faced and 31
+pitches, against 19 and 68 for a start. **The burn half is unfalsifiable on this
+data.** Other games price it at about 3x. **ASSUMPTION.**
+
+### 7.2 The system to build
+
+**What the fatigue system is for.** Not to predict a pitcher's decline -- it is
+to give the player a reason to take her out on roughly the schedule a real
+manager would. That distinction decides everything below, because **managers
+always pull, so what would have happened past the hook is never observed.** Any
+curve out there is extrapolation and cannot be verified from play-by-play, now or
+with ten more seasons. **DECISION (user, 22 Sep).**
+
+Two ways to make a player act: a mechanism that deteriorates past the hook, or
+one that forces the change on a trigger. **Deterioration**, as Deadball and
+History Maker Baseball both chose -- a forced trigger removes the decision, and
+the pitching change is the most interesting choice a manager makes.
+
+**The curve has two anchored points**, which is better than an invented one:
+
+| | runs per batter faced |
+|---|---|
+| by the inning before a manager acts (section 7, paired test) | **+0.08** |
+| with the bullpen genuinely spent (semifinal G3) | **+0.13** |
+
+The first is an upper bound on fatigue proper, since it includes the manager
+reacting to luck. The second is the only observation of pitchers working past the
+point a manager would normally accept, which is exactly the region the
+extrapolation has to cover.
+
+**Every parameter, and where it stands:**
+
+| parameter | status |
+|---|---|
+| base pitch cost per line | **measured**: BB 5.40, K 4.92, contact 3.05-3.26 |
+| reach-base surcharge | free. Must *override* the measured costs, which are wrong-signed here -- a single costs 3.08 and an out 3.23, so under measured costs a pitcher being hit tires slower |
+| capacity, starter / reliever | **anchored**: median 68 / 31 pitches, max about 100 for both |
+| daily recovery | free, **constrained** by 7-day loads of 85 with a start and 45 relief-only |
+| degradation shape | **from G3**: shrink K, widen extra-base contact |
+| degradation size | the two anchor points above |
+| relief ceiling bonus | **about 0.06 runs per batter faced** (section 7.1) |
+| relief burn multiplier | free and untestable; other games use 3x |
+
+**What "testable" means here.** Not whether the curve is right -- it cannot be.
+With a pull rule in the engine, the system is tested on whether it reproduces the
+median 68 and 31 pitches, the 7-day loads, and 7.77 runs per team per game. That
+is a real test of the whole, and section 9 check 3 is where it lives.
+
+**A pull rule is not the same as an AI manager.** A *descriptive* rule -- pull at
+the observed distribution of stint lengths -- is enough to make a fatigue setting
+identifiable, since a setting only has consequences where a tired pitcher is left
+in. Check 3 asks the harder question of whether a *sensible strategy* produces
+realistic usage. **OPEN**: both, but they are separable and the descriptive one
+is small.
+
 ## 8. Dice
 
 **DECISION (user, 17 Sep):** cells are 1 percentage point. Even with more than
