@@ -883,6 +883,24 @@ after the first inning, level thereafter, and then a spike when the manager acts
 because she is tired. A mechanic that accumulates linearly with pitches would get
 this shape wrong.
 
+**An independent check with no cards in it at all** (`times_seen.py`). Comparing
+the i'th time a batter has faced this pitcher in this game with her first holds
+the matchup *exactly* fixed -- same batter, same pitcher -- so raw run values can
+be differenced with nothing modelled away. Second meeting minus first: **+0.028
+(SE 0.033)** over 831 pairs, and +0.031 restricted to outings of 3+ innings where
+surviving to a second meeting was never in doubt.
+
+That looks like a third of the innings figure and is not: **the times-seen clock
+is compressed.** Only 59% of first meetings fall in the pitcher's first inning
+(36% in her second, mean inning 1.47), while second meetings average inning 3.02.
+A step of +0.09 taken after her first inning therefore predicts a penalty of
+0.037 on first meetings and 0.089 on seconds -- a contrast of **+0.052**, not
++0.09. The measured +0.028 sits 0.7 SE below that. Inverted, this design alone
+implies a step of +0.048 (SE 0.057). Consistent with the innings curve, and a
+weaker instrument for it, since it can generate only about half the contrast.
+Its value is that it corroborates the direction with no card, no residual and no
+statistical control.
+
 **Bucket by innings, never by pitches.** The same paired test bucketed by pitches
 thrown says the opposite -- -0.085 at 25-49 pitches, -0.132 at 50-74, both about
 2 SE -- and it is wrong. Pitches consumed depend on how badly she pitched: a
