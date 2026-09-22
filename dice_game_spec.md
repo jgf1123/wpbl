@@ -731,11 +731,50 @@ The game's central mechanic, and the least supported by data.
 - **Tired columns.** **ASSUMPTION**: a pitcher card carries fresh / tired /
   gassed columns; the pitch track selects one; tired columns shrink K and widen
   BB and contact. This keeps fatigue to one dial with no extra roll.
-- **What the data cannot say.** Observed decline with pitch count is biased,
-  because managers pull pitchers who are struggling. Semifinal G3 (14 Sep) is
-  the one clean look at exhausted bullpens — high on-base, 26 runs — and it is
-  excluded from every other fit for exactly that reason. Fatigue strength is a
-  tuned setting, not an estimate. **OPEN**: the shape and size.
+- **What the data cannot say — measured, 22 Sep (`fatigue.py`).** The assumption
+  above holds: no decline within an appearance is detectable, so fatigue strength
+  stays a tuned setting rather than an estimate. Two SE is 0.064 runs per batter
+  faced, about 1.6 runs across a whole outing, so only a very large effect could
+  have shown.
+
+  Conditioning on survivors -- comparing a pitcher's early and late batters only
+  within appearances that reached a given depth, so the manager's decision no
+  longer picks who is in the late bucket -- the two available cuts **disagree in
+  sign**, each at about 1 SE:
+
+  | cut | early | late | difference |
+  |---|---|---|---|
+  | pitches, among appearances reaching 50+ | -0.0274 | -0.0619 | -0.034 (SE 0.034) |
+  | times through the order, among those reaching 2x | -0.0425 | -0.0125 | +0.030 (SE 0.032) |
+
+  **The pitch cut needs a control the obvious version omits.** A pitcher's first
+  25 pitches face the top of the order and her next 25 the bottom, so without
+  removing the batter's own expected value every pitcher appears to improve. The
+  numbers above already subtract it; doing so shrank the times-through effect
+  from +0.036 to +0.030 and did not flip the pitch cut, so lineup order is not
+  the whole of the disagreement.
+
+- **The fatigue that is visible is between games, not within one.** Semifinal G3
+  (14 Sep), excluded from training precisely because both bullpens were spent, is
+  the only clean observation: 86 plate appearances at +0.0878 run value allowed
+  per batter faced against a league -0.0433, a gap four times the standard error
+  of anything measurable within an appearance. Its shape is section 7's predicted
+  tired signature -- **K 7.0% against 11.8%, HR 5.8% against 2.6%, 2B 8.1%
+  against 4.5%** -- strikeouts collapsing and extra-base contact doubling.
+
+  But within that game more pitches did *not* mean worse: the 83-pitch outing was
+  comparatively fine (+0.068) and the worst were 42 and 54 pitches (+0.287,
+  +0.229). What it shows is a bullpen tired across days. The same axis measured
+  league-wide is the largest signal anywhere in this work and still not
+  significant: pitchers who threw 25+ pitches in the prior three days allow
+  +0.049 against -0.026 for the rested, a 0.075 gap at about 1.65 SE. Prior-seven-
+  day load and days of rest show no monotone pattern at all.
+
+- **So the mechanic takes its shape from G3 and its size from tuning.** The track
+  should carry workload **across days**, not reset each outing, which is what the
+  usage targets above already describe; the tired column should shrink K and
+  widen extra-base contact rather than walks alone. **OPEN**: the size, and
+  whether a within-appearance component is worth having at all.
 
 ## 8. Dice
 
