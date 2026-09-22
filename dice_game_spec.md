@@ -773,8 +773,40 @@ The game's central mechanic, and the least supported by data.
 - **So the mechanic takes its shape from G3 and its size from tuning.** The track
   should carry workload **across days**, not reset each outing, which is what the
   usage targets above already describe; the tired column should shrink K and
-  widen extra-base contact rather than walks alone. **OPEN**: the size, and
-  whether a within-appearance component is worth having at all.
+  widen extra-base contact rather than walks alone. **OPEN**: the size, the daily
+  recovery, and whether a within-appearance component is worth having at all.
+  Recovery cannot be fitted: the prior-three-day load carries the signal and the
+  prior-seven-day load shows no monotone pattern, which hints most recovery
+  happens inside three days, but 18 appearances in the loaded bucket cannot
+  support a curve.
+
+- **The published in-game rules are not supported here** (`pitcher_state.py`).
+  Deadball and History Maker Baseball both carry state rules alongside workload
+  ones; scored as a residual against the matchup -- both cards, so neither who
+  batted nor who pitched can be credited -- none of them appears:
+
+  | rule | test | result |
+  |---|---|---|
+  | STRUGGLER (HMB) | after n consecutive batters reach base, is the next worse? | 0 on -0.013, 1 -0.019, 2 **-0.072**, 3+ -0.025. Non-monotone; the two-consecutive bucket is the best of the four |
+  | ACE (HMB) | a reliever entering mid-inning, on her first batter | -0.037 on 34 BF against -0.029 for her later batters |
+  | FRESH / SEMI-FRESH (HMB) | a starter's innings 1-3 against 4-6 | -0.011 against -0.033: later looks *better* |
+
+  So a pitcher who cannot get anyone out in a third of an inning is not in a
+  persistent state the next batter inherits -- on this data that is bad luck plus
+  a manager reacting quickly. The manager pulling her biases the test toward
+  zero, so the effect would have to be large to hide there. **ASSUMPTION.**
+
+  HMB's tiers also do not map onto this league at all: a starter's seventh inning
+  of work has **zero** plate appearances, because WPBL plays seven-inning games.
+
+- **Pitch cost per line, and why it already does the work** a struggling rule
+  would. Measured pitches: BB 5.40, K 4.92, HR 3.26, Out 3.23, 2B 3.18, 1B 3.08,
+  HBP 3.05. Outs recorded cost 3.58 and reaching base 3.76, a gap of 0.17 --
+  essentially nothing, and a single is *cheaper* than an out. Weighting outs
+  lower would distort a measured quantity rather than refine it. It is also
+  unnecessary: at 5.40 pitches a walk against 3.2 for contact, **the walk-prone
+  pitcher already tires fastest**, and she is the pitcher who is not making
+  progress. **DECISION (22 Sep): the track uses the measured costs.**
 
 ## 8. Dice
 

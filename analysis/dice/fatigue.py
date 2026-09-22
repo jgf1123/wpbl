@@ -158,8 +158,17 @@ def between_games():
     pa["P"] = pa["pitcher_id"].map(person).fillna(pa["pitcher_id"])
     pa["Bp"] = pa["batter_id"].map(person).fillna(pa["batter_id"])
     pa["date"] = pd.to_datetime(pa["game_date"].astype(str).str[:10])
-    exp = (cards("B") @ W.reindex(CARD_LINES)).reindex(pa["Bp"]).to_numpy()
-    pa["resid"] = pa["rv"] - np.where(np.isnan(exp), pa["rv"].mean(), exp)
+    # Across days the buckets hold DIFFERENT pitchers -- the heavily used ones are
+    # the arms a manager trusts -- so the pitcher's own card comes out too, not
+    # just the batter's. (Within one appearance the pitcher is constant and
+    # cancels, which is why the cut above subtracts only the batter.)
+    from wpbl.dice import MIX_ALPHA
+    P = cards("P")
+    lgm = float(pa["rv"].mean())
+    ev = (cards("B") @ W.reindex(CARD_LINES)).reindex(pa["Bp"]).to_numpy()
+    pv = (P @ W.reindex(CARD_LINES)).reindex(pa["P"]).to_numpy()
+    pa["resid"] = pa["rv"] - (MIX_ALPHA * np.where(np.isnan(pv), lgm, pv)
+                              + (1 - MIX_ALPHA) * np.where(np.isnan(ev), lgm, ev))
     app = pa.groupby(["game_id", "P", "date"], as_index=False).agg(
         BF=("rv", "size"), pitches=("pitches", "sum"), resid=("resid", "mean"))
     rows = []
