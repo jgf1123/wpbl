@@ -864,17 +864,40 @@ one that forces the change on a trigger. **Deterioration**, as Deadball and
 History Maker Baseball both chose -- a forced trigger removes the decision, and
 the pitching change is the most interesting choice a manager makes.
 
-**The curve has two anchored points**, which is better than an invented one:
+**The curve is anchored across the whole working range** (`fatigue_curve.py`),
+not just at its ends. Every figure is paired -- a pitcher against herself earlier
+in the same outing, with her removal inning excluded -- so neither her quality nor
+the outing's length can masquerade as fatigue:
 
-| | runs per batter faced |
-|---|---|
-| by the inning before a manager acts (section 7, paired test) | **+0.08** |
-| with the bullpen genuinely spent (semifinal G3) | **+0.13** |
+| against her own first inning | runs per batter faced | |
+|---|---|---|
+| her 2nd inning | **+0.067** | 1.9 SE |
+| her 3rd | **+0.095** | 2.4 SE |
+| her 4th or later | +0.084 | 1.2 SE |
+| the inning before a manager acts | +0.078 | 2.2 SE |
+| the inning he acts in | +0.192 | 4.8 SE |
 
-The first is an upper bound on fatigue proper, since it includes the manager
-reacting to luck. The second is the only observation of pitchers working past the
-point a manager would normally accept, which is exactly the region the
-extrapolation has to cover.
+**The decline arrives early and then flattens.** It is a step of roughly +0.08
+after the first inning, level thereafter, and then a spike when the manager acts
+-- which is largely him reacting to a bad inning rather than the inning being bad
+because she is tired. A mechanic that accumulates linearly with pitches would get
+this shape wrong.
+
+**Bucket by innings, never by pitches.** The same paired test bucketed by pitches
+thrown says the opposite -- -0.085 at 25-49 pitches, -0.091 at 50-74, both about
+2 SE -- and it is wrong. Pitches consumed depend on how badly she pitched: a
+struggling inning is a long inning, so "her first 24 pitches" disproportionately
+covers innings where she was struggling, and the next bucket regresses upward
+from a baseline selected on bad performance. An inning is normalised by outs and
+does not do that. This is why the start-aligned cuts in section 7 found nothing.
+
+**Past the hook there is one observation and it is on a different baseline.**
+Semifinal G3 ran +0.131 runs per batter faced *against the league*, not against
+those pitchers' own earlier innings, and the pitchers in it were whoever was
+left. It fixes the SHAPE of exhaustion -- K collapsing, extra-base contact
+doubling -- and says the level out there is worse than anything inside the
+working range, but it is not a point on the same curve and should not be read as
+one.
 
 **Every parameter, and where it stands:**
 
@@ -885,7 +908,7 @@ extrapolation has to cover.
 | capacity, starter / reliever | **anchored**: median 68 / 31 pitches, max about 100 for both |
 | daily recovery | free, **constrained** by 7-day loads of 85 with a start and 45 relief-only |
 | degradation shape | **from G3**: shrink K, widen extra-base contact |
-| degradation size | the two anchor points above |
+| degradation size | **anchored across the working range**: +0.067 / +0.095 / +0.084 by her 2nd / 3rd / 4th inning, level after. Past the hook, extrapolation |
 | relief ceiling bonus | **about 0.06 runs per batter faced** (section 7.1) |
 | relief burn multiplier | free and untestable; other games use 3x |
 

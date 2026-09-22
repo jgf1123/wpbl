@@ -160,6 +160,7 @@ diagnostics around it.
 |---|---|---|
 | `fatigue.py` | Does a pitcher decline within an appearance, conditioning on survivors? And does workload carried in from previous days predict? | within an appearance, nothing: the pitch and times-through cuts disagree in sign at about 1 SE each. Across days, 25+ pitches in the prior three gives +0.050 against -0.025 rested, 1.69 SE |
 | `fatigue_from_end.py` | The same question with appearances aligned on the REMOVAL, paired within one outing | **+0.078 (SE 0.035), 2.2 SE** in the inning before she was pulled, excluding the inning the removal happened in. Prints the pooled version too, with a warning: its buckets hold different appearances |
+| `fatigue_curve.py` | The shape of the decline over the range a pitcher actually works, paired within the outing | rises to +0.067 by her 2nd inning and +0.095 by her 3rd, then flat. **Bucketing by pitches gives the opposite answer and is wrong**: a struggling inning is a long inning, so a pitch-defined baseline is selected on bad performance |
 | `pitcher_state.py` | Do Deadball's and History Maker's in-game rules appear -- STRUGGLER, ACE, FRESH tiers? | none of them. HMB's tiers do not even apply: a starter's 7th inning of work has zero plate appearances in a seven-inning league |
 | `roles.py` | Do relievers pitch at a higher ceiling, and burn faster? | ceiling yes, measured within the pitcher: 13 of 19 better in relief, mean -0.058 (1.7 SE). Burn untestable -- relievers rarely reach the three innings the paired test needs |
 
