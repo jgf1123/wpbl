@@ -1,0 +1,16 @@
+# Out flavours, measured and UNROUNDED. No die mechanic is chosen yet, so
+# nothing here is quantized; analysis/dice/out_quantize.py has what a
+# d6/d10/d12/d20 table would cost in runs.
+# Family comes from the feed's label (fielder's choice, double play); only
+# the + is inferred from the base-out change.
+# With nobody on 1st, F and FB act as B, so only the + matters there.
+# F and FB share one + rate, pooled: an F is a double-play attempt whose
+# relay did not get the batter, so the runners behave the same on both.
+# That rate still rests on 13 plays -- see plus visible on.
+runner on 1st,family,family share,plays,plus rate,plus visible on,flavor share,flavor+ share
+False,B,0.96396,107,0.55556,99,0.42843,0.53554
+False,F,0.00901,1,,0,,
+False,FB,0.02703,3,,0,,
+True,B,0.63542,183,0.26061,165,0.46982,0.16559
+True,F,0.19097,55,0.76923,13,0.04407,0.1469
+True,FB,0.17361,50,0.76923,13,0.04006,0.13355

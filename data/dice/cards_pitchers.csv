@@ -1,44 +1,44 @@
-# WPBL dice-game player cards -- v0.2.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
-# Built from 37 games through 2026-09-19 (2663 plate appearances); code 5a069e4 + uncommitted changes.
+# WPBL dice-game player cards -- v0.4.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
+# Built from 37 games through 2026-09-19 (2663 plate appearances); code a3ccabb + uncommitted changes.
 # These FORECAST how a player would do in games we have not seen. They do not
 # replay 2026: a card is pulled toward players her team used about as much, so it
 # will not match her season line, by design (dice_game_spec.md section 3).
 # A card that looks wrong is worth reporting: https://github.com/jgf1123/wpbl/issues
-player,team,BF,K,FP,HR,1B,2B,ROE,OUT,HBP share of FP
-Kelsie Whitmore,SFF,165,11.7,11.0,2.9,21.9,6.0,2.0,44.4,11.3
-Ayami Sato,LAQ,158,13.0,9.7,2.3,24.5,4.2,1.5,44.8,17.0
-Gigi Schiano,BOS,152,8.1,9.7,3.1,26.2,4.6,2.0,46.3,14.1
-Michelle Roche,LAQ,149,9.2,12.4,2.5,25.7,5.1,2.4,42.8,27.2
-Liz Gilder,SFF,134,11.6,18.5,1.6,19.3,4.0,3.0,42.0,25.0
-Niki Eckert,SFF,134,13.4,16.8,1.0,22.1,3.3,3.3,40.1,28.4
-Rakyung Kim,NYH,129,14.7,14.2,1.6,20.4,3.7,2.7,42.7,30.0
-Kate Blunt,BOS,103,9.8,16.5,2.7,24.1,5.1,3.2,38.5,19.8
-Jamie Mackay,LAQ,100,15.0,15.7,2.8,21.3,4.3,3.1,37.8,34.7
-Alli Schroder,BOS,99,11.2,15.6,2.4,23.6,4.7,3.5,39.1,21.1
-Claire O'Sullivan,NYH,97,10.7,15.9,2.3,22.7,6.0,3.1,39.2,25.5
-Maïka Dumais,BOS,88,13.7,13.3,3.7,22.3,4.8,2.7,39.5,34.7
-Paloma Benach,BOS,86,9.4,17.7,2.5,21.1,6.6,3.3,39.4,25.6
-Jaida Lee,NYH,84,22.4,13.7,3.2,19.0,4.4,3.2,34.1,36.4
-Meggie Meidlinger,LAQ,79,16.4,12.0,3.3,19.1,4.3,2.7,42.2,19.5
-Emi Saiki,NYH,76,14.8,12.0,3.4,19.3,3.7,2.2,44.7,32.9
-Peyton Coria,SFF,76,15.0,15.0,2.6,18.7,4.8,1.9,42.2,11.5
-Jill Albayati,SFF,75,16.5,15.8,2.4,17.7,5.9,1.8,39.8,15.6
-Ela Day-Bédard,SFF,66,9.3,20.6,2.5,20.2,6.1,1.1,40.2,29.6
-Jacqui Reynolds,NYH,63,12.8,19.1,3.6,19.6,4.7,1.8,38.4,19.9
-London Studer,NYH,62,13.7,16.0,3.9,19.6,5.3,2.0,39.6,15.9
-Isabella Villarreal,LAQ,53,11.4,19.6,3.9,18.2,5.4,1.4,40.0,25.8
-Raine Padgham,BOS,52,12.2,21.5,2.5,20.8,4.3,1.0,37.7,29.4
-Claire Eccles,NYH,51,16.6,19.4,3.2,19.9,5.4,1.0,34.6,24.3
-Olivia Bricker,BOS,49,6.5,21.7,4.5,19.4,4.9,1.0,41.8,25.0
-Ayuri Shimano,LAQ,42,12.5,19.9,2.6,20.2,4.0,1.0,39.8,17.2
-Tháima Maximiliana,LAQ,40,7.9,21.4,3.6,20.2,3.6,1.0,42.2,17.8
-Amira Hondras,LAQ,36,8.3,21.6,3.2,19.8,3.6,1.0,42.5,19.0
-Keira Izumi,NYH,35,5.2,21.4,3.0,21.5,3.7,1.1,44.2,11.4
-Rosi del Castillo,SFF,31,11.8,23.7,3.0,19.9,2.3,1.0,38.4,15.7
-Alyssa Zettlemoyer,NYH,31,7.4,24.7,3.2,19.4,3.6,1.0,40.6,16.2
-Jua Park,SFF,16,8.2,26.2,3.4,17.3,3.8,1.0,40.1,16.1
-Suzu Narasaki,LAQ,14,8.4,27.4,3.4,16.5,3.8,1.0,39.5,11.4
-Andreanne Leblanc,SFF,12,8.7,27.1,3.3,17.3,3.7,1.0,38.9,11.4
-Maggie Foxx,LAQ,12,10.1,26.6,2.9,17.6,3.6,1.0,38.2,11.4
-Brittany Apgar,LAQ,7,7.8,26.8,2.9,18.2,3.6,1.0,39.7,11.0
-Adelaide Frank,LAQ,7,7.8,26.5,3.3,18.1,3.6,1.0,39.7,10.6
+player,team,BF,K cells,K,BB cells,BB,HBP cells,HBP,HR cells,HR,1B cells,1B,OUT cells,OUT
+Kelsie Whitmore,SFF,165,4,00-03,4,04-07,1,08,1,09,8,10-17,17,18-34
+Ayami Sato,LAQ,158,5,00-04,2,05-06,1,07,1,08,9,09-17,17,18-34
+Gigi Schiano,BOS,152,3,00-02,4,03-06,1,07,1,08,10,09-18,16,19-34
+Michelle Roche,LAQ,149,3,00-02,4,03-06,1,07,1,08,10,09-18,16,19-34
+Liz Gilder,SFF,134,4,00-03,5,04-08,1,09,1,10,7,11-17,17,18-34
+Niki Eckert,SFF,134,5,00-04,4,05-08,2,09-10,1,11,8,12-19,15,20-34
+Rakyung Kim,NYH,129,6,00-05,4,06-09,2,10-11,1,12,7,13-19,15,20-34
+Kate Blunt,BOS,103,3,00-02,5,03-07,1,08,1,09,10,10-19,15,20-34
+Jamie Mackay,LAQ,100,6,00-05,4,06-09,2,10-11,1,12,8,13-20,14,21-34
+Alli Schroder,BOS,99,4,00-03,5,04-08,1,09,1,10,9,11-19,15,20-34
+Claire O'Sullivan,NYH,97,4,00-03,5,04-08,2,09-10,1,11,8,12-19,15,20-34
+Maïka Dumais,BOS,88,5,00-04,4,05-08,3,09-11,1,12,8,13-20,14,21-34
+Paloma Benach,BOS,86,2,00-01,5,02-06,1,07,1,08,9,09-17,17,18-34
+Jaida Lee,NYH,84,10,00-09,3,10-12,2,13-14,1,15,7,16-22,12,23-34
+Meggie Meidlinger,LAQ,79,7,00-06,2,07-08,1,09,1,10,8,11-18,16,19-34
+Emi Saiki,NYH,76,5,00-04,2,05-06,2,07-08,1,09,8,10-17,17,18-34
+Peyton Coria,SFF,76,6,00-05,5,06-10,1,11,1,12,7,13-19,15,20-34
+Jill Albayati,SFF,75,6,00-05,4,06-09,1,10,1,11,7,12-18,16,19-34
+Ela Day-Bédard,SFF,66,2,00-01,5,02-06,3,07-09,1,10,8,11-18,16,19-34
+Jacqui Reynolds,NYH,63,5,00-04,5,05-09,1,10,2,11-12,7,13-19,15,20-34
+London Studer,NYH,62,5,00-04,7,05-11,1,12,1,13,7,14-20,14,21-34
+Isabella Villarreal,LAQ,53,4,00-03,6,04-09,2,10-11,1,12,7,13-19,15,20-34
+Raine Padgham,BOS,52,5,00-04,5,05-09,3,10-12,1,13,7,14-20,14,21-34
+Claire Eccles,NYH,51,8,00-07,6,08-13,2,14-15,1,16,7,17-23,11,24-34
+Olivia Bricker,BOS,49,1,00,6,01-06,1,07,2,08-09,8,10-17,17,18-34
+Ayuri Shimano,LAQ,42,7,00-06,6,07-12,1,13,1,14,7,15-21,13,22-34
+Tháima Maximiliana,LAQ,40,3,00-02,6,03-08,2,09-10,1,11,8,12-19,15,20-34
+Amira Hondras,LAQ,36,3,00-02,6,03-08,2,09-10,1,11,7,12-18,16,19-34
+Keira Izumi,NYH,35,1,00,9,01-09,1,10,1,11,8,12-19,15,20-34
+Rosi del Castillo,SFF,31,6,00-05,7,06-12,1,13,1,14,7,15-21,13,22-34
+Alyssa Zettlemoyer,NYH,31,1,00,8,01-08,1,09,1,10,8,11-18,16,19-34
+Jua Park,SFF,16,2,00-01,10,02-11,2,12-13,1,14,6,15-20,14,21-34
+Suzu Narasaki,LAQ,14,3,00-02,9,03-11,1,12,1,13,6,14-19,15,20-34
+Andreanne Leblanc,SFF,12,3,00-02,9,03-11,1,12,1,13,6,14-19,15,20-34
+Maggie Foxx,LAQ,12,6,00-05,8,06-13,1,14,1,15,6,16-21,13,22-34
+Brittany Apgar,LAQ,7,1,00,11,01-11,1,12,1,13,7,14-20,14,21-34
+Adelaide Frank,LAQ,7,1,00,11,01-11,1,12,1,13,7,14-20,14,21-34
