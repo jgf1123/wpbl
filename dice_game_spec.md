@@ -922,13 +922,35 @@ one.
 | parameter | status |
 |---|---|
 | base pitch cost per line | **measured**: BB 5.40, K 4.92, contact 3.05-3.26 |
-| reach-base surcharge | free. Must *override* the measured costs, which are wrong-signed here -- a single costs 3.08 and an out 3.23, so under measured costs a pitcher being hit tires slower |
+| reach-base surcharge | **not needed** -- the compounding is already automatic (below) |
 | capacity, starter / reliever | **anchored**: median 68 / 31 pitches, max about 100 for both |
-| daily recovery | free, **constrained** by 7-day loads of 85 with a start and 45 relief-only |
+| daily recovery | **start at 14 pitches a day** (user, 22 Sep): a starter recovers 84 over six days, about her 68-pitch outing, and 98 over a week against the 85 load. Relief-only weeks run 45 |
 | degradation shape | **from G3**: shrink K, widen extra-base contact |
 | degradation size | **anchored across the working range**: +0.067 / +0.095 / +0.084 by her 2nd / 3rd / 4th inning, level after. Past the hook, extrapolation |
 | relief ceiling bonus | **about 0.06 runs per batter faced** (section 7.1) |
 | relief burn multiplier | free and untestable; other games use 3x |
+
+**The feedback loop is already in a plain pitch count** (`pitch_tempo.py`). The
+proposal was an *effective* count -- outs costing less, other results more -- so
+that a struggling pitcher tires faster. Measured, **pitches per plate appearance
+do not drift at all** over an outing: -0.13, -0.11, +0.00 against her own first
+inning, every one inside a standard error, and the walk and contact rates are
+flat with them. Each plate appearance costs the same whatever is happening.
+
+What varies is BATTERS FACED. An inning averages 4.80 batters (SD 1.84) and 17.5
+pitches (SD 7.8), and a pitcher who cannot get outs faces more of them. So a
+plain pitch count already burns faster for her, by the batter rather than by the
+pitch -- the compounding arrives on its own, without a surcharge and without
+distorting a measured quantity. **DECISION (22 Sep): the track counts measured
+pitches, unweighted.**
+
+**Measure in innings, implement in pitches.** The decline is measured per inning
+because pitches are endogenous; the track counts pitches because that is the work.
+The conversion is 17.5 pitches an inning, and it is noisy -- a coefficient of
+variation of 0.44 -- so the step should be applied on the track's own scale rather
+than by pretending an inning is a fixed quantity of work. Batting around is rare
+enough not to matter: 1.7% of innings face ten or more batters and 1.9% see a
+batter twice.
 
 **What "testable" means here.** Not whether the curve is right -- it cannot be.
 With a pull rule in the engine, the system is tested on whether it reproduces the
