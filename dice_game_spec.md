@@ -928,7 +928,7 @@ one.
 | degradation shape | **from G3**: shrink K, widen extra-base contact |
 | degradation size | **+0.032 at gassed** (section 7.3). The innings step of +0.09 is an upper bound a card-only mechanic cannot reach without an absurd card |
 | relief ceiling bonus | **about 0.06 runs per batter faced** (section 7.1) |
-| relief burn multiplier | free and untestable; other games use 3x |
+| relief burn multiplier | **none** (section 7.4): capacity carries it, and a 3x rate contradicts the observed rest rhythm |
 
 **The feedback loop is already in a plain pitch count** (`pitch_tempo.py`). The
 proposal was an *effective* count -- outs costing less, other results more -- so
@@ -990,6 +990,48 @@ anchored at G3's own shift, not at the +0.09 step.** The rounding is why tired a
 gassed differ by only one cell despite differing by half the shift; at 33 cells
 the mechanic has about that much resolution, which is an argument for two tired
 states rather than four.
+
+### 7.4 The track: thresholds, and what it is for
+
+**There is no burn multiplier** (`burn_or_capacity.py`). Other games give a
+reliever one fresh inning against a starter's three, which is where a 3x burn
+rate comes from. Within an outing a rate and a capacity are algebraically the
+same thing -- a threshold of 31 at rate 1 behaves exactly like 93 at rate 3 --
+so nothing could distinguish them there. Across days they differ, and the data
+decides: at rate 3 a reliever's 31-pitch outing puts 93 on her track and needs
+6.6 days to clear at 14 a day, while she actually rests 5. She would arrive
+tired every time. At rate 1 she carries 31, clears in 2.2 days, and shows up
+fresh, which is the observed rhythm. **DECISION (22 Sep): capacity carries the
+role difference; there is no burn parameter.** The model has no free parameters
+left.
+
+Observed rhythm, for the record: relievers 31 pitches every 5 days (6.2 a day
+sustained), starters 68 every 6 (11.3 a day). Seven-day loads reproduce section
+7's targets exactly -- 45 relief-only, 85 for a week with a start.
+
+**The cross-day track rarely binds, and that is the point.** At 14 pitches a day
+four outings in five start from zero, and the mean carried in is 2.5 pitches in
+the regular season and 2.6 in the postseason -- the playoffs are not tighter
+(median rest 5 days against 6). So the track is not reproducing something real
+managers hit. **It exists to stop the PLAYER doing what a real manager would
+not** -- running one arm out every game -- and the fact that real usage almost
+never engages it is evidence the limit is set in the right place, not that it is
+useless. **ASSUMPTION.** (The figure looks only at the previous outing; a track
+that sums will bite harder on back-to-back appearances.)
+
+**Thresholds** follow from the measured shape. The decline is a step after her
+first inning and flat after (section 7.2), and an inning is 17.5 pitches (section
+7.2), so:
+
+| column | starter | reliever |
+|---|---|---|
+| fresh | 0-17 pitches | 0-17 |
+| tired | 18 to 68 | 18 to 31 |
+| gassed | past 68 | past 31 |
+
+A starter reaches gassed at her median hook of 68; a reliever is fresh for about
+the first half of a median 31-pitch outing. Both boundaries are measured
+quantities rather than chosen ones. **DECISION (22 Sep).**
 
 **What "testable" means here.** Not whether the curve is right -- it cannot be.
 With a pull rule in the engine, the system is tested on whether it reproduces the
