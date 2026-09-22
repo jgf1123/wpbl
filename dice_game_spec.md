@@ -731,16 +731,36 @@ The game's central mechanic, and the least supported by data.
 - **Tired columns.** **ASSUMPTION**: a pitcher card carries fresh / tired /
   gassed columns; the pitch track selects one; tired columns shrink K and widen
   BB and contact. This keeps fatigue to one dial with no extra roll.
-- **What the data cannot say — measured, 22 Sep (`fatigue.py`).** The assumption
-  above holds: no decline within an appearance is detectable, so fatigue strength
-  stays a tuned setting rather than an estimate. Two SE is 0.064 runs per batter
-  faced, about 1.6 runs across a whole outing, so only a very large effect could
-  have shown.
+- **What the data cannot say — measured, 22 Sep (`fatigue.py`,
+  `fatigue_from_end.py`).** A within-appearance decline *is* detectable, but only
+  when the appearance is aligned on the REMOVAL rather than on the first batter,
+  and only when a pitcher is compared with herself. Aligning on the start and
+  bucketing by pitches finds nothing (below); the paired end-aligned test finds
+  **+0.078 runs per batter faced (SE 0.035, 2.2 SE)** in the inning before she was
+  pulled against her own first inning -- with the inning the removal happened in
+  excluded, so it is not the collapse that triggered the decision. That inning,
+  for reference, is +0.192 (4.8 SE).
 
-  Conditioning on survivors -- comparing a pitcher's early and late batters only
-  within appearances that reached a given depth, so the manager's decision no
-  longer picks who is in the late bucket -- the two available cuts **disagree in
-  sign**, each at about 1 SE:
+  **Why the alignment matters.** Aligning on the start puts only survivors in the
+  late buckets. Aligning on the end and pooling inverts the bias -- "four innings
+  before removal" exists only inside long outings, which are the good ones -- so
+  the test has to be *paired*: her first inning against her penultimate one,
+  inside one appearance, which holds the outing's length and the pitcher both
+  fixed.
+
+  **Fatigue, or a manager reacting to bad luck?** Not resolved. The inning before
+  removal is selected on having just pitched badly, which is what makes a manager
+  act, so luck plus a quick hook produces the same result. They separate on one
+  prediction -- fatigue should bite harder when more pitches have been thrown --
+  and it is directionally supported but thin: outings of 45 pitches or fewer show
+  -0.004 (SE 0.136, 14 outings), 46-70 show +0.116 (SE 0.050), 71+ show +0.054
+  (SE 0.055). The short bucket is the decisive one and cannot tell -0.004 from
+  +0.12. **OPEN.**
+
+  The start-aligned cuts find nothing. Conditioning on survivors -- comparing a
+  pitcher's early and late batters only within appearances that reached a given
+  depth, so the manager's decision no longer picks who is in the late bucket --
+  the two available cuts **disagree in sign**, each at about 1 SE:
 
   | cut | early | late | difference |
   |---|---|---|---|
@@ -769,6 +789,11 @@ The game's central mechanic, and the least supported by data.
   significant: pitchers who threw 25+ pitches in the prior three days allow
   +0.049 against -0.026 for the rested, a 0.075 gap at about 1.65 SE. Prior-seven-
   day load and days of rest show no monotone pattern at all.
+
+- **A usable magnitude, at last.** The paired result gives roughly **0.08 runs
+  per batter faced by the inning before a manager acts**, which is something to
+  tune against rather than a blind setting. It is an upper bound on fatigue
+  proper, since some of it is the manager reacting to luck.
 
 - **So the mechanic takes its shape from G3 and its size from tuning.** The track
   should carry workload **across days**, not reset each outing, which is what the
