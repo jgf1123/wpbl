@@ -926,7 +926,7 @@ one.
 | capacity, starter / reliever | **anchored**: median 68 / 31 pitches, max about 100 for both |
 | daily recovery | **start at 14 pitches a day** (user, 22 Sep): a starter recovers 84 over six days, about her 68-pitch outing, and 98 over a week against the 85 load. Relief-only weeks run 45 |
 | degradation shape | **from G3**: shrink K, widen extra-base contact |
-| degradation size | **anchored across the working range**: +0.067 / +0.095 / +0.084 by her 2nd / 3rd / 4th inning, level after. Past the hook, extrapolation |
+| degradation size | **+0.032 at gassed** (section 7.3). The innings step of +0.09 is an upper bound a card-only mechanic cannot reach without an absurd card |
 | relief ceiling bonus | **about 0.06 runs per batter faced** (section 7.1) |
 | relief burn multiplier | free and untestable; other games use 3x |
 
@@ -951,6 +951,45 @@ variation of 0.44 -- so the step should be applied on the track's own scale rath
 than by pretending an inning is a fixed quantity of work. Batting around is rare
 enough not to matter: 1.7% of innings face ten or more batters and 1.9% see a
 batter twice.
+
+### 7.3 What a tired column looks like
+
+**One cell is 1/94 of a plate appearance, not 1/33.** Her block is only 35.1% of
+the cells that resolve one; the rest is the batter's block and the bands. So
+moving a cell from K to 1B -- a run-value gap of 1.214 -- is worth **+0.013 runs
+per batter faced**, and K to HR is +0.023. (`tired_card.py`)
+
+**That puts a hard ceiling on a card-only mechanic.** To move the *matchup* by
+the +0.09 step, her *card* has to move by 0.09 / 0.351 = 0.26 runs a read,
+against a league pitcher card worth -0.077. Scaling G3's own line mix far enough
+to do it means multiplying that shift by 2.82 and moving 8 of her 33 cells, which
+prints a card of K 1, BB 6, HBP 4, HR 4, 1B 5, OUT 13. Hit-by-pitches at 12% of
+her card is not a tired pitcher.
+
+**So +0.09 is the wrong target, and the other two estimates say so.** It is an
+upper bound that includes the manager reacting to luck. The two that do not:
+
+| estimate | runs per batter faced |
+|---|---|
+| innings step (upper bound, includes the manager's reaction) | +0.09 |
+| times-seen design, inverted (section 7.2) | +0.048 (SE 0.057) |
+| **G3's own line mix applied to her card** | **+0.032** |
+
+**The columns.** Shifting the league pitcher card toward the G3 mix, rounded
+with the same rule the cards use:
+
+| column | G3 shift | runs/BF | cells moved | K | BB | HBP | HR | 1B | Out |
+|---|---|---|---|---|---|---|---|---|---|
+| fresh | 0 | 0 | 0 | 4 | 4 | 1 | 1 | 8 | 15 |
+| tired | 0.5x | +0.020 | 3 | 3 | 5 | 2 | 2 | 6 | 15 |
+| gassed | 1.0x | +0.032 | 3 | 3 | 5 | 2 | 2 | 7 | 14 |
+
+Three cells of 33 between fresh and gassed -- small enough to print on one card as
+three columns, and large enough for a player to feel. **DECISION (22 Sep): size
+anchored at G3's own shift, not at the +0.09 step.** The rounding is why tired and
+gassed differ by only one cell despite differing by half the shift; at 33 cells
+the mechanic has about that much resolution, which is an argument for two tired
+states rather than four.
 
 **What "testable" means here.** Not whether the curve is right -- it cannot be.
 With a pull rule in the engine, the system is tested on whether it reproduces the
