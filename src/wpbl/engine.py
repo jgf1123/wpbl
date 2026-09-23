@@ -403,17 +403,28 @@ PITCH_COST = {"K": 4.92, "BB": 5.40, "HBP": 3.05, "HR": 3.26, "1B": 3.08,
               "2B": 3.18, "ROE": 3.10, "OUT": 3.23}
 FRESH_UNTIL = 17                      # her first inning, at 17.5 pitches an inning
 CAPACITY = {"start": 68, "relief": 31}    # median outing by role
-RECOVERY = 14                         # pitches recovered per day (user, 22 Sep)
+# Entering a game costs pitches before she faces anybody: she warmed up. Without
+# it, short outings are FREE -- a 14-pitch appearance clears overnight, so the
+# dominant strategy is to run eight arms through a game at 14 each, nobody ever
+# tires, and the whole system idles. That is not a tuning problem: with E = 0
+# there is NO recovery rate that both clears a starter's 68 pitches in her six
+# days and stops a 14-pitch outing clearing in two. E > 13 is required for the
+# pair of constraints to have a solution at all (spec 7.9).
+ENTRY_COST = 30                       # about what a reliever throws getting loose
+RECOVERY = 20                         # pitches recovered per day
 
 
 def column_for(track, role):
     """Which column a pitcher reads, from the pitches on her track (spec 7.4).
 
     Three states, and the boundaries are the two that mean something: her first
-    inning of work, and her capacity."""
-    if track <= FRESH_UNTIL:
+    inning of work, and her capacity. Both sit ABOVE the entry cost, because the
+    measured fresh window is one inning of GAME pitches and the pitchers it was
+    measured on had all warmed up -- the entry cost buys availability later, it
+    does not make her worse now."""
+    if track <= ENTRY_COST + FRESH_UNTIL:
         return "fresh"
-    return "tired" if track <= CAPACITY[role] else "gassed"
+    return "tired" if track <= ENTRY_COST + CAPACITY[role] else "gassed"
 
 
 # The share of PLATE APPEARANCES in each state, counted over the REAL outings --
@@ -489,15 +500,17 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
         total = 0
         pi = int(rng.choice(len(ids), p=p_w))
         role = "start"
-        track, target = 0.0, float(rng.choice(st["start"]))
+        track = float(ENTRY_COST)
+        target = float(rng.choice(st["start"]))
         for _ in range(INNINGS):
             bases, outs = (False, False, False), 0
             while outs < 3:
-                if fatigue and track >= target:              # the hook
-                    stints.append((role, track))
+                if fatigue and track - ENTRY_COST >= target:     # the hook
+                    stints.append((role, track - ENTRY_COST))
                     pi = int(rng.choice(len(ids), p=p_w))
                     role = "relief"
-                    track, target = 0.0, float(rng.choice(st["relief"]))
+                    track = float(ENTRY_COST)
+                    target = float(rng.choice(st["relief"]))
                 col = column_for(track, role) if fatigue else "fresh"
                 seen[col] += 1
                 ids_b, pr = lu[spot % 9]
@@ -513,7 +526,7 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
                 total += r
                 bases, made = steal(bases, rng)
                 outs += made
-        stints.append((role, track))
+        stints.append((role, track - ENTRY_COST))
         runs.append(total)
     n = sum(seen.values())
     return (np.array(runs, float), pd.DataFrame(stints, columns=["role", "pitches"]),

@@ -1195,7 +1195,12 @@ is small.
 **PITCH COUNT**
 
 Every pitcher has a pitch count. It starts at whatever she carried in from
-earlier in the week and goes up after each batter she faces:
+earlier in the week.
+
+**When she enters a game, add 30 to her count** before she faces anybody: that is
+her warm-up. It costs the same whether she then faces one batter or twenty.
+
+After each batter, add:
 
 | Result | Pitches |
 |---|---|
@@ -1207,32 +1212,34 @@ Her card has three columns. Read the one her count is in:
 
 | Column | Pitch count |
 |---|---|
-| Fresh | up to 17 |
-| Tired | 18 up to her **stamina** number |
-| Gassed | past her stamina |
+| Fresh | up to 47 |
+| Tired | 48 up to 30 + her **stamina** number |
+| Gassed | past that |
 
 Her stamina number is printed on her card -- about 68 for a starter, 31 for a
-reliever, and higher or lower for the arms that go longer or shorter.
+reliever, and higher or lower for the arms that go longer or shorter. So a
+starter with stamina 68 is fresh to 47, tired to 98, gassed past that.
 
 **BETWEEN GAMES**
 
-Every pitcher takes 14 off her count for each day since she last pitched, down to
-zero. Most pitchers come back to a new game at zero; one who worked yesterday
-does not.
+Every pitcher takes 20 off her count for each day since she last pitched, down to
+zero. A starter who threw 68 carries 98 out and needs five days. A reliever who
+faced two batters carries 36 out and is not clear the next day.
 
 **EXAMPLE**
 
-Liz Gilder starts, count 0, and reads her FRESH column.
+Liz Gilder starts. Warming up puts her at 30, and she reads her FRESH column.
 
-- First batter walks: +5, count 5.
-- Next two strike out: +5 and +5, count 15.
-- A groundout ends the inning: +3, count 18.
+- First batter walks: +5, count 35.
+- Next two strike out: +5 and +5, count 45.
+- A groundout ends the inning: +3, count 48.
 
-Gilder is past 17, so from the next batter she reads her TIRED column. Her
+Gilder is past 47, so from the next batter she reads her TIRED column. Her
 strikeouts fall from 5 cells to 3 and those cells move to outs.
 
-She works into the fifth. A four-pitch walk and a single put her at 66, two short
-of her stamina number of 68. The next batter takes her to 69 and she is GASSED:
+She works into the fifth. A four-pitch walk and a single put her at 96, two short
+of 30 plus her stamina number of 68. The next batter takes her to 99 and she is
+GASSED:
 her strikeouts fall again, to 2, and cells move to walks, hit-by-pitches and home
 runs. She is now giving up about a third of a run more per nine batters than she
 was fresh.
@@ -1240,8 +1247,9 @@ was fresh.
 Her manager has to decide whether the best arm in the bullpen, reading his FRESH
 column, is better than Gilder reading her GASSED one.
 
-Two days later Gilder is available again, but 28 comes off her count of 69, so she
-starts that game at 41 -- already TIRED before she throws a pitch.
+Two days later Gilder is available again, but only 40 comes off her count of 99,
+so she is at 59 -- and warming up adds 30 more. She takes the mound at 89, deep
+into TIRED and nine pitches from GASSED.
 
 **WHY THE COLUMNS SIT WHERE THEY DO**
 
@@ -1253,8 +1261,64 @@ pitches to get through the first has done more work than one who needed eight.
 
 Gassed begins at her stamina number because that is where the observed outings
 end -- past it, nothing was ever observed, and the level is extrapolation
-(section 7.2).
+(section 7.2). Both boundaries sit 30 above where they would otherwise, because
+the warm-up buys availability later rather than making her worse now: the fresh
+window was measured in GAME pitches, on pitchers who had all warmed up.
 
+
+### 7.9 The entry cost, and the exploit that forced it
+
+**The exploit** (user, 22 Sep). Recovery was a flat rate per day and the fresh
+window was 17 pitches, so a 14-pitch outing cleared overnight and cost nothing.
+The dominant strategy is then to run eight arms through a game at 14 pitches
+each: everybody stays fresh, everybody is recovered tomorrow, and the fatigue
+system never engages. A player who noticed would never play any other way.
+
+**It is not a tuning problem.** With no entry cost there is *no* recovery rate
+that satisfies both of the things it has to. A starter throws 68 and rests six
+days, so R >= 68/6 = 11.3. A 14-pitch outing must not clear in the two days
+between a team's games, so R < 14/2 = 7. Those cannot both hold. Writing it with
+an entry cost E, the constraints are R >= (68+E)/6 and R < (14+E)/2, which cross
+at **E > 13**: below that the mechanic is unrepairable, above it there is a
+window.
+
+**DECISION (22 Sep): E = 30, R = 20.** E = 30 is about what a reliever throws
+getting loose, which is what the cost represents. Priced against the exploit --
+eight arms at 14 game-pitches each, repeated every two days:
+
+| E, R | an arm carries in, after eight such games |
+|---|---|
+| 0, 14 | 0 -- the exploit is free |
+| 14, 14 | 0 -- still free |
+| 20, 16 | 16 |
+| **30, 20** | **32** |
+
+At 32 carried in, she is past the fresh boundary before she warms up, so the
+strategy degrades the arms it depends on. It also keeps the observed rhythm: a
+starter's 98 clears in 4.9 days against six of rest, a reliever's 61 in 3.1
+against five.
+
+**The thresholds move up by E, not the other way.** The fresh window was measured
+as one inning of GAME pitches, on pitchers who had all warmed up, so the entry
+cost buys availability later rather than making her worse now. A starter with
+stamina 68 is fresh to 47, tired to 98, gassed past that.
+
+**This fixes the multi-day exploit and not the within-game degeneracy.** They are
+different problems: the exploit was about carrying arms across days, while
+section 7.7's optimiser pulls too often inside a single game, where an entry cost
+does not change the comparison -- a reliever still enters fresh. That still wants
+a season-level term.
+
+**Short rest cannot calibrate any of this.** There are four appearances in the
+league on one day's rest, 39 batters faced between them, and every one follows a
+short outing: 13, 15, 19 and 33 pitches. By rest bucket the residuals are 1 day
++0.005, 2 days -0.011, 3-4 days -0.001, 5+ days +0.003 -- no pattern. Managers
+never put a pitcher in the position where recovery would show, which is the same
+reason the curve past the hook is unobservable (section 7.2). **ASSUMPTION.**
+
+**Usage, for the record:** 2.89 pitchers per team-game, and the distribution is
+tight -- two in 20 team-games, three in 44, four in 12, and **never five**. Any
+rule that permits eight is wrong on its face.
 
 ## 8. Dice
 
