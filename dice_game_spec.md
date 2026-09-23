@@ -1056,6 +1056,31 @@ which is the engine's pre-existing level. **DECISION (22 Sep).** The weights com
 from one pass of the pull rule (fresh 43%, tired 45%, gassed 12%); re-running with
 centred columns moves them by well under a point.
 
+**What the column shares mean, and why they are needed.** Fresh 43.3% and tired
+56.7% are the share of PLATE APPEARANCES resolved against a pitcher in each
+column, counted over a simulated season under the pull rule: 43% are pitched by
+someone whose track is still inside her fresh window, 57% by someone past it.
+Centring needs them because the weighted average of the columns has to return her
+card, and that average is over how often each is actually read.
+
+That is circular -- the shares depend on the columns, since a tired pitcher
+allows more baserunners, faces more batters, and so spends more plate appearances
+tired -- so it was iterated. It converges immediately: centring on 0.433 returns
+0.432, which returns 0.4319, and it sits there. One pass is enough, now checked
+rather than assumed.
+
+**Fatigue does not touch wild pitches.** The obvious extension is that a tired
+pitcher loses the ball more often, and G3 cannot say: three wild pitches in the
+game, a rate of 5.26% of rolls with a runner on against a league 5.01%, a ratio
+of 1.05 -- with a Poisson error of +/-0.61 on a count of three, consistent with
+anything from 0.4 to 1.7. (G3 had fewer running plays per roll than the league,
+5.26% against 6.73%, on the same three events.) There is also a structural cost:
+the running-play band is a fixed six-cell block on neither card, so making it vary
+with fatigue means the table changes with who is pitching and how tired she is,
+which is the one thing the fixed-block layout exists to avoid. **DECISION (22
+Sep): the running-play band is the same whoever is on the mound.** Passed balls
+belong to the catcher and balks to the umpire in any case (section 6).
+
 **The pull rule is descriptive**: a stint length is sampled from the real
 distribution by role and the pitcher comes out when her track passes it. That is
 all that is needed to make a fatigue setting identifiable -- a setting only has

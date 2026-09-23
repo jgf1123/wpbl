@@ -415,10 +415,13 @@ def column_for(track, role):
     return "fresh" if track <= FRESH_UNTIL else "tired"
 
 
-# How often each column is actually read, from a run of the descriptive pull rule.
-# The columns are CENTRED on these weights (see pitcher_columns), so they have to
-# come from somewhere; one pass is enough, since re-running with centred columns
-# moves them by well under a point.
+# The share of PLATE APPEARANCES resolved against a pitcher in each column,
+# counted over a simulated season under the pull rule: 43% are pitched by someone
+# still inside her fresh window, 57% by someone past it. The columns are CENTRED
+# on these (see pitcher_columns), which is circular -- a tired pitcher allows more
+# baserunners, faces more batters, and so spends more plate appearances tired --
+# so it was iterated. Centring on 0.433 returns 0.432, which returns 0.4319, and
+# it sits there. One pass is enough.
 COLUMN_SHARE = {"fresh": 0.433, "tired": 0.567}
 
 
