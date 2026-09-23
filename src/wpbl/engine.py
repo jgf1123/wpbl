@@ -565,7 +565,12 @@ def stamina():
         base = CAPACITY[role]
         own = sub[sub["role"] == role]["pitches"].median()
         cap = base if not np.isfinite(own) else base + W_OWN * (own - base)
-        out[pid] = (role, float(cap), FRESH_UNTIL * float(cap) / CAPACITY["start"])
+        # scaled against HER ROLE's median, not the starter's: the measured step
+        # comes after a first inning for pitchers pooled, so a median reliever
+        # should get the same 17 as a median starter, and only an arm that goes
+        # longer THAN HER ROLE should get a wider window. Dividing by the starter
+        # median gave a median reliever 17 x 31/68 = 8 pitches, half an inning.
+        out[pid] = (role, float(cap), FRESH_UNTIL * float(cap) / CAPACITY[role])
     return out
 
 

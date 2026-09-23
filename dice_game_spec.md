@@ -1309,6 +1309,52 @@ section 7.7's optimiser pulls too often inside a single game, where an entry cos
 does not change the comparison -- a reliever still enters fresh. That still wants
 a season-level term.
 
+**The assumptions behind that derivation**, since only the inequality is forced
+and the rest are choices:
+
+1. A starter throws **68** pitches and rests **6 days** -- both observed medians.
+2. A reliever throws 31 and rests 5. This constraint never binds.
+3. "Recovered" means the count returns to exactly **0**. This is what makes the
+   constraint tight; allowing a pitcher to start carrying a little would loosen it.
+4. A team's games are **2 days apart**.
+5. The exploit uses **14** game-pitches, chosen as "just under the fresh window".
+6. Recovery is flat and linear, R a day whatever the count. No evidence for that
+   shape; it is the simplest one.
+7. The entry cost is the same for everyone and every appearance -- a starter's
+   pre-game warm-up and a reliever's mid-game scramble cost alike, and a reliever
+   who warms up without entering pays nothing.
+8. The pitch count is the only thing limiting usage: no roster cap, no leverage.
+
+**Assumption 4 does most of the work**, and it was the one made most casually:
+
+| changed | E must exceed |
+|---|---|
+| baseline | **13.0** |
+| starters rest 5 days | 22.0 |
+| starters rest 7 days | 7.6 |
+| the exploit uses 17 pitches | 8.5 |
+| games 1 day apart | none, auto-blocked |
+| **games 3 days apart** | **40.0** |
+
+A team's gaps are median 2 and mean 2.51, but **38% are three days or more**,
+where E = 30 blocks nothing. What saves it is that the exploit only pays when the
+schedule is tight: at a 3-day gap an ordinary starter recovers 63 of her 68 and
+is nearly fresh anyway, so cycling eight arms gains nothing, while at a 1-day gap
+an arm carries 23 in and takes the mound tired. **The cost lands where the
+strategy is worth playing and misses where it is not** -- which is fortunate
+rather than designed, and is recorded as such. **ASSUMPTION.**
+
+**What "carries N after eight cycles" means.** The count is a running number. Each
+cycle of the exploit adds the entry cost and the game pitches, then subtracts the
+gap's recovery: 30 + 14 - 2R, or 44 - 2R a cycle. She stays fresh while her carry
+is at most 17, since entry adds 30 against a boundary of 47. At R = 20 the carry
+grows 4 a cycle and crosses on her fifth appearance; at R = 21, 2 a cycle and the
+ninth. The exploit is never blocked outright -- it stops delivering fresh
+pitchers after a while. **OPEN:** R = 20 or 21. Twenty kills the exploit faster;
+twenty-one lets the most durable reliever work consecutive days, which happened
+four times in the league. At E = 30 those are the only two values that satisfy
+both, and the choice is which failure to prefer.
+
 **Short rest cannot calibrate any of this.** There are four appearances in the
 league on one day's rest, 39 batters faced between them, and every one follows a
 short outing: 13, 15, 19 and 33 pitches. By rest bucket the residuals are 1 day
