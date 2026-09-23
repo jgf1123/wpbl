@@ -253,6 +253,39 @@ def build(X: np.ndarray, names: list[str], share: np.ndarray, steps, ks,
     return out
 
 
+# --- fatigue ------------------------------------------------------------------
+# A tired pitcher's card is her own, shifted toward the mix of semifinal G3 -- the
+# one game played with genuinely spent bullpens, and the only look at pitchers
+# working past the point a manager accepts (spec 7.3). The shift is MULTIPLICATIVE
+# so it scales with each pitcher: a strikeout pitcher loses a bigger share of a
+# bigger line, and a pitcher with one K cell is not asked to give up a cell she
+# does not have. Additive would have demanded the same absolute move from both.
+#
+#   tired_i  proportional to  fresh_i * ratio_i ** lam,  renormalised
+#
+# lam = 0 is her fresh card, lam = 1 the full G3 shift. The thresholds that pick a
+# column live in the engine, not here (spec 7.4).
+G3_RATIO = {"K": 0.593, "BB": 1.126, "HBP": 1.658, "HR": 2.250, "1B": 0.894, "OUT": 0.996}
+FATIGUE = {"fresh": 0.0, "tired": 0.5, "gassed": 1.0}
+
+
+def fatigue_card(card: np.ndarray, lam: float) -> np.ndarray:
+    """One pitcher's card shifted lam of the way toward the spent-bullpen mix.
+
+    The fixed bands are untouched: 2B and ROE are on neither card, so fatigue
+    cannot move them, and the tree is renormalised to the share they leave."""
+    out = card.copy()
+    if lam == 0:
+        return out
+    idx = [CARD_LINES.index(l) for l in TREE_LINES]
+    tree = card[..., idx]
+    r = np.array([G3_RATIO[l] ** lam for l in TREE_LINES])
+    shifted = tree * r
+    shifted = shifted / shifted.sum(axis=-1, keepdims=True) * tree.sum(axis=-1, keepdims=True)
+    out[..., idx] = shifted
+    return out
+
+
 def to_cells(card: np.ndarray, block: int, weights: np.ndarray,
              floor_one: bool) -> np.ndarray:
     """A card's tree lines as whole d100 cells summing to `block`.

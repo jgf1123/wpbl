@@ -1033,6 +1033,53 @@ A starter reaches gassed at her median hook of 68; a reliever is fresh for about
 the first half of a median 31-pitch outing. Both boundaries are measured
 quantities rather than chosen ones. **DECISION (22 Sep).**
 
+### 7.5 As built (22 Sep)
+
+`dice.fatigue_card` makes the three columns; `engine.sim_fatigue` plays with them.
+
+**The shift is multiplicative, not additive.** Each line is multiplied by its G3
+ratio raised to the column's power and renormalised, so a strikeout pitcher sheds
+a share of a big line while a pitcher with one K cell is not asked for a cell she
+does not have. Keira Izumi, who has exactly one, keeps it all the way to gassed
+and degrades through walks and home runs instead. Across all 37 pitchers, gassed
+costs **+0.032 runs per batter faced** on average (range +0.010 to +0.068),
+landing on the section 7.3 target, and no column has an entry below one cell.
+
+**The columns must be CENTRED, and this is the one thing the build changed.** A
+pitcher's card is fitted to all her plate appearances, the tired ones included,
+so it already carries the average fatigue she pitched with. Hanging a penalty on
+top of it counts that twice: uncentred, the game scored 8.31 runs a team-game
+against a season 7.77. Centring shifts all three columns so their usage-weighted
+mean returns her card exactly -- a **fresh pitcher is better than her season
+line**, a gassed one worse, the average unchanged -- and scoring returns to 7.95,
+which is the engine's pre-existing level. **DECISION (22 Sep).** The weights come
+from one pass of the pull rule (fresh 43%, tired 45%, gassed 12%); re-running with
+centred columns moves them by well under a point.
+
+**The pull rule is descriptive**: a stint length is sampled from the real
+distribution by role and the pitcher comes out when her track passes it. That is
+all that is needed to make a fatigue setting identifiable -- a setting only has
+consequences where a tired pitcher is left in. It is not the AI manager of check
+3.
+
+**Against the season:**
+
+| | dice | season |
+|---|---|---|
+| runs per team-game | 7.97 | 7.77 |
+| median starter stint, pitches | 70 | 69 |
+| starter p25 / p75 | 61 / 81 | 60 / 79 |
+| median reliever stint | 25 | 30 |
+| pitchers per team-game | 3.45 | 2.80 |
+
+The starter distribution matches closely. **OPEN:** relievers run short and the
+game uses too many of them, because each is sampled independently and the last
+one is cut off by the end of the game rather than by her target. A staff plan
+rather than independent draws would fix it, and that is the AI manager's job. The
+2.6% excess in scoring predates fatigue -- the engine ran 8.02 before any of this
+(section 9.1) -- so centring has left the run environment where it found it,
+which is what it is for.
+
 **What "testable" means here.** Not whether the curve is right -- it cannot be.
 With a pull rule in the engine, the system is tested on whether it reproduces the
 median 68 and 31 pitches, the 7-day loads, and 7.77 runs per team per game. That

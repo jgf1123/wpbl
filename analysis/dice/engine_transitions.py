@@ -63,7 +63,7 @@ def simulated(table, n=N, seed=20260921):
         occ = tuple(c != "_" for c in bases)
         for _ in range(n):
             b, o = occ, outs
-            b2, made, early, runs = engine.plate_appearance(table, b, o, rng)
+            b2, made, early, runs, _ = engine.plate_appearance(table, b, o, rng)
             o += made
             total = early + (runs if o < 3 else 0)
             if o < 3:                      # the steal belongs to THIS transition

@@ -185,10 +185,12 @@ def advance_all(bases):
 def plate_appearance(table, bases, outs, rng):
     """Roll until a roll ends the plate appearance.
 
-    Returns (bases, outs made, runs already in, runs on the final play). The two
-    run counts are kept apart because a run that scored on a wild pitch stands
-    even if the batter then makes the third out, while runs on the out itself do
-    not -- the batter is retired before reaching first, so the inning ends first.
+    Returns (bases, outs made, runs already in, runs on the final play, line).
+    The two run counts are kept apart because a run that scored on a wild pitch
+    stands even if the batter then makes the third out, while runs on the out
+    itself do not -- the batter is retired before reaching first, so the inning
+    ends first. The line comes back so a fatigue track can charge the pitches that
+    outcome really costs (spec 7.2): a walk is 5.40 and contact about 3.2.
     """
     early = 0
     while True:
@@ -199,7 +201,7 @@ def plate_appearance(table, bases, outs, rng):
                 early += r
             continue
         b, made, r = apply_line(line, bases, outs, rng)
-        return b, made, early, r
+        return b, made, early, r, line
 
 
 def steal(bases, rng):
@@ -224,7 +226,7 @@ def half_inning(table, rng, bases=(False, False, False), outs=0, steals=True):
     """Runs from this state to the end of the half-inning."""
     total = 0
     while outs < 3:
-        bases, made, early, runs = plate_appearance(table, bases, outs, rng)
+        bases, made, early, runs, _ = plate_appearance(table, bases, outs, rng)
         total += early                          # runs already in always count
         outs += made
         if outs >= 3:
@@ -378,7 +380,7 @@ def sampled_halves(n_games=30000, seed=7):
                 ids, pr = lu[spot % 9]
                 spot += 1
                 tb = Table.from_lines(p_line[pi], b_line[ids[int(rng.choice(len(ids), p=pr))]])
-                bases, made, early, r = plate_appearance(tb, bases, outs, rng)
+                bases, made, early, r, _ = plate_appearance(tb, bases, outs, rng)
                 total += early
                 outs += made
                 if outs >= 3:
@@ -392,3 +394,124 @@ def sampled_halves(n_games=30000, seed=7):
 
 if __name__ == "__main__":
     main()
+
+
+# --- fatigue (spec 7.3, 7.4) ---------------------------------------------------
+# The track counts MEASURED pitches, unweighted: a struggling pitcher faces more
+# batters and so burns faster on her own, without a surcharge (spec 7.2).
+PITCH_COST = {"K": 4.92, "BB": 5.40, "HBP": 3.05, "HR": 3.26, "1B": 3.08,
+              "2B": 3.18, "ROE": 3.10, "OUT": 3.23}
+FRESH_UNTIL = 17                      # her first inning, at 17.5 pitches an inning
+CAPACITY = {"start": 68, "relief": 31}    # median outing by role
+RECOVERY = 14                         # pitches recovered per day (user, 22 Sep)
+
+
+def column_for(track, role):
+    """Which column a pitcher reads, from the pitches on her track (spec 7.4)."""
+    if track <= FRESH_UNTIL:
+        return "fresh"
+    return "tired" if track <= CAPACITY[role] else "gassed"
+
+
+# How often each column is actually read, from a run of the descriptive pull rule.
+# The columns are CENTRED on these weights (see pitcher_columns), so they have to
+# come from somewhere; one pass is enough, since re-running with centred columns
+# moves them by well under a point.
+COLUMN_SHARE = {"fresh": 0.433, "tired": 0.449, "gassed": 0.118}
+
+
+def pitcher_columns(centred=True):
+    """Every pitcher's three columns, as expanded cell labels ready for Table.
+
+    CENTRED, and this matters. A pitcher's card is built from all her plate
+    appearances, the tired ones included, so it already carries the average
+    fatigue she pitched with. Hanging a penalty on top of it counts that twice and
+    inflates the league's scoring. Centring shifts all three columns so their
+    usage-weighted average returns her card exactly: a FRESH pitcher is better
+    than her season line, a gassed one worse, and the average is unchanged.
+    """
+    from wpbl.dice import FATIGUE, cards as _cards, fatigue_card
+    P = _cards("P")
+    w = line_weights()
+    mean_lam = sum(COLUMN_SHARE[k] * v for k, v in FATIGUE.items()) if centred else 0.0
+    out = {}
+    for name, lam in FATIGUE.items():
+        cells = to_cells(fatigue_card(P.to_numpy(), lam - mean_lam), P_CELLS, w, True)
+        out[name] = [np.repeat(TREE_LINES, r) for r in cells]
+    return P.index, out
+
+
+def stint_targets():
+    """The observed distribution of pitches in an outing, by role.
+
+    The pull rule is DESCRIPTIVE on purpose: a manager is sampled to come out
+    where real managers came out, which is all that is needed to make a fatigue
+    setting identifiable (spec 7.2). It is not the AI manager check 3 wants.
+    """
+    pa = plate_appearances()
+    pa = pa.assign(pitches=[PITCH_COST.get(l, 3.3) for l in pa["line"]])
+    pa = pa.sort_values(["game_id", "P_team", "date"])
+    first = pa.groupby(["game_id", "P_team"])["P"].first()
+    out = {"start": [], "relief": []}
+    for (gm, tm, pid), grp in pa.groupby(["game_id", "P_team", "P"], sort=False):
+        role = "start" if first.get((gm, tm)) == pid else "relief"
+        out[role].append(float(grp["pitches"].sum()))
+    return {k: np.array(v) for k, v in out.items()}
+
+
+def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
+    """Play whole games with pitching changes, and optionally with the track on.
+
+    One team's seven half-innings at a time, against a staff that changes when the
+    current pitcher passes a stint length sampled from the real distribution. The
+    track carries her measured pitches; the column she reads follows from it. Every
+    outing starts at zero, which matches the league: four in five really do (spec
+    7.4), so the cross-day carry is a season-level concern, not a game-level one.
+    """
+    rng = np.random.default_rng(seed)
+    from wpbl.dice import B_CELLS, cards as _cards
+    ids, cols = pitcher_columns(centred=centred)
+    B = _cards("B")
+    w = line_weights()
+    b_line = {pid: np.repeat(TREE_LINES, r) for pid, r in
+              zip(B.index, to_cells(B.to_numpy(), B_CELLS, w, False))}
+    pa = plate_appearances()
+    p_w = pa.groupby("P").size().reindex(ids).fillna(0).to_numpy(float)
+    p_w /= p_w.sum()
+    st = stint_targets()
+    lus = lineups()
+    runs, stints, seen = [], [], {"fresh": 0, "tired": 0, "gassed": 0}
+    for _ in range(n_games):
+        lu, spot = lus[rng.integers(len(lus))], 0
+        total = 0
+        pi = int(rng.choice(len(ids), p=p_w))
+        role = "start"
+        track, target = 0.0, float(rng.choice(st["start"]))
+        for _ in range(INNINGS):
+            bases, outs = (False, False, False), 0
+            while outs < 3:
+                if fatigue and track >= target:              # the hook
+                    stints.append((role, track))
+                    pi = int(rng.choice(len(ids), p=p_w))
+                    role = "relief"
+                    track, target = 0.0, float(rng.choice(st["relief"]))
+                col = column_for(track, role) if fatigue else "fresh"
+                seen[col] += 1
+                ids_b, pr = lu[spot % 9]
+                spot += 1
+                tb = Table.from_lines(cols[col][pi],
+                                      b_line[ids_b[int(rng.choice(len(ids_b), p=pr))]])
+                bases, made, early, r, line = plate_appearance(tb, bases, outs, rng)
+                track += PITCH_COST.get(line, 3.3)
+                total += early
+                outs += made
+                if outs >= 3:
+                    break
+                total += r
+                bases, made = steal(bases, rng)
+                outs += made
+        stints.append((role, track))
+        runs.append(total)
+    n = sum(seen.values())
+    return (np.array(runs, float), pd.DataFrame(stints, columns=["role", "pitches"]),
+            {k: v / n for k, v in seen.items()})
