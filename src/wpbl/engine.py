@@ -407,17 +407,19 @@ RECOVERY = 14                         # pitches recovered per day (user, 22 Sep)
 
 
 def column_for(track, role):
-    """Which column a pitcher reads, from the pitches on her track (spec 7.4)."""
-    if track <= FRESH_UNTIL:
-        return "fresh"
-    return "tired" if track <= CAPACITY[role] else "gassed"
+    """Which column a pitcher reads, from the pitches on her track (spec 7.4).
+
+    Two columns, not three. At 33 cells one cell is worth about 0.013 runs a
+    batter, and centred, a third column would sit under a cell away from the
+    second -- a distinction no rounding can print (spec 7.6)."""
+    return "fresh" if track <= FRESH_UNTIL else "tired"
 
 
 # How often each column is actually read, from a run of the descriptive pull rule.
 # The columns are CENTRED on these weights (see pitcher_columns), so they have to
 # come from somewhere; one pass is enough, since re-running with centred columns
 # moves them by well under a point.
-COLUMN_SHARE = {"fresh": 0.433, "tired": 0.449, "gassed": 0.118}
+COLUMN_SHARE = {"fresh": 0.433, "tired": 0.567}
 
 
 def pitcher_columns(centred=True):
@@ -480,7 +482,7 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
     p_w /= p_w.sum()
     st = stint_targets()
     lus = lineups()
-    runs, stints, seen = [], [], {"fresh": 0, "tired": 0, "gassed": 0}
+    runs, stints, seen = [], [], {"fresh": 0, "tired": 0}
     for _ in range(n_games):
         lu, spot = lus[rng.integers(len(lus))], 0
         total = 0
@@ -515,3 +517,53 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
     n = sum(seen.values())
     return (np.array(runs, float), pd.DataFrame(stints, columns=["role", "pitches"]),
             {k: v / n for k, v in seen.items()})
+
+
+def stamina():
+    """Each pitcher's fresh window, in pitches, shrunk toward the role default.
+
+    Stamina is a real trait but a small one: per-pitcher median start lengths run
+    from 58 to 92 pitches, SD 8.9, of which 5.5 is the noise in a median of about
+    five starts -- so 7.0 is real. Her own median therefore gets weight
+    49 / (49 + 30) = 0.62 against the role median, the same shrinkage idea the
+    cards use.
+
+    The fresh window scales with it. The measured step comes after her first
+    inning for pitchers pooled together (spec 7.2), and nothing in the data says
+    when a strong arm's step comes; scaling is the assumption that a pitcher who
+    lasts a fifth longer stays fresh a fifth longer. ASSUMPTION.
+    """
+    from wpbl.dice import cards as _cards
+    W_OWN = 0.62
+    pa = plate_appearances()
+    pa = pa.assign(pitches=[PITCH_COST.get(l, 3.3) for l in pa["line"]])
+    first = pa.sort_values(["game_id", "P_team", "date"]).groupby(
+        ["game_id", "P_team"])["P"].first()
+    rows = []
+    for (gm, tm, pid), grp in pa.groupby(["game_id", "P_team", "P"], sort=False):
+        rows.append({"P": pid, "role": "start" if first.get((gm, tm)) == pid else "relief",
+                     "pitches": float(grp["pitches"].sum())})
+    a = pd.DataFrame(rows)
+    out = {}
+    for pid in _cards("P").index:
+        sub = a[a["P"] == pid]
+        role = "start" if (sub["role"] == "start").mean() >= 0.5 else "relief"
+        base = CAPACITY[role]
+        own = sub[sub["role"] == role]["pitches"].median()
+        cap = base if not np.isfinite(own) else base + W_OWN * (own - base)
+        out[pid] = (role, float(cap), FRESH_UNTIL * float(cap) / CAPACITY["start"])
+    return out
+
+
+def manager_pull(cur_cost, bench_cost):
+    """Pull when the batter in front of her is cheaper against someone else.
+
+    No free parameter and no fitting to observed hooks. Every batter is worth the
+    same in runs, so the run-minimising allocation gives each one to the best arm
+    still able to take him: keep her while her CURRENT column beats the best
+    available arm's FRESH column, and change when it does not. A strong starter
+    stays in because her tired card is still better than the bullpen; a weak one
+    goes early. Check 3 then asks whether that lands where real managers landed,
+    which it cannot do if the rule were fitted to them.
+    """
+    return cur_cost > bench_cost

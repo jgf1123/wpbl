@@ -1080,6 +1080,66 @@ rather than independent draws would fix it, and that is the AI manager's job. Th
 (section 9.1) -- so centring has left the run environment where it found it,
 which is what it is for.
 
+### 7.6 Two columns, not three
+
+Writing the arithmetic out killed the third column. Centred, tired sits +0.009
+from fresh and gassed +0.021 -- but one cell of a 33-cell block is worth about
+0.013 runs a batter, so **fresh to tired is less than one cell**. No rounding
+rule can print a distinction that small. Rounding each column independently also
+breaks monotonicity: Izumi's walk line has exact counts of 8.22, 8.59, 8.91 and
+rounds to 7, 9, 8, so a player would watch her walks rise and then fall as she
+tires. Building the ladder by moving cells out of the fresh column instead was
+worse, leaving 7 of 37 pitchers with two identical columns.
+
+Two columns fix all of it at the same total effect:
+
+| | median swing | cells moved | pitchers with identical columns |
+|---|---|---|---|
+| three | 0.023 | 1.5 | 2 of 37 |
+| **two** | **0.023** | **2.4** | **0 of 37** |
+
+Gilder reads K5 BB3 fresh and K3 BB5 tired -- two cells, visible, and in the
+right direction. **DECISION (22 Sep): fresh and tired only.** The mechanic has
+about two and a half cells of usable resolution across its whole range, and
+spending them on two states rather than three is the difference between a
+distinction a player can see and one the table cannot hold.
+
+**Stamina is a pitcher trait, but a small one.** Per-pitcher median start lengths
+run 58 to 92 pitches with an SD of 8.9, of which 5.5 is the noise in a median of
+about five starts -- so 7.0 is real, roughly half an inning. Her own median gets
+weight 49/(49+30) = 0.62 against the role default, the same shrinkage the cards
+use. It scales the fresh window rather than adding a threshold, since with two
+columns there is only one boundary to move. **ASSUMPTION**: a pitcher who lasts a
+fifth longer stays fresh a fifth longer; nothing in the data says when a strong
+arm's step comes.
+
+### 7.7 The optimising manager is degenerate, and that is the finding
+
+Built with no free parameter: every batter is worth the same in runs, so the
+run-minimising allocation gives each to the best arm still able to take him --
+keep her while her current column beats the best available arm's fresh column.
+
+It pulls after about 17 pitches every time. **7.22 pitchers a team-game against a
+real 2.80**, median starter stint zero. The logic is right and that is the
+problem: within one game there is never a reason to leave a tiring pitcher in
+while a fresher arm sits in the bullpen, and with a deep staff the quality gaps
+between consecutive arms are smaller than the fresh-to-tired swing of 0.023, so
+everyone is pulled the moment she leaves the fresh window.
+
+**The constraint that stops a real manager is not in the game.** He keeps a
+starter in because he needs those arms tomorrow and the day after. A single-game
+objective has no interior optimum; it burns the whole staff every night. So check
+3 cannot be met by optimising one game, and the descriptive rule of section 7.5
+is not a placeholder for something better -- it is standing in for a season-level
+scarcity the game does not yet represent.
+
+**OPEN:** the manager needs a cost for using an arm, which is a season quantity.
+The three candidates are an explicit arms-per-game budget (descriptive, and
+honest about it), a shadow price per appearance tuned until usage matches
+(fitting, and then check 3 is circular), or a season-level objective with the
+schedule in it (correct, and much the largest). Nothing here decides between
+them.
+
 **What "testable" means here.** Not whether the curve is right -- it cannot be.
 With a pull rule in the engine, the system is tested on whether it reproduces the
 median 68 and 31 pitches, the 7-day loads, and 7.77 runs per team per game. That

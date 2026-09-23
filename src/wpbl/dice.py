@@ -266,7 +266,7 @@ def build(X: np.ndarray, names: list[str], share: np.ndarray, steps, ks,
 # lam = 0 is her fresh card, lam = 1 the full G3 shift. The thresholds that pick a
 # column live in the engine, not here (spec 7.4).
 G3_RATIO = {"K": 0.593, "BB": 1.126, "HBP": 1.658, "HR": 2.250, "1B": 0.894, "OUT": 0.996}
-FATIGUE = {"fresh": 0.0, "tired": 0.5, "gassed": 1.0}
+FATIGUE = {"fresh": 0.0, "tired": 1.0}      # two columns: see spec 7.6
 
 
 def fatigue_card(card: np.ndarray, lam: float) -> np.ndarray:
