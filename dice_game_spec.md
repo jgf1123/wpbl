@@ -1105,9 +1105,9 @@ rather than independent draws would fix it, and that is the AI manager's job. Th
 (section 9.1) -- so centring has left the run environment where it found it,
 which is what it is for.
 
-### 7.6 Two columns, not three
+### 7.6 Spacing the three columns
 
-Writing the arithmetic out killed the third column. Centred, tired sits +0.009
+Writing the arithmetic out nearly killed the third column. Centred, tired sits +0.009
 from fresh and gassed +0.021 -- but one cell of a 33-cell block is worth about
 0.013 runs a batter, so **fresh to tired is less than one cell**. No rounding
 rule can print a distinction that small. Rounding each column independently also
@@ -1116,18 +1116,31 @@ rounds to 7, 9, 8, so a player would watch her walks rise and then fall as she
 tires. Building the ladder by moving cells out of the fresh column instead was
 worse, leaving 7 of 37 pitchers with two identical columns.
 
-Two columns fix all of it at the same total effect:
+The fault was the SPACING, not the third column. Setting them evenly at 0, 0.5
+and 1 put tired half a step from fresh. Spacing them by what they MEAN fixes it:
+tired is the measured plateau, gassed is past her capacity where nothing is
+observed and the level is extrapolation, so it sits at twice the G3 shift.
 
-| | median swing | cells moved | pitchers with identical columns |
+| | share of real PAs | vs her card | step |
 |---|---|---|---|
-| three | 0.023 | 1.5 | 2 of 37 |
-| **two** | **0.023** | **2.4** | **0 of 37** |
+| fresh | 38.9% | -0.012 | -- |
+| tired | 46.1% | +0.000 | +0.023 |
+| gassed | 15.0% | +0.043 | +0.042 |
 
-Gilder reads K5 BB3 fresh and K3 BB5 tired -- two cells, visible, and in the
-right direction. **DECISION (22 Sep): fresh and tired only.** The mechanic has
-about two and a half cells of usable resolution across its whole range, and
-spending them on two states rather than three is the difference between a
-distinction a player can see and one the table cannot hold.
+**0 of 74 adjacent pairs round to the same cells.** Crossing into gassed costs
+nearly double what going tired did, which is what gives a manager a reason to act
+before she gets there. **DECISION (22 Sep).**
+
+The shares are counted over the REAL outings, not a simulation: the simulation
+uses 3.45 pitchers a side against a real 2.80, and every extra change restarts
+someone at zero, so its fresh share is inflated and centring on it would centre on
+a known flaw.
+
+**OPEN:** the rounding can move cells between lines of near-equal run value.
+Gilder's fresh and tired differ by two cells, K5 against K3, but only by 0.0004
+runs, because the cells went to outs -- worth almost the same as a strikeout. The
+median step is +0.023; hers is not. A card can look like it changed more than it
+did.
 
 **Stamina is a pitcher trait, but a small one.** Per-pitcher median start lengths
 run 58 to 92 pitches with an SD of 8.9, of which 5.5 is the noise in a median of
@@ -1176,6 +1189,72 @@ identifiable, since a setting only has consequences where a tired pitcher is lef
 in. Check 3 asks the harder question of whether a *sensible strategy* produces
 realistic usage. **OPEN**: both, but they are separable and the descriptive one
 is small.
+
+### 7.8 The rules, as they would be printed
+
+**PITCH COUNT**
+
+Every pitcher has a pitch count. It starts at whatever she carried in from
+earlier in the week and goes up after each batter she faces:
+
+| Result | Pitches |
+|---|---|
+| Walk | 5 |
+| Strikeout | 5 |
+| Anything else | 3 |
+
+Her card has three columns. Read the one her count is in:
+
+| Column | Pitch count |
+|---|---|
+| Fresh | up to 17 |
+| Tired | 18 up to her **stamina** number |
+| Gassed | past her stamina |
+
+Her stamina number is printed on her card -- about 68 for a starter, 31 for a
+reliever, and higher or lower for the arms that go longer or shorter.
+
+**BETWEEN GAMES**
+
+Every pitcher takes 14 off her count for each day since she last pitched, down to
+zero. Most pitchers come back to a new game at zero; one who worked yesterday
+does not.
+
+**EXAMPLE**
+
+Liz Gilder starts, count 0, and reads her FRESH column.
+
+- First batter walks: +5, count 5.
+- Next two strike out: +5 and +5, count 15.
+- A groundout ends the inning: +3, count 18.
+
+Gilder is past 17, so from the next batter she reads her TIRED column. Her
+strikeouts fall from 5 cells to 3 and those cells move to outs.
+
+She works into the fifth. A four-pitch walk and a single put her at 66, two short
+of her stamina number of 68. The next batter takes her to 69 and she is GASSED:
+her strikeouts fall again, to 2, and cells move to walks, hit-by-pitches and home
+runs. She is now giving up about a third of a run more per nine batters than she
+was fresh.
+
+Her manager has to decide whether the best arm in the bullpen, reading his FRESH
+column, is better than Gilder reading her GASSED one.
+
+Two days later Gilder is available again, but 28 comes off her count of 69, so she
+starts that game at 41 -- already TIRED before she throws a pitch.
+
+**WHY THE COLUMNS SIT WHERE THEY DO**
+
+Fresh ends at 17 pitches because that is one inning's work (an inning averages
+17.5), and the measured decline is a step after a pitcher's first inning rather
+than a gradual slide (section 7.2). The boundary is on the COUNT and not on the
+inning because the count is being kept anyway, and a pitcher who needed thirty
+pitches to get through the first has done more work than one who needed eight.
+
+Gassed begins at her stamina number because that is where the observed outings
+end -- past it, nothing was ever observed, and the level is extrapolation
+(section 7.2).
+
 
 ## 8. Dice
 

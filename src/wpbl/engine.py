@@ -409,20 +409,18 @@ RECOVERY = 14                         # pitches recovered per day (user, 22 Sep)
 def column_for(track, role):
     """Which column a pitcher reads, from the pitches on her track (spec 7.4).
 
-    Two columns, not three. At 33 cells one cell is worth about 0.013 runs a
-    batter, and centred, a third column would sit under a cell away from the
-    second -- a distinction no rounding can print (spec 7.6)."""
-    return "fresh" if track <= FRESH_UNTIL else "tired"
+    Three states, and the boundaries are the two that mean something: her first
+    inning of work, and her capacity."""
+    if track <= FRESH_UNTIL:
+        return "fresh"
+    return "tired" if track <= CAPACITY[role] else "gassed"
 
 
-# The share of PLATE APPEARANCES resolved against a pitcher in each column,
-# counted over a simulated season under the pull rule: 43% are pitched by someone
-# still inside her fresh window, 57% by someone past it. The columns are CENTRED
-# on these (see pitcher_columns), which is circular -- a tired pitcher allows more
-# baserunners, faces more batters, and so spends more plate appearances tired --
-# so it was iterated. Centring on 0.433 returns 0.432, which returns 0.4319, and
-# it sits there. One pass is enough.
-COLUMN_SHARE = {"fresh": 0.433, "tired": 0.567}
+# The share of PLATE APPEARANCES in each state, counted over the REAL outings --
+# not over a simulation. The simulation over-counts fresh, because it uses 3.45
+# pitchers a side against a real 2.80 and every extra change restarts someone at
+# zero; centring on its numbers would centre on a known flaw.
+COLUMN_SHARE = {"fresh": 0.389, "tired": 0.461, "gassed": 0.150}
 
 
 def pitcher_columns(centred=True):
@@ -485,7 +483,7 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
     p_w /= p_w.sum()
     st = stint_targets()
     lus = lineups()
-    runs, stints, seen = [], [], {"fresh": 0, "tired": 0}
+    runs, stints, seen = [], [], {"fresh": 0, "tired": 0, "gassed": 0}
     for _ in range(n_games):
         lu, spot = lus[rng.integers(len(lus))], 0
         total = 0
