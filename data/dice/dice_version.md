@@ -1,3 +1,22 @@
+2026-09-24: v0.5.3
+  - Printed names are letters and spaces. Accents fold, apostrophes drop,
+    a hyphen becomes a space: Day Bedard, Maika Dumais, Thaima Maximiliana,
+    Mone Davis, Claire OSullivan. The stored name is unchanged
+
+2026-09-24: v0.5.2
+  - A pitcher is one row. Fresh, fading and gassed sit side by side on it,
+    each in the low-to-high line order, instead of three rows per pitcher
+
+2026-09-23: v0.5.1
+  - The number of cells on a line did not change. What changed is which numbers
+    they own, so a card reads low to high in a fixed order
+  - Pitcher cards, low to high: HR, 1B, BB, HBP, K, OUT
+  - Batter cards, low to high: OUT, K, HBP, BB, 1B, HR
+  - Batter cards gain a position list: every position she played in the games
+    the cards are built from, DH excluded, most innings first. Abbreviations
+    P, C, 1B, 2B, 3B, SS, LF, CF, RF. An equal number of innings is broken by
+    that same order; no 2026 card ties
+
 2026-09-21: v0.5.0
   - The d100 gains a RUNNING-PLAY block: 00-32 pitcher, 33-36 double, 37-38
     error, 39-44 running play, 45-99 batter. A wild pitch, passed ball or balk

@@ -43,12 +43,15 @@ import numpy as np
 import pandas as pd
 
 from wpbl import tables
-from wpbl.dice import (BAND_CELLS, B_CELLS, CARD_LINES, PA_CELLS, P_CELLS,
-                       RUN_CELLS, TREE_LINES, cards, league_card, line_weights,
-                       plate_appearances, to_cells)
+from wpbl.dice import (BAND_CELLS, B_CELLS, CAPACITY_DEFAULT, CARD_LINES,
+                       COLUMN_SHARE, PA_CELLS, PITCH_COST, PRINT_ORDER, P_CELLS,
+                       RUN_CELLS, arrange, capacity, cards,
+                       league_card, line_weights, played_lines,
+                       pitcher_columns, plate_appearances, to_cells)
 
 BASE_ORDER = ["___", "1__", "_2_", "__3", "12_", "1_3", "_23", "123"]
-INNINGS = 7                        # WPBL plays seven (32 of 37 training games)
+INNINGS = 7                        # WPBL plays seven (36 of 39 training games;
+                                   # one went 6, two went 8)
 
 # --- the single, off the same d12 -------------------------------------------
 # "+" means what it means on B / F / FB: EVERY runner takes the extra base. The
@@ -143,11 +146,13 @@ class Table:
     """The printed d100: a pitcher's cells, a batter's cells, and the bands."""
 
     def __init__(self, pitcher_cells, batter_cells):
-        self.p = np.asarray(pitcher_cells, int)
-        self.b = np.asarray(batter_cells, int)
+        # to_cells hands these over in TREE_LINES order. The printed card, and
+        # so this table, reads them low number to high in PRINT_ORDER.
+        p_order, self.p = arrange(np.asarray(pitcher_cells, int), "P")
+        b_order, self.b = arrange(np.asarray(batter_cells, int), "B")
         assert self.p.sum() == P_CELLS and self.b.sum() == B_CELLS
-        self.p_line = np.repeat(TREE_LINES, self.p)
-        self.b_line = np.repeat(TREE_LINES, self.b)
+        self.p_line = np.repeat(p_order, self.p)
+        self.b_line = np.repeat(b_order, self.b)
         self.two = P_CELLS
         self.roe = self.two + BAND_CELLS["2B"]
         self.run = self.roe + BAND_CELLS["ROE"]
@@ -267,9 +272,11 @@ def main() -> None:
     pd.set_option("display.width", 220)
     table = league_table()
     print("=== the printed table, league card on both sides ===")
-    for label, cells, start in (("pitcher", table.p, 0), ("batter", table.b, table.bat)):
+    for label, cells, start, order in (
+            ("pitcher", table.p, 0, PRINT_ORDER["P"]),
+            ("batter", table.b, table.bat, PRINT_ORDER["B"])):
         at, parts = start, []
-        for l, c in zip(TREE_LINES, cells):
+        for l, c in zip(order, cells):
             parts.append(f"{l} {at:02d}-{at + c - 1:02d}" if c > 1 else f"{l} {at:02d}")
             at += c
         print(f"  {label}: " + "  ".join(parts))
@@ -303,7 +310,7 @@ def main() -> None:
 
     n = 200000
     print(f"\n=== check 1b: the half-inning, {n:,} played ===")
-    print("  season: 1.132 runs, 50.8% scoreless, 1r 19.6%, 2r 13.4%, 7.77 runs per game")
+    _report(season_halves(), "season                 ")
     for steals, label in ((False, "league card, no steals "),
                           (True, "league card            ")):
         rng = np.random.default_rng(7)
@@ -317,6 +324,24 @@ def main() -> None:
     print("  season      : 1:25.4%, 2:8.2%, 3:8.3%, 4:9.5%, 5:11.7%, 6:9.1%, "
           "7:8.9%, 8:9.7%, 9:8.9%")
 
+
+
+def season_halves():
+    """Runs scored in each half-inning of the real season.
+
+    The baseline check 1b compares the dice against. It was a hardcoded string
+    until 23 Sep -- "1.132 runs, 50.8% scoreless ... 7.77 runs per game" from the
+    37-game scope -- which quietly became a comparison against the wrong season
+    when two games were added. It is computed now so it cannot go stale again.
+
+    One caution on the runs-per-game figure this feeds into: it is seven times the
+    mean half-inning, and half-innings that were never played (a home team ahead
+    after the top of the last) are not in the average, so it reads a little high.
+    Actual runs per team-game, straight off the line score, is the lower number --
+    7.67 against the 7.81 this gives. Both are quoted in section 9.1.
+    """
+    pl = tables.read("plays", "training")
+    return pl.groupby(["game_id", "inning", "half"])["runs_scored"].sum().to_numpy(float)
 
 
 def _report(got, label):
@@ -364,9 +389,8 @@ def sampled_halves(n_games=30000, seed=7):
     pa = plate_appearances()
     B, P = _cards("B"), _cards("P")
     w = line_weights()
-    b_line = {pid: np.repeat(TREE_LINES, r) for pid, r in
-              zip(B.index, to_cells(B.to_numpy(), B_CELLS, w, False))}
-    p_line = [np.repeat(TREE_LINES, r) for r in to_cells(P.to_numpy(), P_CELLS, w, True)]
+    b_line = dict(zip(B.index, played_lines(to_cells(B.to_numpy(), B_CELLS, w, False), "B")))
+    p_line = played_lines(to_cells(P.to_numpy(), P_CELLS, w, True), "P")
     p_w = pa.groupby("P").size().reindex(P.index).fillna(0).to_numpy(float)
     p_w /= p_w.sum()
     lus, runs, leads = lineups(), [], []
@@ -399,60 +423,43 @@ if __name__ == "__main__":
 # --- fatigue (spec 7.3, 7.4) ---------------------------------------------------
 # The track counts MEASURED pitches, unweighted: a struggling pitcher faces more
 # batters and so burns faster on her own, without a surcharge (spec 7.2).
-PITCH_COST = {"K": 4.92, "BB": 5.40, "HBP": 3.05, "HR": 3.26, "1B": 3.08,
-              "2B": 3.18, "ROE": 3.10, "OUT": 3.23}
-FRESH_UNTIL = 17                      # her first inning, at 17.5 pitches an inning
-CAPACITY = {"start": 68, "relief": 31}    # median outing by role
+FRESH_UNTIL = 20   # her first inning: 19.5 pitches MEASURED, rounded to 20
+
 # Entering a game costs pitches before she faces anybody: she warmed up. Without
 # it, short outings are FREE -- a 14-pitch appearance clears overnight, so the
 # dominant strategy is to run eight arms through a game at 14 each, nobody ever
-# tires, and the whole system idles. That is not a tuning problem: with E = 0
+# fades, and the whole system idles. That is not a tuning problem: with E = 0
 # there is NO recovery rate that both clears a starter's 68 pitches in her six
 # days and stops a 14-pitch outing clearing in two. E > 13 is required for the
 # pair of constraints to have a solution at all (spec 7.9).
 ENTRY_COST = 30                       # about what a reliever throws getting loose
-RECOVERY = 20                         # pitches recovered per day
+RECOVERY = 20                         # pitches recovered per day; USER DECISION,
+# taken over 21 for playability -- a count that moves in twenties is one a player
+# can update in their head between games. Both values satisfy the two binding
+# constraints at E = 30 (spec 7.9); twenty is the rounder of the two.
 
 
-def column_for(track, role):
+def column_for(track, cap):
     """Which column a pitcher reads, from the pitches on her track (spec 7.4).
 
-    Three states, and the boundaries are the two that mean something: her first
-    inning of work, and her capacity. Both sit ABOVE the entry cost, because the
-    measured fresh window is one inning of GAME pitches and the pitchers it was
-    measured on had all warmed up -- the entry cost buys availability later, it
-    does not make her worse now."""
+    Three states, and the two boundaries are not the same KIND of thing.
+
+    fresh -> fading is MEASURED. The fatigue curve found one step, after the first
+    inning, and flat after it (spec 7.2); a starter's first inning is 19.5 pitches
+    mean, 19.0 median, so the window is 20.
+
+    fading -> gassed is DESIGNED. No second step was ever found in the data, so
+    there is nothing to fit. Capacity is instead placed just past what each arm
+    has been shown to do, which makes gassed the price of pushing an arm further
+    than a real manager pushed it. It is a deterrent, not a measurement, and the
+    spec says so in those words.
+
+    Both sit ABOVE the entry cost, because the measured window is one inning of
+    GAME pitches and the pitchers it was measured on had all warmed up -- the
+    entry cost buys availability later, it does not make her worse now."""
     if track <= ENTRY_COST + FRESH_UNTIL:
         return "fresh"
-    return "tired" if track <= ENTRY_COST + CAPACITY[role] else "gassed"
-
-
-# The share of PLATE APPEARANCES in each state, counted over the REAL outings --
-# not over a simulation. The simulation over-counts fresh, because it uses 3.45
-# pitchers a side against a real 2.80 and every extra change restarts someone at
-# zero; centring on its numbers would centre on a known flaw.
-COLUMN_SHARE = {"fresh": 0.389, "tired": 0.461, "gassed": 0.150}
-
-
-def pitcher_columns(centred=True):
-    """Every pitcher's three columns, as expanded cell labels ready for Table.
-
-    CENTRED, and this matters. A pitcher's card is built from all her plate
-    appearances, the tired ones included, so it already carries the average
-    fatigue she pitched with. Hanging a penalty on top of it counts that twice and
-    inflates the league's scoring. Centring shifts all three columns so their
-    usage-weighted average returns her card exactly: a FRESH pitcher is better
-    than her season line, a gassed one worse, and the average is unchanged.
-    """
-    from wpbl.dice import FATIGUE, cards as _cards, fatigue_card
-    P = _cards("P")
-    w = line_weights()
-    mean_lam = sum(COLUMN_SHARE[k] * v for k, v in FATIGUE.items()) if centred else 0.0
-    out = {}
-    for name, lam in FATIGUE.items():
-        cells = to_cells(fatigue_card(P.to_numpy(), lam - mean_lam), P_CELLS, w, True)
-        out[name] = [np.repeat(TREE_LINES, r) for r in cells]
-    return P.index, out
+    return "fading" if track <= ENTRY_COST + cap else "gassed"
 
 
 def stint_targets():
@@ -487,14 +494,15 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
     ids, cols = pitcher_columns(centred=centred)
     B = _cards("B")
     w = line_weights()
-    b_line = {pid: np.repeat(TREE_LINES, r) for pid, r in
-              zip(B.index, to_cells(B.to_numpy(), B_CELLS, w, False))}
+    b_line = dict(zip(B.index, played_lines(to_cells(B.to_numpy(), B_CELLS, w, False), "B")))
     pa = plate_appearances()
     p_w = pa.groupby("P").size().reindex(ids).fillna(0).to_numpy(float)
     p_w /= p_w.sum()
     st = stint_targets()
+    caps = capacity()
+    cap_by_i = np.array([caps.get(pid, CAPACITY_DEFAULT) for pid in ids], float)
     lus = lineups()
-    runs, stints, seen = [], [], {"fresh": 0, "tired": 0, "gassed": 0}
+    runs, stints, seen = [], [], {"fresh": 0, "fading": 0, "gassed": 0}
     for _ in range(n_games):
         lu, spot = lus[rng.integers(len(lus))], 0
         total = 0
@@ -511,7 +519,7 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
                     role = "relief"
                     track = float(ENTRY_COST)
                     target = float(rng.choice(st["relief"]))
-                col = column_for(track, role) if fatigue else "fresh"
+                col = column_for(track, cap_by_i[pi]) if fatigue else "fresh"
                 seen[col] += 1
                 ids_b, pr = lu[spot % 9]
                 spot += 1
@@ -533,47 +541,6 @@ def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
             {k: v / n for k, v in seen.items()})
 
 
-def stamina():
-    """Each pitcher's fresh window, in pitches, shrunk toward the role default.
-
-    Stamina is a real trait but a small one: per-pitcher median start lengths run
-    from 58 to 92 pitches, SD 8.9, of which 5.5 is the noise in a median of about
-    five starts -- so 7.0 is real. Her own median therefore gets weight
-    49 / (49 + 30) = 0.62 against the role median, the same shrinkage idea the
-    cards use.
-
-    The fresh window scales with it. The measured step comes after her first
-    inning for pitchers pooled together (spec 7.2), and nothing in the data says
-    when a strong arm's step comes; scaling is the assumption that a pitcher who
-    lasts a fifth longer stays fresh a fifth longer. ASSUMPTION.
-    """
-    from wpbl.dice import cards as _cards
-    W_OWN = 0.62
-    pa = plate_appearances()
-    pa = pa.assign(pitches=[PITCH_COST.get(l, 3.3) for l in pa["line"]])
-    first = pa.sort_values(["game_id", "P_team", "date"]).groupby(
-        ["game_id", "P_team"])["P"].first()
-    rows = []
-    for (gm, tm, pid), grp in pa.groupby(["game_id", "P_team", "P"], sort=False):
-        rows.append({"P": pid, "role": "start" if first.get((gm, tm)) == pid else "relief",
-                     "pitches": float(grp["pitches"].sum())})
-    a = pd.DataFrame(rows)
-    out = {}
-    for pid in _cards("P").index:
-        sub = a[a["P"] == pid]
-        role = "start" if (sub["role"] == "start").mean() >= 0.5 else "relief"
-        base = CAPACITY[role]
-        own = sub[sub["role"] == role]["pitches"].median()
-        cap = base if not np.isfinite(own) else base + W_OWN * (own - base)
-        # scaled against HER ROLE's median, not the starter's: the measured step
-        # comes after a first inning for pitchers pooled, so a median reliever
-        # should get the same 17 as a median starter, and only an arm that goes
-        # longer THAN HER ROLE should get a wider window. Dividing by the starter
-        # median gave a median reliever 17 x 31/68 = 8 pitches, half an inning.
-        out[pid] = (role, float(cap), FRESH_UNTIL * float(cap) / CAPACITY[role])
-    return out
-
-
 def manager_pull(cur_cost, bench_cost):
     """Pull when the batter in front of her is cheaper against someone else.
 
@@ -581,7 +548,7 @@ def manager_pull(cur_cost, bench_cost):
     same in runs, so the run-minimising allocation gives each one to the best arm
     still able to take him: keep her while her CURRENT column beats the best
     available arm's FRESH column, and change when it does not. A strong starter
-    stays in because her tired card is still better than the bullpen; a weak one
+    stays in because her fading card is still better than the bullpen; a weak one
     goes early. Check 3 then asks whether that lands where real managers landed,
     which it cannot do if the rule were fitted to them.
     """

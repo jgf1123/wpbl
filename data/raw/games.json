@@ -9103,7 +9103,7 @@
     },
     "eventTypeCode": "postSeason",
     "eventTypeDescription": "Post-Season/Play-Offs",
-    "lastUpdatedDateTime": "2026-09-15T20:35:55",
+    "lastUpdatedDateTime": "2026-09-21T18:52:56",
     "links": null,
     "notes": "",
     "ranks": {
@@ -9124,7 +9124,7 @@
     "sportId": "bsb",
     "startDateTime": "2026-09-14T23:00:00",
     "stateCountry": "IL",
-    "status": "Final - Weather Delay",
+    "status": "Final",
     "statusCode": 0,
     "tba": false,
     "teams": {
@@ -9207,11 +9207,11 @@
     "home_score": 11,
     "inning": 0,
     "outs": 0,
-    "status": "Final - Weather Delay",
-    "updated_at": "2026-09-15T20:35:55Z"
+    "status": "Final",
+    "updated_at": "2026-09-21T18:52:56Z"
    },
-   "status": "Final - Weather Delay",
-   "updated_at": "2026-09-15T20:35:55Z",
+   "status": "Final",
+   "updated_at": "2026-09-21T18:52:56Z",
    "venue": "Robin Roberts Stadium"
   },
   {
@@ -9641,6 +9641,7 @@
    "away_team_id": "r622khgeymi55fwo",
    "away_team_name": "San Francisco Firebells",
    "away_team_url": "https://www.womensprobaseballleague.com/teams/san-francisco/",
+   "completed_at": "2026-09-20T21:54:58Z",
    "counts_in_standings": true,
    "game_id": "zfzsdiknnotmbfgo",
    "game_type": "postSeason",
@@ -9666,7 +9667,7 @@
     },
     "eventTypeCode": "postSeason",
     "eventTypeDescription": "Post-Season/Play-Offs",
-    "lastUpdatedDateTime": "2026-09-15T14:32:53",
+    "lastUpdatedDateTime": "2026-09-20T21:54:58",
     "links": null,
     "notes": "",
     "ranks": {
@@ -9680,15 +9681,15 @@
      "regionalHome": null
     },
     "score": {
-     "away": "",
-     "home": ""
+     "away": "17",
+     "home": "4"
     },
     "seasonId": "i6lv598xq7fqc0z7",
     "sportId": "bsb",
     "startDateTime": "2026-09-20T18:00:00",
     "stateCountry": "",
-    "status": "Not Started",
-    "statusCode": -2,
+    "status": "Final",
+    "statusCode": 0,
     "tba": false,
     "teams": {
      "awayTeam": {
@@ -9763,24 +9764,25 @@
    "scheduled_start": "2026-09-20T18:00:00Z",
    "season_id": "i6lv598xq7fqc0z7",
    "state": {
-    "away_score": 0,
+    "away_score": 17,
     "batter_id": "",
     "game_id": "zfzsdiknnotmbfgo",
     "half": "",
-    "home_score": 0,
+    "home_score": 4,
     "inning": 0,
     "outs": 0,
-    "status": "Not Started",
-    "updated_at": "2026-09-15T14:32:53Z"
+    "status": "Final",
+    "updated_at": "2026-09-20T21:54:58Z"
    },
-   "status": "Not Started",
-   "updated_at": "2026-09-15T14:32:53Z",
+   "status": "Final",
+   "updated_at": "2026-09-20T21:54:58Z",
    "venue": ""
   },
   {
    "away_team_id": "e1u35z4hgkmddl84",
    "away_team_name": "Los Angeles Queens",
    "away_team_url": "https://www.womensprobaseballleague.com/teams/los-angeles/",
+   "completed_at": "2026-09-23T00:54:00Z",
    "counts_in_standings": true,
    "game_id": "pw31gzuzy86nmrhq",
    "game_type": "postSeason",
@@ -9806,7 +9808,7 @@
     },
     "eventTypeCode": "postSeason",
     "eventTypeDescription": "Post-Season/Play-Offs",
-    "lastUpdatedDateTime": "2026-09-15T14:33:44",
+    "lastUpdatedDateTime": "2026-09-23T04:27:42",
     "links": null,
     "notes": "",
     "ranks": {
@@ -9820,15 +9822,15 @@
      "regionalHome": null
     },
     "score": {
-     "away": "",
-     "home": ""
+     "away": "2",
+     "home": "0"
     },
     "seasonId": "i6lv598xq7fqc0z7",
     "sportId": "bsb",
     "startDateTime": "2026-09-22T23:00:00",
     "stateCountry": "",
-    "status": "Not Started",
-    "statusCode": -2,
+    "status": "Final",
+    "statusCode": 0,
     "tba": false,
     "teams": {
      "awayTeam": {
@@ -9903,18 +9905,18 @@
    "scheduled_start": "2026-09-22T23:00:00Z",
    "season_id": "i6lv598xq7fqc0z7",
    "state": {
-    "away_score": 0,
+    "away_score": 2,
     "batter_id": "",
     "game_id": "pw31gzuzy86nmrhq",
     "half": "",
     "home_score": 0,
     "inning": 0,
     "outs": 0,
-    "status": "Not Started",
-    "updated_at": "2026-09-15T14:33:44Z"
+    "status": "Final",
+    "updated_at": "2026-09-23T04:27:42Z"
    },
-   "status": "Not Started",
-   "updated_at": "2026-09-15T14:33:44Z",
+   "status": "Final",
+   "updated_at": "2026-09-23T04:27:42Z",
    "venue": ""
   }
  ],

@@ -1,8 +1,8 @@
 {
  "boxscore": {
-  "fetched_at": "2026-09-15T20:36:53.770465111Z",
+  "fetched_at": "2026-09-21T19:56:14.008593812Z",
   "game_id": "r1slo258zh4c0mwg",
-  "game_status": "Final - Weather Delay",
+  "game_status": "Final",
   "plays": [
    {
     "balls": 4,
@@ -4586,7 +4586,7 @@
    }
   ],
   "provider": "presto",
-  "source_updated_at": "2026-09-15T17:46:27Z",
+  "source_updated_at": "2026-09-21T18:52:56Z",
   "status": {
    "away_runs": 15,
    "balls": 0,

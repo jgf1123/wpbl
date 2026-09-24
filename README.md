@@ -37,7 +37,7 @@ pixi run bullpen     # kept in or replaced at the inning boundary
 pixi run relievers   # who gets the call, and how good they are
 pixi run depth       # was there a good arm available in high-leverage spots
 pixi run pitches     # pitches per game, per start, per stint
-pixi run workload    # rolling 7-day pitch load, rest between starts, staff weeks
+pixi run workload    # rolling 7-day pitch load, stints per 7 days, rest between starts
 pixi run batters     # RE24 and context-neutral value per plate appearance
 pixi run weights     # linear weights behind the context-neutral column, with diagnostics
 pixi run batter-chart out.png       # the batter table as a chart

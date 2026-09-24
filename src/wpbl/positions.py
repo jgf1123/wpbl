@@ -28,12 +28,13 @@ teams rather than splitting.
 
 from __future__ import annotations
 
+import re
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 
 import pandas as pd
 
-from wpbl.parse import OUT_DIR
+from wpbl.parse import OUT_DIR, ip_to_outs
 from wpbl.usage_chart import CODES
 
 # The nine fielding positions plus the designated hitter, in scorecard order.
@@ -137,6 +138,227 @@ def main() -> None:
     for row in both.sort_values("p", ascending=False).to_dict("records"):
         elsewhere = ", ".join(f"{p} {row[p]}" for p in FIELDING if p != "p" and row[p])
         print(f"    {row['tm']} {row['player']:22s} pitched {row['p']:2d}, also {elsewhere}")
+
+
+# Positions a batter card may list, in scorecard order. DH is not one of them:
+# the card says where she can be sent in the field. The same order breaks a tie
+# when two positions have the same number of outs. None of the 2026 cards tie.
+CARD_POS = ["p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf"]
+CARD_ABBR = {"p": "P", "c": "C", "1b": "1B", "2b": "2B", "3b": "3B",
+             "ss": "SS", "lf": "LF", "cf": "CF", "rf": "RF"}
+_TIE = {p: i for i, p in enumerate(CARD_POS)}
+
+_MOVE = re.compile(
+    r"^(.*?)\s+to\s+(p|c|1b|2b|3b|ss|lf|cf|rf|dh)(?:\s+for\s+(.*?))?\s*\.?\s*$",
+    re.I,
+)
+_LEAVE = re.compile(r"^/\s+for\s+(.*?)\s*\.?\s*$")
+_OUT_WORD = re.compile(r"\bout\b", re.I)
+_DOUBLE_PLAY = re.compile(r"double play", re.I)
+_OUT_EVENTS = {"groundout", "flyout", "strikeout", "popup", "lineout",
+               "foul_out", "out", "sacrifice", "fielders_choice", "caught_stealing"}
+_ROSTER = {"substitution", "pitching_change", "empty"}
+
+
+def _narr(play) -> str:
+    return play.narrative if isinstance(play.narrative, str) else ""
+
+
+def _out_like(play) -> bool:
+    return (play.event_type in _OUT_EVENTS
+            or play.play_kind in ("pickoff", "baserunning_out")
+            or bool(_OUT_WORD.search(_narr(play))))
+
+
+def _outs_from_text(play) -> int:
+    """How many outs a play records when the feed's out count is stuck at zero."""
+    return 2 if _DOUBLE_PLAY.search(_narr(play)) else 1
+
+
+def _outs_per_play(rows, completed: bool) -> list[int]:
+    """Outs to charge to each play of one half-inning.
+
+    The next play's outs_before says what this play did. The last play has no
+    next play, so a half that another half follows is closed out to 3, and the
+    rest lands on the last play that was not a roster move. A half whose count
+    never leaves zero lost plays; charge only the outs the narratives still
+    show, rather than inventing a full inning on the last name.
+    """
+    n = len(rows)
+    made = [0] * n
+    if n == 0:
+        return made
+    for i in range(n - 1):
+        delta = int(rows[i + 1].outs_before or 0) - int(rows[i].outs_before or 0)
+        if 0 < delta <= 3:
+            made[i] = delta
+    stuck = max(int(r.outs_before or 0) for r in rows) == 0 and sum(made) == 0
+    if stuck:
+        for i, play in enumerate(rows):
+            if _out_like(play):
+                made[i] = _outs_from_text(play)
+        return made
+    target = n - 1
+    while target > 0 and rows[target].play_kind in _ROSTER:
+        target -= 1
+    if completed or _out_like(rows[target]):
+        rest = 3 - sum(made)
+        if 0 < rest <= 3:
+            made[target] = rest
+    return made
+
+
+def _drop(align, team, pid, keep=None):
+    for pos, holder in list(align[team].items()):
+        if holder == pid and pos != keep:
+            del align[team][pos]
+
+
+def _install(align, team, pos, pid):
+    _drop(align, team, pid)
+    align[team][pos] = pid
+
+
+def field_outs(scope: str = "training") -> dict:
+    """Outs each player spent at each field position, over the card games.
+
+    Pitching innings come from the pitching line (the box score's position
+    string leaves "p" off). The other eight come from the starting lineup plus
+    substitutions: a move by the team in the field happens at once, and a move
+    by the team at bat (a pinch hitter staying in the game) waits until that
+    team takes the field. DH, pinch-hitting and pinch-running are not positions.
+    """
+    from wpbl import tables
+
+    bat = tables.read("batting", scope)
+    plays = tables.read("plays", scope).sort_values(["game_id", "sequence"])
+    pit = tables.read("pitching", scope)
+    players = tables.read("players", scope)
+    player_to_person = players.set_index("player_id")["person_id"].to_dict()
+
+    name_of = {}
+    team_of = {}
+    for row in bat.itertuples(index=False):
+        name_of[(row.game_id, row.person_name)] = row.person_id
+        name_of[(row.game_id, row.player_name)] = row.person_id
+        team_of[(row.game_id, row.person_id)] = row.team_id
+
+    def resolve(game, name):
+        if not name:
+            return None
+        return name_of.get((game, name.strip().rstrip(".")))
+
+    season = defaultdict(Counter)
+    for game_id, gplays in plays.groupby("game_id", sort=False):
+        align = defaultdict(dict)
+        pending = defaultdict(dict)
+        starters = bat[(bat["game_id"] == game_id) & bat["in_starting_lineup"]]
+        for row in starters.itertuples(index=False):
+            pos = (row.lineup_position or "").lower()
+            if pos in CARD_ABBR and pos != "p":
+                align[row.team_id][pos] = row.person_id
+            elif pos == "p":
+                align[row.team_id]["p"] = row.person_id
+        rows = list(gplays.sort_values("sequence").itertuples(index=False))
+        # Outs are a property of the half, so number them before walking it.
+        charged = {}
+        i = 0
+        while i < len(rows):
+            j = i + 1
+            while j < len(rows) and (rows[j].inning, rows[j].half) == (rows[i].inning, rows[i].half):
+                j += 1
+            later = j < len(rows)
+            for k, n_out in enumerate(_outs_per_play(rows[i:j], later)):
+                charged[i + k] = n_out
+            i = j
+
+        seen_half = None
+        for i, play in enumerate(rows):
+            field = play.pitching_team_id
+            half_key = (play.inning, play.half)
+            if field and half_key != seen_half:
+                for pos, pid in pending.pop(field, {}).items():
+                    _install(align, field, pos, pid)
+                seen_half = half_key
+            narr = _narr(play).strip()
+            if play.play_kind in ("substitution", "pitching_change"):
+                leave = _LEAVE.match(narr)
+                move = _MOVE.match(narr)
+                if leave:
+                    pid = resolve(game_id, leave.group(1))
+                    if pid and field:
+                        _drop(align, field, pid)
+                elif move:
+                    pid = resolve(game_id, move.group(1))
+                    pos = move.group(2).lower()
+                    if pid and pos == "dh":
+                        for team in list(align):
+                            _drop(align, team, pid)
+                    elif pid and pos != "p":
+                        # p is taken from the pitching line, not from this text.
+                        side = team_of.get((game_id, pid))
+                        if side == field:
+                            _install(align, field, pos, pid)
+                        elif side is not None:
+                            # Batting now, fielding next half: a pinch hitter
+                            # staying in the game.
+                            pending[side][pos] = pid
+                    elif pid and pos == "p":
+                        side = team_of.get((game_id, pid))
+                        if side == field:
+                            _drop(align, field, pid)
+            made = charged.get(i, 0)
+            if made and field:
+                for pos, pid in align[field].items():
+                    if pos != "p":
+                        season[pid][pos] += made
+
+    for row in pit.itertuples(index=False):
+        if not row.bf or row.bf <= 0:
+            continue
+        season[row.person_id]["p"] += ip_to_outs(row.ip) or 0
+    return season
+
+
+def position_labels(scope: str = "training") -> dict[str, str]:
+    """Card text: positions she played, most innings first, DH excluded.
+
+    An equal number of outs is broken by scorecard order (P, C, 1B, 2B, 3B,
+    SS, LF, CF, RF). A player who only DH'd, pinch-hit or pinch-ran gets "".
+    """
+    labels = {}
+    for pid, counts in field_outs(scope).items():
+        ranked = sorted(((p, n) for p, n in counts.items() if n > 0 and p in CARD_ABBR),
+                        key=lambda item: (-item[1], _TIE[item[0]]))
+        labels[pid] = "/".join(CARD_ABBR[p] for p, _ in ranked)
+    return labels
+
+
+def check_position_labels(labels: dict[str, str] | None = None) -> None:
+    """The list matches the pitching line, and a few positions read off the feed by hand."""
+    from wpbl import tables
+
+    labels = position_labels() if labels is None else labels
+    bat = tables.read("batting", "training")
+    pit = tables.read("pitching", "training")
+    allowed = set(CARD_ABBR.values())
+    pitched = set(pit.loc[pit["bf"] > 0, "person_id"])
+    for label in labels.values():
+        parts = label.split("/") if label else []
+        assert parts == [p for p in parts if p in allowed]
+        assert len(parts) == len(set(parts))
+    for pid, label in labels.items():
+        parts = label.split("/") if label else []
+        assert ("P" in parts) == (pid in pitched)
+    assert pitched <= set(labels)
+    by_name = bat.drop_duplicates("person_id").set_index("person_name")["person_id"]
+    # Denver's pitching line is 2.1 IP in a game whose play-by-play lost the
+    # outs, so P has to come from the pitching table. Jordan was announced at
+    # P and faced nobody. Alli moved to RF in a game whose box score omits it.
+    assert "P" in labels[by_name["Denver Bryant"]].split("/")
+    assert "P" not in labels[by_name["Jordan Eyster"]].split("/")
+    assert "RF" in labels[by_name["Alli Schroder"]].split("/")
+    assert labels[by_name["Ayami Sato"]].startswith("P")
 
 
 if __name__ == "__main__":

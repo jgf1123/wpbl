@@ -11,8 +11,8 @@ Both k candidates are swept, because the two choices interact -- mixing is
 itself shrinkage, so a card built with large k is already smoothed and may want
 less mixing:
 
+  SHIPPED  whatever dice.py holds, read at import -- never copied
   high k   64 4 16 8 64 | 32 1024 16 inf inf   built for a card read ALONE
-  low k    11 1 8 8 32  | 2.8 45 16 inf inf    built to be MIXED (in dice.py now)
 
 Cards are built once per fold per k set; every weight is then scored on the same
 held-out plate appearances, so the curves are directly comparable.
@@ -22,17 +22,22 @@ import pandas as pd
 
 from wpbl import tables
 from wpbl.batters import plate_appearances as bat_pa
-from wpbl.dice import (BATTER_STEPS, CARD_LINES, LINES, PITCHER_STEPS, SLUGGERS,
-                       TO_LINE, bands, build, plate_appearances, usage)
+from wpbl.dice import (BATTER_K, BATTER_STEPS, CARD_LINES, LINES, PITCHER_K,
+                       PITCHER_STEPS, SLUGGERS, TO_LINE, bands, build,
+                       plate_appearances, usage)
 
 pd.set_option("display.width", 250)
 SPLITS = 15
 AGRID = np.round(np.arange(0, 0.8001, 0.05), 3)
+# The shipped set is READ FROM dice.py, not copied here. It used to be copied,
+# and by 23 Sep the copy had drifted: this file swept [11.3, 1, 8, 8, 32] under a
+# label saying "in dice.py now" while dice.py shipped [16, 2, 16, 2.83, 45.25].
+# Section 4's "runs bottom near 0.15-0.20" was measured on the copy, so it
+# described a configuration nobody was playing with. Never copy them again.
 K_SETS = {
+    "SHIPPED (dice.py)": (list(BATTER_K), list(PITCHER_K)),
     "high k (card alone)": ([64.0, 4.0, 16.0, 8.0, 64.0],
                             [32.0, 1024.0, 16.0, np.inf, np.inf]),
-    "low k (built to mix)": ([2 ** 3.5, 1.0, 8.0, 8.0, 32.0],
-                             [2 ** 1.5, 2 ** 5.5, 16.0, np.inf, np.inf]),
 }
 pa = plate_appearances()
 players = tables.read("players", "training").drop_duplicates("person_id").set_index("person_id")

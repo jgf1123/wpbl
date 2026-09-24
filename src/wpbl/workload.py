@@ -11,7 +11,9 @@ Four things, in the order the argument runs:
 
     rest between starts   -- the cadence the rotation actually keeps
     rolling 7-day load    -- what an arm carries at each appearance
-    peak per pitcher      -- the ceiling anyone has actually reached
+    stints per 7 days     -- how often starters and relievers actually take the mound
+    per pitcher           -- span, rest, and pitches per outing, starts and relief apart
+    peak per pitcher      -- her usual 7-day load, and the ceiling she reached
     team weekly totals    -- how a staff divides ~400 pitches
 
 The window here is inclusive of the outing being measured -- the seven days
@@ -57,15 +59,21 @@ def appearances() -> pd.DataFrame:
     # counts only the days BEFORE a game, because it answers a different
     # question ("what was she carrying when the manager chose?"). Adding the
     # current outing to that window would silently span eight days.
-    loads, contains_start = [], []
+    loads, contains_start, stints = [], [], []
     for row in pitching.itertuples():
         window = pitching[(pitching["person_id"] == row.person_id)
                           & (pitching["date"] > row.date - pd.Timedelta(days=WINDOW))
                           & (pitching["date"] <= row.date)]
         loads.append(float(window["pitches"].sum()))
         contains_start.append(bool(window["is_starter"].any()))
+        stints.append(len(window))
     pitching["load"] = loads
     pitching["week_with_start"] = contains_start
+    # Outings in the same inclusive window, including today's. A start that is
+    # the only appearance in seven days is 1; a second relief outing inside
+    # the window makes it 2. The window looks backward, so the first of two
+    # close outings still reads as 1.
+    pitching["stints_7d"] = stints
     pitching["started"] = pitching["is_starter"]
     return pitching
 
@@ -76,6 +84,58 @@ def rest_between_starts(pitching: pd.DataFrame) -> pd.Series:
     for _, group in starts.groupby("person_id"):
         gaps.extend(group["date"].diff().dt.days.dropna().tolist())
     return pd.Series(gaps, dtype=float)
+
+
+def rest_between_stints(pitching: pd.DataFrame) -> pd.DataFrame:
+    """Days from one stint to the next, for the same pitcher.
+
+    Calendar difference, so pitching on consecutive days is 1. The gap is
+    filed under the role of the later outing: how long she had been off the
+    mound when she started, or when she relieved.
+    """
+    rows = []
+    ordered = pitching.sort_values(["person_id", "date", "game_id"])
+    for _, group in ordered.groupby("person_id"):
+        days = group["date"].diff().dt.days
+        for started, gap in zip(group["is_starter"].iloc[1:], days.iloc[1:]):
+            rows.append({"started": bool(started), "days": float(gap)})
+    return pd.DataFrame(rows)
+
+
+def pitcher_season(pitching: pd.DataFrame) -> pd.DataFrame:
+    """One row per pitcher with enough outings to describe a workload.
+
+    Span and the gaps between appearances are calendar days, so consecutive
+    dates count as 1. Pitches per start and per relief outing are blank when
+    she never pitched in that role.
+    """
+    rows = []
+    ordered = pitching.sort_values(["person_id", "date", "game_id"])
+    for person_id, group in ordered.groupby("person_id"):
+        if len(group) < MIN_APPEARANCES:
+            continue
+        gaps = group["date"].diff().dt.days.dropna()
+        starts = group.loc[group["is_starter"], "pitches"]
+        relief = group.loc[~group["is_starter"], "pitches"]
+        rows.append({
+            "person_id": person_id,
+            "pitcher": group["person_name"].iloc[-1],
+            "team": group["team_name"].iloc[-1],
+            "span": int((group["date"].iloc[-1] - group["date"].iloc[0]).days),
+            "app": len(group),
+            "gs": int(group["is_starter"].sum()),
+            "gap_mean": float(gaps.mean()) if len(gaps) else float("nan"),
+            "gap_median": float(gaps.median()) if len(gaps) else float("nan"),
+            "p_mean": float(group["pitches"].mean()),
+            "p_median": float(group["pitches"].median()),
+            "s_mean": float(starts.mean()) if len(starts) else float("nan"),
+            "s_median": float(starts.median()) if len(starts) else float("nan"),
+            "r_mean": float(relief.mean()) if len(relief) else float("nan"),
+            "r_median": float(relief.median()) if len(relief) else float("nan"),
+        })
+    return (pd.DataFrame(rows)
+            .sort_values(["app", "pitcher"], ascending=[False, True])
+            .reset_index(drop=True))
 
 
 def main() -> None:
@@ -101,11 +161,53 @@ def main() -> None:
         print(f"  {kind:20s} n={len(v):3d}  median {v.median():5.1f}  mean {v.mean():5.1f}"
               f"  90th {np.percentile(v, 90):5.1f}  max {v.max():5.1f}")
 
-    print(f"\n\n=== peak {WINDOW}-day load reached, per pitcher "
+    print(f"\n\n=== stints in the same {WINDOW}-day window, by role of this outing ===")
+    print("  counted at every appearance; the window includes today and looks back")
+    for role, block in frame.assign(
+            role=np.where(frame["started"], "starters", "relievers")).groupby("role"):
+        counts = block["stints_7d"].value_counts().sort_index()
+        bits = "  ".join(f"{int(k)}:{int(n)}" for k, n in counts.items())
+        print(f"  {role:12s} n={len(block):3d}  mean {block['stints_7d'].mean():.2f}  "
+              f"median {block['stints_7d'].median():.0f}   ({bits})")
+    print("  both sit near 1-2 because a count is only taken on a day she pitches")
+
+    print("\n\n=== days since her previous stint, by role of this outing ===")
+    print("  consecutive days count as 1; first outing of the season has no gap")
+    between = rest_between_stints(frame)
+    for started, label in ((True, "starters"), (False, "relievers")):
+        gaps = between.loc[between["started"] == started, "days"]
+        counts = gaps.value_counts().sort_index()
+        print(f"\n  {label}  n={len(gaps)}  mean {gaps.mean():.1f}  median {gaps.median():.0f}")
+        print("   days  outings")
+        for days, n in counts.items():
+            print(f"   {int(days):4d}  {'#' * int(n)} {int(n)}")
+
+    print(f"\n\n=== per pitcher, span and outing size "
           f"(min {MIN_APPEARANCES} appearances) ===")
+    print("  span = days from first appearance to last (consecutive dates are 1)")
+    print("  gaps = days between consecutive appearances; P all outings, S starts, R relief")
+    print(f"  {'':4s}{'pitcher':22s}{'span':>5s}{'app':>4s}{'GS':>4s}"
+          f"{'gap~':>6s}{'gap|':>6s}{'P~':>6s}{'P|':>6s}"
+          f"{'S~':>6s}{'S|':>6s}{'R~':>6s}{'R|':>6s}")
+    print("  ~ mean, | median; - = she never pitched in that role")
+
+    def cell(value: float) -> str:
+        return f"{'-':>6s}" if value != value else f"{value:6.1f}"
+
+    for row in pitcher_season(frame).itertuples(index=False):
+        print(f"  {CODES.get(row.team, '?'):4s}{row.pitcher:22s}"
+              f"{row.span:5d}{row.app:4d}{row.gs:4d}"
+              f"{cell(row.gap_mean)}{cell(row.gap_median)}"
+              f"{cell(row.p_mean)}{cell(row.p_median)}"
+              f"{cell(row.s_mean)}{cell(row.s_median)}"
+              f"{cell(row.r_mean)}{cell(row.r_median)}")
+
+    print(f"\n\n=== {WINDOW}-day load per pitcher "
+          f"(min {MIN_APPEARANCES} appearances) ===")
+    print("  usual = median of the same rolling windows as the peak")
     peak = (frame.groupby(["person_id", "person_name", "team_name"])
             .agg(apps=("load", "size"), peak=("load", "max"),
-                 median=("load", "median"), starts=("started", "sum"),
+                 usual=("load", "median"), starts=("started", "sum"),
                  pitches=("pitches", "sum"), bf=("bf", "sum"),
                  outs=("ip_outs", "sum"))
             .reset_index())
@@ -115,12 +217,13 @@ def main() -> None:
     # defence behind her looks worse on the second and unchanged on the first.
     peak["per_bf"] = peak["pitches"] / peak["bf"]
     peak["per_ip"] = peak["pitches"] / (peak["outs"] / 3)
-    peak = peak[peak["apps"] >= MIN_APPEARANCES].sort_values("peak", ascending=False)
-    print(f"  {'':4s}{'pitcher':22s}{'app':>4s}{'GS':>4s}{'peak':>7s}{'median':>8s}"
+    peak = peak[peak["apps"] >= MIN_APPEARANCES].sort_values(
+        ["usual", "peak"], ascending=False)
+    print(f"  {'':4s}{'pitcher':22s}{'app':>4s}{'GS':>4s}{'usual':>7s}{'peak':>6s}"
           f"{'P/BF':>7s}{'P/IP':>7s}")
     for row in peak.itertuples():
         print(f"  {CODES.get(row.team_name, '?'):4s}{row.person_name:22s}"
-              f"{row.apps:4d}{int(row.starts):4d}{row.peak:7.0f}{row.median:8.0f}"
+              f"{row.apps:4d}{int(row.starts):4d}{row.usual:7.0f}{row.peak:6.0f}"
               f"{row.per_bf:7.2f}{row.per_ip:7.1f}")
     lg_bf = peak["pitches"].sum() / peak["bf"].sum()
     lg_ip = peak["pitches"].sum() / (peak["outs"].sum() / 3)

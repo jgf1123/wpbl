@@ -7,11 +7,14 @@ precede or replace the bullpen simulator (`bullpen_spec.md`). **DECISION
 (user, 17 Sep).**
 
 Status: design; cards and the d100 table built (`pixi run dice`, sections 3 and
-4), v0.4.0. Numbers are from this repo's training scope: 37 games (the 30-game
-regular season, semifinal G1-G2 of both series, and championship G1-G3).
-Semifinal G3 (14 Sep) is excluded because both bullpens were exhausted
-(`tables.TRAINING_EXCLUDED`); later championship games join training unless the
-same happens, decided game by game. **DECISION (user, 17 Sep).** Items marked
+4), v0.4.0. Numbers are from this repo's training scope: **39 games** -- the
+30-game regular season, both semifinal series, and all five championship games,
+the last on 22 Sep. **The season is complete; there is no more data coming.**
+Semifinal G3 (14 Sep) is the only exclusion, because both bullpens were
+exhausted (`tables.TRAINING_EXCLUDED`). It stays in the "all" scope, and the
+fatigue work reads it there deliberately -- it is the league's one look at
+pitchers working past the point a manager would normally allow.
+**DECISION (user, 17 Sep; scope closed 23 Sep).** Items marked
 **ASSUMPTION** are choices, not findings; items marked **OPEN** are undecided.
 
 Policy: the probability distribution must reflect the data first; game
@@ -24,7 +27,7 @@ A play is a transition between base-out states, as in `markov.py`. The engine
 needs nothing else: state is inning, half, outs, which bases are occupied,
 score, and each pitcher's fatigue.
 
-Design rule: **fidelity stops where the data stops.** 2,663 plate appearances
+Design rule: **fidelity stops where the data stops.** 2,798 plate appearances
 cannot support runner-by-runner advancement rules, so runner movement is fixed
 per outcome line, with one variant line where the data shows a real coin flip.
 
@@ -33,18 +36,18 @@ per outcome line, with one variant line where the data shows a real coin flip.
 Two different jobs, kept apart:
 
 1. **Card lines** come from the feed's play labels, consolidated from 15 to 8
-   by `batters.contact()`. Counts are the 37 training games:
+   by `batters.contact()`. Counts are the 39 training games:
 
 | Card line | Feed labels |
 |---|---|
-| K | strikeout 314; generic "out" 3 (batter's interference: an out with no ball in play) |
-| BB | walk 336 |
-| HBP | hit by pitch 94 |
-| HR | home run 69 |
-| 1B | single 562; fielder's choice 1 (the ball got through to the outfield) |
-| 2B | double 121 (triples included; none this season) |
-| ROE | reached on error 59 |
-| Out | groundout 367, flyout 282, popup 114, fielder's choice 95, lineout 91, generic "out" 70, foul out 54, sacrifice 31 |
+| K | strikeout 324; generic "out" 3 (batter's interference: an out with no ball in play) |
+| BB | walk 348 |
+| HBP | hit by pitch 98 |
+| HR | home run 70 |
+| 1B | single 587; fielder's choice 1 (the ball got through to the outfield) |
+| 2B | double 126; **triple 1** -- Skylar Kaplan, 20 Sep, the only one of the season |
+| ROE | reached on error 65 |
+| Out | groundout 385, flyout 297, popup 122, fielder's choice 102, lineout 98, generic "out" 76, foul out 57, sacrifice 33 |
 
    Six of the eight are printed on a card. **2B and ROE are fixed league bands**
    on neither card, read straight off the d100 (section 4).
@@ -67,16 +70,16 @@ too many), and counted the 14 errors that put the batter on 2nd as doubles too.
 | FB | batter and runner from 1st out, other forced runners advance one | as B |
 | + | unforced runners also advance one (B+: every runner advances one) | |
 
-Evidence (37 training games): of the 399 plays the flavor table governs -- a
+Evidence (39 training games): of the 419 plays the flavor table governs -- a
 plate appearance with runners on, <2 outs, and a label that is an out -- these
-lines reproduce 374 (94%).
+lines reproduce 391 (93.3%). `out_flavors.py` counts 417 under a marginally
+narrower filter; the two-play difference is the filter, not the data.
 
-`proposals.py` reports the same coverage on a wider set of 514 (482, also 94%):
-it counts any plate appearance where an out was *recorded*, whatever the label,
-which adds 104 strikeouts, 8 singles with a runner thrown out and 3 unlabelled
-plays. Strikeouts are reproduced 98% of the time and are not governed by the
-flavor table at all -- a strikeout cannot be a fielder's choice -- so 399 is the
-denominator that means something. The two counts now reconcile exactly.
+`proposals.py` reports the same coverage on a wider set of 537 (502, 93.5%): it
+counts any plate appearance where an out was *recorded*, whatever the label,
+which adds strikeouts, singles with a runner thrown out and unlabelled plays.
+Strikeouts are not governed by the flavor table at all -- a strikeout cannot be
+a fielder's choice -- so 419 is the denominator that means something.
 
 - F uses the force at 2nd: of 30 fielder's choices with 2+ forced runners, 20
   took the runner from 1st, 9 the lead runner and 1 a middle runner. A
@@ -99,8 +102,8 @@ read off the transition.
 | Family | Share of outs with runners on | + rate | + measured on |
 |---|---|---|---|
 | B | 72.7% | 37.1% | 264 plays |
-| F | 14.0% | 76.9% | 13 plays, pooled with FB |
-| FB | 13.3% | 76.9% | 13 plays, pooled with F |
+| F | 14.4% | 78.6% | 14 plays, pooled with FB |
+| FB | 13.7% | 78.6% | 14 plays, pooled with F |
 
 **F and FB share one + rate, because they are the same play with a different
 number of outs recorded.** 45 of the 56 F plays read "reached on a fielder's
@@ -109,8 +112,10 @@ The 49 ground-ball double plays are the identical fielding sequence with "to 1b"
 on the end -- "ss to 2b" against "ss to 2b to 1b". An F is a double-play attempt
 whose relay did not retire the batter, so whatever the other runners do on one
 they do on the other. Measured apart the two read 1 of 2 and 9 of 11, which is
-no evidence of a difference (Fisher exact p = 0.42); pooled they are 10 of 13 =
-76.9%, and the rate rests on 13 plays instead of 2. **DECISION (user, 21 Sep).**
+no evidence of a difference; pooled they are 11 of 14 = 78.6%, and the rate rests
+on 14 plays instead of 2. The full season added one F/FB plate appearance with a
+visible `+`, which is the whole of what more data bought here.
+**DECISION (user, 21 Sep).**
 The other 11 F plays are lead-runner force outs (6 at third, 5 at home), which
 leave the same base-out state as B.
 
@@ -207,8 +212,8 @@ so this is a question about dice, not about probability.
 
 ## 3. Player cards
 
-Every pitcher and batter has a full card. Six lines are printed -- K, BB, HBP,
-HR, 1B, Out -- and together they fill that player's block of the d100 (section
+Every pitcher and batter has a full card. Six lines are printed -- OUT, K, HBP
+BB, 1B, HR -- and together they fill that player's block of the d100 (section
 4). 2B and ROE are fixed league bands on neither card. Smoothing decides how
 far each player differs from her cohort; no printed line is left off a card by
 rule. This replaces the 15 Sep rule that an entry exists only if its league
@@ -337,6 +342,25 @@ the rest of the league shows no measurable HR spread. **DECISION (user,
 
 - **k:** section 3.1. Each step's k is the best held-out score (section 9.0) on
   a grid of powers of sqrt(2), fitted jointly with the mixing weight.
+
+  **Refitted on all 39 games (23 Sep, `joint_runs.py`), and the shipped values
+  stand.** Coordinate descent on runs from six starts moves four of the five
+  batter constants and four of the five pitcher constants to a common point that
+  differs from what ships -- batter step 1 from 16 to 128, step 2 from 2 to 11.3,
+  step 5 from 45 to 90.5, pitcher step 2 from 64 to 32. But **runs cannot see the
+  difference**: all six endpoints span 1.3 units out of 396,407, a relative spread
+  of 3e-6, across constants differing by eight to sixteen times. Swept against the
+  weight at a fixed 0.375, the refit is about 250 runs-units better (0.35 SE) and
+  2.2 log-loss units worse (0.6 SE) -- two non-significant edges pointing opposite
+  ways. There is no case for changing them.
+
+  **The BB | HBP k is not identified by runs at all.** It is the only constant the
+  descent leaves wherever it started -- 2, 16, 256 or 2.83 depending on the start
+  -- because a walk and a hit-by-pitch are worth almost the same in runs. Log loss
+  ranks those leftovers 2.83 (1629.56) then 16 (1629.91) then 2 (1630.57) then 256
+  (1633.54), so the shipped 2.83 is the best of them. That reproduces
+  `split_k_final.py` from a completely different direction, and it is why that
+  step was settled on log loss in the first place.
 - **Structures:** compared by nested cross-validation, where k is tuned only
   inside each build half. Results are held-out runs error, x1e-6 per PA:
 
@@ -451,7 +475,7 @@ parentheses, against the comparison named; rows scored on log loss instead say s
 | | the weight swept under both metrics | runs bottom near 0.15-0.20, log loss near 0.375-0.43; both curves flat enough that neither excludes the other | `alpha_sweep.py`, `alpha_cost.py` |
 | | 35 / 5 / 2 / 58 cells (weight 0.3763) | **chosen**: the round-number point inside that range | `layout_cells.py`, `layout_round.py` |
 | Bands | 2B and ROE on a card vs a flat league rate | no real spread on either side; flat beats the batter's own 2B record by 3.9 SE and the pitcher is worse still | `line_owner.py` |
-| | flat 5% and 2% vs the measured 4.54% and 2.22% | round levels no worse and nominally better (log loss x1000 -0.151, SE 0.348; -0.236, SE 0.308). **Chosen: 5 and 2 cells** | `band_two_level.py` |
+| | flat 5% and 2% vs the measured 4.54% and 2.32% | round levels no worse and nominally better (log loss x1000 -0.151, SE 0.348; -0.236, SE 0.308). **Chosen: 5 and 2 cells** | `band_two_level.py` |
 | | a flat band plus a marked bonus group, chosen inside each build half | worse at every bonus size (+0.017 to +1.088): it sorts noise | `band_two_level.py` |
 | Rounding | largest remainder | lets Out absorb every rounding error | `layout_round.py` |
 | | nearest, then spend the difference where \|run error\| is smallest | **chosen** | `layout_round.py` |
@@ -485,7 +509,7 @@ advances every runner and the roll is then *taken again*, so those six cells do
 not resolve a plate appearance at all (section 6). A card is therefore a
 distribution over the **94 cells that do end a plate appearance**, not over all
 100, and the bands divide by 94: doubles at 4/94 = 4.26% and errors at 2/94 =
-2.13%, against measured rates of 4.54% and 2.22%. With the bases empty the block
+2.13%, against measured rates of 4.54% and 2.32%. With the bases empty the block
 is a plain reroll, about once every 43 plate appearances.
 
 **Reading one card or the other is the combination rule.** The mechanic is a
@@ -523,6 +547,26 @@ fit returns whatever the grid order gives (section 9.0).
 **Where 0.3763 came from.** The two metrics put the weight in different places:
 runs bottom near 0.15-0.20, log loss near 0.375-0.43, and both curves are flat
 enough that neither excludes the other (`alpha_sweep.py`, `joint_runs.py`).
+
+**That sentence was measured on a k set that was never shipped** (found 23 Sep).
+`alpha_sweep.py` copied its constants instead of importing them, and the copy had
+drifted: it swept `[11.3, 1, 8, 8, 32]` under a label reading "in dice.py now"
+while dice.py shipped `[16, 2, 16, 2.83, 45.25]`. The script now reads them from
+`wpbl.dice` at import, so it cannot drift again.
+
+**Re-swept at the SHIPPED constants on all 39 games**, and the shape is the one
+the choice was made on: **runs barely cares and log loss does.**
+
+| metric | best weight | depth of the bowl | SE | verdict |
+|---|---|---|---|---|
+| held-out runs | 0.30 | 703 | 725 | under 1 SE: cannot choose |
+| log loss | 0.40 | 18.06 | 3.62 | 5 SE: genuinely discriminates |
+
+So the weight is set by log loss, and log loss has a flat bottom between about
+0.35 and 0.45 -- 1617.02, 1616.76, 1616.86 at 0.35 / 0.40 / 0.45 -- rising away on
+both sides. **0.375 sits in that bottom**, which is why it was a reasonable
+compromise and still is. Runs is along for the ride: its own minimum is 0.30 and
+its 1-SE band runs 0.00 to 0.55, so it excludes nothing.
 Within that range the user chose the value that makes the cells round. The
 running-play block later forced the split to be redrawn (section 6), and 33 / 4 /
 2 / 6 / 55 lands the weight on 33/88 = 0.375 exactly -- a move of 0.003, far
@@ -533,7 +577,7 @@ measurement (section 9.0).
 on either side: a flat league rate predicts held-out doubles better than the
 batter's own record by 3.9 SE, and the pitcher's record is worse still
 (`line_owner.py`). Printed at 5 and 2 cells against measured rates of 4.54% and
-2.22%, the round levels score no worse and nominally better (log loss x1000:
+2.32%, the round levels score no worse and nominally better (log loss x1000:
 -0.151, SE 0.348 for doubles; -0.236, SE 0.308 for errors). A two-level version
 -- a flat band plus a marked group of doublers getting one extra cell, the group
 chosen inside each build half -- is worse at every bonus size, which is what a
@@ -566,7 +610,7 @@ alternative -- fix a line only where both sides are zero -- is unnecessary once
 the pitcher side can never be zero. **DECISION (user, 21 Sep).**
 (`hr_floor_options.py`)
 
-**As built** (37 games, `pixi run dice`): every pitcher card fills its 33 cells
+**As built** (39 games, `pixi run dice`): every pitcher card fills its 33 cells
 and every batter card its 55; no pitcher entry is at zero and 47 of 402 batter
 entries are; **0 of 2,479 matchups have a line that cannot happen**; the table
 gives 71.3 league home runs against 69 actual.
@@ -579,7 +623,7 @@ are put together -- never to a card (section 3).
 Handedness rides on every batting and pitching row (`parse.py`, modal per
 person; the feed contradicts itself for 10 of 80 players). The league is 54
 right / 17 left / 2 switch at the plate, 61 right / 12 left on the mound. Of
-2,663 plate appearances, 1,668 are same-handed and 995 opposite (switch hitters
+2,798 plate appearances, 1,762 are same-handed and 1,036 opposite (switch hitters
 counted as opposite).
 
 **DECISION (22 Sep): the game has no platoon mechanic.** Handedness is recorded
@@ -658,17 +702,35 @@ slow to resolve.
 
 ## 6. Running plays and steals
 
-- **The running-play line** covers wild pitches, passed balls and balks: 87 / 12
-  / 18 in the training games, 117 in all. Every runner advances one base, then
-  roll again for the plate appearance. It owns **6 cells** of the d100 (section
-  4). With the bases empty it is a plain reroll, about once every 43 plate
-  appearances. **DECISION (user, 21 Sep).**
-- **Six cells, not the four "4.2% of rolls" implied.** Every one of the 117 plays
-  on record happened with a runner on, so the block is dead 39% of the time and
-  has to be bigger to land the same rate. Against rolls that can actually produce
-  one -- the 1,621 plate appearances that began with a runner on, plus the running
-  plays themselves -- the rate is 6.5%, not 4.2%. Four cells would produce 69
-  plays a season against 117 actual, a 38% undercount.
+- **The running-play line** covers wild pitches, passed balls and balks: 83 / 11
+  / 18 = **112** in the 39 training games, 115 across all 40. Every runner
+  advances one base, then roll again for the plate appearance. It owns **6 cells**
+  of the d100 (section 4). With the bases empty it is a plain reroll, about once
+  every 43 plate appearances. **DECISION (user, 21 Sep).**
+
+  *Correction (23 Sep).* This line read "87 / 12 / 18 in the training games, 117
+  in all". Those were the ALL-scope counts wearing a training label, and the rest
+  of the paragraph then compared them against a training-scope denominator.
+  Semifinal G3 is the difference: three wild pitches now, four plus a passed ball
+  before its box score was re-parsed. **The training counts did not move when the
+  last two games arrived** -- neither game had a running play in it.
+- **Six cells, not the four "4.2% of rolls" implied.** Every play on record
+  happened with a runner on, so the block is dead 39% of the time and has to be
+  bigger to land the same rate. A running play also consumes its roll and you roll
+  again, so a band of c cells yields c / (100 - c) plays per opportunity. Against
+  the 1,696 plate appearances that began with a runner on:
+
+  | cells | plays a season | against 112 actual |
+  |---|---|---|
+  | 4 | 70.7 | -41.3 |
+  | 5 | 89.3 | -22.7 |
+  | **6** | **108.3** | **-3.7** |
+  | 7 | 127.7 | +15.7 |
+
+  **Six is now the best fit on the raw count with nothing else assumed.** On the
+  mixed-scope numbers seven fitted best and six needed the balk changepoint to
+  justify it. On consistent ones six wins by a factor of four. Same decision,
+  better footing.
 - **It is on neither card.** Sweeping the smoothing constant, where k = inf *is*
   the flat band, the best k against the league is 1024 and beats the flat band by
   0.48 SE -- a tie. Smoothing toward the player's usage cohort instead is worse
@@ -677,7 +739,7 @@ slow to resolve.
   than the league rate. So the line joins doubles and errors as a fixed band.
   (`running_plays.py`, `running_k.py`)
 - **What that result cannot say.** The feed records one of these plays only when
-  it has a visible consequence -- all 117 describe a runner advancing or scoring,
+  it has a visible consequence -- all 115 describe a runner advancing or scoring,
   and the one wild pitch on record with the bases empty appears only because the
   batter reached on a dropped third strike. A pitch the catcher blocks never
   enters the data. So each pitcher's observed rate is her wildness times one
@@ -685,27 +747,58 @@ slow to resolve.
   was prevented is invisible. The spread is **censored, not absent**: what the
   test establishes is that at this sample size, on the quantity the game needs,
   no pitcher differentiation earns its place. **ASSUMPTION.**
-- **The knuckleballer.** Liz Gilder threw 8 wild pitches in 282 pitches with a
-  runner on, 2.84% against a league 1.43% -- twice the field, on eight events.
+- **The knuckleballer.** Liz Gilder threw 8 wild pitches in 287 pitches with a
+  runner on, 2.79% against a league 1.34% -- twice the field, on eight events.
   Named here so it is revisited rather than lost in a null result, as the slugger
   exception was (section 3.3). Keira Izumi and London Studer sit higher still,
   but they are position players pressed into pitching by a league-wide shortage
   of arms, which is inexperience rather than a repeatable trait.
-- **Balks and the umpire.** 18 balks, and the rate falls 3.6x after game 22
-  (4.41 per 1000 pitches with a runner on, against 1.22), which is consistent
-  with the mid-season replacement of an umpire who called them freely. It is not
-  established: a changepoint test that prices the search over all split points
-  gives p = 0.17, and 18 events cannot carry more than that. The band is set at
-  6 cells, which is what both ways of acting on the theory give -- applying the
-  post-change rate (~106 plays) and dropping balks entirely (99) both round to 6,
-  while keeping all 117 rounds to 7. Capping at one balk per game, the other
-  proposal, removes only 4 and still rounds to 7. **DECISION (user, 21 Sep).**
+- **Balks and the umpire.** 18 balks, and the rate falls 4.1x after game 22
+  (4.39 per 1000 pitches with a runner on, against 1.08), which is consistent with
+  the mid-season replacement of an umpire who called them freely. Still not
+  established, but the full season strengthened it rather than washing it out: the
+  changepoint test that prices the search over all split points now gives
+  **p = 0.094**, against 0.17 on 37 games.
+
+  **No balk is discarded anywhere, and none ever was.** The band is a flat 6 cells
+  (`dice.RUN_CELLS`) and all 18 are inside the 112 running plays it is fitted to.
+  Nothing in the model filters by date, and because the line sits on neither card
+  no pitcher carries a balk rate an umpire could distort. (The per-pitcher balk
+  test is unaffected for the same reason it was always safe: a trigger-happy
+  umpire would ADD spurious spread between pitchers, and none was found -- real
+  SD 0.18, 90% interval 0.00 to 0.44.)
+
+  **DECISION (user): estimate the balk rate from AFTER the changeover**, not from
+  the season as a whole -- the early games, the ones carrying two balks apiece,
+  are the umpire and not the league. Applied across the season that gives 1.08 per
+  1000 pitches with a runner on, or about 6.6 balks, for 100.7 running plays.
+
+  | treatment | plays a season | best band |
+  |---|---|---|
+  | **post-change rate applied all season (chosen)** | **100.7** | **6** (+7.6) |
+  | keep every balk | 112 | 6 (-3.7) |
+  | drop balks entirely | 94 | 5 (-4.7) |
+
+  **Six cells either way**, which is what makes the decision safe rather than
+  load-bearing: the chosen estimate and the do-nothing one agree, and only
+  pretending balks never happen -- when three were called after the changeover --
+  would give five. On the old mixed-scope numbers the chosen estimate was the only
+  thing getting to 6, because keeping all 117 gave 7; now it is the choice and the
+  robustness check both. **Re-checked 23 Sep.**
+
+  The separate question of whether balks BUNCH into particular games -- the same
+  umpire theory read a different way -- is still nothing: 18 balks over 39 games
+  have variance 0.47 against a mean of 0.46, and a Poisson process is this
+  clustered or more 42% of the time.
 - **Steals are a decision, not a line.** The offense declares before the roll;
-  only the resolution is random. 128 attempts, 107 successful.
+  only the resolution is random. 133 attempts, 112 successful.
 - **A league-rate stand-in exists for the validation only** (`engine.steal`),
   because a check that never steals reproduces only the half-innings nobody stole
   in. Attempts per plate appearance by state: `1__` 0.145, `1_3` 0.370, `_2_`
-  0.047, `12_` 0.035; success 83% stealing 2nd, 88% stealing 3rd. It resolves
+  0.047, `12_` 0.035; success 83% stealing 2nd, 88% stealing 3rd. Re-measured on
+  the full season (23 Sep) those come to 0.142, 0.375, 0.046, 0.036 and 84% / 86%
+  -- inside rounding of what is shipped, so the constants were left alone. It
+  resolves
   **after** the plate appearance, not before: a steal happens during the next
   batter's turn and the feed files it between the two, so rolling it first puts
   it in the wrong transition and leaves the batter who singled and stole standing
@@ -728,8 +821,8 @@ The game's central mechanic, and the least supported by data.
 - **Usage targets to reproduce:** starts average about 70 pitches, relief about
   35; the median 7-day load is 45 pitches for relief-only weeks and 85 for weeks
   with a start.
-- **Tired columns.** **ASSUMPTION**: a pitcher card carries fresh / tired /
-  gassed columns; the pitch track selects one; tired columns shrink K and widen
+- **Fading columns.** **ASSUMPTION**: a pitcher card carries fresh / fading /
+  gassed columns; the pitch track selects one; fading columns shrink K and widen
   BB and contact. This keeps fatigue to one dial with no extra roll.
 - **What the data cannot say — measured, 22 Sep (`fatigue.py`,
   `fatigue_from_end.py`).** A within-appearance decline *is* detectable, but only
@@ -797,7 +890,7 @@ The game's central mechanic, and the least supported by data.
 
 - **So the mechanic takes its shape from G3 and its size from tuning.** The track
   should carry workload **across days**, not reset each outing, which is what the
-  usage targets above already describe; the tired column should shrink K and
+  usage targets above already describe; the fading column should shrink K and
   widen extra-base contact rather than walks alone. **OPEN**: the size, the daily
   recovery, and whether a within-appearance component is worth having at all.
   Recovery cannot be fitted: the prior-three-day load carries the signal and the
@@ -923,8 +1016,8 @@ one.
 |---|---|
 | base pitch cost per line | **measured**: BB 5.40, K 4.92, contact 3.05-3.26 |
 | reach-base surcharge | **not needed** -- the compounding is already automatic (below) |
-| capacity, starter / reliever | **anchored**: median 68 / 31 pitches, max about 100 for both |
-| daily recovery | **start at 14 pitches a day** (user, 22 Sep): a starter recovers 84 over six days, about her 68-pitch outing, and 98 over a week against the 85 load. Relief-only weeks run 45 |
+| capacity | **per pitcher**, not per role (section 7.4). A 50-100 ladder over 37 arms, median 70 |
+| daily recovery | **20 pitches a day** (user, 23 Sep, section 7.9). Superseded a 14 chosen on 22 Sep, which was set before the entry cost existed |
 | degradation shape | **from G3**: shrink K, widen extra-base contact |
 | degradation size | **+0.032 at gassed** (section 7.3). The innings step of +0.09 is an upper bound a card-only mechanic cannot reach without an absurd card |
 | relief ceiling bonus | **about 0.06 runs per batter faced** (section 7.1) |
@@ -937,22 +1030,22 @@ do not drift at all** over an outing: -0.13, -0.11, +0.00 against her own first
 inning, every one inside a standard error, and the walk and contact rates are
 flat with them. Each plate appearance costs the same whatever is happening.
 
-What varies is BATTERS FACED. An inning averages 4.80 batters (SD 1.84) and 17.5
-pitches (SD 7.8), and a pitcher who cannot get outs faces more of them. So a
-plain pitch count already burns faster for her, by the batter rather than by the
+What varies is BATTERS FACED. A PITCHER-inning averages 4.80 batters (SD 1.85)
+and 17.6 pitches (SD 7.8), and a pitcher who cannot get outs faces more of them.
+So a plain pitch count already burns faster for her, by the batter rather than by the
 pitch -- the compounding arrives on its own, without a surcharge and without
 distorting a measured quantity. **DECISION (22 Sep): the track counts measured
 pitches, unweighted.**
 
 **Measure in innings, implement in pitches.** The decline is measured per inning
 because pitches are endogenous; the track counts pitches because that is the work.
-The conversion is 17.5 pitches an inning, and it is noisy -- a coefficient of
-variation of 0.44 -- so the step should be applied on the track's own scale rather
-than by pretending an inning is a fixed quantity of work. Batting around is rare
+The conversion is noisy -- a coefficient of variation of 0.44 -- so the step
+should be applied on the track's own scale rather than by pretending an inning is
+a fixed quantity of work. Batting around is rare
 enough not to matter: 1.7% of innings face ten or more batters and 1.9% see a
 batter twice.
 
-### 7.3 What a tired column looks like
+### 7.3 What a fading column looks like
 
 **One cell is 1/94 of a plate appearance, not 1/33.** Her block is only 35.1% of
 the cells that resolve one; the rest is the batter's block and the bands. So
@@ -981,14 +1074,14 @@ with the same rule the cards use:
 | column | G3 shift | runs/BF | cells moved | K | BB | HBP | HR | 1B | Out |
 |---|---|---|---|---|---|---|---|---|---|
 | fresh | 0 | 0 | 0 | 4 | 4 | 1 | 1 | 8 | 15 |
-| tired | 0.5x | +0.020 | 3 | 3 | 5 | 2 | 2 | 6 | 15 |
+| fading | 0.5x | +0.020 | 3 | 3 | 5 | 2 | 2 | 6 | 15 |
 | gassed | 1.0x | +0.032 | 3 | 3 | 5 | 2 | 2 | 7 | 14 |
 
 Three cells of 33 between fresh and gassed -- small enough to print on one card as
 three columns, and large enough for a player to feel. **DECISION (22 Sep): size
-anchored at G3's own shift, not at the +0.09 step.** The rounding is why tired and
+anchored at G3's own shift, not at the +0.09 step.** The rounding is why fading and
 gassed differ by only one cell despite differing by half the shift; at 33 cells
-the mechanic has about that much resolution, which is an argument for two tired
+the mechanic has about that much resolution, which is an argument for two fading
 states rather than four.
 
 ### 7.4 The track: thresholds, and what it is for
@@ -998,19 +1091,30 @@ reliever one fresh inning against a starter's three, which is where a 3x burn
 rate comes from. Within an outing a rate and a capacity are algebraically the
 same thing -- a threshold of 31 at rate 1 behaves exactly like 93 at rate 3 --
 so nothing could distinguish them there. Across days they differ, and the data
-decides: at rate 3 a reliever's 31-pitch outing puts 93 on her track and needs
-6.6 days to clear at 14 a day, while she actually rests 5. She would arrive
-tired every time. At rate 1 she carries 31, clears in 2.2 days, and shows up
-fresh, which is the observed rhythm. **DECISION (22 Sep): capacity carries the
-role difference; there is no burn parameter.** The model has no free parameters
-left.
+decides -- re-run at E = 30, R = 20 (23 Sep), because the original arithmetic was
+done at R = 14 with no entry cost in the model. At rate 3 a reliever's 31-pitch
+outing puts 3 x (30 + 31) = 183 on her track and needs 9.2 days to clear, while
+she actually rests 5. She would arrive tired every time. At rate 1 she carries 61
+and clears in 3.1 days, which is the observed rhythm. **DECISION (22 Sep,
+re-checked 23 Sep): capacity carries the difference; there is no burn parameter.**
 
-Observed rhythm, for the record: relievers 31 pitches every 5 days (6.2 a day
-sustained), starters 68 every 6 (11.3 a day). Seven-day loads reproduce section
-7's targets exactly -- 45 relief-only, 85 for a week with a start.
+**The re-check exposed a dependence worth naming.** It now matters whether the
+entry cost is multiplied by the burn rate. If it is not, a rate-3 reliever carries
+3 x 31 + 30 = 123 and clears in 6.2 days, still past her 5 -- but strip the entry
+cost out altogether and she carries 93, clears in 4.65, inside her rest, and rate
+3 would no longer be excluded. The original rejection was made at R = 14 without
+ever confronting this. It survives at R = 20 only because the entry cost exists.
+**ASSUMPTION.**
+
+Observed rhythm, for the record: relievers 31 pitches every 5 days, starters 68
+every 6. Seven-day loads reproduce section 7's targets -- 45 relief-only, 85 for a
+week with a start. League-wide a team-game is 133.1 pitches (median 132.5) over
+6.83 innings of a SEVEN-inning game: 19.5 pitches an inning, 3.67 a plate
+appearance, 2.90 pitchers a side.
 
 **The cross-day track rarely binds, and that is the point.** At 14 pitches a day
-four outings in five start from zero, and the mean carried in is 2.5 pitches in
+-- and more so at the 20 finally chosen -- four outings in five start from zero,
+and the mean carried in is 2.5 pitches in
 the regular season and 2.6 in the postseason -- the playoffs are not tighter
 (median rest 5 days against 6). So the track is not reproducing something real
 managers hit. **It exists to stop the PLAYER doing what a real manager would
@@ -1019,19 +1123,112 @@ never engages it is evidence the limit is set in the right place, not that it is
 useless. **ASSUMPTION.** (The figure looks only at the previous outing; a track
 that sums will bite harder on back-to-back appearances.)
 
-**Thresholds** follow from the measured shape. The decline is a step after her
-first inning and flat after (section 7.2), and an inning is 17.5 pitches (section
-7.2), so:
+**Thresholds.** The two boundaries are not the same KIND of thing, and what
+follows replaces a role-keyed table that treated them as if they were.
 
-| column | starter | reliever |
-|---|---|---|
-| fresh | 0-17 pitches | 0-17 |
-| tired | 18 to 68 | 18 to 31 |
-| gassed | past 68 | past 31 |
+| column | every pitcher |
+|---|---|
+| fresh | 0-20 pitches |
+| fading | 21 to her capacity |
+| gassed | past her capacity |
 
-A starter reaches gassed at her median hook of 68; a reliever is fresh for about
-the first half of a median 31-pitch outing. Both boundaries are measured
-quantities rather than chosen ones. **DECISION (22 Sep).**
+**Fresh ends at 20, and that is MEASURED -- but the measurement moved.** The
+decline is a step after her first inning and flat after (section 7.2). On the full
+season a starter's first inning is **19.3 pitches mean, 18.0 median, over 79
+starts**; it was 19.5 and 19.0 over 75. Complete team-innings run 19.4 (SD 8.8,
+5.31 batters). The previous 17 came from an inning being "17.5 pitches" -- which
+is the PITCHER-inning average, partial relief innings included, and a first inning
+is a complete one. That unit error is fixed for good.
+
+**Twenty is now slightly above both the mean and the median**, where on 37 games
+it sat between them. It is kept because the whole system runs in tens (E = 30,
+R = 20, fresh 20, capacity by tens) and because the first-inning distribution is
+very wide -- p25 14, p75 25 -- so the difference between 18, 19 and 20 is far
+inside the noise it is drawn from. Recorded as a judgement, not a measurement.
+**ASSUMPTION.**
+
+**Capacity is per PITCHER, and it is DESIGNED.** Two corrections, both the user's
+(23 Sep).
+
+*Role is not a property of the arm.* Twenty-three of this league's thirty-nine
+pitchers worked both as starter and in relief, and those arms threw 67% of all
+outings. Four of them went LONGER in relief than in any start: Sato 98 against a
+77-pitch best as a starter, Villarreal 77 against 29, Mackay 79 against 72, and
+Hondras 51 against 37. A role median of 31 measures how long a manager PLANNED
+to use her. The old
+`{start: 68, relief: 31}` was reading a scheduling decision as a physical limit.
+
+*The median is where a manager stopped, not where an arm ran out.* Separate the
+pitchers a team WANTS to field from the ones it is forced to field; the first
+group should be pressing its limit. Blowouts are not what does this -- contested
+and decided games give nearly the same medians (starts 70.5 against 65.0, relief
+31.0 against 31.0). It is WHICH ARM: the median per-arm ceiling is 82 pitches for
+a team's top five by usage and 56 for everyone below them.
+
+So capacity is fitted per arm. Her longest outing is predicted from her typical
+one (max = 31.3 + 0.88 x median, R2 0.62, residual SD 12.0), floored at what she
+has actually thrown, and rounded to the nearest ten -- which costs almost nothing
+against a residual SD of 12.0 and lets a card print a number a player can hold in
+their head. Her max tracks her median at 0.79 and her outing COUNT at only 0.27,
+so a ceiling is mostly a trait rather than an artefact of having had more chances
+to show one. The ladder, over 38 arms:
+
+| capacity | 50 | 60 | 70 | 80 | 90 | 100 | 110 |
+|---|---|---|---|---|---|---|---|
+| arms | 8 | 5 | 8 | 7 | 6 | 3 | 1 |
+
+Saiki at 110; Sato, Schiano and Padgham at 100; del Castillo, Leblanc, Bricker and
+Park at 50; median 70. That spread is what the old constant could not express --
+the difference between the arm that goes five innings and the one that goes three.
+Jaida Lee lands at 90 off a 33-pitch median and a single 86-pitch outing, which is
+the converted starter the league talked about.
+
+**The top of the ladder is thin, and it should be read that way.** Saiki reaches
+110 on three outings, Padgham 100 on three. At the minimum sample the fit
+extrapolates from a median rather than shrinking toward the league, so a pitcher
+who happened to throw three long outings is handed the highest number on the card.
+The floor at her own maximum protects against setting capacity too LOW; nothing
+protects against setting it too high on thin evidence. **OPEN:** whether the
+estimate should shrink toward the league ceiling by outing count, the way the
+cards shrink toward a cohort. It would pull Saiki and Padgham down and move
+nobody else.
+
+**Why capacity is designed rather than measured.** The fatigue curve found ONE
+step, after the first inning, and flat after it. No second step was ever found, so
+there is nothing in the data to fit a fading -> gassed boundary to. Putting it just
+past what each arm has been shown to do makes gassed the price of pushing an arm
+further than a real manager pushed it: a deterrent, not a measurement. This is
+also the honest answer to the objection that two columns were being measured and
+three printed -- **fresh and fading are measured, gassed is designed.**
+**DECISION (23 Sep).**
+
+**The floor makes gassed unreachable within an outing; the carry gives it back.**
+Capacity is floored at her own maximum, so by construction no real plate
+appearance is past it: counted within outings, gassed is 0.0%. Counted the way the
+engine counts -- track = carry + entry + pitches so far, with the carry running
+across days at 20 a day -- 11.2% of real outings END past the line. The shares:
+
+| | fresh | fading | gassed |
+|---|---|---|---|
+| **new** (fresh 20, per-arm capacity, 39 games) | 0.366 | 0.618 | 0.017 |
+| old (fresh 17, role capacity, 37 games) | 0.389 | 0.461 | 0.150 |
+
+The old rule put a sixth of the league's plate appearances in a state the data
+never identified. These shares set the centring, so they move every column.
+
+**The step the model delivers is smaller than the step that was measured.** With
+the columns re-centred, playing every plate appearance off the fresh column gives
+7.304 runs a team-game and off the fading column 8.040: a fresh -> fading step of
+**+0.0202 runs per plate appearance**, with fading -> gassed adding a further
++0.0380. (On 37 games: +0.0218 and +0.0404 -- the full season did not move it.)
+The paired end-aligned measurement that motivated the whole system found
+**+0.078 (2.2 SE)**. These are not the same contrast -- the measurement's late
+bucket is not the model's fading column -- but the model sits on the low side of
+it, about 1.6 SE below. Matching 0.078 would need the columns spaced roughly 2.3
+apart in lambda instead of 1, which puts fading nearly where gassed is now.
+**OPEN:** whether to widen the spacing. The evidence for 0.078 is a single 2.2-SE
+result, so the conservative spacing is defensible -- but it should not be changed
+silently in either direction.
 
 ### 7.5 As built (22 Sep)
 
@@ -1053,10 +1250,10 @@ against a season 7.77. Centring shifts all three columns so their usage-weighted
 mean returns her card exactly -- a **fresh pitcher is better than her season
 line**, a gassed one worse, the average unchanged -- and scoring returns to 7.95,
 which is the engine's pre-existing level. **DECISION (22 Sep).** The weights come
-from one pass of the pull rule (fresh 43%, tired 45%, gassed 12%); re-running with
+from one pass of the pull rule (fresh 43%, fading 45%, gassed 12%); re-running with
 centred columns moves them by well under a point.
 
-**What the column shares mean, and why they are needed.** Fresh 43.3% and tired
+**What the column shares mean, and why they are needed.** Fresh 43.3% and fading
 56.7% are the share of PLATE APPEARANCES resolved against a pitcher in each
 column, counted over a simulated season under the pull rule: 43% are pitched by
 someone whose track is still inside her fresh window, 57% by someone past it.
@@ -1095,7 +1292,7 @@ consequences where a tired pitcher is left in. It is not the AI manager of check
 | median starter stint, pitches | 70 | 69 |
 | starter p25 / p75 | 61 / 81 | 60 / 79 |
 | median reliever stint | 25 | 30 |
-| pitchers per team-game | 3.45 | 2.80 |
+| pitchers per team-game | 3.45 | 2.91 |
 
 The starter distribution matches closely. **OPEN:** relievers run short and the
 game uses too many of them, because each is sampled independently and the last
@@ -1107,9 +1304,9 @@ which is what it is for.
 
 ### 7.6 Spacing the three columns
 
-Writing the arithmetic out nearly killed the third column. Centred, tired sits +0.009
+Writing the arithmetic out nearly killed the third column. Centred, fading sits +0.009
 from fresh and gassed +0.021 -- but one cell of a 33-cell block is worth about
-0.013 runs a batter, so **fresh to tired is less than one cell**. No rounding
+0.013 runs a batter, so **fresh to fading is less than one cell**. No rounding
 rule can print a distinction that small. Rounding each column independently also
 breaks monotonicity: Izumi's walk line has exact counts of 8.22, 8.59, 8.91 and
 rounds to 7, 9, 8, so a player would watch her walks rise and then fall as she
@@ -1117,27 +1314,27 @@ tires. Building the ladder by moving cells out of the fresh column instead was
 worse, leaving 7 of 37 pitchers with two identical columns.
 
 The fault was the SPACING, not the third column. Setting them evenly at 0, 0.5
-and 1 put tired half a step from fresh. Spacing them by what they MEAN fixes it:
-tired is the measured plateau, gassed is past her capacity where nothing is
+and 1 put fading half a step from fresh. Spacing them by what they MEAN fixes it:
+fading is the measured plateau, gassed is past her capacity where nothing is
 observed and the level is extrapolation, so it sits at twice the G3 shift.
 
 | | share of real PAs | vs her card | step |
 |---|---|---|---|
 | fresh | 38.9% | -0.012 | -- |
-| tired | 46.1% | +0.000 | +0.023 |
+| fading | 46.1% | +0.000 | +0.023 |
 | gassed | 15.0% | +0.043 | +0.042 |
 
 **0 of 74 adjacent pairs round to the same cells.** Crossing into gassed costs
-nearly double what going tired did, which is what gives a manager a reason to act
+nearly double what going fading did, which is what gives a manager a reason to act
 before she gets there. **DECISION (22 Sep).**
 
 The shares are counted over the REAL outings, not a simulation: the simulation
-uses 3.45 pitchers a side against a real 2.80, and every extra change restarts
+uses 3.45 pitchers a side against a real 2.91, and every extra change restarts
 someone at zero, so its fresh share is inflated and centring on it would centre on
 a known flaw.
 
 **OPEN:** the rounding can move cells between lines of near-equal run value.
-Gilder's fresh and tired differ by two cells, K5 against K3, but only by 0.0004
+Gilder's fresh and fading differ by two cells, K5 against K3, but only by 0.0004
 runs, because the cells went to outs -- worth almost the same as a strikeout. The
 median step is +0.023; hers is not. A card can look like it changed more than it
 did.
@@ -1158,10 +1355,10 @@ run-minimising allocation gives each to the best arm still able to take him --
 keep her while her current column beats the best available arm's fresh column.
 
 It pulls after about 17 pitches every time. **7.22 pitchers a team-game against a
-real 2.80**, median starter stint zero. The logic is right and that is the
+real 2.91**, median starter stint zero. The logic is right and that is the
 problem: within one game there is never a reason to leave a tiring pitcher in
 while a fresher arm sits in the bullpen, and with a deep staff the quality gaps
-between consecutive arms are smaller than the fresh-to-tired swing of 0.023, so
+between consecutive arms are smaller than the fresh-to-fading swing of 0.023, so
 everyone is pulled the moment she leaves the fresh window.
 
 **The constraint that stops a real manager is not in the game.** He keeps a
@@ -1212,13 +1409,16 @@ Her card has three columns. Read the one her count is in:
 
 | Column | Pitch count |
 |---|---|
-| Fresh | up to 47 |
-| Tired | 48 up to 30 + her **stamina** number |
+| Fresh | up to 50 |
+| Fading | 51 up to 30 + her **stamina** |
 | Gassed | past that |
 
-Her stamina number is printed on her card -- about 68 for a starter, 31 for a
-reliever, and higher or lower for the arms that go longer or shorter. So a
-starter with stamina 68 is fresh to 47, tired to 98, gassed past that.
+Her stamina is printed on her card, from 50 to 110 in tens. Saiki is 110; Sato,
+Schiano and Padgham 100; Whitmore, Kim, Lee, Roche, Blunt and Shimano 90; the
+league median is 70; the arms a team would rather not have to use are 50.
+**Stamina belongs to the pitcher, not to the job** -- the same number applies
+whether she starts or comes out of the bullpen. So Gilder, stamina 80, is fresh
+to 50, fading to 110, and gassed past that.
 
 **BETWEEN GAMES**
 
@@ -1234,42 +1434,50 @@ Liz Gilder starts. Warming up puts her at 30, and she reads her FRESH column.
 - Next two strike out: +5 and +5, count 45.
 - A groundout ends the inning: +3, count 48.
 
-Gilder is past 47, so from the next batter she reads her TIRED column. Her
-strikeouts fall from 5 cells to 3 and those cells move to outs.
+She is still under 50, so she starts the second inning fresh. The leadoff batter
+singles: +3, count 51. From the next batter she reads her FADING column -- her
+strikeouts fall from 5 cells to 3, and those cells move to outs. She is giving up
+about a fifth of a run more per nine batters than she was in the first inning.
 
-She works into the fifth. A four-pitch walk and a single put her at 96, two short
-of 30 plus her stamina number of 68. The next batter takes her to 99 and she is
-GASSED:
-her strikeouts fall again, to 2, and cells move to walks, hit-by-pitches and home
-runs. She is now giving up about a third of a run more per nine batters than she
-was fresh.
+She works into the seventh at a count of 104. That is 74 pitches in the game,
+more than Gilder has ever thrown in one; her stamina of 80 is set just past her
+longest outing on purpose. Two batters later she crosses 110 and is GASSED: her
+strikeouts fall again, to 2, and cells move to walks, hit-by-pitches and home
+runs. She is now giving up more than half a run per nine batters over her fresh
+self.
 
-Her manager has to decide whether the best arm in the bullpen, reading his FRESH
+Her manager has to decide whether the best arm in the bullpen, reading her FRESH
 column, is better than Gilder reading her GASSED one.
 
-Two days later Gilder is available again, but only 40 comes off her count of 99,
-so she is at 59 -- and warming up adds 30 more. She takes the mound at 89, deep
-into TIRED and nine pitches from GASSED.
+Gilder finishes at 113. Two days later she is available again, but only 40 comes
+off, so she is at 73 -- and warming up adds 30 more. She takes the mound at 103,
+deep into FADING and seven pitches from GASSED.
 
 **WHY THE COLUMNS SIT WHERE THEY DO**
 
-Fresh ends at 17 pitches because that is one inning's work (an inning averages
-17.5), and the measured decline is a step after a pitcher's first inning rather
-than a gradual slide (section 7.2). The boundary is on the COUNT and not on the
+Fresh ends at 20 pitches of game work because that is one inning, and the measured
+decline is a step after a pitcher's first inning rather than a gradual slide
+(section 7.2). Twenty is measured directly: a starter throws 19.5 pitches in her
+first inning, mean, 19.0 median. The boundary is on the COUNT and not on the
 inning because the count is being kept anyway, and a pitcher who needed thirty
 pitches to get through the first has done more work than one who needed eight.
 
-Gassed begins at her stamina number because that is where the observed outings
-end -- past it, nothing was ever observed, and the level is extrapolation
-(section 7.2). Both boundaries sit 30 above where they would otherwise, because
-the warm-up buys availability later rather than making her worse now: the fresh
-window was measured in GAME pitches, on pitchers who had all warmed up.
+Gassed begins at her stamina number, and that boundary is DESIGNED rather than
+measured. Only one step was ever found in the data, the one after the first
+inning; nothing in the record marks a second. Her stamina is set just past the
+longest outing she has actually thrown, so reaching GASSED means a player has
+pushed her further than any real manager did. It is the price of that, not a
+measurement of it (section 7.4).
+
+Both boundaries sit 30 above where they would otherwise, because the warm-up buys
+availability later rather than making her worse now: the fresh window was measured
+in GAME pitches, on pitchers who had all warmed up.
 
 
 ### 7.9 The entry cost, and the exploit that forced it
 
 **The exploit** (user, 22 Sep). Recovery was a flat rate per day and the fresh
-window was 17 pitches, so a 14-pitch outing cleared overnight and cost nothing.
+window was 20 pitches, so a 14-pitch outing cleared overnight and cost nothing.
 The dominant strategy is then to run eight arms through a game at 14 pitches
 each: everybody stays fresh, everybody is recovered tomorrow, and the fatigue
 system never engages. A player who noticed would never play any other way.
@@ -1300,8 +1508,8 @@ against five.
 
 **The thresholds move up by E, not the other way.** The fresh window was measured
 as one inning of GAME pitches, on pitchers who had all warmed up, so the entry
-cost buys availability later rather than making her worse now. A starter with
-stamina 68 is fresh to 47, tired to 98, gassed past that.
+cost buys availability later rather than making her worse now. A pitcher with
+stamina 80 is fresh to 50, fading to 110, gassed past that.
 
 **This fixes the multi-day exploit and not the within-game degeneracy.** They are
 different problems: the exploit was about carrying arms across days, while
@@ -1347,13 +1555,33 @@ rather than designed, and is recorded as such. **ASSUMPTION.**
 **What "carries N after eight cycles" means.** The count is a running number. Each
 cycle of the exploit adds the entry cost and the game pitches, then subtracts the
 gap's recovery: 30 + 14 - 2R, or 44 - 2R a cycle. She stays fresh while her carry
-is at most 17, since entry adds 30 against a boundary of 47. At R = 20 the carry
-grows 4 a cycle and crosses on her fifth appearance; at R = 21, 2 a cycle and the
-ninth. The exploit is never blocked outright -- it stops delivering fresh
-pitchers after a while. **OPEN:** R = 20 or 21. Twenty kills the exploit faster;
-twenty-one lets the most durable reliever work consecutive days, which happened
-four times in the league. At E = 30 those are the only two values that satisfy
-both, and the choice is which failure to prefer.
+is at most 20, since entry adds 30 against a boundary of 50. At R = 20 the carry
+grows 4 a cycle and crosses on her sixth appearance; at R = 21, 2 a cycle and the
+eleventh. The exploit is never blocked outright -- it stops delivering fresh
+pitchers after a while.
+
+**DECISION (user, 23 Sep): R = 20**, taken over 21 for playability -- a count that
+moves in twenties is one a player can update in their head between games, and the
+whole system now runs in tens: E = 30, R = 20, fresh 20, capacity 50 to 100 by
+tens. The cost is that no arm can work consecutive days without carrying something
+in, which happened four times in the league; all four followed short outings of 13
+to 33 pitches, so under this rule they arrive tired rather than being blocked.
+
+**How much of this rests on the fresh window.** The user asked, and the answer is:
+almost none of it. The two constraints that pin E do not involve the fresh window
+at all -- a starter's capacity must clear in her rest (E + C <= 6R) and a 14-pitch
+outing must not clear in two days (E + 14 > 2R). At R = 20 those give
+26 < E <= 52, and E = 30 sits inside. The fresh window only sets how fast the
+exploit DECAYS, and moving it from 17 to the measured 20 costs exactly one cycle:
+the carry crosses on the sixth appearance rather than the fifth. **E = 30 survives
+the correction untouched.**
+
+Per-arm capacity does bite on the first constraint, where the role median never
+did. At R = 20 a 100-pitch arm needs (30 + 100) / 20 = 6.5 days, and Saiki at 110
+needs exactly 7.0. Starters rest a median 7 days (mean 8.7, p25 6), so both clear
+-- but only just, and an arm at the top of the ladder pitching on six days' rest
+starts her next outing carrying 10 to 20. The full season made this tighter rather
+than looser: the ladder gained a 110 that the 37-game fit did not have.
 
 **Short rest cannot calibrate any of this.** There are four appearances in the
 league on one day's rest, 39 batters faced between them, and every one follows a
@@ -1401,7 +1629,7 @@ five times better than any other die. The table is read per force state:
 | 11-12 | B+ | FB+ |
 
 With a force on, F and FB always come with the + -- their bare forms are 4.4% and
-4.0% of out plays, too small for a cell of a d12, and the pooled + rate of 76.9%
+4.0% of out plays, too small for a cell of a d12, and the pooled + rate of 78.6%
 (section 2) puts them on the + side. With nobody on 1st, F and FB act as B, so
 only the + is rolled for.
 
@@ -1444,26 +1672,41 @@ Before anyone plays:
 3. **Fatigue tuning.** A simple AI manager's stint lengths and 7-day loads must
    land on the usage targets in section 7. **OPEN**, and blocked on section 7.
 
-### 9.1 The league check, as run (22 Sep)
+### 9.1 The league check, as run (22 Sep; re-run 23 Sep on all 39 games)
 
 `pixi run engine` (`src/wpbl/engine.py`) plays the printed game -- it rolls a
 d100 against the cell table, rerolls on a running play, rolls a d12 for the out
 flavor and the single -- rather than modelling it. Cards and pitchers are drawn
 in proportion to use, which matters: the league-average card rounded into 33 and
-55 cells prints home runs at 3.19% against the card's own 2.59%, a 23% relative
+55 cells prints home runs at 3.19% against the card's own 2.50%, a 28% relative
 inflation, because both blocks scale one rate and both round the same way. Real
 cards average that out (batter mean bias -0.086 cells on HR), so a check run
 league-against-league validates a table nobody will play with.
 
 | | dice | season |
 |---|---|---|
-| run expectancy, mean absolute difference over 24 states | 0.105 runs | -- |
-| ... states where the dice are high | 13 of 24 | -- |
-| transition distance, PA-weighted (`engine_transitions.py`) | 0.095 | 0.076 from sampling alone |
-| runs per half-inning | 1.146 | 1.132 |
-| scoreless half-innings | 54.0% | 50.8% (+/- 2.2) |
-| runs per 7-inning game, one team | 8.02 | 7.77 |
+| run expectancy, mean absolute difference over 24 states | 0.096 runs | -- |
+| ... states where the dice are high | 12 of 24 | -- |
+| transition distance, PA-weighted (`engine_transitions.py`) | 0.092 | 0.074 from sampling alone |
+| runs per half-inning | 1.102 | 1.116 |
+| scoreless half-innings | 55.0% | 52.1% (+/- 2.2) |
+| runs per 7-inning game, one team | 7.71 | 7.81, or 7.67 off the line score |
 | leadoff lineup slot 1 | 23.6% | 25.4% |
+
+**The season row used to be a hardcoded string.** `engine.py` printed
+"1.132 runs, 50.8% scoreless ... 7.77 runs per game" as a literal, so adding two
+games silently left the dice being compared against the wrong season. It is
+computed now (`engine.season_halves`). Two runs-per-game figures are quoted
+because they are different things: seven times the mean half-inning is 7.81, and
+half-innings never played -- a home team ahead after the top of the last -- are
+not in that average, so it reads high; straight off the line score a team scores
+7.67.
+
+**The over-scoring closed.** On 37 games the dice produced 8.02 runs a team-game
+against a season 7.77, about 3% high and unexplained. On 39 they produce 7.71
+against 7.81, or 1.102 runs a half-inning against 1.116 -- 1.3% LOW. Most of that
+is one cell: the pitcher block's largest-remainder allocation moved a cell from
+1B to BB, and a walk is worth less than a single.
 
 **What the check caught.** Comparing transition *distributions* rather than run
 expectancy found a real bug that run expectancy could not see: steals were
@@ -1478,8 +1721,10 @@ seen 10 times looks far off even when the engine is exact.
 cards through seven innings reproduces the observed non-uniform leadoff slot
 (25.4% for slot 1) without anything being fitted to it.
 
-**The residual.** Scoreless innings run 3.2 points high, which is 1.44 SE against
-the 506 observed half-innings behind the target. Five explanations were tested
+**The residual.** Scoreless innings run 2.9 points high, which is 1.34 SE against
+the 534 observed half-innings behind the target -- the one thing the extra games
+did not fix, and the gap barely moved (3.2 points, 1.44 SE on 37 games). Five
+explanations were tested
 and are not worth retesting without more games:
 
 | tested | effect on the gap |
@@ -1491,7 +1736,7 @@ and are not worth retesting without more games:
 | lineup order vs batters drawn independently | rejected, 0.4 pts |
 
 The lineup-order test is a caution worth keeping: on 15 starters-only lineups it
-appeared to close 1.5 points, and on all 74 team-game lineups with substitutions
+appeared to close 1.5 points, and on all 78 team-game lineups with substitutions
 it closes 0.4. The first sample was stronger than a real batting order.
 
 **What the check cannot do.** It reads one card per side per plate appearance, so

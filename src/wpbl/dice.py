@@ -70,6 +70,7 @@ cards and the result would floor twice.
 from __future__ import annotations
 
 from functools import lru_cache
+import unicodedata
 
 import numpy as np
 import pandas as pd
@@ -84,6 +85,13 @@ IX = {line: i for i, line in enumerate(LINES)}
 CARD_LINES = ["K", "BB", "HBP", "HR", "1B", "2B", "ROE", "OUT"]      # lines printed on a card
 FIXED = ("2B", "ROE")        # league bands: no real spread on either side
 TREE_LINES = [l for l in CARD_LINES if l not in FIXED]
+# How a card is read, low number to high. The two sides are not the same order.
+# TREE_LINES stays the order the probabilities are stored in.
+PRINT_ORDER = {
+    "P": ["HR", "1B", "BB", "HBP", "K", "OUT"],
+    "B": ["OUT", "K", "HBP", "BB", "1B", "HR"],
+}
+assert all(set(order) == set(TREE_LINES) for order in PRINT_ORDER.values())
 TO_LINE = {"strikeout": "K", "walk": "BB", "hit_by_pitch": "HBP", "home_run": "HR",
            "single": "1B", "double": "2B", "triple": "2B", "reached_on_error": "ROE"}
 MIN_RATE = 0.01
@@ -254,24 +262,24 @@ def build(X: np.ndarray, names: list[str], share: np.ndarray, steps, ks,
 
 
 # --- fatigue ------------------------------------------------------------------
-# A tired pitcher's card is her own, shifted toward the mix of semifinal G3 -- the
+# A fading pitcher's card is her own, shifted toward the mix of semifinal G3 -- the
 # one game played with genuinely spent bullpens, and the only look at pitchers
 # working past the point a manager accepts (spec 7.3). The shift is MULTIPLICATIVE
 # so it scales with each pitcher: a strikeout pitcher loses a bigger share of a
 # bigger line, and a pitcher with one K cell is not asked to give up a cell she
 # does not have. Additive would have demanded the same absolute move from both.
 #
-#   tired_i  proportional to  fresh_i * ratio_i ** lam,  renormalised
+#   fading_i  proportional to  fresh_i * ratio_i ** lam,  renormalised
 #
 # lam = 0 is her fresh card, lam = 1 the full G3 shift. The thresholds that pick a
 # column live in the engine, not here (spec 7.4).
 G3_RATIO = {"K": 0.593, "BB": 1.126, "HBP": 1.658, "HR": 2.250, "1B": 0.894, "OUT": 0.996}
-# Three states, spaced by what they MEAN rather than evenly. Tired is the measured
+# Three states, spaced by what they MEAN rather than evenly. Fading is the measured
 # plateau -- her second inning onward, which the data says is flat. Gassed is past
 # her capacity, where nothing is observable and the level is extrapolation, so it
-# sits at twice the G3 shift. Spacing them 0 / 0.5 / 1 instead put tired half a
+# sits at twice the G3 shift. Spacing them 0 / 0.5 / 1 instead put fading half a
 # step from fresh and the two rounded to the same cells (spec 7.6).
-FATIGUE = {"fresh": 0.0, "tired": 1.0, "gassed": 2.0}
+FATIGUE = {"fresh": 0.0, "fading": 1.0, "gassed": 2.0}
 
 
 def fatigue_card(card: np.ndarray, lam: float) -> np.ndarray:
@@ -334,6 +342,26 @@ def line_weights() -> np.ndarray:
     lw = _pa("training").copy()
     lw["line"] = lw["outcome"].map(TO_LINE).fillna("OUT")
     return lw.groupby("line")["run_value"].mean().reindex(TREE_LINES).to_numpy()
+
+
+def arrange(cells, side: str):
+    """Cell counts in TREE_LINES order, returned in the order the card is read.
+
+    Low roll to high. Pitchers and batters do not share an order, so this is
+    applied when a count becomes a printed range or a d100 face, not before.
+    """
+    order = PRINT_ORDER[side]
+    idx = [TREE_LINES.index(line) for line in order]
+    arr = np.asarray(cells)
+    taken = arr[idx] if arr.ndim == 1 else arr[:, idx]
+    return order, taken
+
+
+def played_lines(cells, side: str):
+    """One array of line labels per card, low roll to high."""
+    order, arranged = arrange(np.atleast_2d(cells), side)
+    lines = [np.repeat(order, row) for row in arranged]
+    return lines[0] if np.asarray(cells).ndim == 1 else lines
 
 
 def ranges(cells: np.ndarray, start: int) -> list[str]:
@@ -402,6 +430,114 @@ def cards(side: str = "B") -> pd.DataFrame:
     return pd.DataFrame(built, columns=CARD_LINES, index=ids)
 
 
+# Re-measured on the 39-game scope (23 Sep). Nothing moved more than 0.13, which
+# was ROE on 65 plays; the weighted average is 3.68 pitches a plate appearance
+# either way, which is what the capacity ladder is calibrated in.
+PITCH_COST = {"K": 4.89, "BB": 5.44, "HBP": 3.04, "HR": 3.24, "1B": 3.12,
+              "2B": 3.26, "ROE": 3.23, "OUT": 3.25}
+# Capacity is a property of the ARM, not of the assignment. Twenty-three of this
+# league's thirty-eight pitchers worked both roles and they threw 68% of all
+# outings; four went LONGER in relief than in any start (Sato 98, against a
+# 77-pitch ceiling as a starter). A role median of 31 measures how long a manager
+# PLANNED to use her, not what her arm holds, so the old {start: 68, relief: 31}
+# was reading a scheduling decision as a physical limit. capacity() gives every
+# pitcher her own number instead (spec 7.4).
+CAPACITY_DEFAULT = 50.0    # arms with fewer than three outings to fit
+
+# The share of PLATE APPEARANCES in each state, counted over the REAL outings --
+# not over a simulation. The simulation over-counts fresh, because it uses 3.45
+# pitchers a side against a real 2.91 and every extra change restarts someone at
+# zero; centring on its numbers would centre on a known flaw.
+#
+# Counted the way the engine counts: track = carry + ENTRY_COST + pitches so far,
+# with carry running across days at RECOVERY a day. The carry matters. Within a
+# single outing NO real plate appearance is past capacity -- it cannot be, since
+# capacity is floored at what the arm has thrown -- so gassed reads 0.0% without
+# it. With the carry, 11.3% of real outings END past the line and gassed becomes
+# a real, rare state.
+#
+# Was {"fresh": 0.389, "fading": 0.461, "gassed": 0.150} under the role-keyed rule,
+# which put a sixth of the league's plate appearances in a state the data never
+# identified. Fading now carries the weight, which is the honest shape: it is the
+# state the measurement found.
+COLUMN_SHARE = {"fresh": 0.366, "fading": 0.618, "gassed": 0.017}   # 39 games
+
+
+def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndarray]:
+    """Each pitcher's three columns as CELL COUNTS per line, ready to print."""
+    w = line_weights()
+    mean_lam = sum(COLUMN_SHARE[k] * v for k, v in FATIGUE.items()) if centred else 0.0
+    return {name: to_cells(fatigue_card(p_cards, lam - mean_lam), P_CELLS, w, True)
+            for name, lam in FATIGUE.items()}
+
+
+def pitcher_columns(centred=True):
+    """Every pitcher's three columns, as expanded cell labels ready for Table.
+
+    CENTRED, and this matters. A pitcher's card is built from all her plate
+    appearances, the fading ones included, so it already carries the average
+    fatigue she pitched with. Hanging a penalty on top of it counts that twice and
+    inflates the league's scoring. Centring shifts all three columns so their
+    usage-weighted average returns her card exactly: a FRESH pitcher is better
+    than her season line, a gassed one worse, and the average is unchanged.
+    """
+    P = cards("P")
+    counts = column_cells(P.to_numpy(), centred)
+    return P.index, {k: played_lines(v, "P") for k, v in counts.items()}
+
+
+
+def capacity():
+    """Every pitcher's own capacity, in pitches: the fading -> gassed boundary.
+
+    Keyed on the PITCHER, not on her assignment. Twenty-three of thirty-eight
+    arms worked both roles, and a role median measures the manager's plan rather
+    than the arm -- Sato threw 98 in relief against a 77-pitch best as a starter.
+
+    The estimate, and each step is a choice worth seeing:
+
+      her ceiling is predicted from her TYPICAL outing. Across arms with three or
+      more outings, the longest outing runs 31.3 + 0.88 x her median, R2 0.62,
+      residual SD 12.0. Her max correlates 0.79 with her median but only 0.27
+      with how often she pitched, so a ceiling is mostly a trait and not an
+      artefact of having had more chances to show one.
+
+      FLOORED at what she actually threw. An arm that has thrown 102 pitches is
+      not past capacity at 90, whatever a regression on her median says. This is
+      what drives gassed to zero within an outing, and it is a design choice: the
+      penalty starts past the demonstrated range, not inside it.
+
+      ROUNDED to the nearest ten, which costs almost nothing against a residual
+      SD of 12.0 and lets a card print a number a player can hold in their head.
+
+    It gives a ladder of 50 to 110 over 8/5/8/7/6/3/1 arms, median 70: Saiki at
+    the top, del Castillo and Leblanc at the bottom. That spread is the thing the
+    old constant could not express -- the difference between an arm that goes five
+    innings and one that goes three.
+
+    Pitches are charged with PITCH_COST, the same currency the track spends. That
+    is not automatic and it was checked: PITCH_COST under the real outcome mix
+    comes to 3.68 pitches a plate appearance, the same as the feed's measure.
+    """
+    pa = plate_appearances()
+    pa = pa.assign(pitches=[PITCH_COST.get(l, 3.3) for l in pa["line"]])
+    outings = (pa.groupby(["game_id", "P_team", "P"], sort=False)["pitches"]
+                 .sum().reset_index())
+    per = outings.groupby("P")["pitches"].agg(["size", "median", "max"])
+    fit_on = per[per["size"] >= 3]
+    b, a = np.polyfit(fit_on["median"], fit_on["max"], 1)
+    out = {}
+    for pid, row in per.iterrows():
+        if row["size"] < 3:
+            # Still floored at what she threw. Addisyn Baird debuted with one
+            # 64-pitch outing; handing her the 50 default would have her go
+            # gassed partway through a repeat of it.
+            out[pid] = max(CAPACITY_DEFAULT, float(np.round(row["max"], -1)))
+        else:
+            out[pid] = float(np.round(max(a + b * row["median"], row["max"]), -1))
+    return out
+
+
 def bands(pa: pd.DataFrame) -> dict[str, float]:
     """The fixed league bands: doubles and reached-on-error.
 
@@ -439,7 +575,23 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.5.0"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.5.3"                 # keep in step with data/dice/dice_version.md
+
+
+def plain_name(name: str) -> str:
+    """The name printed on a card: letters and spaces only.
+
+    Accents fold (é -> e). An apostrophe drops (O'Sullivan -> OSullivan,
+    Mo'ne -> Mone). A hyphen becomes a space (Day-Bédard -> Day Bedard).
+    The stored name is unchanged -- slugger matching and person ids still
+    use it.
+    """
+    text = unicodedata.normalize("NFKD", str(name))
+    text = "".join(c for c in text if not unicodedata.combining(c))
+    text = text.replace("'", "").replace("’", "").replace("`", "")
+    text = text.replace("-", " ")
+    text = "".join(c for c in text if c.isascii() and (c.isalpha() or c == " "))
+    return " ".join(text.split())
 REPORT_TO = "https://github.com/jgf1123/wpbl/issues"
 
 
@@ -484,6 +636,9 @@ def main() -> None:
     print(f"{pa['game_id'].nunique()} training games, {len(pa)} plate appearances")
     print("league: " + "  ".join(f"{l} {100 * league[l]:.1f}%" for l in LINES))
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    from wpbl.positions import check_position_labels, position_labels
+    position_of = position_labels()
+    check_position_labels(position_of)
     stamp = provenance(pa)
     band = bands(pa)
     W_LINE = line_weights()
@@ -506,14 +661,46 @@ def main() -> None:
         assert (cells.sum(axis=1) == block).all(), "a card does not fill its block"
         if side == "P":
             assert (cells >= 1).all(), "a pitcher card has an empty line"
-        table = pd.DataFrame(cells, columns=[f"{l} cells" for l in TREE_LINES], index=ids)
-        for j, l in enumerate(TREE_LINES):
-            table[l] = [r[j] for r in (ranges(c, start) for c in cells)]
-        table = table[[c for l in TREE_LINES for c in (f"{l} cells", l)]]
-        table.insert(0, "PA" if side == "B" else "BF", X.sum(axis=1).to_numpy())
-        table.insert(0, "team", [CODES.get(last_team.get(i), "?") for i in ids])
-        table.insert(0, "player", names)
-        table = table.sort_values(table.columns[2], ascending=False)       # most-used players first
+        def rows(cell_arr):
+            """One row per player. cell_arr is in TREE_LINES order; the columns
+            are the order a player reads the card, low number to high."""
+            order, arranged = arrange(cell_arr, side)
+            t = pd.DataFrame(arranged, columns=[f"{l} cells" for l in order], index=ids)
+            for j, l in enumerate(order):
+                t[l] = [r[j] for r in (ranges(c, start) for c in arranged)]
+            t = t[[c for l in order for c in (f"{l} cells", l)]]
+            t.insert(0, "PA", X.sum(axis=1).to_numpy())
+            t.insert(0, "team", [CODES.get(last_team.get(i), "?") for i in ids])
+            t.insert(0, "player", [plain_name(n) for n in names])
+            t.insert(2, "position", [position_of.get(i, "") for i in ids])
+            return t
+
+        if side == "P":
+            # One row per pitcher. She still has three columns -- fresh, fading,
+            # gassed -- and reads the one her pitch count is in. They sit side
+            # by side so her whole card is one line. Stamina is where fading ends.
+            caps = capacity()
+            cols = column_cells(cards)
+            order = PRINT_ORDER["P"]
+            table = pd.DataFrame({
+                "player": [plain_name(n) for n in names],
+                "team": [CODES.get(last_team.get(i), "?") for i in ids],
+                "stamina": [int(caps.get(i, CAPACITY_DEFAULT)) for i in ids],
+                "BF": X.sum(axis=1).to_numpy(),
+            }, index=ids)
+            for st, arr in cols.items():
+                assert (arr.sum(axis=1) == block).all(), f"{st} column does not fill the block"
+                assert (arr >= 1).all(), f"{st} column has an empty line"
+                _, arranged = arrange(arr, "P")
+                ranged = [ranges(c, start) for c in arranged]
+                for j, line in enumerate(order):
+                    table[f"{st} {line} cells"] = arranged[:, j]
+                    table[f"{st} {line}"] = [r[j] for r in ranged]
+            table = table.sort_values("BF", ascending=False)
+        else:
+            table = rows(cells)
+            table = table.sort_values("PA", ascending=False)   # most-used first
+        assert table["player"].map(lambda s: s.replace(" ", "").isalpha() and s.isascii()).all()
         out = OUT_DIR / f"cards_{label}.csv"
         with out.open("w", encoding="utf-8", newline="") as fh:
             fh.write("\n".join(stamp) + "\n")
@@ -525,15 +712,23 @@ def main() -> None:
         print(f"\n  cells: {block} per card, "
               f"mean rounding cost {1000 * drift.mean():.2f} x1e-3 runs, "
               f"worst {1000 * drift.max():.2f}")
-        print(f"\n=== {label}: {len(table)} cards -> {out} ===")
+        n_cards = len(table)
+        extra = ", fresh / fading / gassed on one row" if side == "P" else ""
+        print(f"\n=== {label}: {n_cards} cards{extra} -> {out} ===")
         if side == "B":
             print(f"home runs the cards produce over the same PAs: {hr_total:.1f} (actual {int(X['HR'].sum())})")
-        print(table.head(12).to_string(index=False))
+        print(table.head(12 if side == "B" else 15).to_string(index=False))
     lg = league_card(pa)
     check(lg.to_numpy()[None, :])
-    league = pd.DataFrame([["League average batter", "-", len(pa)],
-                           ["League average pitcher", "-", len(pa)]],
-                          columns=["player", "team", "PA/BF"])
+    # A stand-in pitcher needs her three columns and a stamina number like anyone
+    # else, so the league card carries them: a player with no card reads these.
+    lg_cols = column_cells(lg.to_numpy()[None, :])
+    LEAGUE_STAMINA = 70          # the median of the ladder (spec 7.4)
+    league = pd.DataFrame(
+        [["League average batter", "-", "", "", len(pa)],
+         ["League average pitcher", "-", "", "season card", len(pa)]]
+        + [["League average pitcher", "-", LEAGUE_STAMINA, st, len(pa)] for st in FATIGUE],
+        columns=["player", "team", "stamina", "column", "PA/BF"])
     # Both a percentage and a cell count: the percentages are the league's own
     # rates, handy for checking what is typical; the cells are what a stand-in
     # card would actually print for a player who has none.
@@ -541,10 +736,21 @@ def main() -> None:
                 "P": to_cells(lg.to_numpy()[None, :], P_CELLS, W_LINE, True)[0]}
     for col in CARD_LINES:
         league[f"{col} %"] = round(100 * lg[col], 2)
-    for j, l in enumerate(TREE_LINES):
-        league[f"{l} cells"] = [lg_cells["B"][j], lg_cells["P"][j]]
-        league[l] = [ranges(lg_cells["B"], P_CELLS + sum(BAND_CELLS.values()) + RUN_CELLS)[j],
-                     ranges(lg_cells["P"], 0)[j]]
+    b_start = P_CELLS + sum(BAND_CELLS.values()) + RUN_CELLS
+    per_row = [lg_cells["B"], lg_cells["P"]] + [lg_cols[st][0] for st in FATIGUE]
+    starts = [b_start, 0] + [0] * len(FATIGUE)
+    # A batter row and a pitcher row share this file, so the columns stay in
+    # TREE_LINES order. The range text is what a player reads, and that text
+    # is in each side's own low-to-high order.
+    sides = ["B", "P"] + ["P"] * len(FATIGUE)
+    for line in TREE_LINES:
+        cell_col, range_col = [], []
+        for cells, side, start_at in zip(per_row, sides, starts):
+            order, arranged = arrange(cells, side)
+            cell_col.append(int(arranged[order.index(line)]))
+            range_col.append(ranges(arranged, start_at)[order.index(line)])
+        league[f"{line} cells"] = cell_col
+        league[line] = range_col
     for l, n in BAND_CELLS.items():
         league[f"{l} cells"] = n
         league[l] = ranges([n], P_CELLS + sum(
@@ -553,9 +759,11 @@ def main() -> None:
     out = OUT_DIR / "cards_league.csv"
     with out.open("w", encoding="utf-8", newline="") as fh:
         fh.write("\n".join(stamp) + "\n")
-        fh.write("# The two rows are identical by construction: every plate appearance has a\n"
-                 "# batter and a pitcher, so the season's outcomes are one distribution. A\n"
-                 "# player facing this card is shrunk toward it by the mixing weight.\n")
+        fh.write("# The batter and season-card pitcher rows are identical by construction:\n"
+                 "# every plate appearance has a batter and a pitcher, so the season's\n"
+                 "# outcomes are one distribution. A player facing this card is shrunk toward\n"
+                 "# it by the mixing weight. The three column rows are the stand-in pitcher a\n"
+                 "# player with no card of her own reads, at stamina 70.\n")
         league.to_csv(fh, index=False, lineterminator="\n")
     print(f"\n=== league average -> {out} ===")
     print(league.to_string(index=False))
