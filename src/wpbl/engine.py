@@ -43,11 +43,9 @@ import numpy as np
 import pandas as pd
 
 from wpbl import tables
-from wpbl.dice import (BAND_CELLS, B_CELLS, CAPACITY_DEFAULT, CARD_LINES,
-                       COLUMN_SHARE, PA_CELLS, PITCH_COST, PRINT_ORDER, P_CELLS,
-                       RUN_CELLS, arrange, capacity, cards,
-                       league_card, line_weights, played_lines,
-                       pitcher_columns, plate_appearances, to_cells)
+from wpbl.dice import (BAND_CELLS, BAND_START, BAT_START, B_CELLS, RUN_START,
+                       PRINT_ORDER, P_CELLS, arrange, cards, league_card,
+                       line_weights, played_lines, plate_appearances, to_cells)
 
 BASE_ORDER = ["___", "1__", "_2_", "__3", "12_", "1_3", "_23", "123"]
 INNINGS = 7                        # WPBL plays seven (36 of 39 training games;
@@ -76,8 +74,11 @@ SINGLE_D12 = {0: (8, 11), 1: (8, 11), 2: (5, 10)}
 STEAL_RATE = {"1__": 0.145, "1_3": 0.370, "_2_": 0.047, "12_": 0.035}
 STEAL_OK = {2: 0.83, 3: 0.88}      # success stealing 2nd (103 tries) / 3rd (24)
 # d12, per force state: (roll -> flavour). Spec section 8.
+# Face order follows the rulebook's Outs Table, which reads flavour-first so the
+# two columns line up on the page. Only WHICH face gives which flavour differs
+# from an earlier ordering; the counts, and so the probabilities, are the same.
 D12_NO_FORCE = ["B"] * 5 + ["B+"] * 7
-D12_FORCE = ["B"] * 6 + ["B+"] * 2 + ["F+"] * 2 + ["FB+"] * 2
+D12_FORCE = ["FB+"] * 2 + ["F+"] * 2 + ["B"] * 6 + ["B+"] * 2
 
 
 def move(bases, batter_out, out_runner, plus):
@@ -153,31 +154,32 @@ class Table:
         assert self.p.sum() == P_CELLS and self.b.sum() == B_CELLS
         self.p_line = np.repeat(p_order, self.p)
         self.b_line = np.repeat(b_order, self.b)
-        self.two = P_CELLS
-        self.roe = self.two + BAND_CELLS["2B"]
-        self.run = self.roe + BAND_CELLS["ROE"]
-        self.bat = self.run + RUN_CELLS
+        self._layout()
 
     @classmethod
     def from_lines(cls, p_line, b_line):
         """Build from already-expanded cell labels, so a sampled matchup costs nothing."""
         self = cls.__new__(cls)
         self.p_line, self.b_line = p_line, b_line
-        self.two = P_CELLS
-        self.roe = self.two + BAND_CELLS["2B"]
-        self.run = self.roe + BAND_CELLS["ROE"]
-        self.bat = self.run + RUN_CELLS
+        self._layout()
         return self
 
+    def _layout(self):
+        """Where the bands sit, in the rulebook's Matchup Table order."""
+        self.run = RUN_START                       # 33-38 running play
+        self.roe = BAND_START                      # 39-40 reached on error
+        self.two = self.roe + BAND_CELLS["ROE"]    # 41-44 double
+        self.bat = BAT_START                       # 45-99 batter
+
     def read(self, roll):
-        if roll < self.two:
+        if roll < self.run:
             return self.p_line[roll]
         if roll < self.roe:
-            return "2B"
-        if roll < self.run:
+            return "RUN"
+        if roll < self.two:
             return "ROE"
         if roll < self.bat:
-            return "RUN"
+            return "2B"
         return self.b_line[roll - self.bat]
 
 
@@ -280,8 +282,9 @@ def main() -> None:
             parts.append(f"{l} {at:02d}-{at + c - 1:02d}" if c > 1 else f"{l} {at:02d}")
             at += c
         print(f"  {label}: " + "  ".join(parts))
-    print(f"  bands: 2B {table.two:02d}-{table.roe - 1:02d}, ROE {table.roe:02d}-"
-          f"{table.run - 1:02d}, running play {table.run:02d}-{table.bat - 1:02d}")
+    print(f"  bands: running play {table.run:02d}-{table.roe - 1:02d}, "
+          f"ROE {table.roe:02d}-{table.two - 1:02d}, "
+          f"2B {table.two:02d}-{table.bat - 1:02d}")
 
     print("\n=== check 1: run expectancy, dice against the season ===")
     re_dice = run_expectancy(table)
@@ -319,6 +322,21 @@ def main() -> None:
         _report(got, label)
     got, leads = sampled_halves()
     _report(got, "real lineups, pitchers by use")
+    # Runs per team-game the honest way: whole two-sided games, ended the way the
+    # rules end them. Seven times a mean half-inning counts half-innings that were
+    # never played, which is why it reads high against the line score.
+    tot, skipped, extras, inn, per_team = sim_games()
+    s_skip, s_extra, s_inn, s_per_team = season_endings()
+    ls = tables.read("line_score", "training")
+    s_runs = float(ls.groupby(["game_id", "team_id"])["runs"].sum().mean())
+    print(f"  whole games, real endings: {tot.mean():.2f} runs per team-game "
+          f"(season {s_runs:.2f}; the figure above counts half-innings nobody played)")
+    print(f"    bottom of the {INNINGS}th skipped {100 * skipped:.1f}% "
+          f"(season {100 * s_skip:.1f}%), extra innings {100 * extras:.1f}% "
+          f"(season {100 * s_extra:.1f}%), mean innings {inn:.2f} (season {s_inn:.2f})")
+    print(f"    {per_team:.2f} half-innings batted a team (season {s_per_team:.2f}) at "
+          f"{tot.mean() / per_team:.3f} runs each (season {s_runs / s_per_team:.3f}) -- "
+          f"the ending rules fix the COUNT; what is left is per half-inning")
     ld = pd.Series(leads).value_counts(normalize=True).sort_index()
     print("  leadoff slot: " + ", ".join(f"{int(k)}:{100 * v:.1f}%" for k, v in ld.items()))
     print("  season      : 1:25.4%, 2:8.2%, 3:8.3%, 4:9.5%, 5:11.7%, 6:9.1%, "
@@ -342,6 +360,30 @@ def season_halves():
     """
     pl = tables.read("plays", "training")
     return pl.groupby(["game_id", "inning", "half"])["runs_scored"].sum().to_numpy(float)
+
+
+def season_endings():
+    """How the real season's games ended, for sim_games to be checked against.
+
+    Computed, not quoted. The hardcoded-baseline mistake in check 1b was made once
+    already (see season_halves) and these are the same kind of number.
+
+    Returns (share of games whose final bottom half was never played, share going
+    past INNINGS, mean innings, half-innings batted per team).
+    """
+    pl = tables.read("plays", "training")
+    half = pl.groupby(["game_id", "inning", "half"]).size().reset_index(name="n")
+    last = half.groupby("game_id")["inning"].max()
+    skipped = extras = 0
+    for g, li in last.items():
+        rows = half[half["game_id"] == g]
+        if not ((rows["inning"] == li) & (rows["half"] == "bottom")).any():
+            skipped += 1
+        if li > INNINGS:
+            extras += 1
+    n = len(last)
+    teams = pl.groupby(["game_id", "pitching_team_id"]).ngroups
+    return skipped / n, extras / n, float(last.mean()), len(half) / teams
 
 
 def _report(got, label):
@@ -380,10 +422,8 @@ def lineups():
     return out
 
 
-def sampled_halves(n_games=30000, seed=7):
-    """Half-inning run totals from whole games: a real batting order against
-    pitchers drawn by batters faced, one per half-inning. This is the league
-    check proper -- the league-average card rounds badly (section 9.1)."""
+def _matchups(seed):
+    """Lineups, pitcher draw and expanded card lines, shared by the game sims."""
     from wpbl.dice import B_CELLS, cards as _cards
     rng = np.random.default_rng(seed)
     pa = plate_appearances()
@@ -393,25 +433,90 @@ def sampled_halves(n_games=30000, seed=7):
     p_line = played_lines(to_cells(P.to_numpy(), P_CELLS, w, True), "P")
     p_w = pa.groupby("P").size().reindex(P.index).fillna(0).to_numpy(float)
     p_w /= p_w.sum()
-    lus, runs, leads = lineups(), [], []
+    return rng, lineups(), b_line, p_line, p_w
+
+
+def _half(lu, spot, b_line, p_line, p_w, rng, bases=(False, False, False)):
+    """One half-inning. Returns (runs, spot after). A new pitcher each inning."""
+    pi = int(rng.choice(len(p_line), p=p_w))
+    outs, total = 0, 0
+    while outs < 3:
+        ids, pr = lu[spot % 9]
+        spot += 1
+        tb = Table.from_lines(p_line[pi], b_line[ids[int(rng.choice(len(ids), p=pr))]])
+        bases, made, early, r, _ = plate_appearance(tb, bases, outs, rng)
+        total += early
+        outs += made
+        if outs >= 3:
+            break
+        total += r
+        bases, made = steal(bases, rng)
+        outs += made
+    return total, spot
+
+
+def sim_games(n_games=30000, seed=11):
+    """Whole two-sided games, ended the way the rules end them.
+
+    Seven innings, and two rules that a string of independent half-innings cannot
+    express (Two Outs, So What: Ending the Game):
+
+      the home team does not bat in the bottom of the 7th when it is already ahead
+      a tie after seven goes to extra innings, each side starting a runner on 2nd
+
+    The first is why seven times the mean half-inning reads high against the line
+    score: some of those half-innings were never played. The second pushes the
+    other way. Returns per-team run totals, both sides pooled.
+    """
+    rng, lus, b_line, p_line, p_w = _matchups(seed)
+    totals, skipped, extras, innings, halves = [], 0, 0, [], 0
+    for _ in range(n_games):
+        away_lu, home_lu = lus[rng.integers(len(lus))], lus[rng.integers(len(lus))]
+        a_spot = h_spot = 0
+        away = home = 0
+        for _ in range(INNINGS - 1):
+            r, a_spot = _half(away_lu, a_spot, b_line, p_line, p_w, rng)
+            away += r
+            r, h_spot = _half(home_lu, h_spot, b_line, p_line, p_w, rng)
+            home += r
+            halves += 2
+        r, a_spot = _half(away_lu, a_spot, b_line, p_line, p_w, rng)   # top of the 7th
+        away += r
+        halves += 1
+        n_inn = INNINGS
+        if home > away:
+            skipped += 1                       # already ahead: she does not bat
+        else:
+            r, h_spot = _half(home_lu, h_spot, b_line, p_line, p_w, rng)
+            home += r
+            halves += 1
+        if away == home:
+            extras += 1
+        on2 = (False, True, False)             # the placed runner
+        while away == home:
+            n_inn += 1
+            r, a_spot = _half(away_lu, a_spot, b_line, p_line, p_w, rng, on2)
+            away += r
+            r, h_spot = _half(home_lu, h_spot, b_line, p_line, p_w, rng, on2)
+            home += r
+            halves += 2
+        totals += [away, home]
+        innings.append(n_inn)
+    return (np.array(totals, float), skipped / n_games, extras / n_games,
+            float(np.mean(innings)), halves / (2 * n_games))
+
+
+def sampled_halves(n_games=30000, seed=7):
+    """Half-inning run totals from whole games: a real batting order against
+    pitchers drawn by batters faced, one per half-inning. This is the league
+    check proper -- the league-average card rounds badly (section 9.1)."""
+    rng, lus, b_line, p_line, p_w = _matchups(seed)
+    runs, leads = [], []
     for _ in range(n_games):
         lu, spot = lus[rng.integers(len(lus))], 0
         for _ in range(INNINGS):
-            pi = int(rng.choice(len(p_line), p=p_w))
-            bases, outs, total = (False, False, False), 0, 0
             leads.append(spot % 9 + 1)
-            while outs < 3:
-                ids, pr = lu[spot % 9]
-                spot += 1
-                tb = Table.from_lines(p_line[pi], b_line[ids[int(rng.choice(len(ids), p=pr))]])
-                bases, made, early, r, _ = plate_appearance(tb, bases, outs, rng)
-                total += early
-                outs += made
-                if outs >= 3:
-                    break
-                total += r
-                bases, made = steal(bases, rng)
-                outs += made
+            total, spot = _half(lu, spot, b_line, p_line, p_w, rng)
             runs.append(total)
     return np.array(runs, float), np.array(leads)
 
@@ -433,13 +538,35 @@ FRESH_UNTIL = 20   # her first inning: 19.5 pitches MEASURED, rounded to 20
 # days and stops a 14-pitch outing clearing in two. E > 13 is required for the
 # pair of constraints to have a solution at all (spec 7.9).
 ENTRY_COST = 30                       # about what a reliever throws getting loose
+RESTED = -ENTRY_COST                  # a fully recovered pitcher's count, so that
+# entering puts her at zero. The count is the rulebook's: it can be negative while
+# an arm still has slack, and recovery floors here rather than at zero.
 RECOVERY = 20                         # pitches recovered per day; USER DECISION,
 # taken over 21 for playability -- a count that moves in twenties is one a player
 # can update in their head between games. Both values satisfy the two binding
 # constraints at E = 30 (spec 7.9); twenty is the rounder of the two.
 
 
-def column_for(track, cap):
+def recover(count, days):
+    """The rulebook's between-games rule, as one named operation.
+
+    "At the end of every day, all pitchers reduce their Pitch Count by 20 to a
+    minimum of -30." So recovery is per calendar day elapsed and floors at RESTED,
+    not at zero -- an arm with slack keeps it, which is what lets a rested pitcher
+    take the mound at 0 after paying the entry cost.
+
+    It lives here rather than inline in the simulation so `rules_check` has
+    something to compare the printed rule against.
+    """
+    return max(RESTED, count - RECOVERY * days)
+
+
+def enter(count):
+    """Taking the mound: add the warm-up. A fully rested arm arrives at zero."""
+    return count + ENTRY_COST
+
+
+def column_for(count, cap):
     """Which column a pitcher reads, from the pitches on her track (spec 7.4).
 
     Three states, and the two boundaries are not the same KIND of thing.
@@ -454,102 +581,15 @@ def column_for(track, cap):
     than a real manager pushed it. It is a deterrent, not a measurement, and the
     spec says so in those words.
 
-    Both sit ABOVE the entry cost, because the measured window is one inning of
-    GAME pitches and the pitchers it was measured on had all warmed up -- the
-    entry cost buys availability later, it does not make her worse now."""
-    if track <= ENTRY_COST + FRESH_UNTIL:
+    The count is the RULEBOOK's count, not a running total of work. A rested
+    pitcher sits at RESTED = -30; entering adds the 30 she spends warming up, so
+    she takes the mound at 0 and her first twenty game pitches are fresh. That is
+    why neither boundary carries the entry cost: the measured window is one inning
+    of GAME pitches, on pitchers who had all warmed up, so the warm-up buys
+    availability later rather than making her worse now. Stating it this way makes
+    her stamina the fading limit directly -- stamina 80 means fading through 80 --
+    which is the form the printed rules use. Every number is 30 lower than the
+    first version of this and the states are identical."""
+    if count <= FRESH_UNTIL:
         return "fresh"
-    return "fading" if track <= ENTRY_COST + cap else "gassed"
-
-
-def stint_targets():
-    """The observed distribution of pitches in an outing, by role.
-
-    The pull rule is DESCRIPTIVE on purpose: a manager is sampled to come out
-    where real managers came out, which is all that is needed to make a fatigue
-    setting identifiable (spec 7.2). It is not the AI manager check 3 wants.
-    """
-    pa = plate_appearances()
-    pa = pa.assign(pitches=[PITCH_COST.get(l, 3.3) for l in pa["line"]])
-    pa = pa.sort_values(["game_id", "P_team", "date"])
-    first = pa.groupby(["game_id", "P_team"])["P"].first()
-    out = {"start": [], "relief": []}
-    for (gm, tm, pid), grp in pa.groupby(["game_id", "P_team", "P"], sort=False):
-        role = "start" if first.get((gm, tm)) == pid else "relief"
-        out[role].append(float(grp["pitches"].sum()))
-    return {k: np.array(v) for k, v in out.items()}
-
-
-def sim_fatigue(n_games=20000, fatigue=True, seed=20260922, centred=True):
-    """Play whole games with pitching changes, and optionally with the track on.
-
-    One team's seven half-innings at a time, against a staff that changes when the
-    current pitcher passes a stint length sampled from the real distribution. The
-    track carries her measured pitches; the column she reads follows from it. Every
-    outing starts at zero, which matches the league: four in five really do (spec
-    7.4), so the cross-day carry is a season-level concern, not a game-level one.
-    """
-    rng = np.random.default_rng(seed)
-    from wpbl.dice import B_CELLS, cards as _cards
-    ids, cols = pitcher_columns(centred=centred)
-    B = _cards("B")
-    w = line_weights()
-    b_line = dict(zip(B.index, played_lines(to_cells(B.to_numpy(), B_CELLS, w, False), "B")))
-    pa = plate_appearances()
-    p_w = pa.groupby("P").size().reindex(ids).fillna(0).to_numpy(float)
-    p_w /= p_w.sum()
-    st = stint_targets()
-    caps = capacity()
-    cap_by_i = np.array([caps.get(pid, CAPACITY_DEFAULT) for pid in ids], float)
-    lus = lineups()
-    runs, stints, seen = [], [], {"fresh": 0, "fading": 0, "gassed": 0}
-    for _ in range(n_games):
-        lu, spot = lus[rng.integers(len(lus))], 0
-        total = 0
-        pi = int(rng.choice(len(ids), p=p_w))
-        role = "start"
-        track = float(ENTRY_COST)
-        target = float(rng.choice(st["start"]))
-        for _ in range(INNINGS):
-            bases, outs = (False, False, False), 0
-            while outs < 3:
-                if fatigue and track - ENTRY_COST >= target:     # the hook
-                    stints.append((role, track - ENTRY_COST))
-                    pi = int(rng.choice(len(ids), p=p_w))
-                    role = "relief"
-                    track = float(ENTRY_COST)
-                    target = float(rng.choice(st["relief"]))
-                col = column_for(track, cap_by_i[pi]) if fatigue else "fresh"
-                seen[col] += 1
-                ids_b, pr = lu[spot % 9]
-                spot += 1
-                tb = Table.from_lines(cols[col][pi],
-                                      b_line[ids_b[int(rng.choice(len(ids_b), p=pr))]])
-                bases, made, early, r, line = plate_appearance(tb, bases, outs, rng)
-                track += PITCH_COST.get(line, 3.3)
-                total += early
-                outs += made
-                if outs >= 3:
-                    break
-                total += r
-                bases, made = steal(bases, rng)
-                outs += made
-        stints.append((role, track - ENTRY_COST))
-        runs.append(total)
-    n = sum(seen.values())
-    return (np.array(runs, float), pd.DataFrame(stints, columns=["role", "pitches"]),
-            {k: v / n for k, v in seen.items()})
-
-
-def manager_pull(cur_cost, bench_cost):
-    """Pull when the batter in front of her is cheaper against someone else.
-
-    No free parameter and no fitting to observed hooks. Every batter is worth the
-    same in runs, so the run-minimising allocation gives each one to the best arm
-    still able to take him: keep her while her CURRENT column beats the best
-    available arm's FRESH column, and change when it does not. A strong starter
-    stays in because her fading card is still better than the bullpen; a weak one
-    goes early. Check 3 then asks whether that lands where real managers landed,
-    which it cannot do if the rule were fitted to them.
-    """
-    return cur_cost > bench_cost
+    return "fading" if count <= cap else "gassed"

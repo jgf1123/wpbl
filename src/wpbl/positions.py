@@ -6,8 +6,8 @@
 Positional versatility is a defining feature of this league rather than a
 curiosity. Fifteen-player rosters mean position players pitch, catchers move to
 the outfield, and a team's best starter may spend the rest of the week in
-centre field. This counts games at each position so that pattern is visible
-rather than anecdotal.
+centre field. The command prints two tables for the regular season: games at
+each position, and innings at each fielding position.
 
 Two things this gets right that a naive count of the box score's `position`
 field would not.
@@ -35,7 +35,7 @@ from collections import Counter, defaultdict
 import pandas as pd
 
 from wpbl.parse import OUT_DIR, ip_to_outs
-from wpbl.usage_chart import CODES
+from wpbl.usage_chart import CODES, ip_text
 
 # The nine fielding positions plus the designated hitter, in scorecard order.
 FIELDING = ["p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh"]
@@ -121,6 +121,11 @@ def main() -> None:
             cells = "".join(f"{row[p] or '':>5}" for p in FIELDING)
             print(f"  {row['tm']:4s}{row['player']:22s}{row['games']:4d}{row['starts']:4d}"
                   f"{cells}{row['ph/pr'] or '':>7}{row['spots']:7d}  {row['primary']}")
+
+    innings = innings_by_position()
+    if minimum > 1:
+        innings = innings[innings["player"].isin(set(table["player"]))]
+    _print_innings(innings)
 
     print("\n\n=== how many positions each player covered ===")
     spread = table["spots"].value_counts().sort_index()
@@ -217,6 +222,75 @@ def _drop(align, team, pid, keep=None):
 def _install(align, team, pos, pid):
     _drop(align, team, pid)
     align[team][pos] = pid
+
+
+def innings_by_position(scope: str = "default") -> pd.DataFrame:
+    """Innings at each field position, one row per player.
+
+    Cells are scorebook innings: 5.2 means five innings and two outs, the same
+    reading as a pitching line. A blank cell is zero. Pitching comes from the
+    pitching line; the other eight positions come from field_outs. A player who
+    changed teams is one row, with both clubs in the team cell. DH is absent,
+    because those outs are not time in the field.
+    """
+    from wpbl import tables
+
+    counted = field_outs(scope)
+    bat = tables.read("batting", scope)
+    pit = tables.read("pitching", scope)
+    pitched = 0
+    for row in pit.itertuples(index=False):
+        if row.bf and row.bf > 0:
+            pitched += ip_to_outs(row.ip) or 0
+    # Every pitching out has to land in the P column. A miss here means the
+    # lineup walk and the pitching line have come apart.
+    assert sum(counts["p"] for counts in counted.values()) == pitched
+
+    names = (bat.drop_duplicates("person_id").set_index("person_id")["person_name"])
+    clubs = bat.groupby("person_id")["team_name"].agg(lambda s: tuple(sorted(set(s))))
+    # A pitcher can be missing from the batting table. Her name and club then
+    # come from the pitching line, which is where her innings came from.
+    pit_names = pit.drop_duplicates("person_id").set_index("person_id")
+    rows = []
+    for pid, counts in counted.items():
+        total = sum(counts.get(pos, 0) for pos in CARD_POS)
+        if total == 0:
+            continue
+        if pid in names.index:
+            name = names.loc[pid]
+            team_list = clubs.loc[pid]
+        else:
+            name = pit_names.loc[pid, "person_name"]
+            team_list = (pit_names.loc[pid, "team_name"],)
+        row = {
+            "tm": "/".join(CODES.get(team, "?") for team in team_list),
+            "player": name,
+            "total_outs": total,
+        }
+        for pos in CARD_POS:
+            n = counts.get(pos, 0)
+            assert ip_to_outs(ip_text(n)) == n
+            row[CARD_ABBR[pos]] = ip_text(n) if n else ""
+        rows.append(row)
+    shown = sum(ip_to_outs(row["P"]) or 0 for row in rows)
+    assert shown == pitched
+    frame = pd.DataFrame(rows)
+    return frame.sort_values(["tm", "total_outs", "player"], ascending=[True, False, True])
+
+
+def _print_innings(frame: pd.DataFrame) -> None:
+    cols = [CARD_ABBR[pos] for pos in CARD_POS]
+    print(f"\n\ninnings at each position, {len(frame)} players")
+    print("  regular season, same games as the table above")
+    print("  5.2 means 5 innings and 2 outs; a blank cell is zero")
+    print("  pitching innings come from the pitching line, the rest from who")
+    print("  was standing at that position while the outs were recorded\n")
+    print(f"  {'':8s}{'player':22s}" + "".join(f"{col:>6s}" for col in cols))
+    for _, block in frame.groupby("tm", sort=True):
+        print()
+        for row in block.to_dict("records"):
+            cells = "".join(f"{row[col]:>6s}" for col in cols)
+            print(f"  {row['tm']:8s}{row['player']:22s}{cells}")
 
 
 def field_outs(scope: str = "training") -> dict:

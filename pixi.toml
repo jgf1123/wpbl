@@ -42,6 +42,7 @@ running = "python -m wpbl.running_game"
 table = "python -m wpbl.table_image"
 dice = "python -m wpbl.dice"
 engine = "python -m wpbl.engine"
+season-fatigue = "python -m wpbl.season_fatigue"
 advance = "python -m wpbl.advance"
 refresh = { depends-on = ["scrape", "build", "check"] }
 
@@ -55,3 +56,4 @@ pyarrow = ">=25.0.0,<26"
 duckdb = ">=1.5.5,<2"
 requests = ">=2.34.2,<3"
 matplotlib = ">=3.11.1,<4"
+scipy = ">=1.18.1,<2"

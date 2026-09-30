@@ -495,10 +495,17 @@ cells are split into fixed blocks:
 | Cells | Read | Size |
 |---|---|---|
 | 00-32 | the **pitcher's** card | 33 cells |
-| 33-36 | **double** | 4 cells |
-| 37-38 | **reached on error** | 2 cells |
-| 39-44 | **running play** | 6 cells |
+| 33-38 | **running play** | 6 cells |
+| 39-40 | **reached on error** | 2 cells |
+| 41-44 | **double** | 4 cells |
 | 45-99 | the **batter's** card | 55 cells |
+
+**The order inside those middle twelve cells follows the rulebook, not the other
+way round (23 Sep).** The rulebook's Matchup Table and its own quick reference had
+disagreed about which rolls were doubles, and the code agreed with the quick
+reference; the user's call was to align the code to the Matchup Table. Only WHICH
+roll produces which band changed -- the counts, and so every probability, are
+untouched. `rules_check.py` now checks all 100 rolls so it cannot recur.
 
 Each card spreads its own block over its six printed lines, so a roll lands in
 exactly one cell of exactly one card and the player reads the line off it. No
@@ -1016,7 +1023,7 @@ one.
 |---|---|
 | base pitch cost per line | **measured**: BB 5.40, K 4.92, contact 3.05-3.26 |
 | reach-base surcharge | **not needed** -- the compounding is already automatic (below) |
-| capacity | **per pitcher**, not per role (section 7.4). A 50-100 ladder over 37 arms, median 70 |
+| capacity | **per pitcher**, not per role (section 7.4). Her own number, 44-100 over 38 arms, median 69.5 |
 | daily recovery | **20 pitches a day** (user, 23 Sep, section 7.9). Superseded a 14 chosen on 22 Sep, which was set before the entry cost existed |
 | degradation shape | **from G3**: shrink K, widen extra-base contact |
 | degradation size | **+0.032 at gassed** (section 7.3). The innings step of +0.09 is an upper bound a card-only mechanic cannot reach without an absurd card |
@@ -1166,19 +1173,51 @@ and decided games give nearly the same medians (starts 70.5 against 65.0, relief
 a team's top five by usage and 56 for everyone below them.
 
 So capacity is fitted per arm. Her longest outing is predicted from her typical
-one (max = 31.3 + 0.88 x median, R2 0.62, residual SD 12.0), floored at what she
-has actually thrown, and rounded to the nearest ten -- which costs almost nothing
-against a residual SD of 12.0 and lets a card print a number a player can hold in
-their head. Her max tracks her median at 0.79 and her outing COUNT at only 0.27,
-so a ceiling is mostly a trait rather than an artefact of having had more chances
-to show one. The ladder, over 38 arms:
+one (**max = 35.0 + 0.73 x median, R2 0.54, residual SD 12.6**), floored at what
+she has actually thrown, and rounded to a whole pitch.
+
+**The fit is weaker in the rulebook's currency** (29 Sep): measured in PITCH_COST
+it was max = 31.3 + 0.88 x median, R2 0.62, SD 12.0. The flat 3 for everything but
+walks and strikeouts compresses the spread between arms.
+
+**And the ARGUMENT this section made needs a null it never had.** The old reasoning
+was that her max tracks her median at 0.79 but her outing COUNT at only 0.27, "so a
+ceiling is mostly a trait rather than an artefact of having had more chances to
+show one" -- comparing both against an implicit zero. Zero is the wrong baseline:
+**the maximum of a sample grows with the sample**, so even pitchers with identical
+arms would show both correlations simply because some of them pitched more often.
+The right baseline is a simulation in which every arm IS identical and only the
+outing counts are real:
+
+| | observed | null: identical arms |
+|---|---|---|
+| max ~ her median | **0.71** | 0.46 (90%: 0.24-0.65) |
+| max ~ her outing count | **0.49** | 0.52 (90%: 0.34-0.68) |
+| spread of maxes, SD | 20.6 | 17.6 (90%: 13.9-21.2) |
+
+**Read properly, the conclusion survives but the evidence is thinner than it
+looked.** The relationship with her median clears its null -- 0.71 against 0.46,
+above the null's 95th percentile -- so there is a real trait in there. The
+relationship with her outing count clears nothing: 0.49 against a null of 0.52, so
+it is **entirely sample size and not evidence of an artefact at all**, which also
+means the old 0.27 was BELOW what chance alone predicts. The caveat is the third
+row: the observed spread of maxes, 20.6, sits inside the range identical arms would
+produce. **The ladder separates arms, but by less than its range suggests**, and
+the FLOOR at what she actually threw is doing more of the work than the fit is. The
+ladder, over 38 arms:
 
 | capacity | 50 | 60 | 70 | 80 | 90 | 100 | 110 |
 |---|---|---|---|---|---|---|---|
 | arms | 8 | 5 | 8 | 7 | 6 | 3 | 1 |
 
 Saiki at 110; Sato, Schiano and Padgham at 100; del Castillo, Leblanc, Bricker and
-Park at 50; median 70. That spread is what the old constant could not express --
+Park at the bottom; median 69.5. **The ladder no longer rounds to tens** (user
+decision, 29 Sep): it ran 50-110 in tens, on the reasoning that a round number is
+easier to hold in the head, but the boundary is read off a track that moves in
+threes and fives, so rounding bought nothing at the table and cost up to five
+pitches of accuracy against a residual SD of 12.0. Each arm now carries her own
+number, 44 to 100 over 38 arms with 29 distinct values. That spread is what the
+old constant could not express --
 the difference between the arm that goes five innings and the one that goes three.
 Jaida Lee lands at 90 off a 33-pitch median and a single 86-pitch outing, which is
 the converted starter the league talked about.
@@ -1210,11 +1249,20 @@ across days at 20 a day -- 11.2% of real outings END past the line. The shares:
 
 | | fresh | fading | gassed |
 |---|---|---|---|
-| **new** (fresh 20, per-arm capacity, 39 games) | 0.366 | 0.618 | 0.017 |
-| old (fresh 17, role capacity, 37 games) | 0.389 | 0.461 | 0.150 |
+| **current** (rulebook currency, exact ladder, 39 games) | **0.412** | **0.579** | **0.010** |
+| superseded (measured currency, ladder in tens) | 0.366 | 0.618 | 0.017 |
+| superseded (fresh 17, role capacity, 37 games) | 0.389 | 0.461 | 0.150 |
 
-The old rule put a sixth of the league's plate appearances in a state the data
+The oldest rule put a sixth of the league's plate appearances in a state the data
 never identified. These shares set the centring, so they move every column.
+
+**This table is the only statement of the shares, and `dice.COLUMN_SHARE` is the
+only place they are written down** (user decision, 29 Sep, after three different
+triples were found quoted around section 7 and one of them was used in an
+analysis). `rules_check.check_column_share` recomputes them from the real outings
+on every run and fails if the constant drifts, so a stale number cannot survive
+here again. Sections 7.5 and 7.6 below quote the shares that were current when
+they were written; where they differ from this table, this table wins.
 
 **The step the model delivers is smaller than the step that was measured.** With
 the columns re-centred, playing every plate appearance off the fresh column gives
@@ -1232,7 +1280,9 @@ silently in either direction.
 
 ### 7.5 As built (22 Sep)
 
-`dice.fatigue_card` makes the three columns; `engine.sim_fatigue` plays with them.
+`dice.fatigue_card` makes the three columns. `engine.sim_fatigue` played with them
+and has since been deleted (7.21-B); `season_fatigue.sim_season` is what plays them
+now, on the real calendar.
 
 **The shift is multiplicative, not additive.** Each line is multiplied by its G3
 ratio raised to the column's power and renormalised, so a strikeout pitcher sheds
@@ -1245,20 +1295,28 @@ landing on the section 7.3 target, and no column has an entry below one cell.
 **The columns must be CENTRED, and this is the one thing the build changed.** A
 pitcher's card is fitted to all her plate appearances, the tired ones included,
 so it already carries the average fatigue she pitched with. Hanging a penalty on
-top of it counts that twice: uncentred, the game scored 8.31 runs a team-game
-against a season 7.77. Centring shifts all three columns so their usage-weighted
-mean returns her card exactly -- a **fresh pitcher is better than her season
-line**, a gassed one worse, the average unchanged -- and scoring returns to 7.95,
-which is the engine's pre-existing level. **DECISION (22 Sep).** The weights come
-from one pass of the pull rule (fresh 43%, fading 45%, gassed 12%); re-running with
-centred columns moves them by well under a point.
+top of it counts that twice. Centring shifts all three columns so their
+usage-weighted mean returns her card exactly -- a **fresh pitcher is better than
+her season line**, a gassed one worse, the average unchanged. **DECISION (22
+Sep).**
 
-**What the column shares mean, and why they are needed.** Fresh 43.3% and fading
-56.7% are the share of PLATE APPEARANCES resolved against a pitcher in each
-column, counted over a simulated season under the pull rule: 43% are pitched by
-someone whose track is still inside her fresh window, 57% by someone past it.
-Centring needs them because the weighted average of the columns has to return her
-card, and that average is over how often each is actually read.
+**What it is worth, re-measured 29 Sep in the current build:** uncentred, the game
+scores **8.46 runs a team-game against a season 7.64**; centred it scores **7.63**.
+So centring is worth **0.83 runs a team-game**, or +0.0144 runs per batter faced on
+the cards themselves. The figures that stood here -- 8.31 uncentred and 7.95
+centred against a season 7.77 -- were the old currency and the superseded
+simulator.
+
+**The weights are `dice.COLUMN_SHARE`**, and nowhere else: see the table in 7.6,
+which is the single statement of them, and 7.24 for why they are counted over real
+outings rather than over the game. Two earlier triples quoted here -- fresh 43% /
+fading 45% / gassed 12%, and a two-column "fresh 43.3% and fading 56.7%" -- are
+both superseded and neither was ever the constant.
+
+**What the column shares mean, and why they are needed.** They are the share of
+PLATE APPEARANCES resolved against a pitcher in each column. Centring needs them
+because the weighted average of the columns has to return her card, and that
+average is over how often each is actually read.
 
 That is circular -- the shares depend on the columns, since a tired pitcher
 allows more baserunners, faces more batters, and so spends more plate appearances
@@ -1284,27 +1342,18 @@ all that is needed to make a fatigue setting identifiable -- a setting only has
 consequences where a tired pitcher is left in. It is not the AI manager of check
 3.
 
-**Against the season:**
-
-| | dice | season |
-|---|---|---|
-| runs per team-game | 7.97 | 7.77 |
-| median starter stint, pitches | 70 | 69 |
-| starter p25 / p75 | 61 / 81 | 60 / 79 |
-| median reliever stint | 25 | 30 |
-| pitchers per team-game | 3.45 | 2.91 |
-
-The starter distribution matches closely. **OPEN:** relievers run short and the
-game uses too many of them, because each is sampled independently and the last
-one is cut off by the end of the game rather than by her target. A staff plan
-rather than independent draws would fix it, and that is the AI manager's job. The
-2.6% excess in scoring predates fatigue -- the engine ran 8.02 before any of this
-(section 9.1) -- so centring has left the run environment where it found it,
-which is what it is for.
+**Against the season.** The table that stood here reported `engine.sim_fatigue`,
+which played one team at a time on no calendar and has been superseded: the figures
+are in the old currency, from a simulator that used 3.45 arms a team-game and never
+carried a track between days. **The current comparison is in 7.18** -- every stint
+distribution matching, 2.87 arms a team-game, 7.66 runs against 7.64 -- and the
+open items it leaves are in 7.23.
 
 ### 7.6 Spacing the three columns
 
-Writing the arithmetic out nearly killed the third column. Centred, fading sits +0.009
+Writing the arithmetic out nearly killed the third column. (The figures in this
+paragraph describe the REJECTED even spacing, in the measured currency of the day;
+the spacing that was adopted is the table below.) Centred, fading sits +0.009
 from fresh and gassed +0.021 -- but one cell of a 33-cell block is worth about
 0.013 runs a batter, so **fresh to fading is less than one cell**. No rounding
 rule can print a distinction that small. Rounding each column independently also
@@ -1320,23 +1369,29 @@ observed and the level is extrapolation, so it sits at twice the G3 shift.
 
 | | share of real PAs | vs her card | step |
 |---|---|---|---|
-| fresh | 38.9% | -0.012 | -- |
-| fading | 46.1% | +0.000 | +0.023 |
-| gassed | 15.0% | +0.043 | +0.042 |
+| fresh | 41.2% | -0.011 | -- |
+| fading | 57.9% | +0.007 | +0.018 |
+| gassed | 1.0% | +0.039 | +0.032 |
 
-**0 of 74 adjacent pairs round to the same cells.** Crossing into gassed costs
+**0 of 76 adjacent pairs round to the same cells.** Crossing into gassed costs
 nearly double what going fading did, which is what gives a manager a reason to act
-before she gets there. **DECISION (22 Sep).**
+before she gets there. **DECISION (22 Sep).** Figures re-measured 29 Sep in the
+rulebook currency on the exact ladder; they stood at 38.9 / 46.1 / 15.0 with steps
+of +0.023 and +0.042 when the track counted measured pitches and the ladder ran in
+tens. The SHAPE is unchanged -- gassed is still nearly twice the step that fading
+is -- and both steps are smaller because the cheaper currency keeps a pitcher fresh
+longer.
 
-The shares are counted over the REAL outings, not a simulation: the simulation
-uses 3.45 pitchers a side against a real 2.91, and every extra change restarts
-someone at zero, so its fresh share is inflated and centring on it would centre on
-a known flaw.
+The shares are counted over the REAL outings, not a simulation. The original reason
+was that the simulation used 3.45 pitchers a side against a real 2.91, so its fresh
+share was inflated and centring on it would centre on a known flaw. **That reason
+expired on 29 Sep** -- the simulation now uses 2.87 against 2.87 -- and the choice
+was re-opened and re-made on different grounds (7.24).
 
 **OPEN:** the rounding can move cells between lines of near-equal run value.
 Gilder's fresh and fading differ by two cells, K5 against K3, but only by 0.0004
 runs, because the cells went to outs -- worth almost the same as a strikeout. The
-median step is +0.023; hers is not. A card can look like it changed more than it
+median step is +0.018; hers is not. A card can look like it changed more than it
 did.
 
 **Stamina is a pitcher trait, but a small one.** Per-pitcher median start lengths
@@ -1375,6 +1430,21 @@ honest about it), a shadow price per appearance tuned until usage matches
 schedule in it (correct, and much the largest). Nothing here decides between
 them.
 
+**Re-run 29 Sep against the current build, which now HAS a cost for using an arm:
+the entry cost changes nothing.** 7.28 arms a team-game against the 7.22 recorded
+here. See 7.25 -- the cost is paid in the incoming pitcher's future availability,
+and a single-game objective does not value the future.
+
+**But the degeneracy is largely about the HORIZON, not the objective (7.28).** The
+same rule, valuing twenty plate appearances instead of one, keeps a starter 71
+pitches against a real 65.5 and uses 2.25 arms instead of 7.28 -- with no season
+term added. "Within one game there is never a reason to leave a tiring pitcher in"
+is true only of a manager who values one BATTER; over an outing there is, because
+the arm he spends now is not available for the rest of it. The conclusion below
+should be read as narrowed: no single horizon lands both the starter's length and
+the arm count, so a season objective is still wanted, but it is not what separates
+7.22 arms from 2.25.
+
 **What "testable" means here.** Not whether the curve is right -- it cannot be.
 With a pull rule in the engine, the system is tested on whether it reproduces the
 median 68 and 31 pitches, the 7-day loads, and 7.77 runs per team per game. That
@@ -1387,73 +1457,21 @@ in. Check 3 asks the harder question of whether a *sensible strategy* produces
 realistic usage. **OPEN**: both, but they are separable and the descriptive one
 is small.
 
-### 7.8 The rules, as they would be printed
+### 7.8 Why the columns sit where they do
 
-**PITCH COUNT**
+**The rules themselves live in `Two_Outs_So_What_rules.md`**, which is the player's
+document and carries no rationale. This section used to restate them and the two
+drifted: the rulebook re-origined the pitch count so that a rested pitcher sits at
+-30, entering adds 30, and she is fresh through 20 and fading through her stamina,
+while this section still printed fresh to 50 and fading to 30 + stamina. Those are
+the same system with every number 30 lower -- verified boundary by boundary, and
+the column shares are identical to three decimals either way -- but two statements
+of one rule is one too many. **DECISION (user, 25 Sep): the rulebook's form is the
+real one**, because it makes stamina the fading limit directly. `engine.column_for`
+now takes that count, and `rules_check.py` compares the two across every count at
+every stamina on the ladder.
 
-Every pitcher has a pitch count. It starts at whatever she carried in from
-earlier in the week.
-
-**When she enters a game, add 30 to her count** before she faces anybody: that is
-her warm-up. It costs the same whether she then faces one batter or twenty.
-
-After each batter, add:
-
-| Result | Pitches |
-|---|---|
-| Walk | 5 |
-| Strikeout | 5 |
-| Anything else | 3 |
-
-Her card has three columns. Read the one her count is in:
-
-| Column | Pitch count |
-|---|---|
-| Fresh | up to 50 |
-| Fading | 51 up to 30 + her **stamina** |
-| Gassed | past that |
-
-Her stamina is printed on her card, from 50 to 110 in tens. Saiki is 110; Sato,
-Schiano and Padgham 100; Whitmore, Kim, Lee, Roche, Blunt and Shimano 90; the
-league median is 70; the arms a team would rather not have to use are 50.
-**Stamina belongs to the pitcher, not to the job** -- the same number applies
-whether she starts or comes out of the bullpen. So Gilder, stamina 80, is fresh
-to 50, fading to 110, and gassed past that.
-
-**BETWEEN GAMES**
-
-Every pitcher takes 20 off her count for each day since she last pitched, down to
-zero. A starter who threw 68 carries 98 out and needs five days. A reliever who
-faced two batters carries 36 out and is not clear the next day.
-
-**EXAMPLE**
-
-Liz Gilder starts. Warming up puts her at 30, and she reads her FRESH column.
-
-- First batter walks: +5, count 35.
-- Next two strike out: +5 and +5, count 45.
-- A groundout ends the inning: +3, count 48.
-
-She is still under 50, so she starts the second inning fresh. The leadoff batter
-singles: +3, count 51. From the next batter she reads her FADING column -- her
-strikeouts fall from 5 cells to 3, and those cells move to outs. She is giving up
-about a fifth of a run more per nine batters than she was in the first inning.
-
-She works into the seventh at a count of 104. That is 74 pitches in the game,
-more than Gilder has ever thrown in one; her stamina of 80 is set just past her
-longest outing on purpose. Two batters later she crosses 110 and is GASSED: her
-strikeouts fall again, to 2, and cells move to walks, hit-by-pitches and home
-runs. She is now giving up more than half a run per nine batters over her fresh
-self.
-
-Her manager has to decide whether the best arm in the bullpen, reading her FRESH
-column, is better than Gilder reading her GASSED one.
-
-Gilder finishes at 113. Two days later she is available again, but only 40 comes
-off, so she is at 73 -- and warming up adds 30 more. She takes the mound at 103,
-deep into FADING and seven pitches from GASSED.
-
-**WHY THE COLUMNS SIT WHERE THEY DO**
+What belongs here is the reasoning the rulebook leaves out.
 
 Fresh ends at 20 pitches of game work because that is one inning, and the measured
 decline is a step after a pitcher's first inning rather than a gradual slide
@@ -1469,9 +1487,11 @@ longest outing she has actually thrown, so reaching GASSED means a player has
 pushed her further than any real manager did. It is the price of that, not a
 measurement of it (section 7.4).
 
-Both boundaries sit 30 above where they would otherwise, because the warm-up buys
-availability later rather than making her worse now: the fresh window was measured
-in GAME pitches, on pitchers who had all warmed up.
+**Neither boundary carries the warm-up**, because the 30 buys availability later
+rather than making her worse now: the fresh window was measured in GAME pitches, on
+pitchers who had all warmed up. The rulebook gets this for free by starting a
+rested arm at -30 -- she takes the mound at 0, and her first twenty game pitches
+are fresh however much she is carrying from earlier in the week.
 
 
 ### 7.9 The entry cost, and the exploit that forced it
@@ -1502,14 +1522,32 @@ eight arms at 14 game-pitches each, repeated every two days:
 | **30, 20** | **32** |
 
 At 32 carried in, she is past the fresh boundary before she warms up, so the
-strategy degrades the arms it depends on. It also keeps the observed rhythm: a
-starter's 98 clears in 4.9 days against six of rest, a reliever's 61 in 3.1
-against five.
+strategy degrades the arms it depends on. It also keeps the observed rhythm: in the
+rulebook's currency a starter's median 66 carries out at **96 and clears in 4.8
+days** against a real seven of rest, and a reliever's 28 carries out at **58 and
+clears in 2.9**. (Measured in PITCH_COST these were 98 in 4.9 days and 61 in 3.1;
+the conclusion is unchanged, which is the point of 7.9's constraint arithmetic
+being expressed as a ratio.)
+
+**The track is denominated in the RULEBOOK's costs** (user decision, 29 Sep):
+5 for a walk, 5 for a strikeout, 3 for anything else. The engine used to charge
+the measured conditional mean of each outcome instead -- BB 5.44, K 4.89, the rest
+3.04-3.26 -- which came to 3.679 pitches a plate appearance against the rulebook's
+3.482. Per batter that is nothing; over a season the rulebook is **5.3% cheaper**,
+so the engine was validating a game nobody would play: 19.0 plate appearances to a
+capacity of 70 where a player takes 20.1. Every threshold in this section is in the
+cheaper unit, and `rules_check.check_costs` holds the two together. The cost of the
+change is that the currency no longer coincides with the feed's measure, which it
+used to; that coincidence is given up deliberately.
+
+**R = 20 survives the change.** Restated in rulebook units the two binding
+constraints become R >= 15.9 and R < 21.6, so twenty still sits inside with room,
+and the user's requirement that R stay a round number is met.
 
 **The thresholds move up by E, not the other way.** The fresh window was measured
 as one inning of GAME pitches, on pitchers who had all warmed up, so the entry
 cost buys availability later rather than making her worse now. A pitcher with
-stamina 80 is fresh to 50, fading to 110, gassed past that.
+stamina 80 is fresh to 20, fading to 80, gassed past that.
 
 **This fixes the multi-day exploit and not the within-game degeneracy.** They are
 different problems: the exploit was about carrying arms across days, while
@@ -1594,6 +1632,1203 @@ reason the curve past the hook is unobservable (section 7.2). **ASSUMPTION.**
 tight -- two in 20 team-games, three in 44, four in 12, and **never five**. Any
 rule that permits eight is wrong on its face.
 
+### 7.10 The calendar, simulated (28-29 Sep)
+
+`pixi run season-fatigue` (`src/wpbl/season_fatigue.py`) plays every team's real
+games with the track carrying between them. Until 28 Sep nothing did: the only
+fatigue simulator was `engine.sim_fatigue`, which reset the track at every outing
+and played one game at a time (since deleted, 7.21-B), so **E and R -- the two
+settings that exist only to link one day to the next -- had never been exercised by
+any code that ran.** They were chosen by solving two inequalities by
+hand (7.9).
+
+**The settings pass, and the cleanest evidence needs no simulation at all.** Take
+the 232 real outings, in order, and run them through the track at E = 30, R = 20:
+
+| | |
+|---|---|
+| outings entering ALREADY past capacity | **0.0%** |
+| outings entering past the fresh window | 13.8% |
+| outings ENDING past capacity | 11.2% |
+| entered_at: median / p90 / max | 0 / 27 / 72 |
+
+Not once in a season would a manager have been blocked from an arm he actually
+used, and the 11.2% ending past capacity reproduces the 11.3% `COLUMN_SHARE` was
+derived from. **E = 30 and R = 20 are compatible with how this league really
+pitched.**
+
+**The descriptive manager, on the same calendar:**
+
+| | dice | season |
+|---|---|---|
+| **starter stint, median** | **66** | **66** |
+| ... p25 / p75 | 57 / 77 | 55 / 76 |
+| reliever stint, median | 24 | 28 |
+| relief-only week, median load | 44 | 41 |
+| ... p90 | 85 | 92 |
+| week with a start, median load | 89 | 83 |
+| ... p90 | 145 | 136 |
+| runs per team-game | 8.08 | 7.77 |
+| pitchers per team-game | 3.26 | 2.80 |
+| team-games with nobody available | 0.0% | -- |
+
+**Both columns are in the GAME's currency** (29 Sep). They were not before, and it
+mattered: the season side came from `workload.appearances`, which counts the feed's
+pitches, while the dice side spends PITCH_COST. Once that became the rulebook's
+5/5/3 the two units differed by 5.3%, and the dice looked about 5% lighter than
+they were. `season_fatigue.real_usage` now re-charges the same real outings at
+whatever the game charges, so both sides move together when the currency does. The
+figures here are not comparable with the feed-unit ones an earlier draft carried.
+
+**The starter distribution now lands exactly** -- median 66 against 66, quartiles
+57/77 against 55/76 -- and that is the clearest single result in this section. The
+loads run about 7% heavy at the median, and the serial check says why rather than
+leaving it vague: the draw
+has no memory, so **7.7% of starts have the same arm relieving within one day,
+against a real 0.0% in 79 starts**, and 18.9% of starts come on three days' rest
+or fewer against a real 3.7%. A starter relieving beside her own start inflates
+exactly the weeks that contain a start and leaves relief-only weeks alone, which
+is the pattern observed. Carry does not disturb the run environment: 8.08 sits on
+the engine's own pre-fatigue level of 8.02 (9.1), and the league check is untouched
+by the currency change at 7.66 against a season 7.67.
+
+**CORRECTION (28 Sep): three stale column-share triples.** A first version of this
+section quoted 7.5's fresh 43 / fading 45 / gassed 12 as the centring weights. The
+live constant is `dice.COLUMN_SHARE` = **36.6 / 61.8 / 1.7**, counted over the real
+outings run through the carry, and it supersedes both 7.5's triple and 7.6's 38.9 /
+46.1 / 15.0. The real-log replay above confirms it. **7.5 and 7.6 should be
+reconciled to the constant. FLAGGED.**
+
+**The simulated gassed share is an artefact of the POOLED STINT DRAW, not a
+property of E and R.** The sim reads 14.6% of plate appearances off the gassed
+column against the constant's 1.0%, and its outings end past capacity far more
+often than the real 11.2%. `capacity()` is FLOORED at what each arm demonstrably
+threw, so within one outing a real pitcher cannot exceed her own capacity -- all of
+the real overshoot is carry raising her entry point. Drawing her target from the
+pooled role distribution discards that: a stamina-50 arm can draw the 69-pitch
+starter median and pass her ceiling in one outing. The overshoot duly concentrates
+in STARTS, 46.6% against 20.4% for relief, and a pitcher's real median stint
+correlates **0.75** with her capacity -- exactly the link a pooled draw throws away.
+Shrinking her own median toward the role default does NOT fix it: with about five
+starts against a prior of thirty outings, every scale factor lands between 0.98 and
+1.03. **OPEN.**
+
+**"Share of outings past capacity" cannot be a calibration target**, because
+capacity is defined as her floored maximum, so the real rate is near-definitional.
+It diagnoses the pooled-draw artefact; it cannot be tuned against.
+
+**The final really is the hardest thing asked of a staff, and 7.9 was right.** The
+regular season runs a **median of 3 games per team per rolling 7 days, p90 4,
+maximum 5**; the championship is 5 in 7, about 1.7x a median week, which is the
+figure `bullpen_spec.md` gives. Simulated on that cadence the staff is squeezed
+monotonically -- gassed outings 12.8% to 42.2%, runs 7.78 to 8.28 -- and never
+collapses, 0.4% of team-games reaching the last game with nobody available. The
+DIRECTION is the result; the size inherits the pooled-draw artefact above, so
+**+0.50 runs is an upper bound.**
+
+**CORRECTION (29 Sep), recorded because it briefly reversed this section.** A
+version of `schedules()` read the feed's game rows at face value and so counted
+one fixture several times (see Data notes: duplicate game_ids), inflating the
+season to 140 team-games against a real 80. On that calendar the staff appeared to
+collapse -- 49.1% of team-games with nobody available, 62.4% gassed, 9.07 runs --
+and the loads appeared half again too heavy. **None of that was real.** It is
+recorded only because the failure mode is instructive: the entry cost is a strong
+amplifier, so any error that inflates games or arms per game turns into an apparent
+collapse of the fatigue system rather than an obviously wrong game count.
+
+**What check 3 now says.** The settings pass on the real log. The loads and the
+starter distribution land. What does not land is the relief usage -- 25 against 31,
+3.22 arms against 2.90, and the serial pattern above -- and all of it is the
+manager having no memory and no plan, which is 7.7's open item rather than a
+fatigue setting.
+
+### 7.11 The guard (29 Sep)
+
+`analysis/dice/rules_check.py` used to check three printed tables and stop at the
+fatigue COLUMNS. Everything about the pitch COUNT -- what a batter costs, the
+warm-up, recovery between games -- and every constant behind the cards were
+unchecked, and all four mistakes found while building 7.10 were in that gap. It
+now covers them:
+
+| check | cases | result |
+|---|---|---|
+| Matchup Table | 100 rolls | agrees |
+| Outs and Singles Tables | 720 combinations | agrees |
+| fatigue columns | 945 counts | agrees |
+| **pitch costs** | 8 lines | agrees |
+| **the track: entering, recovery, the floor** | 2,534 cases | agrees |
+| **season shape, from play-by-play** | 2 invariants | agrees |
+| **COLUMN_SHARE, replayed** | 3 shares | agrees |
+
+**The track is correct**, including the rulebook's own printed example checked
+verbatim: finish at 83, recover 40 over two days to 43, enter at 73, read FADING,
+seven pitches from GASSED. All four assertions hold.
+
+**The season-shape check is anchored to PLAY-BY-PLAY, and that is the point.** It
+asserts the calendar holds 2 x (games with plays) = 80 team-games. Anchoring it to
+the `games` table instead would have been useless, because that table is what was
+wrong -- the check would have confirmed the inflated 140 against itself. A game
+either has plays or it does not. It also prints the real 2.90 arms per team-game
+as the manager's standing target.
+
+**COLUMN_SHARE replays clean**: the constant is 0.366 / 0.618 / 0.017 and walking
+the real outings through the track, per plate appearance and in order, gives 0.375
+/ 0.613 / 0.013. This supersedes the 3.68-pitches-per-PA approximation quoted in an
+earlier draft of 7.10 and confirms the constant against 7.5's and 7.6's stale
+triples.
+
+**The costs drove the currency decision.** On the guard's first run it reported 8
+mismatches: the rulebook charges 5 / 5 / 3 and `PITCH_COST` charged the measured
+conditional means. That is now settled in the rulebook's favour (7.9), the ladder
+is each arm's own number rather than a rung in tens (7.4), and `COLUMN_SHARE` was
+recomputed from the replay under both changes. **The guard is green**, and the
+three things it now pins -- the costs, the carry, and the constant -- are exactly
+the three that had drifted.
+
+**What the switch actually moved**, for the record: the stamina ladder from 50-110
+in tens to **44-100 with 29 distinct values, median 69.5 against 70**; `COLUMN_SHARE`
+from 0.366 / 0.618 / 0.017 to **0.412 / 0.579 / 0.010**; the simulated starter
+stint onto its target exactly; and nothing at all in the league check of 9.1, which
+does not read the columns.
+
+
+### 7.12 A manager with a memory (29 Sep)
+
+7.10 left the descriptive rule failing on everything serial: the draw had no
+memory, so **18.9% of starts came on three days' rest or fewer against a real
+3.7%**, and **7.7% of starts had the same arm relieving within a day, against 0 of
+78 in the real season.** Two rules fix it, neither with a constant of its own.
+
+**Starters are not scheduled; they become eligible** (user, 29 Sep). Most of this
+league did not keep a rotation, so imposing one would invent a pattern the data
+does not show. Instead an arm is start-eligible once her track has recovered to
+RESTED -- and how long that takes is exactly how much she threw last time, which
+the track already encodes. "See what she threw, then decide" needs no schedule.
+Among the cleared arms she is drawn by her real share of starts.
+
+**Relief is weighted, not gated** (user, 29 Sep): her real relief share times her
+remaining headroom, `capacity - track`, so a loaded arm becomes progressively
+unlikely rather than abruptly impossible. The old hard rule -- refuse anyone whose
+entry would pass capacity -- is what produced a spurious "nobody available", since
+the alternative to an unwise choice is not always a wise one.
+
+**Two arms are held back, on BOTH sides of a start, and that took two goes.**
+Protecting only the arm ABOUT to start left the 9.4% within a day almost
+untouched, because the case that matters is the arm who has just started: the day
+after a 66-pitch start her track is 46, her headroom is still positive, and she
+keeps being drawn. Smooth weighting alone cannot reproduce a zero. So an arm who
+started her last outing is unavailable in relief until her track clears -- the same
+moment she becomes start-eligible again -- and that is what the 0-of-78 actually
+describes.
+
+| | before | after | season |
+|---|---|---|---|
+| starts on 3 days' rest or fewer | 18.9% | **0.1%** | 1.9% |
+| start with relief by the same arm within 1 day | 7.7% | **0.3%** | 0.0% |
+| ... within 2 days | 15.4% | **0.8%** | 2.6% |
+| rest between starts, median | 7.0 | 8.0 | 7.0 |
+
+**The serial pattern is now right, and slightly over-disciplined.** Real managers
+occasionally did work an arm short; this one almost never does. The median gap of
+8 against 7 is the same effect, and it matches the user's reading: an arm clears in
+4.8 days but the next game's start may already be taken, so she waits a turn. The
+spacing is a QUEUE, not a recovery time.
+
+**It redistributed the load rather than fixing it:**
+
+| | before | after | season |
+|---|---|---|---|
+| relief-only week, median | 44 | 52 | 41 |
+| week with a start, median | 89 | 73 | 83 |
+| starter stint, median | 66 | 67 | 66 |
+| reliever stint, median | 24 | 24 | 28 |
+| **arms per team-game** | 3.26 | **3.24** | **2.80** |
+
+Weeks with a start were 7% heavy and are now 12% light; relief-only weeks were 7%
+heavy and are now 27% heavy. Protecting starters moves the between-start work onto
+the arms that only relieve, and there are not enough of them to absorb it.
+
+**The one number that did not move is the one that matters.** Arms per team-game
+is 3.24 against 2.80, exactly where it was, and with the entry cost every extra arm
+is 30 pitches of pure overhead -- about 13 a team-game -- which now lands entirely
+on relievers. **The remaining error is not the rotation and not fatigue; it is that
+relief stints are too short** (median 24 against 28, p75 34 against 45). Real
+relievers sometimes go multiple innings and these do not, so more of them are
+needed, and each one costs a warm-up.
+
+**That is the pooled stint draw, and 7.13 measures what is actually wrong with
+it** -- which is not what this section first guessed.
+
+**On the final's cadence** the squeeze is unchanged in shape -- gassed outings 13.3%
+to 38.9%, runs 7.90 to 8.33 -- but the staff now runs out at the end: **2.6% of
+team-games reach G5 with nobody properly available**, against 0.4% under the old
+rule. Protecting starters is what does it, and it is the right kind of pressure for
+a five-game series to apply.
+
+### 7.13 Why relief outings ran short (29 Sep)
+
+7.12 blamed "the pooled stint draw" without saying what about it. Measured, there
+were two mechanisms and only one was the draw.
+
+**1. A pulled pitcher could come back, and that was a RULES violation.** The relief
+draw could re-pick an arm it had already pulled: **25.3% of team-games used someone
+twice, some three times**, each return charging the 30-pitch entry cost again. A
+removed pitcher cannot return. Fixed.
+
+It also showed the headline number was flattering itself. "Pitchers per team-game"
+counted DISTINCT arms, so a pitcher used twice counted once: the reported 3.24 was
+really **3.52 entries**, and 0.28 of them were illegal.
+
+**2. The targets looked truncated, and mostly were not.** 52.7% of real relief
+outings end the game, and sampling that pool and then truncating again in the
+simulation removes the length twice -- realised mean 26.1 against a target mean of
+32.3, a 19% shortfall. But **most of those game-ending outings are not censored at
+all**: they are arms whose job is to finish (7.14). Of the 77, **54 belong to LATE
+pitchers doing exactly that**; only 19 are middle relievers caught by the end. So
+the genuinely censored group is about **13% of relief outings, not 53%**, and
+un-truncating the whole pool would have stretched closer stints to lengths no
+closer throws. **The un-truncation plan was dropped on that evidence (user,
+29 Sep).**
+
+**What was really wrong was the ROLE, not the draw** -- see 7.14.
+
+### 7.14 Relief is two jobs, split by the inning she enters (29 Sep)
+
+**EDA (user's hypothesis, 29 Sep).** Relief pitchers were grouped by the share of
+their outings that ended the game, then checked against features that did NOT
+define the group:
+
+| | outings | finish | median pitches | entry inning | median lead |
+|---|---|---|---|---|---|
+| LATE | 67 (51%) | 81% | 24 | 6 | +1 |
+| MIDDLE | 64 (49%) | 30% | 35 | 5 | -0.5 |
+
+They separate cleanly on entry inning and length, neither of which was used to
+form them, so the split is real rather than a restatement. Meidlinger is
+unmistakable: 13 outings, 92% finish, 18 pitches, entering in the sixth.
+
+**There is no save-situation closer in this league, and the role is defined by WHEN
+she enters, not by the score.** Among game-ending relief outings only **8 of 77
+came with a 1-3 run lead**; 37 came from behind and 26 with a lead of four or more.
+The median stint is flat at 23-26 pitches in all three. So the job is "throw the
+last inning", and using the INNING as the splitter keeps the rule observable to the
+simulator instead of edging into the AI manager. **DECISION (user, 29 Sep):
+LATE_FROM = 6.**
+
+**Late arms are on call, but not freely.** Rest before a relief outing: late
+relievers went back-to-back 5% of the time and inside two days 17%, against 2% and
+6% for middle relief and 0% and 1% for starters. A real, ordered effect -- but a
+median of 5 days' rest is every second or third team-game, so "i.i.d. with no
+buffer" was too strong and the protection is GRADED instead: the "about to start"
+hold is dropped in the late innings and kept earlier, while two rules hold
+throughout -- an arm recovering from a start is unavailable until her track clears,
+and one already used today cannot return.
+
+**A change waits for the inning to end.** 83% of real late relievers enter to START
+an inning and span exactly one; middle relievers 57%, spanning three. Hooking the
+moment a target is passed fragmented late relief badly -- a closer brought in with
+one out left throws five pitches, and the simulated late stint came out at **14
+against a real 22**. Changes now wait for the boundary unless a roll says
+otherwise, at the observed mid-inning rates of 17% late and 43% middle.
+
+**HEADROOM COUNTS THE WARM-UP** (user, 29 Sep): `capacity - (track + ENTRY_COST)`
+rather than `capacity - track`. A pitcher who finished near her capacity is not
+available the next day, because the 30 she spends warming up would put her back
+past it before she faced anybody. This is the story the entry cost exists to tell
+and the arithmetic was not telling it. It also does an explicit rule's work for
+starters: a 66-pitch start leaves her at 46 the next day, so `cap - (46 + 30)` is
+negative and she leaves the relief draw on her own. **She pays 30 for her start and
+30 again for any relief between starts, which is what stops a starter being used as
+a reliever too often** (user, 29 Sep).
+
+**Together these move the number 7.12 could not:**
+
+| | 7.12 | now | season |
+|---|---|---|---|
+| **arms per team-game** | 3.51 | **2.99** | **2.87** |
+| starter stint, median | 67 | 69 | 66 |
+| middle relief, median | -- | **41** | 39 |
+| ... p25 / p75 | -- | 30 / 52 | 26 / 50 |
+| late relief, median | -- | 17 | 22 |
+| relief-only week | 47 | 46 | 41 |
+| week with a start | 74 | 77 | 83 |
+| runs per team-game | 8.04 | 8.04 | 7.64 |
+| team-games with nobody available | 0.3% | 0.0% | -- |
+
+**Arms per team-game is the result**: 2.99 against 2.87, a 4% excess where it was
+25%. Middle relief now matches on the quartiles as well as the median. **OPEN:**
+late relief is still short at 17 against 22, because the simulated late reliever
+enters at a boundary but the game still ends under her more often than it did in
+reality.
+
+**Two hardcoded season figures were found and computed instead**, both the same bug
+9.1 records in `engine.py`. The report printed a literal "7.77" runs per team-game;
+computed from the plays it is **7.64**. And arms per team-game divided by a literal
+80 team-games while the outings came from the 39 TRAINING games, understating the
+real figure by 3% -- 2.80 where it is 2.87. Anchoring a number to play-by-play does
+not help if the denominator is typed in by hand.
+
+### 7.15 Three questions about the closer, answered (29 Sep)
+
+**1. Is the primary closer saved for close games?** (user's win-probability bins.)
+Win probability was computed at the moment each late reliever entered, from the
+pitching team's side, and closing stints binned by how close the game was. The
+answer is that **the bins cannot see it, and the reason is the finding**: 60% of
+closing stints come with the game already decided, and only **3 of 52** fall in the
+toss-up band.
+
+| win probability at entry | closing stints |
+|---|---|
+| .40-.60 (toss-up) | 3 |
+| .30-.40 / .60-.70 | 2 |
+| .20-.30 / .70-.80 | 5 |
+| .10-.20 / .80-.90 | 11 |
+| **under .10 / over .90** | **31** |
+
+No association survives: r = -0.023 between "the primary closer pitched" and
+closeness, p = 0.87, Fisher p = 0.66.
+
+**But the SIGNED split is significant, and the symmetric bins destroyed it.**
+Measuring by closeness lumps "ahead by a lot" with "behind by a lot", which are
+opposite decisions:
+
+| at entry | closing stints | by the primary closer |
+|---|---|---|
+| **ahead** | 26 | **69%** |
+| **behind** | 26 | **35%** |
+
+Fisher p = 0.025, odds ratio 4.25. **Managers do reserve their best late arm -- for
+LEADS, not for close games.** With only 8 of 77 game-ending outings coming at a
+lead of 1-3, there is no save situation to reserve her for; what there is, is a
+lead worth protecting at any size. **The earlier reading in 7.14 -- "no closer
+role" -- was right about save situations and wrong about the role.**
+
+*Circularity, stated:* the primary closer is defined as the arm with the most late
+outings, so her overall 52% share is fixed by that definition. The LEVEL is
+circular; the ahead-versus-behind contrast is not, since both halves are drawn from
+the same definition.
+
+**2. Does she come in clean, or into a jam?** (user's question.)
+
+| late reliever enters | n | share | then finished the game | median pitches |
+|---|---|---|---|---|
+| to start an inning | 50 | 77% | 78% | 23.0 |
+| **into a jam, runners on** | **14** | **22%** | **86%** | 20.5 |
+| mid-inning, bases empty | 1 | 2% | 100% | 17.0 |
+
+So **about one late reliever in five comes in to rescue someone**, and when she
+does she almost always finishes -- 12 of 14. Middle relief is a different job
+again: 44% enter into a jam and only a third finish. The simulation's boundary rule
+(7.14) sends 83% of late relievers in clean, which matches the 77% here, so the
+remaining late-stint shortfall of 17 against 22 is not the entry point.
+
+**3. Why are runs high?** Fatigue turned OFF inside the simulator, same seed,
+everything else identical:
+
+| | runs |
+|---|---|
+| fatigue off (season card every PA) | 7.873 |
+| fatigue on | 7.904 |
+| **fatigue costs** | **+0.030** |
+
+**It is almost entirely not fatigue.** The excess decomposes as:
+
+- **+0.17, the seventh half-inning.** This module plays SEVEN half-innings for
+  every team because it simulates one staff's workload, not a contest: it has no
+  home side and no score to decide whether the bottom of the seventh is played. A
+  real team bats **6.85** (9.1: the home team skips it 39.6% of the time). The
+  season figure is now scaled to seven half-innings so the two sides match, and the
+  report line says "runs per 7 half-innings" rather than "per team-game".
+- **+0.03, fatigue**, via the COLUMN_SHARE mismatch: the simulation reads gassed
+  4.9% of the time against the 1.0% centring assumes. Computed independently from
+  the columns' run values this predicts +0.05, which agrees.
+- **the remainder, about 2.9%**, is the structural excess 9.1 already records as
+  predating fatigue.
+
+Against the corrected baseline the simulation runs **8.04 against 7.81**. Nothing
+here is a fatigue problem.
+
+### 7.16 Two staffs in one game, and the bottom of the seventh (29 Sep)
+
+**DECISION (user, 29 Sep): the simulation plays the real game.** 7.15 scaled the
+season figure to seven half-innings to make the comparison fair. The user's point
+was that the missing half-inning is not only a scoring artefact -- **it changes
+closer length**, because it is the AWAY staff that loses it.
+
+So `sim_season` now iterates FIXTURES rather than team-days. The home staff works
+the top of every inning, the away staff the bottom, both tracks carry across the
+season, and **the bottom of the seventh is not played when the home team already
+leads.** A staff needs an opponent and a score to know that, which a one-sided
+simulator could not have.
+
+| | dice | season |
+|---|---|---|
+| half-innings pitched | **6.80** | 6.85 |
+| bottom of the 7th skipped | 34.5% | 35.9% (9.1) |
+| **pitchers per team-game** | **2.87** | **2.87** |
+| **middle relief, median** | **39** | **39** |
+| ... p25 / p75 | 28 / 50 | 26 / 50 |
+| starter, median | 69 | 66 |
+| late relief, median | 17 | 22 |
+| runs allowed per team-game | 7.76 | 7.64 |
+| relief-only week | 44 | 41 |
+| week with a start | 79 | 83 |
+
+**Arms per team-game and middle relief now land exactly**, and runs are within
+1.6% -- inside the structural excess 9.1 records as predating fatigue. The season
+figure is compared per team-game again, since both sides now mean the same thing;
+`season_runs(per_seven=True)` and `seventh_rule=False` are kept for judging the
+one-sided version.
+
+**On the final's cadence the staff is now genuinely stretched**: unavailability
+reaches **6.0% by G5**, against 0.4% when every team played seven half-innings a
+night. Taking the seventh inning away from the trailing staff frees its arms, and
+the pressure lands where a five-game series should put it.
+
+### 7.17 What is left in the relief system (29 Sep)
+
+**Late relief is the balancing item, and that is the whole of the remaining
+error.** Its COUNT is right -- 0.81 late outings a team-game against a real 0.83 --
+and total arms are exact. What is wrong is the length: 17 against 22. The
+arithmetic says why. A game holds a fixed amount of work, so the three roles must
+sum to it, and the other two run over:
+
+| role | dice | season | difference |
+|---|---|---|---|
+| starter | 69 | 66 | **+3** |
+| middle relief | 39 | 39 | +0 (median), +1 (mean) |
+| late relief | 17 | 22 | **-5** |
+
+Whatever the starter and the middle take beyond their share comes off the end of
+the game, and the arm at the end is the late reliever.
+
+**The root cause is what a "target" MEANS, and it is the same error in a third
+costume.** `role_stints` draws targets from REALISED outings, then the simulator
+applies a mechanism that modifies them again -- the boundary rule makes a starter
+finish her inning after passing her target (+3), and the end of the game cuts a
+late reliever short (-5). But the realised outings already contain both effects,
+because real starters also finished their innings and real closers were also cut
+off. **A target is being used as a decision threshold while being measured as an
+outcome.** 7.13 found this as double truncation for relief; it is double
+OVERSHOOT for starters, and the two meet in the middle at the late reliever.
+
+The fix is to define the target as the point at which a manager DECIDES and
+calibrate so that the REALISED distribution matches the real one, rather than
+setting the realised distribution as the target and letting the mechanism move it.
+**DONE in 7.18.**
+
+**Second, the score is not in the pitcher choice at all.** 7.15 found managers
+reserve the primary closer for LEADS -- 69% of closing stints when ahead against
+35% when behind, Fisher p = 0.025, odds ratio 4.25. The simulator picks a late
+reliever by role share and headroom and never looks at the score, so it spreads
+the primary closer evenly over won and lost games. This is real and measured, and
+it is also the first thing in this module that would need the manager to read the
+scoreboard. **OPEN, and it is a design question rather than a calibration one.**
+
+**Third, entering a jam is not modelled.** 22% of real late relievers come in with
+runners on and 86% of those finish (7.15). The simulator changes pitchers at an
+inning boundary or not at all, so a late reliever never inherits traffic. This
+matters less for fatigue than for how a player experiences the game.
+
+### 7.18 The hook, as a decision rather than a length (29 Sep)
+
+**The user's hypothesis**, and the data agrees with it: a real starter is replaced
+either because she is in a jam and looks gassed, or because it does not look like
+she can pitch another full inning -- in which case the reliever takes the inning
+from the start, rather than the manager waiting for her to reach her limit.
+
+| how 78 real starts ended | n | share | median pitches | headroom left before capacity |
+|---|---|---|---|---|
+| at an inning BOUNDARY | 52 | 67% | 62.5 | median **15.5**, mean 17.9 |
+| MID-INNING, runners on | 21 | 27% | 72.0 | median 10.0 |
+| mid-inning, bases empty | 4 | 5% | 56.5 | 20.0 |
+
+An average half-inning is **18.3 pitches**, so a starter pulled at a boundary has
+about one inning left in her and the manager does not spend it. A jam hook comes
+later and deeper -- she was left in and got into trouble.
+
+**`comes_out()` replaces the drawn target for starters**: pull at a boundary when
+another inning would take her past her capacity, or mid-inning when runners are on
+and she is within half an inning of it. Her stint is now an OUTCOME of her capacity
+and how the game has gone.
+
+**MARGIN = 1.4 is the one calibrated constant.** The literal reading of "she cannot
+pitch another full inning" is 1.0 and leaves her in too long, because she is pulled
+at the FIRST boundary under the threshold and so her realised headroom averages
+half an inning less than the threshold itself. Swept against the real starter
+distribution, 1.4 lands it. It is calibrated the way 7.17 asks -- a decision tuned
+so the outcome matches -- rather than an outcome used as a decision.
+
+**Fixing the starter alone did NOT fix late relief, which disproves 7.17's
+explanation.** Across every margin from 1.0 to 1.8 the late stint stayed at 17-18:
+an earlier hook produced an EXTRA reliever rather than a longer one, because relief
+was still pinned by drawn targets. Late relief was not absorbing the starter's
+overshoot; it had its own problem, and it was the 7.13 one.
+
+**So a LATE reliever gets no target either: she pitches to the end.** 81% of real
+ones do. Drawing her a target instead cut her to 17 against a real 22, because the
+pool she was drawn from had already been truncated by the end of the game. Middle
+relief keeps its drawn target, because it lands (40 against 39) -- a hybrid, and
+noted as one.
+
+**The result:**
+
+| | dice | season |
+|---|---|---|
+| starter, median | 64 | 66 |
+| ... p25 / p75 | 55 / 72 | 55 / 76 |
+| middle relief, median | 40 | 39 |
+| ... p25 / p75 | 29 / 51 | 26 / 50 |
+| **late relief, median** | **20** | **22** |
+| ... p25 / p75 | 12 / 29 | 15 / 26 |
+| **pitchers per team-game** | **2.87** | **2.87** |
+| half-innings pitched | 6.80 | 6.85 |
+| **runs allowed per team-game** | **7.66** | **7.64** |
+
+**All three stint distributions and both totals now land.** The run environment
+closed too: 7.66 against 7.64, where it had been running 2.6-2.9% high since before
+fatigue existed (9.1). That excess was never purely structural -- part of it was
+tired pitchers being left in by a target rule that did not know what a manager was
+deciding.
+
+**OPEN: the weekly loads redistribute wrongly.** Relief-only weeks are 48 against
+41 and weeks with a start 73 against 83, so relievers carry about 17% too much and
+starters 12% too little, even though every stint distribution matches. Totals and
+shapes can both be right while the split across arms is not, and that is where this
+now sits.
+
+### 7.19 Nothing in the printed game rewards pulling her early (user, 29 Sep)
+
+**The TIMING half is confirmed by direct test (7.28).** Forcing every pitching
+change to an inning boundary, or forcing every one to happen immediately, moves runs
+per team-game by nothing measurable -- 7.744 against 7.720, on a standard error of
+0.08. **The game is indifferent to WHEN a change happens**, because a reliever
+carries her 20-pitch fresh window in whatever the situation: entering mid-inning
+does not cost her any of it, only changes which batters it is spent on.
+
+**The EARLINESS half is narrower than this section claimed.** There IS a reason to
+pull her early, and it is her own next stint rather than anything in this game: past
+a free zone, every pitch she throws today costs her a fresh pitch next time (7.29).
+For a high-stamina arm on normal rest, and for every arm on short rest, that cost
+binds BEFORE the gassed column does. What remains true is that a median arm on
+normal rest has about fourteen pitches of free headroom past a typical start, so
+over that range nothing at all deters a player -- and `MARGIN = 1.4`, the arm a real
+manager declines to spend, is still unpriced.
+
+**The observation.** A real manager pulls his starter at an inning boundary with a
+median **15.5 pitches of headroom unspent** (7.18). A player of this game has no
+reason to. The printed rules give him the exact pitch count, fixed costs of 5 / 5
+/ 3, and boundaries he can see, so he can run her to the pitch before her stamina
+and pull her then. A mid-inning change costs exactly what a change between innings
+costs. **There is no mechanic that makes a boundary change preferable, and none
+that makes pulling early preferable.**
+
+**Why this matters, and it is not cosmetic.** `MARGIN = 1.4` is a calibrated risk
+margin -- the amount of arm a real manager declines to spend. He declines it
+because he does not know how long the next inning will take. A player who can read
+the count exactly faces no such uncertainty, so a sensible player plays at MARGIN
+close to 1.0 and hooks mid-inning whenever it suits. **The usage this section
+spent its length calibrating is usage the printed game gives a player no reason to
+reproduce.** Section 9 check 3 asks whether a sensible strategy produces realistic
+usage; against a descriptive rule it now passes, and against a player it would not.
+This is the same finding as 7.7's degenerate optimiser, sharpened: there is no
+reason to keep her in, and no reason to time the change.
+
+**Candidate mechanics, none chosen.**
+
+- **Charge more for entering mid-inning.** A reliever brought in between innings
+  had the break to get loose; one brought in mid-inning did not. The entry cost
+  already represents warming up, so this costs no new concept -- only a second
+  number. It must stay small: 43% of real middle relievers and 17% of late ones do
+  come in mid-inning, so the game should discourage it, not forbid it.
+- **Hide the count.** `bullpen_spec.md` already imagines pitchers reporting their
+  own fatigue on a coarse scale with noise, read before a game and at a limited
+  number of mound visits. This is the REAL reason managers leave 15 pitches
+  unspent, and it would generate the margin rather than imposing it. It is also
+  the largest change, and it needs the reporting mechanic built first.
+- **Make crossing into gassed carry a risk, not just a cost.** Gassed is worth
+  about +0.04 runs a batter, which is a price a player will happily pay for one
+  more inning. `bullpen_spec.md` carries an injury chance rising with fatigue;
+  nothing like it is in this spec. A small chance of losing the arm for the series
+  changes the calculus at the boundary without touching any table.
+
+**DECISION NEEDED (spec owner).** The first is cheap and targets the boundary
+behaviour directly; the third targets pulling early and is the more faithful; the
+second is the real answer and the largest. Until one of them exists, the fatigue
+system is calibrated against managers whose incentives the game does not give the
+player.
+
+**Hiding the count is ruled out for the BOARD game (user, 29 Sep):** a player has
+to know which column to read, so the count has to be visible. It stays available
+to a computer implementation -- which is what `bullpen_spec.md` describes, where
+pitchers report their fatigue coarsely and mound visits are limited -- so the
+mechanic is not dead, it belongs to a different product.
+
+**History Maker Baseball's mechanic, which is the cheapest of the three.** In HMB
+a reliever is FRESH until the end of the half-inning she enters, so bringing her in
+with two outs spends most of a free fresh window on two batters. That creates the
+boundary incentive out of the fatigue system itself, with no new number and no
+surcharge -- the cost of a mid-inning change is the fresh time you waste. It is a
+better shape than charging more for a mid-inning entry, because it scales with HOW
+FAR into the inning she comes, which a flat surcharge does not. **Worth costing
+out.**
+
+### 7.20 Innings or pitches? The data cannot say, and one obvious test is a trap
+
+**Both HMB and Deadball degrade at INNING boundaries rather than on a pitch count**
+(user, 29 Sep), which prompts the question of which this league's data supports.
+
+**The measurement in 7.2 was always by INNING.** The step is +0.067 after her first
+inning, +0.095 after her second, +0.084 thereafter, and the section's own
+conclusion is that "a mechanic that accumulates linearly with pitches would get
+this shape wrong." The pitch count was adopted later, in 7.8, as an implementation
+convenience -- the count is being kept anyway -- with 20 pitches standing in for
+one inning. **So the inning-based reading is the measured one and the pitch-based
+one is the approximation**, which is the opposite of the way round it has been
+described since.
+
+**The obvious test to separate them is a trap, and it was run and discarded.**
+Splitting outings by how long her first inning took and comparing the later step
+gives +0.176 for a short first inning and -0.152 for a long one -- an apparently
+enormous effect in the wrong direction. It is regression to the mean. A long first
+inning IS an outcome: she gave up baserunners, so her first-inning run value was
+high, and differencing from it must fall.
+
+| split by her first inning's length | n | her 1st inning | her later innings |
+|---|---|---|---|
+| short 1st (<=18 pitches) | 74 | **-0.281** | -0.106 |
+| long 1st (>18 pitches) | 37 | **+0.079** | -0.073 |
+
+The first-inning columns differ by 0.36 and the later ones by 0.033. The split is
+measuring the first inning.
+
+**What survives is weak and points away from pitch count.** Looking only at her
+LATER innings, a pitcher who needed 24.6 pitches for her first does **+0.033**
+against one who needed 12.3 -- where a pitch-count mechanic predicts she should be
+clearly worse, having thrown twelve more. SE 0.046, p = 0.48, 80% interval -0.027
+to +0.092. **Underpowered, consistent with zero, and consistent with a modest pitch
+effect** -- it cannot settle the question, but nothing in it supports pitches over
+innings.
+
+**Why it cannot be settled here.** Both clocks are endogenous. Pitches thrown is an
+OUTCOME -- a pitcher in trouble throws more of them -- so conditioning on it
+conditions on how she has pitched. Innings completed is a MANAGER'S DECISION, and
+he removes the ones being hit. There is no third variable in this data that moves
+one without the other. **The choice between them is a design question, not a
+measurement**, and it should be made on what the game needs: an inning clock
+motivates changing at the boundary, which 7.19 says the game currently lacks.
+
+### 7.21 What is left to reconcile (29 Sep)
+
+Nothing here is a disagreement about how the game works. It is prose, dead code and
+one named inconsistency that have fallen out of step while section 7 was rebuilt,
+and this is the list.
+
+**A. Numbers in this section that predate the currency switch and the exact
+ladder. DONE 29 Sep** -- corrected in place, and the load-bearing ones are now
+pinned by `rules_check.check_spec_numbers`, which recomputes them from the data and
+fails when the prose and the code disagree. A data refresh SHOULD fail it; that is
+the signal to update the spec, and it is exactly what went missing before. It found
+a wrong number on its first run: the ladder's median is **69.5, not 70** -- 38 arms
+means it falls between the nineteenth and twentieth. The table below is what was
+corrected:
+
+| | spec says | actually |
+|---|---|---|
+| 7.4 capacity fit | max = 31.3 + 0.88 x median, R2 0.62, SD 12.0 | **35.0 + 0.73 x median, R2 0.54, SD 12.6** |
+| 7.6 column shares | 38.9 / 46.1 / 15.0 | **41.2 / 57.9 / 1.0** |
+| 7.6 vs her card | -0.012 / +0.000 / +0.043 | **-0.011 / +0.007 / +0.039** |
+| 7.6 steps | +0.023, +0.042 | **+0.018, +0.032** |
+| 7.5 centring weights | fresh 43%, fading 45%, gassed 12% | the constant, 41.2 / 57.9 / 1.0 |
+| 7.5 scoring | 8.31 uncentred, 7.95 centred | centring is worth **+0.0144 runs/BF**; the game runs 7.66 against 7.64 |
+| 7.9 recovery example | a starter's 98 clears in 4.9 days | 64 + 30 = **94, 4.7 days** |
+
+The capacity fit is the one that matters beyond bookkeeping: R2 has fallen from
+0.62 to 0.54 and the slope from 0.88 to 0.73, because the rulebook's flat 3 for
+everything but walks and strikeouts compresses the spread between arms. Chasing
+that down also showed 7.4's "mostly a trait" argument was comparing its
+correlations against an implicit zero when the right baseline is a sampling null;
+against that null the conclusion survives but the evidence is thinner. See 7.4.
+
+**B. Superseded code. DONE 29 Sep.** `engine.sim_fatigue` played one team at a
+time, reset the track at every outing, and used the two-role start/relief split;
+everything it measured is now done by `season_fatigue` on the real calendar. It is
+deleted, along with `engine.stint_targets` (superseded by `role_stints`, which
+splits relief in two) and `engine.manager_pull` (superseded by
+`sim_season(manager="optimiser")`, which runs the same rule against a season -- see
+7.25 for the re-run that cleared it for removal). `engine.py` loses 93 lines and
+five now-unused imports. The dead `started_last` parameter, which `_pick_reliever`
+stopped reading when the hold was removed, is gone too.
+
+**C. One live inconsistency, and it is a real one.** `COLUMN_SHARE` centres every
+card on **41.2 / 57.9 / 1.0**, counted over the real outings by 7.6's deliberate
+decision. The simulation realises **39.9 / 57.3 / 2.8** -- gassed nearly three
+times as often as the centring assumes. Fresh and fading agree within two points,
+so the run environment barely notices (7.15 priced the whole mismatch at +0.03
+runs), but **the cards are centred on a usage the game does not generate**, and
+that is a choice rather than an accident only because 7.6 made it one.
+
+**D. The manager is not in the rulebook at all.** `MARGIN = 1.4`, the hook rule,
+the role split and the weighting all live in `season_fatigue`. The printed rules
+say when a pitcher's column changes and nothing about when to take her out. That
+is correct -- the pitching change is the player's decision and 7.2 says so -- but
+it means the calibrated usage of 7.18 describes a manager the player is neither
+told about nor motivated to imitate (7.19).
+
+**E. Middle relief is still target-drawn** while starters and late relievers come
+out by rule (7.18). It lands, so it stays, but the system now has two different
+kinds of hook in it.
+
+### 7.22 Injury: the data is too thin to calibrate (29 Sep)
+
+Injury is specified only in `bullpen_spec.md`, as a per-PA chance rising with that
+model's φ, flagged **ASSUMPTION** on both form and consequence, in a document whose
+header says nothing is built. It is not in this spec or in the rulebook, and φ is
+not a quantity this game has -- porting it means re-expressing it against the track
+or the columns.
+
+**The evidence base is one confirmed injury.** Jaida Lee, who was seen in a cast
+(user). Her log fits: she pitched 8 times and then missed her team's last 6 games.
+
+**Quiet injuries are visible but unidentifiable.** Counting each pitcher's longest
+gap in HER TEAM'S GAMES rather than in days, so off-days do not read as absence,
+the clearest case is the user's: **Jill Albayati, 6 outings, a mid-season gap of 10
+team-games, median gap 3, and she came back.** Five others show gaps of 6 or more:
+Maximiliana 8, del Castillo 8, Izumi 8, Shimano 7, Mackay 6.
+
+**Four of the six are not injuries (user, 29 Sep), and only the user could know
+it.** None of this is in the play-by-play:
+
+- **Maximiliana** did not want to pitch. She is an infielder pulled onto the mound
+  when the bullpen is stretched, and she left mid-season for the softball World Cup.
+- **Izumi** is the arm of last resort, used so better arms can be saved for higher
+  leverage -- which is the same pattern `relievers.py` and `depth.py` found.
+- **Mackay** was benched for being hit. The log agrees: +0.200 runs a batter on 14
+  Aug and +0.222 on 3 Sep. It also agrees with the rest of the user's account --
+  she started championship G1 on 16 Sep and was **the best she has ever been,
+  -0.271 over 23 batters across 81 pitches.**
+- **del Castillo** and **Shimano** are the two that still look like injuries, and
+  Shimano is the shortstop whose pitching pattern `bullpen_spec.md` already records
+  as unexplained.
+
+**Of the remaining candidates, Albayati has the cleanest signature**, and it is a
+different one from Mackay's: she was pitching WELL before her gap (-0.583, -0.052,
+-0.028) and stopped for ten team-games. A good pitcher who stops is what an injury
+looks like; a hit pitcher who stops is what benching looks like. That contrast is
+the only diagnostic the data offers, and it separates two of the six.
+
+**That is the whole sample, and it cannot support a model.** One confirmed, two or
+three plausible, and a gap of that size is equally consistent with a coach's
+preference, a demotion, availability outside baseball (3.3 records absences as
+non-use), or rest. Nothing in the record says when an injury struck, how long it lasted, or what
+workload preceded it. **Any injury mechanic is invented, and should say so in the
+same words 7.4 uses about capacity: a deterrent priced by design, not a measurement
+of risk.** If one is added, 7.19's third candidate is where it belongs -- as a
+reason to pull a pitcher before she is gassed, which the game currently lacks.
+
+### 7.23 What the weekly split is NOT (29 Sep)
+
+Two candidate causes were tested and neither is it. Recorded so they are not tried
+again.
+
+**A bug found on the way.** The two-sided rewrite cleared the whole `started_last`
+array whenever a game opened, so every other arm lost its "her last outing was a
+start" mark the moment the next game began. The protection of 7.12 had been
+silently inactive. Fixed.
+
+**Candidate 1: starters relieve at the wrong time.** True, and fixed, and it did
+not move the loads. Real starters relieve a median of **7 days** after their last
+start, 15% within three; the simulation held them until their track fully cleared
+and produced **11 days** and 3%. Charging the warm-up against headroom had already
+made that hold redundant -- a 64-pitch start keeps her out about two days on the
+arithmetic alone -- so it was removed, giving 9 days and 16%. The weekly loads
+moved by one pitch. **The timing of a starter's relief work is not what makes her
+week light.**
+
+**Candidate 2: relief work is too concentrated.** Also no. The busiest third of
+relievers take 57% of relief outings in the simulation against 58% in the season.
+
+**Candidate 3: the "about to start" hold keeps starters out of middle relief in
+exactly the window a manager would use them.** Plausible -- the hold fires once her
+track is within a day of clearing, which is three or four days after a start -- but
+removing it moves the loads by two pitches (relief-only 49 to 47, with-start 73 to
+74) and costs accuracy on arms per team-game. Not it either. Kept.
+
+**Candidate 4: the team-week aggregate is wrong.** No. A team-week with three games
+uses **7 distinct arms, 9 outings, 3 distinct starters and about 390 pitches** in
+the simulation, against 7, 9, 3 and 390 in the season. The totals are right at
+every level; only the split between pitchers is wrong.
+
+**What the split actually decomposes into**, measured on weeks containing a start:
+
+| | real | dice |
+|---|---|---|
+| weeks with ONE start | 84%, median load 75 | 87%, median load 70 |
+| weeks with TWO starts | 16%, median load 136 | 13%, median load 132 |
+
+So it is diffuse rather than one mechanism: the starter's own stint is two pitches
+short, she does a little less relief inside that week, and a few percent fewer
+weeks catch two of her starts. Each is small; together they are the 10 pitches.
+
+**Candidate 5: starts are spread over too many arms.** No. Per team-season the
+simulation uses **6.0 distinct starters against a real 6.2**, with the top four
+taking 86% of starts against 85%, and 1.2 one-start arms against 1.8.
+
+**Candidate 6: a starter's relief work comes at the wrong time in the week.** No.
+For regular starters, the share of relief outings falling inside the seven days
+after a start is **50% against a real 53%**, and the whole distribution over 1-2,
+3-4, 5-6, 7-8 and 9+ days is close.
+
+**Where the gap actually sits.** Splitting the with-start weeks by whether she is a
+REGULAR starter (three or more starts):
+
+| | real | dice |
+|---|---|---|
+| week with a start, regular starter | **86** | **73** |
+| week with a start, occasional starter | 76 | 69 |
+| relief-only week | 41 | 49 |
+
+So it is the regular starter's week that is 13 pitches light, and her start accounts
+for only 2 of that.
+
+**Candidate 7: the rotation is a day slow, so fewer windows catch two of her
+starts.** Real regular starters rest a median 7.0 days with a p25 of 6.0 and 26% of
+their start-windows hold two starts; the simulation gave 8.0, 7.0 and 19%. The
+window's lower bound is strict, so a start exactly seven days back falls outside it
+-- which makes the p25 the quantity that matters, and 6 against 7 is the difference
+between a quarter of pairs landing inside and almost none.
+
+**That was a real mismatch and it is NOT the cause.** Its root is concentration: the
+busiest simulated starter started 5.9 of 20 games against a real 6.8, because the
+eligibility filter drops her from the draw whenever she is not fully cleared, so her
+realised share falls below her nominal one. Weighting the draw by her share SQUARED
+recovers it -- busiest 6.8, rest 7.0, two-start windows 23% -- and taking the
+highest-share eligible arm greedily reaches 26%, exactly the real figure. **Neither
+moves the weekly split by more than two pitches**: with-start goes 73 to 75 against
+a real 83, relief-only 49 to 48 against 41.
+
+**Conclusion after seven candidates: the weekly split is DIFFUSE.** Within each
+category the loads are already close -- one-start windows 68 against 72, two-start
+132 against 136 -- and the residual is two pitches on her start, about two more of
+other work inside the window, and a few points of mix. No single mechanism is worth
+more than a pitch or two, and every fix tried moves the headline number by about
+that much. **It should be treated as the accumulated cost of small errors rather
+than as a bug with a location.**
+
+**What was still worth doing, for its own target rather than for the split. DONE 29
+Sep.** The starter draw is now re-weighted so the realised start counts match the
+observed ones (`calibrated_start_weights`). The eligibility filter biases them down
+-- the arms that start most often are the ones least likely to be clear -- and that
+is a selection problem with an observed target, so it is corrected the standard way:
+`w <- w * (observed / realised)`, renormalised, damped at 0.6 to stop it oscillating
+on simulation noise. **Nothing is fitted to the weekly loads.** It converges in
+about five passes and is cached per process.
+
+| | busiest starter | rest between her starts | per-pitcher share error | wk-start | wk-relief |
+|---|---|---|---|---|---|
+| nominal weights | 6.03 | 8.0 | 0.0260 | 73 | 49 |
+| **corrected** | **6.89** | **7.0** | **0.0109** | 76 | 48 |
+| observed | 6.80 | 7.0 | -- | 83 | 41 |
+
+**It lands its own targets** -- the busiest starter and the rotation cadence, both
+mis-calibrated on their own terms -- and halves the mean per-pitcher share error.
+Squaring the share happened to land the same place, but arbitrarily; this has a
+target rather than an exponent.
+
+**And it confirms the diagnosis by failing to fix the split**, which moves three
+pitches. On the full run the knock-on is small and in the right direction: the
+starter's median stint goes 64 to **65** against a real 66 and the with-start week 73
+to **75** against 83, with arms 2.84 against 2.87 and runs 7.65 against 7.64.
+**7.23's conclusion stands: the weekly split is the accumulated cost of small
+errors, and the rotation cadence was one of them worth about two pitches.**
+
+### 7.24 Centring: the decision re-opened, and re-made (29 Sep)
+
+7.6 centred the columns on the REAL outings rather than on the simulation, because
+the simulation then used 3.45 arms a game against a real 2.91 and "centring on it
+would centre on a known flaw". **The flaw is gone** -- 2.87 against 2.87 (7.16,
+7.18) -- so the decision was inherited rather than held, and it was tested.
+
+**Centring has a fixed point and it converges in one step.** Centre on a share
+vector, simulate, count what the game actually reads, re-centre, repeat. The
+feedback is negative, as it should be: weighting gassed more heavily shifts every
+column down, pitchers get better, outings run shorter, and less gassed is read.
+
+| | fresh | fading | gassed |
+|---|---|---|---|
+| real outings (the constant) | 0.412 | 0.579 | **0.010** |
+| fixed point | 0.395 | 0.575 | **0.030** |
+
+They differ almost entirely in gassed, where the game reads three times what the
+real outings do -- and that gap is structural, not a flaw. `capacity()` is floored
+at each arm's demonstrated maximum, so a real outing can barely exceed it within a
+game; a player can push past it whenever she likes.
+
+**Runs cannot choose between them.** Three seeds of 70 seasons each:
+
+| centring | runs per team-game | SE | vs the season's 7.641 |
+|---|---|---|---|
+| real outings | 7.677 | 0.059 | +0.036 |
+| fixed point | 7.659 | 0.024 | +0.018 |
+
+Difference **-0.019, SE 0.064.** Both land on the season within error, and both
+realise the SAME gassed share of 0.028, so the centring barely moves the usage it
+is centred on. By 9.0's rule -- "a parameter that cannot move the score is not a
+result; report its leverage before reporting its fitted value" -- **this parameter
+has no leverage on runs at all.**
+
+**It is not cosmetic, though.** The printed cards differ: 12, 14 and 20 cells move
+across the fresh, fading and gassed columns, touching **6, 6 and 9 of 38
+pitchers**. About a fifth of the staff would print differently.
+
+**DECISION (29 Sep): keep the real-outing shares, on new grounds.** Runs cannot
+adjudicate, so the choice is about what a card MEANS, and the real-outing version
+is anchored to something observed: her columns average back to her card under the
+usage she actually had. The fixed point is self-referential -- the shares depend on
+the cards which depend on the shares -- and although it converges, it is a game
+agreeing with itself. The old justification (the simulation was flawed) is
+withdrawn; the choice stands on the anchor.
+
+**A design fact worth recording.** The game reads the gassed column about **1.1
+plate appearances per team-game**, against 0.4 for the real outings replayed
+through the same track. Gassed is meant to be the price of pushing an arm past
+where any real manager pushed it (7.4), and in play it arrives roughly once a game.
+Whether that is too often for a deterrent is a design question, not a calibration
+one.
+
+### 7.25 The optimiser is still degenerate, and the entry cost does not touch it
+
+7.7 found that a manager who simply minimises runs pulls after about 17 pitches
+every time, using **7.22 arms a team-game against a real 2.91**. That was measured
+on a build with **no entry cost**. The entry cost was introduced afterwards, partly
+as a price for using an arm (7.9), so the obvious question is whether it supplies
+the constraint 7.7 said was missing. `sim_season(manager="optimiser")` now runs the
+rule against the current build.
+
+| | arms / team-game | starter stint | runs | nobody available | gassed PAs |
+|---|---|---|---|---|---|
+| descriptive (7.18) | 2.85 | 64 | 7.66 | 0.0% | 2.8% |
+| **optimiser** | **7.28** | **0** | **8.01** | **9.2%** | **13.2%** |
+| season | 2.87 | 65.5 | 7.64 | -- | -- |
+
+**It does not touch it. 7.28 against the 7.22 it burned with no entry cost at
+all.** The reason is exactly 7.7's: the entry cost is paid in the INCOMING
+pitcher's track, so it buys nothing in this game and costs only her availability in
+later ones -- and a single-game objective does not value later games. A cost that
+only bites tomorrow cannot deter a manager who is not thinking about tomorrow.
+
+**What the season adds, which 7.7 could not see.** The damage is now visible and it
+is severe: **9.2% of team-games end with no legal arm**, and the gassed column is
+read on 13.2% of plate appearances against 2.8%.
+
+**And the punchline: the optimiser allows MORE runs than the manager it beats on
+every individual decision** -- 8.01 against 7.66, on 2,000 team-games. Every change
+charges the incoming pitcher 30 pitches of warm-up; seven changes a game is 210
+pitches of pure overhead, which wrecks the staff it is drawing from. The rule is
+locally optimal at every plate appearance and globally worse over a season. That is
+a stronger statement of 7.7's finding than 7.7 could make, because 7.7 had no
+season to lose.
+
+**So 7.7's conclusion and its prescription both stand.** The manager needs a
+season-level objective, and the three candidates it lists -- an arms-per-game
+budget, a shadow price per appearance, or a scheduled objective -- are still the
+choice. `engine.manager_pull` has been deleted: the rule lives here as
+`sim_season(manager="optimiser")`, runs against the real calendar, and is
+reproducible.
+
+### 7.26 Two hooks, and one of them is earned (29 Sep)
+
+7.21's item E asked whether MIDDLE relief should come out by the rule of 7.18 like
+the other two roles, rather than on a drawn target. Tested:
+
+| | starter | middle (p25/p75) | late | arms | runs |
+|---|---|---|---|---|---|
+| hybrid, as built | 64 | 40 (29/51) | 20 | **2.86** | 7.62 |
+| one rule for all three | 64 | 40 (27/50) | 20 | 2.99 | 7.65 |
+| season | 65.5 | 39 (26/50) | 22 | **2.87** | 7.64 |
+
+**The hybrid stays.** Unifying makes middle relief's quartiles slightly better --
+27/50 against a real 26/50, where the hybrid gives 29/51 -- and makes arms per
+team-game clearly worse, 2.99 against a real 2.87 where the hybrid is 2.86. Arms
+per team-game is a total that took the whole of 7.13 to 7.18 to land and it drives
+the weekly loads through the entry cost; the middle quartiles are a shape already
+inside a pitch. **DECISION (29 Sep): middle relief keeps its drawn target, and the
+system has two kinds of hook in it on purpose.**
+
+### 7.27 History Maker Baseball's boundary rule, built and measured (29 Sep)
+
+7.19's problem: nothing in the printed game rewards changing at an inning
+boundary. The user's preferred answer is HMB's, where a reliever is Fresh until the
+end of the half-inning she enters, so coming in with two outs spends most of a free
+fresh window on two batters.
+
+**Adapting it needs one decision, because the two clocks disagree.** HMB counts
+innings and this game counts pitches, so a reliever eighteen pitches into her
+outing is Fresh on the track and past the boundary on HMB's. Stacking them would
+let the boundary rule ERASE carried fatigue, which is the one thing 7.9 exists to
+prevent. So: **the boundary can only demote her, never promote her.** Once the
+half-inning she entered is over she is at best FADING whatever her count says, and
+an arm that came in already tired stays exactly as tired as her track makes her.
+`sim_season(hmb=True)`, off by default pending a decision.
+
+**The incentive is real, and graded the way it should be** -- by how far into the
+inning she arrives:
+
+| she enters | fresh pitches HMB gives her | the track would give | she loses |
+|---|---|---|---|
+| to start an inning | 18.3 | 20 | **1.7** |
+| with one out gone | 12.2 | 20 | **7.8** |
+| with two outs gone | 6.1 | 20 | **13.9** |
+
+A boundary entry costs almost nothing and a two-out entry costs most of her fresh
+window. That is a better shape than a flat mid-inning surcharge, which cannot
+distinguish the two, and it comes from inside the fatigue system with no new
+number.
+
+**It costs the run environment nothing measurable.** Three seeds of 25 seasons:
+7.694 with it against 7.688 without, on an SE near 0.1. The realised fresh share
+falls from 0.398 to 0.337, which arithmetic says is worth about +0.04 runs a
+team-game -- below what this many games can resolve.
+
+**The optimiser cannot see it, and that is 7.25 repeating.** Its mid-inning change
+rate is 56.9% without and 56.4% with: unmoved. The rule compares only the NEXT
+batter, where the incoming reliever is fresh either way, while HMB's penalty lands
+later in her outing. A cost that arrives after the current plate appearance cannot
+deter a manager who is only valuing the current plate appearance -- exactly the
+blindness that made the entry cost useless against the same opponent. **So this
+test is inconclusive about a PLAYER**, who is not one batter deep; it would need a
+manager that values a whole outing to demonstrate.
+
+**One consequence if it is adopted.** The shares move, so `COLUMN_SHARE` must be
+recomputed and every card re-centred: a real reliever entering mid-inning would
+read fading earlier, so the real-outing replay that 7.24 anchors on changes too.
+That is a card regeneration, not just a constant.
+
+### 7.28 The horizon, not the mechanic -- and the case against adopting HMB
+
+`sim_season(manager="lookahead")` values a whole outing instead of the next batter.
+It compares the two options a manager really weighs: **change now**, with the
+reliever inheriting a part-inning, against **finish the inning and change at the
+boundary**, with her coming in clean. Parameter-free apart from `HORIZON`, the
+number of plate appearances it looks ahead.
+
+| lookahead | arms | starter | middle | late | runs | relief entries mid-inning |
+|---|---|---|---|---|---|---|
+| H=10, HMB off | 3.81 | 14 | 30 | 18 | 7.30 | 31.5% |
+| H=14, HMB off | 2.94 | 24 | 42 | 20 | 7.51 | 34.4% |
+| H=20, HMB off | 2.25 | 71 | 54 | 20 | 7.75 | 32.7% |
+| H=20, HMB **ON** | 2.16 | 71 | 59 | 19 | 7.87 | **22.8%** |
+| the one-batter optimiser (7.25) | 7.29 | 0 | 11 | 18 | 7.86 | 57.1% |
+| **season** | **2.87** | **65.5** | **39** | **22** | **7.64** | **31.4%** |
+
+**7.7's degeneracy is largely a HORIZON artefact, which 7.7 could not have known.**
+A manager valuing one batter pulls after 17 pitches and burns 7.3 arms. The same
+rule valuing twenty plate appearances keeps a starter **71 pitches** against a real
+65.5. Nothing else changed: no season objective, no budget, no shadow price. **The
+constraint 7.7 said was missing from the game is partly just looking further ahead
+INSIDE it.**
+
+**It is not the whole answer, though.** No single horizon lands both totals: H=14
+gives arms 2.94 against 2.87 but a 24-pitch starter, H=20 gives a 71-pitch starter
+but 2.25 arms. A within-game horizon buys realistic behaviour on one axis at a
+time, so 7.7's call for a season-level objective is **narrowed rather than
+refuted**.
+
+**HMB is visible to this manager** where it was invisible to the one-batter one --
+worth about **9 points of mid-inning changes at every horizon of 10 or more** (31.5
+to 22.8, 34.4 to 24.7, 32.7 to 22.8). So the mechanic does reach a manager who
+looks far enough ahead, and 7.27's graded table was right about its shape.
+
+**But changing the manager's decisions is not the same as changing the game, and
+the direct test says the timing does not matter** (user's question, 29 Sep).
+Forcing the descriptive manager to make every change at a boundary, or every change
+immediately, with the same hook points either way:
+
+| mid-inning change policy | runs | SE | arms |
+|---|---|---|---|
+| always wait for the boundary | 7.744 | 0.082 | 2.79 |
+| as observed (43% / 17%) | 7.688 | 0.105 | 2.88 |
+| always change immediately | 7.720 | 0.040 | 3.05 |
+
+**No difference, and none with HMB on either** (7.653 waiting against 7.617
+changing). The comparison is not perfectly clean -- forcing the timing also moves
+arms per game, 2.79 against 3.05 -- but nothing like a real effect appears.
+
+**Computed rather than simulated, HMB is worth 0.033 runs a team-game.** A
+mid-inning entrant loses about 10.8 fresh pitches, or 3.1 batters, and fresh to
+fading costs 0.0179 a batter, so a mid-inning change costs 0.056 runs; at 0.59
+mid-inning relief entries a team-game that is 0.033. The simulation's standard
+error at 75 seasons is 0.08, so resolving it at three sigma would take about **54
+times more games**. It is real and it is negligible.
+
+**RECOMMENDATION (29 Sep): do not adopt it.** Keep `hmb=False`. It changes what a
+thoughtful manager decides while changing the run environment by a third of a tenth
+of a run, and it would cost a full card regeneration (7.27).
+
+**CORRECTION to an earlier draft of this section.** It claimed the printed game
+"already produces the real mid-inning rate, so HMB corrects something that is not
+wrong." That was reading the lookahead's 32-34% against the season's 31.4% as
+agreement. It is not evidence of anything: the direct test above shows the game is
+INDIFFERENT to the timing, so the lookahead's rate is not tracking a run incentive
+at all -- it comes from its horizon and from which arm covers the rest of the
+inning. **7.19's original claim stands: nothing in the printed game meaningfully
+rewards changing at a boundary.** The match with 31.4% is a coincidence.
+
+**What the lookahead does establish** is the horizon result above, which does not
+depend on any of this: myopia causes 7.7's degeneracy.
+
+### 7.29 The cross-day cost of one more batter, and the absence of a round-number exploit
+
+7.19 asks what stops a player running a pitcher to her limit. The within-game
+answer is only the gassed column. The cross-day answer is her OWN next stint (user,
+29 Sep): pitches thrown today are carried, so they delay her next appearance or
+make her arrive further along her track.
+
+**Fresh pitches available in her next outing, by what she threw today:**
+
+| today | 4d rest | 5d | 6d | 7d | 8d |
+|---|---|---|---|---|---|
+| 60 | 0 | 0 | 20 | 20 | 20 |
+| 70 | 0 | 0 | 10 | 20 | 20 |
+| **80** | 0 | 0 | 0 | **20** | 20 |
+| 90 | 0 | 0 | 0 | 10 | 20 |
+| 100 | 0 | 0 | 0 | 0 | 20 |
+
+**There is a FREE ZONE, and a normal start sits inside it.** She costs her next
+outing nothing while `game pitches <= 20d - 60`: up to 80 on seven days' rest, 60
+on six, 40 on five. The real median start is 66 pitches on a real median seven
+days, so **a typical start leaves about 14 pitches of headroom that are free.** The
+carry does not bite until she is pushed past them.
+
+**Which means the two deterrents are ORDERED, and the order depends on the arm.**
+Gassed begins at her stamina -- median 69.5, range 44 to 100 -- and the carry
+begins at 20d - 60.
+
+- a median arm on normal rest: **gassed first** (69.5 before 80). The carry is
+  slack and the within-game column is what deters.
+- a high-stamina arm -- Saiki at 100, Sato and Schiano near it: **the carry first**
+  (80 before 100). Her cross-day cost is the binding constraint, which is the right
+  way round, since she is the arm a player most wants to over-use.
+- short rest, four or five days: the free zone collapses to 20-40 pitches and the
+  carry dominates everything. That is the postseason case 7.9 was designed for.
+
+**No round-number exploit** (user's concern, 29 Sep). Past the free zone the cost
+is **exactly linear -- one fresh pitch lost per pitch thrown** -- so the function is
+piecewise linear with two gentle kinks, where she stops clearing fully (slope 0 to
+1) and where she would arrive with no fresh window left (slope 1 to 0). Crossing
+the first by one pitch costs one pitch. **There is no cliff, so there is no number
+to stop on.**
+
+The kink's LOCATION is a multiple of 20, since R is, so a player planning "she must
+be fully fresh next time" has a soft target at 80 pitches on normal rest. That is
+not an artefact to remove: it reads as ordinary managing -- get her through the
+sixth and no further -- and overshooting it is penalised gently and proportionately
+rather than punitively.
+
+**On the final's cadence** the squeeze is sharper than any earlier version:
+unavailability reaches **8.4% by G5** and runs climb 7.71 to 8.23.
+
+
 ## 8. Dice
 
 **DECISION (user, 17 Sep):** cells are 1 percentage point. Even with more than
@@ -1670,9 +2905,32 @@ Before anyone plays:
    the smoothed spread, with dice rounding neither erasing nor exaggerating it.
    **OPEN.**
 3. **Fatigue tuning.** A simple AI manager's stint lengths and 7-day loads must
-   land on the usage targets in section 7. **OPEN**, and blocked on section 7.
+   land on the usage targets in section 7. **RUN, AND IT SEPARATES (section
+   7.10).** Replaying the REAL log through the track clears the settings: E = 30
+   and R = 20 never block an arm a real manager used. The 7-day loads and the
+   starter distribution land. What does not is the relief usage -- 25 pitches
+   against 31, 3.22 arms a team-game against 2.90, and a starter relieving beside
+   her own start 7.7% of the time against a real 0.0%. Both are now fixed. A
+   reactive rotation and both-sided protection put short-rest starts at 0.1% and
+   starter-relieving-beside-her-start at 0.3% (7.12); splitting relief into middle
+   and late by entry inning, waiting for the inning boundary to change, charging
+   the warm-up against headroom, and forbidding a pulled pitcher to return took
+   **arms per team-game from 3.51 to 2.99** (7.13, 7.14); playing both staffs in
+   one game, with the bottom of the seventh dropped when the home team leads, took
+   it to **2.87 against a real 2.87** (7.16). Middle relief lands exactly at 39,
+   half-innings pitched at 6.80 against 6.85. Replacing the drawn target with a
+   HOOK RULE -- pull at a boundary when another inning would pass her capacity, or
+   mid-inning in a jam -- then landed the rest (7.18): **all three stint
+   distributions match, arms per team-game is exact at 2.87, and runs are 7.66
+   against 7.64.** Correcting the starter draw for the eligibility filter then put
+   the rotation on 7.0 days against 7.0 and the busiest starter on 6.89 against 6.80
+   (7.23). **What remains OPEN is the weekly split**: relievers carry about 17% too
+   much and starters 12% too little, though every stint distribution, both totals
+   and the rotation cadence are right. Seven candidate causes have been ruled out
+   and each fix moves it a pitch or two, so it is recorded as the accumulated cost
+   of small errors rather than a located defect.
 
-### 9.1 The league check, as run (22 Sep; re-run 23 Sep on all 39 games)
+### 9.1 The league check, as run (22 Sep; re-run 25 Sep with whole games)
 
 `pixi run engine` (`src/wpbl/engine.py`) plays the printed game -- it rolls a
 d100 against the cell table, rerolls on a running play, rolls a d12 for the out
@@ -1685,28 +2943,44 @@ league-against-league validates a table nobody will play with.
 
 | | dice | season |
 |---|---|---|
-| run expectancy, mean absolute difference over 24 states | 0.096 runs | -- |
+| run expectancy, mean absolute difference over 24 states | 0.092 runs | -- |
 | ... states where the dice are high | 12 of 24 | -- |
-| transition distance, PA-weighted (`engine_transitions.py`) | 0.092 | 0.074 from sampling alone |
-| runs per half-inning | 1.102 | 1.116 |
+| transition distance, PA-weighted (`engine_transitions.py`) | 0.092 | 0.075 from sampling alone |
+| runs per half-inning | 1.103 | 1.116 |
 | scoreless half-innings | 55.0% | 52.1% (+/- 2.2) |
-| runs per 7-inning game, one team | 7.71 | 7.81, or 7.67 off the line score |
+| **runs per team-game, whole games** | **7.66** | **7.67** |
+| ... half-innings batted a team | 6.89 | 6.85 |
+| ... runs in each | 1.113 | 1.120 |
+| bottom of the 7th never played | 39.6% | 35.9% |
+| games past seven innings | 6.6% | 5.1% |
 | leadoff lineup slot 1 | 23.6% | 25.4% |
 
 **The season row used to be a hardcoded string.** `engine.py` printed
 "1.132 runs, 50.8% scoreless ... 7.77 runs per game" as a literal, so adding two
 games silently left the dice being compared against the wrong season. It is
-computed now (`engine.season_halves`). Two runs-per-game figures are quoted
-because they are different things: seven times the mean half-inning is 7.81, and
-half-innings never played -- a home team ahead after the top of the last -- are
-not in that average, so it reads high; straight off the line score a team scores
-7.67.
+computed now (`engine.season_halves`).
+
+**Runs per team-game is now measured on whole games, and the structural error is
+gone.** `engine.sim_games` plays both sides with the rules that end a game
+(`Two_Outs_So_What_rules.md`): the home team does not bat in the bottom of the 7th
+when it is already ahead, and a tie goes to extra innings with a runner placed on
+2nd. Multiplying a mean half-inning by seven counted half-innings nobody played --
+which is exactly why that route reads 7.81 against a line score of 7.67.
+
+**The decomposition matters more than the headline.** 7.67 against 7.67 is not two
+errors cancelling, and the check now prints the parts so it cannot be read that
+way: the dice bat 6.89 half-innings a team against the season's 6.85, so the ending
+rules reproduce the COUNT, and score 1.113 in each against 1.120, so what remains
+is the same small per-half-inning shortfall that was always there. The skipped
+bottom of the 7th (39.6% against 35.9% on 39 games) and extra innings (6.6%
+against 5.1%) both land inside the season's own noise. Every season figure in that
+block is computed (`engine.season_endings`), not quoted.
 
 **The over-scoring closed.** On 37 games the dice produced 8.02 runs a team-game
-against a season 7.77, about 3% high and unexplained. On 39 they produce 7.71
-against 7.81, or 1.102 runs a half-inning against 1.116 -- 1.3% LOW. Most of that
-is one cell: the pitcher block's largest-remainder allocation moved a cell from
-1B to BB, and a walk is worth less than a single.
+against 7.77, about 3% high and unexplained. Two things fixed it and neither was a
+tuning knob: the pitcher block's largest-remainder allocation moved a cell from 1B
+to BB when the last two games arrived, and a walk is worth less than a single; and
+the game-ending rules stopped counting half-innings that were never played.
 
 **What the check caught.** Comparing transition *distributions* rather than run
 expectancy found a real bug that run expectancy could not see: steals were
@@ -1721,10 +2995,11 @@ seen 10 times looks far off even when the engine is exact.
 cards through seven innings reproduces the observed non-uniform leadoff slot
 (25.4% for slot 1) without anything being fitted to it.
 
-**The residual.** Scoreless innings run 2.9 points high, which is 1.34 SE against
-the 534 observed half-innings behind the target -- the one thing the extra games
-did not fix, and the gap barely moved (3.2 points, 1.44 SE on 37 games). Five
-explanations were tested
+**The residual.** Scoreless innings run 3.0 points high, which is 1.39 SE against
+the 534 observed half-innings behind the target -- the one thing neither the extra
+games nor the ending rules touched, and the gap has barely moved across all of them
+(3.2 points on 37 games, 2.9 on 39, 3.0 with whole games). Five explanations were
+tested
 and are not worth retesting without more games:
 
 | tested | effect on the gap |
@@ -1781,6 +3056,16 @@ than a sixth unmodelled mechanism.
 
 ## Data notes
 
+- **One game can have several `game_id`s, and only one of them is the game.** The
+  `games` table holds 71 rows for 40 played games: each fixture may also carry
+  "Not Started" placeholder rows scheduled for the same date and teams. BOS at NYH
+  on 13 Aug appears **three times, and it was one game** (user, 29 Sep). `is_final`
+  separates them exactly -- all 40 final rows have play-by-play, none of the 31
+  others do -- so **anything counting games must filter `is_final`**. Taking the
+  rows at face value inflates the season to 140 team-games against a real 80.
+  Counting distinct dates per team happens to give the right answer today, because
+  no team ever plays twice in a day, but it would swallow a real doubleheader.
+  `season_fatigue.schedules()` filters `is_final`.
 - The feed misspells names in some box scores (accents dropped, "Naraski",
   "Maggie Fox"), which had split three players in two and names a pitcher "/"
   in championship G2. Fixed in `parse.py` with a check in `pixi run check`
