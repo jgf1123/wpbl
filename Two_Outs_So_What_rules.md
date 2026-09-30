@@ -129,7 +129,7 @@ Otherwise, look up the d12 on the Outs Table. Which column managers use depends 
 - **B**: Batter out with runners holding: the batter is out and the runners stay in place.
 - **B+**: Batter out with runners advancing: A productive out, the batter is out but all runners advance, with a runner on 3rd scoring.
 - **F+**: Force out with runners advancing: the runner on 1st is out at 2nd but all other runners advance, with a runner on 3rd scoring; the batter moves to 1st base.
-- **FB++**: Forced and batter out with runners advancing: Double play! The runner at 1st and the batter are both Out but other runners advance. If these are the 2nd and 3rd Outs, no runs are score; otherwise the runner at 3rd will score.
+- **FB+**: Forced and batter out with runners advancing: Double play! The runner at 1st and the batter are both Out but other runners advance. If these are the 2nd and 3rd Outs, no runs are score; otherwise the runner at 3rd will score.
 
 **Running play:** This represent a wlid pitch, passed ball, or balk. This is the only result that does not end the plate appearance. Advance all the runners then reroll on the Matchup Table with the same batter.
 
@@ -223,15 +223,15 @@ After a game, do *not* reset each pitcher's Pitch Count. At the end of every day
 
 **Matchup Table**
 ```
-00-32  pitcher's card      39-44  running play (advance one, reroll)
-33-36  double              45-99  batter's card
-37-38  reached on error
+00-32  pitcher's card      39-40  reached on error
+33-38  running play        41-44  double
+       (advance, reroll)   45-99  batter's card
 ```
 
 **Outs Table**
 ```
-no runner on 1st:  1-5 B      6-12 B+
-runner on 1st:     1-6 B      7-8 B+     9-10 F+     11-12 FB+
+no runner on 1st:  1-5 B       6-12 B+
+runner on 1st:     1-2 FB+     3-4 F+     5-10 B     11-12 B+
 ```
 
 **Singles Table**
