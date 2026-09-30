@@ -42,6 +42,7 @@ running = "python -m wpbl.running_game"
 table = "python -m wpbl.table_image"
 dice = "python -m wpbl.dice"
 engine = "python -m wpbl.engine"
+season-fatigue = "python -m wpbl.season_fatigue"
 advance = "python -m wpbl.advance"
 refresh = { depends-on = ["scrape", "build", "check"] }
 

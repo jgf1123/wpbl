@@ -2,6 +2,13 @@
 
     pixi run dice
 
+This writes the CSVs under data/dice/ and stops there. **The printable cards
+(TOSW_batters.pdf, TOSW_pitchers.pdf) are laid out in nanDECK from those CSVs,
+by hand, on purpose** -- it is a faster way to try a layout than editing code, so
+there is deliberately no PDF generator here. If a card's NUMBERS look wrong, fix
+them here; if a card's LOOK is wrong, that is nanDECK. The version log is
+data/dice/dice_version.md.
+
 A card is eight lines -- K, BB, HBP, HR, 1B, 2B, ROE, Out -- summing to 100%.
 Each player's raw record is too thin to print as it stands (a regular has ~80
 plate appearances), so each card is pulled toward the record of a cohort of
@@ -138,8 +145,16 @@ BATTER_STEPS = [
 # block is dead 39% of the time and has to be bigger to land the same rate
 # (analysis/dice/running_plays.py).
 P_CELLS, B_CELLS = 33, 55
-BAND_CELLS = {"2B": 4, "ROE": 2}
+# The middle twelve cells of the d100, in the order the rulebook's Matchup Table
+# reads them: the running play first, then the error, then the double. The layout
+# is written out rather than left to dict order, because a silent reordering here
+# changes which roll produces which result on every printed card.
+BAND_CELLS = {"ROE": 2, "2B": 4}
+BAND_ORDER = ["ROE", "2B"]
 RUN_CELLS = 6                                  # wild pitch / passed ball / balk
+RUN_START = P_CELLS                                        # 33-38 running play
+BAND_START = RUN_START + RUN_CELLS                         # 39-40 error, 41-44 double
+BAT_START = BAND_START + 6                                 # 45-99 batter
 PA_CELLS = P_CELLS + B_CELLS + sum(BAND_CELLS.values())   # 94: the cells that end a PA
 MIX_ALPHA = P_CELLS / (P_CELLS + B_CELLS)      # 0.375 exactly: the pitcher's share of the tree
 # Runs cannot see BB | HBP (a walk is worth 0.45, an HBP 0.49), so that step's k is
@@ -433,8 +448,22 @@ def cards(side: str = "B") -> pd.DataFrame:
 # Re-measured on the 39-game scope (23 Sep). Nothing moved more than 0.13, which
 # was ROE on 65 plays; the weighted average is 3.68 pitches a plate appearance
 # either way, which is what the capacity ladder is calibrated in.
-PITCH_COST = {"K": 4.89, "BB": 5.44, "HBP": 3.04, "HR": 3.24, "1B": 3.12,
-              "2B": 3.26, "ROE": 3.23, "OUT": 3.25}
+# THE RULEBOOK'S COSTS, not the measured means (user decision, 29 Sep). A player
+# adds 5 for a walk, 5 for a strikeout and 3 for anything else; the engine used to
+# charge the measured conditional mean of each outcome instead (BB 5.44, K 4.89,
+# the rest 3.04-3.26). Per batter that is nothing, but over a season the rulebook
+# is 5.3% cheaper -- 3.482 pitches a plate appearance against 3.679 -- so the
+# engine was validating a game nobody would play: 19.0 plate appearances to a
+# capacity of 70 where a player takes 20.1. The track is a GAME MECHANIC, so it is
+# denominated in what the game charges. `rules_check.check_costs` holds the two
+# together from now on.
+#
+# The cost of this is that the currency no longer equals the feed's measure. It
+# used to be a virtue that PITCH_COST came to 3.68 a plate appearance, the same as
+# the feed; the rulebook's rounding gives up that coincidence deliberately, and
+# every threshold below is expressed in the cheaper unit.
+PITCH_COST = {"K": 5, "BB": 5, "HBP": 3, "HR": 3, "1B": 3,
+              "2B": 3, "ROE": 3, "OUT": 3}
 # Capacity is a property of the ARM, not of the assignment. Twenty-three of this
 # league's thirty-eight pitchers worked both roles and they threw 68% of all
 # outings; four went LONGER in relief than in any start (Sato 98, against a
@@ -449,7 +478,7 @@ CAPACITY_DEFAULT = 50.0    # arms with fewer than three outings to fit
 # pitchers a side against a real 2.91 and every extra change restarts someone at
 # zero; centring on its numbers would centre on a known flaw.
 #
-# Counted the way the engine counts: track = carry + ENTRY_COST + pitches so far,
+# Counted the way the engine counts: count = carry + 30 on entry + pitches so far,
 # with carry running across days at RECOVERY a day. The carry matters. Within a
 # single outing NO real plate appearance is past capacity -- it cannot be, since
 # capacity is floored at what the arm has thrown -- so gassed reads 0.0% without
@@ -460,7 +489,13 @@ CAPACITY_DEFAULT = 50.0    # arms with fewer than three outings to fit
 # which put a sixth of the league's plate appearances in a state the data never
 # identified. Fading now carries the weight, which is the honest shape: it is the
 # state the measurement found.
-COLUMN_SHARE = {"fresh": 0.366, "fading": 0.618, "gassed": 0.017}   # 39 games
+COLUMN_SHARE = {"fresh": 0.412, "fading": 0.579, "gassed": 0.010}   # 39 games
+# Recomputed 29 Sep for the rulebook currency and the exact ladder, by
+# `rules_check.replay_shares`: the real outings walked in order, per plate
+# appearance, with the carry. It was 0.366 / 0.618 / 0.017 in the measured
+# currency on a ladder rounded to tens. The cheaper unit keeps a pitcher fresh
+# longer, so fresh rises and gassed -- already the rarest state -- halves again.
+# The guard checks this constant against the replay on every run.
 
 
 def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndarray]:
@@ -507,8 +542,12 @@ def capacity():
       what drives gassed to zero within an outing, and it is a design choice: the
       penalty starts past the demonstrated range, not inside it.
 
-      ROUNDED to the nearest ten, which costs almost nothing against a residual
-      SD of 12.0 and lets a card print a number a player can hold in their head.
+      ROUNDED TO A WHOLE PITCH, not to the nearest ten (user decision, 29 Sep).
+      The ladder was in tens so a card could print a number a player holds in
+      their head, but the boundary it sets is the one a player reads off a track
+      that moves in threes and fives, so a round number buys nothing at the table
+      and costs up to five pitches of accuracy against a residual SD of 12.0. Her
+      stamina is now her own number.
 
     It gives a ladder of 50 to 110 over 8/5/8/7/6/3/1 arms, median 70: Saiki at
     the top, del Castillo and Leblanc at the bottom. That spread is the thing the
@@ -532,9 +571,9 @@ def capacity():
             # Still floored at what she threw. Addisyn Baird debuted with one
             # 64-pitch outing; handing her the 50 default would have her go
             # gassed partway through a repeat of it.
-            out[pid] = max(CAPACITY_DEFAULT, float(np.round(row["max"], -1)))
+            out[pid] = max(CAPACITY_DEFAULT, float(np.round(row["max"])))
         else:
-            out[pid] = float(np.round(max(a + b * row["median"], row["max"]), -1))
+            out[pid] = float(np.round(max(a + b * row["median"], row["max"])))
     return out
 
 
@@ -656,7 +695,7 @@ def main() -> None:
         check(cards)
         last_team = pa.sort_values("date").groupby(side)[team_col].last()
         block = P_CELLS if side == "P" else B_CELLS
-        start = 0 if side == "P" else P_CELLS + sum(BAND_CELLS.values()) + RUN_CELLS
+        start = 0 if side == "P" else BAT_START
         cells = to_cells(cards, block, W_LINE, floor_one=(side == "P"))
         assert (cells.sum(axis=1) == block).all(), "a card does not fill its block"
         if side == "P":
@@ -736,7 +775,7 @@ def main() -> None:
                 "P": to_cells(lg.to_numpy()[None, :], P_CELLS, W_LINE, True)[0]}
     for col in CARD_LINES:
         league[f"{col} %"] = round(100 * lg[col], 2)
-    b_start = P_CELLS + sum(BAND_CELLS.values()) + RUN_CELLS
+    b_start = BAT_START
     per_row = [lg_cells["B"], lg_cells["P"]] + [lg_cols[st][0] for st in FATIGUE]
     starts = [b_start, 0] + [0] * len(FATIGUE)
     # A batter row and a pitcher row share this file, so the columns stay in
@@ -751,11 +790,12 @@ def main() -> None:
             range_col.append(ranges(arranged, start_at)[order.index(line)])
         league[f"{line} cells"] = cell_col
         league[line] = range_col
-    for l, n in BAND_CELLS.items():
+    at = BAND_START
+    for l in BAND_ORDER:
+        n = BAND_CELLS[l]
         league[f"{l} cells"] = n
-        league[l] = ranges([n], P_CELLS + sum(
-            BAND_CELLS[k] for k in BAND_CELLS if list(BAND_CELLS).index(k)
-            < list(BAND_CELLS).index(l)))[0]
+        league[l] = ranges([n], at)[0]
+        at += n
     out = OUT_DIR / "cards_league.csv"
     with out.open("w", encoding="utf-8", newline="") as fh:
         fh.write("\n".join(stamp) + "\n")
