@@ -68,10 +68,12 @@ MIN_CATCHER = 5      # attempts faced
 MIN_RUNNER = 4       # attempts made
 MIN_BIN_CHANCES = 10  # chances on second before a runner can be binned
 ATTEMPT_GOES_CUT = 0.19  # shrunk attempt rate that makes her "attempt_goes": a CHOICE
+SUCCESS_LOW_CUT = 0.78   # shrunk success below this is "success_low"
 # The two ratings each have a default value, and both used to be called "league".
 # They are prefixed by their dial so a bin name says which rating it belongs to:
 #   attempt rate -> attempt_goes / attempt_league
 #   success      -> success_low  / success_league
+# Card literals drop the prefix: Goes / League, and League / Low.
 DRAWS = 20000
 SEED = 20260925
 
@@ -187,7 +189,34 @@ def chance_bins(d, cut=ATTEMPT_GOES_CUT):
     return goes, m, p, tau
 
 
-def catchers(rng):
+def success_bins(d, cut=SUCCESS_LOW_CUT):
+    """Which runners are low on success, from their own shrunk rate.
+
+    Only runners with MIN_RUNNER or more attempts can be low; everyone else is
+    success_league, including a 1-for-2 that would shrink under the cut.
+    """
+    g = (d.groupby("runner")
+           .agg(att=("att", "sum"), ok=("ok", "sum")))
+    g = g[g.att >= MIN_RUNNER]
+    p, _obs, _exp, tau = moments(g.ok.to_numpy(float), g.att.to_numpy(float))
+    m = p * (1 - p) / tau ** 2 if tau > 0 else np.inf
+    g["shrunk"] = (g.ok + m * p) / (g.att + m)
+    low = set(g.index[g.shrunk < cut])
+    return low, m, p, tau
+
+
+def card_labels(pl: pd.DataFrame | None = None) -> dict[str, tuple[str, str]]:
+    """Runner name -> (attempt, success) card literals.
+
+    Attempt is Goes or League; success is League or Low. Defaults are both
+    League. Names are the play-by-play spellings (the occupied-base fields).
+    """
+    d = runner_chances(pl if pl is not None else tables.read("plays", "training"))
+    goes, *_ = chance_bins(d)
+    low, *_ = success_bins(d)
+    names = set(d.runner) | goes | low
+    return {n: ("Goes" if n in goes else "League",
+                "Low" if n in low else "League") for n in names}
     """The catcher, on the two questions that need different denominators."""
     f = tables.read("fielding", "training")
     cat = f[f["position"].astype(str).str.lower() == "c"]

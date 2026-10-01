@@ -1,3 +1,9 @@
+2026-10-01: v0.5.4
+  - Batter cards gain stolen-base ratings: attempt (Goes or League) and
+    success (League or Low). Derived each build from the chance and success
+    bins in steals.py / stolen_base_spec.md section 4, not a frozen name list.
+    Default for both is League
+
 2026-09-24: v0.5.3
   - Printed names are letters and spaces. Accents fold, apostrophes drop,
     a hyphen becomes a space: Day Bedard, Maika Dumais, Thaima Maximiliana,

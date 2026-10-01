@@ -77,6 +77,7 @@ cards and the result would floor twice.
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 import unicodedata
 
 import numpy as np
@@ -614,7 +615,7 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.5.3"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.5.4"                 # keep in step with data/dice/dice_version.md
 
 
 def plain_name(name: str) -> str:
@@ -632,6 +633,33 @@ def plain_name(name: str) -> str:
     text = "".join(c for c in text if c.isascii() and (c.isalpha() or c == " "))
     return " ".join(text.split())
 REPORT_TO = "https://github.com/jgf1123/wpbl/issues"
+
+
+def steal_card_labels() -> dict[str, tuple[str, str]]:
+    """person_name -> (attempt, success) with card literals Goes/League, League/Low.
+
+    Derived every build from steals.card_labels (stolen_base_spec.md section 4),
+    not a frozen name list. A batter with no steal chances is League / League.
+    """
+    # ponytail: analysis script is not a package; load it once for the bins.
+    import importlib.util
+    path = Path(__file__).resolve().parents[2] / "analysis" / "dice" / "steals.py"
+    spec = importlib.util.spec_from_file_location("steals_for_cards", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    labels = mod.card_labels()
+    goes = {n for n, (a, _) in labels.items() if a == "Goes"}
+    low = {n for n, (_, s) in labels.items() if s == "Low"}
+    # The eleven / three names the spec records; fail the build if the cut moved.
+    expect_goes = {
+        "Lexi Hastings", "Denae Benites", "Ashton Lansdell", "Amira Hondras",
+        "Denver Bryant", "Claire O'Sullivan", "London Studer", "Joely Leguizamon",
+        "Suzuka Yamamoto", "Ayuri Shimano", "Raine Padgham",
+    }
+    expect_low = {"Amira Hondras", "Joely Leguizamon", "Suzuka Yamamoto"}
+    assert goes == expect_goes, f"attempt_goes moved: {goes ^ expect_goes}"
+    assert low == expect_low, f"success_low moved: {low ^ expect_low}"
+    return labels
 
 
 def provenance(pa: pd.DataFrame) -> list[str]:
@@ -678,6 +706,7 @@ def main() -> None:
     from wpbl.positions import check_position_labels, position_labels
     position_of = position_labels()
     check_position_labels(position_of)
+    steal_of = steal_card_labels()
     stamp = provenance(pa)
     band = bands(pa)
     W_LINE = line_weights()
@@ -738,7 +767,20 @@ def main() -> None:
             table = table.sort_values("BF", ascending=False)
         else:
             table = rows(cells)
+            # Steal bins: attempt Goes/League, success League/Low. Matched on
+            # the stored person_name (accents and all); default is League/League.
+            att, suc = [], []
+            for n in names:
+                a, s = steal_of.get(n, ("League", "League"))
+                att.append(a)
+                suc.append(s)
+            table.insert(3, "success", suc)
+            table.insert(3, "attempt", att)
             table = table.sort_values("PA", ascending=False)   # most-used first
+            n_goes = int((table["attempt"] == "Goes").sum())
+            n_low = int((table["success"] == "Low").sum())
+            print(f"  steal ratings: {n_goes} Goes, {n_low} Low "
+                  f"(rest League / League)")
         assert table["player"].map(lambda s: s.replace(" ", "").isalpha() and s.isascii()).all()
         out = OUT_DIR / f"cards_{label}.csv"
         with out.open("w", encoding="utf-8", newline="") as fh:
