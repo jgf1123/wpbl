@@ -9,3 +9,4 @@ data/tables/
 data/*.html
 data/img/*.png
 .cursor/
+*_post.md

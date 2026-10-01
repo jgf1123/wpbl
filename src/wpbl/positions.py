@@ -6,8 +6,8 @@
 Positional versatility is a defining feature of this league rather than a
 curiosity. Fifteen-player rosters mean position players pitch, catchers move to
 the outfield, and a team's best starter may spend the rest of the week in
-centre field. This counts games at each position so that pattern is visible
-rather than anecdotal.
+centre field. This prints games at each position, then innings (outs / 3) at
+each field position, so that pattern is visible rather than anecdotal.
 
 Two things this gets right that a naive count of the box score's `position`
 field would not.
@@ -23,7 +23,8 @@ game at third base. Pitching appearances are therefore taken from
 pitching.parquet, which is authoritative, and unioned in.
 
 Identity is keyed on person_id, so a traded player's games sum across both
-teams rather than splitting.
+teams rather than splitting. Innings are one row per person (training scope),
+the same totals the card labels use.
 """
 
 from __future__ import annotations
@@ -81,7 +82,7 @@ def games_by_position() -> pd.DataFrame:
         person_id, name, team = key
         counts = played.get(key, Counter())
         spots = bench.get(key, Counter())
-        row = {"tm": CODES.get(team, "?"), "player": name,
+        row = {"person_id": person_id, "tm": CODES.get(team, "?"), "player": name,
                "games": len(appeared[key]), "starts": len(started.get(key, set()))}
         for position in FIELDING:
             row[position] = counts.get(position, 0)
@@ -89,6 +90,44 @@ def games_by_position() -> pd.DataFrame:
         row["spots"] = sum(1 for p in FIELDING if counts.get(p, 0))
         field_games = [p for p in FIELDING if counts.get(p, 0)]
         row["primary"] = max(field_games, key=lambda p: counts[p]) if field_games else "-"
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def outs_as_ip(outs: int) -> str:
+    """Baseball IP: 5.2 is five and two-thirds, not five point two."""
+    return f"{outs // 3}.{outs % 3}"
+
+
+def innings_by_position(scope: str = "training") -> pd.DataFrame:
+    """One row per player, outs spent at each field position (DH excluded).
+
+    Same totals as `position_labels`: pitching from the pitching line, the
+    other eight from the starting lineup and substitutions. Values are outs;
+    print with outs_as_ip.
+    """
+    from wpbl import tables
+
+    bat = tables.read("batting", scope)
+    name_of = bat.drop_duplicates("person_id").set_index("person_id")["person_name"]
+    # A person on two teams keeps the code she appeared for most often.
+    team_of = (bat.groupby("person_id")["team_name"]
+               .agg(lambda s: s.value_counts().index[0])
+               .map(CODES))
+    rows = []
+    for pid, counts in field_outs(scope).items():
+        if pid not in name_of.index:
+            continue
+        total = sum(counts[p] for p in CARD_POS if counts.get(p, 0))
+        if total <= 0:
+            continue
+        ranked = sorted(((p, counts[p]) for p in CARD_POS if counts.get(p, 0)),
+                        key=lambda item: (-item[1], _TIE[item[0]]))
+        row = {"person_id": pid, "tm": team_of.get(pid, "?"),
+               "player": name_of[pid], "outs": total, "ip": outs_as_ip(total),
+               "spots": len(ranked), "primary": ranked[0][0]}
+        for p in CARD_POS:
+            row[p] = counts.get(p, 0)
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -106,8 +145,8 @@ def main() -> None:
 
     print(f"games at each position, {len(table)} players"
           f"{f' with at least {minimum} games' if minimum > 1 else ''}")
-    print("  counts are games, not innings; a player at two positions in one game")
-    print("  is counted at both, so a row can exceed her games played\n")
+    print("  a player at two positions in one game is counted at both, so a")
+    print("  row can exceed her games played\n")
 
     header = (f"  {'':4s}{'player':22s}{'G':>4s}{'GS':>4s}"
               + "".join(f"{p:>5s}" for p in FIELDING)
@@ -138,6 +177,28 @@ def main() -> None:
     for row in both.sort_values("p", ascending=False).to_dict("records"):
         elsewhere = ", ".join(f"{p} {row[p]}" for p in FIELDING if p != "p" and row[p])
         print(f"    {row['tm']} {row['player']:22s} pitched {row['p']:2d}, also {elsewhere}")
+
+    # Same player filter as the games table when --min is set; innings are
+    # person-level (training), so a name that appears on two teams still has
+    # one innings row.
+    keep = set(table["person_id"])
+    inn = innings_by_position()
+    inn = inn[inn["person_id"].isin(keep)].sort_values(
+        ["tm", "outs", "player"], ascending=[True, False, True])
+    print(f"\n\n=== innings at each position, {len(inn)} players (training) ===")
+    print("  outs from the lineup and pitching line; 5.2 means five and")
+    print("  two-thirds. DH, pinch-hitting and pinch-running are not positions.")
+    print("  pitching comes from the pitching line, not the position string.\n")
+    header = (f"  {'':4s}{'player':22s}{'IP':>6s}"
+              + "".join(f"{p:>6s}" for p in CARD_POS)
+              + f"{'spots':>7s}  primary")
+    print(header)
+    for _, block in inn.groupby("tm"):
+        print()
+        for row in block.to_dict("records"):
+            cells = "".join(f"{outs_as_ip(row[p]) if row[p] else '':>6}" for p in CARD_POS)
+            print(f"  {row['tm']:4s}{row['player']:22s}{row['ip']:>6}"
+                  f"{cells}{row['spots']:7d}  {row['primary']}")
 
 
 # Positions a batter card may list, in scorecard order. DH is not one of them:

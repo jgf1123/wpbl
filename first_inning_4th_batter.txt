@@ -1,0 +1,235 @@
+
+===== SFF: BEFORE the 4th batter's PA resolves   (mass 1.000000; mean runs 0.268; P(no 4th PA) = 0.166); order Jorge, Leblanc, Kaplan, Whitmore, Gutierrez, Albayati, Gianelloni, Leguizamon, Park
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .   0.7     .    0.7
+0 out, lead runner 1st        .     .   1.1     .     .    1.1
+0 out, lead runner 2nd        .   2.9   0.6     .     .    3.5
+0 out, lead runner 3rd      4.3   2.4   0.1     .     .    6.8
+1 out, lead runner none       .     .   2.2     .     .    2.2
+1 out, lead runner 1st        .   3.9     .     .     .    3.9
+1 out, lead runner 2nd     16.3   2.6     .     .     .   18.8
+1 out, lead runner 3rd      8.0   1.2     .     .     .    9.1
+2 out, lead runner none       .   3.8     .     .     .    3.8
+2 out, lead runner 1st     20.3     .     .     .     .   20.3
+2 out, lead runner 2nd      8.1     .     .     .     .    8.1
+2 out, lead runner 3rd      5.1     .     .     .     .    5.1
+3 outs                     16.6     .     .     .     .   16.6
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .   3.8   2.2   0.7     .    6.7
+lead runner 1st     20.3   3.9   1.1     .     .   25.3
+lead runner 2nd     24.4   5.5   0.6     .     .   30.4
+lead runner 3rd     17.3   3.5   0.1     .     .   21.0
+3 outs              16.6     .     .     .     .   16.6
+
+===== SFF: AFTER the 4th batter's PA   (mass 1.000000; mean runs 0.605; P(no 4th PA) = 0.166); order Jorge, Leblanc, Kaplan, Whitmore, Gutierrez, Albayati, Gianelloni, Leguizamon, Park
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .     .   1.0    1.0
+0 out, lead runner 1st        .     .     .   0.5     .    0.5
+0 out, lead runner 2nd        .     .   1.3   0.2     .    1.5
+0 out, lead runner 3rd        .   2.5   0.8     .     .    3.2
+1 out, lead runner none       .     .     .   3.3     .    3.3
+1 out, lead runner 1st        .     .   2.2     .     .    2.2
+1 out, lead runner 2nd        .   5.1   1.2     .     .    6.2
+1 out, lead runner 3rd      7.1   3.7   0.3     .     .   11.1
+2 out, lead runner none       .     .   4.7     .     .    4.7
+2 out, lead runner 1st        .   5.8     .     .     .    5.8
+2 out, lead runner 2nd     12.9   2.8     .     .     .   15.7
+2 out, lead runner 3rd      6.2   1.3     .     .     .    7.5
+3 outs                     35.0   2.1     .     .     .   37.1
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .     .   4.7   3.3   1.0    9.1
+lead runner 1st        .   5.8   2.2   0.5     .    8.5
+lead runner 2nd     12.9   7.9   2.4   0.2     .   23.5
+lead runner 3rd     13.3   7.5   1.1     .     .   21.9
+3 outs              35.0   2.1     .     .     .   37.1
+(percent of first innings, by outs and the base of the lead runner)
+
+===== NYH, Perez SS: BEFORE the 4th batter's PA resolves   (mass 1.000000; mean runs 0.228; P(no 4th PA) = 0.169); order Lahners, Yonetani, Willan, Benites, O'Sullivan, Studer, Perez, Eccles, Zettlemoyer
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .   0.3     .    0.3
+0 out, lead runner 1st        .     .   1.0     .     .    1.0
+0 out, lead runner 2nd        .   2.6   0.6     .     .    3.2
+0 out, lead runner 3rd      4.8   2.3   0.1     .     .    7.2
+1 out, lead runner none       .     .   1.4     .     .    1.4
+1 out, lead runner 1st        .   3.6     .     .     .    3.6
+1 out, lead runner 2nd     16.9   2.5     .     .     .   19.4
+1 out, lead runner 3rd      8.1   1.3     .     .     .    9.4
+2 out, lead runner none       .   3.3     .     .     .    3.3
+2 out, lead runner 1st     20.2     .     .     .     .   20.2
+2 out, lead runner 2nd      8.7     .     .     .     .    8.7
+2 out, lead runner 3rd      5.3     .     .     .     .    5.3
+3 outs                     16.9     .     .     .     .   16.9
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .   3.3   1.4   0.3     .    5.0
+lead runner 1st     20.2   3.6   1.0     .     .   24.8
+lead runner 2nd     25.6   5.1   0.6     .     .   31.4
+lead runner 3rd     18.2   3.6   0.1     .     .   21.9
+3 outs              16.9     .     .     .     .   16.9
+
+===== NYH, Perez SS: AFTER the 4th batter's PA   (mass 1.000000; mean runs 0.630; P(no 4th PA) = 0.169); order Lahners, Yonetani, Willan, Benites, O'Sullivan, Studer, Perez, Eccles, Zettlemoyer
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .     .   1.2    1.2
+0 out, lead runner 1st        .     .     .   0.4     .    0.4
+0 out, lead runner 2nd        .     .   1.4   0.2     .    1.6
+0 out, lead runner 3rd        .   2.3   0.9     .     .    3.2
+1 out, lead runner none       .     .     .   3.8     .    3.8
+1 out, lead runner 1st        .     .   2.1     .     .    2.1
+1 out, lead runner 2nd        .   5.2   1.1     .     .    6.4
+1 out, lead runner 3rd      6.9   3.9   0.3     .     .   11.1
+2 out, lead runner none       .     .   5.1     .     .    5.1
+2 out, lead runner 1st        .   6.1     .     .     .    6.1
+2 out, lead runner 2nd     12.7   2.8     .     .     .   15.5
+2 out, lead runner 3rd      6.2   1.3     .     .     .    7.5
+3 outs                     34.5   1.7     .     .     .   36.2
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .     .   5.1   3.8   1.2   10.1
+lead runner 1st        .   6.1   2.1   0.4     .    8.6
+lead runner 2nd     12.7   8.0   2.5   0.2     .   23.4
+lead runner 3rd     13.1   7.5   1.2     .     .   21.8
+3 outs              34.5   1.7     .     .     .   36.2
+(percent of first innings, by outs and the base of the lead runner)
+
+===== NYH, Saiki SS: BEFORE the 4th batter's PA resolves   (mass 1.000000; mean runs 0.227; P(no 4th PA) = 0.167); order Lahners, Yonetani, Saiki, Benites, O'Sullivan, Studer, Eccles, Zettlemoyer, Willan
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .   0.3     .    0.3
+0 out, lead runner 1st        .     .   0.9     .     .    0.9
+0 out, lead runner 2nd        .   2.6   0.7     .     .    3.3
+0 out, lead runner 3rd      4.8   2.3   0.2     .     .    7.3
+1 out, lead runner none       .     .   1.4     .     .    1.4
+1 out, lead runner 1st        .   3.7     .     .     .    3.7
+1 out, lead runner 2nd     17.3   2.5     .     .     .   19.7
+1 out, lead runner 3rd      8.1   1.2     .     .     .    9.3
+2 out, lead runner none       .   3.2     .     .     .    3.2
+2 out, lead runner 1st     19.1     .     .     .     .   19.1
+2 out, lead runner 2nd      9.9     .     .     .     .    9.9
+2 out, lead runner 3rd      5.2     .     .     .     .    5.2
+3 outs                     16.7     .     .     .     .   16.7
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .   3.2   1.4   0.3     .    4.9
+lead runner 1st     19.1   3.7   0.9     .     .   23.6
+lead runner 2nd     27.1   5.1   0.7     .     .   32.9
+lead runner 3rd     18.1   3.6   0.2     .     .   21.9
+3 outs              16.7     .     .     .     .   16.7
+
+===== NYH, Saiki SS: AFTER the 4th batter's PA   (mass 1.000000; mean runs 0.635; P(no 4th PA) = 0.167); order Lahners, Yonetani, Saiki, Benites, O'Sullivan, Studer, Eccles, Zettlemoyer, Willan
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .     .   1.2    1.2
+0 out, lead runner 1st        .     .     .   0.4     .    0.4
+0 out, lead runner 2nd        .     .   1.3   0.2     .    1.6
+0 out, lead runner 3rd        .   2.4   0.9     .     .    3.2
+1 out, lead runner none       .     .     .   3.8     .    3.8
+1 out, lead runner 1st        .     .   2.1     .     .    2.1
+1 out, lead runner 2nd        .   5.2   1.2     .     .    6.4
+1 out, lead runner 3rd      7.0   3.9   0.4     .     .   11.3
+2 out, lead runner none       .     .   5.1     .     .    5.1
+2 out, lead runner 1st        .   6.1     .     .     .    6.1
+2 out, lead runner 2nd     12.5   2.8     .     .     .   15.3
+2 out, lead runner 3rd      6.3   1.3     .     .     .    7.6
+3 outs                     34.3   1.6     .     .     .   35.9
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .     .   5.1   3.8   1.2   10.1
+lead runner 1st        .   6.1   2.1   0.4     .    8.6
+lead runner 2nd     12.5   8.0   2.5   0.2     .   23.3
+lead runner 3rd     13.3   7.6   1.2     .     .   22.1
+3 outs              34.3   1.6     .     .     .   35.9
+(percent of first innings, by outs and the base of the lead runner)
+
+===== LAQ: BEFORE the 4th batter's PA resolves   (mass 1.000000; mean runs 0.281; P(no 4th PA) = 0.161); order Lansdell, Edwards, Benitez, Mackay, Foxx, Eynon, Maximiliana, Davis, Hondras
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .   0.3     .    0.3
+0 out, lead runner 1st        .     .   0.9     .     .    0.9
+0 out, lead runner 2nd        .   3.6   0.6     .     .    4.1
+0 out, lead runner 3rd      3.7   2.5   0.1     .     .    6.3
+1 out, lead runner none       .     .   1.2     .     .    1.2
+1 out, lead runner 1st        .   6.2     .     .     .    6.2
+1 out, lead runner 2nd     13.6   3.3     .     .     .   17.0
+1 out, lead runner 3rd      8.7   1.3     .     .     .   10.0
+2 out, lead runner none       .   4.9     .     .     .    4.9
+2 out, lead runner 1st     18.1     .     .     .     .   18.1
+2 out, lead runner 2nd      8.7     .     .     .     .    8.7
+2 out, lead runner 3rd      6.3     .     .     .     .    6.3
+3 outs                     16.1     .     .     .     .   16.1
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .   4.9   1.2   0.3     .    6.3
+lead runner 1st     18.1   6.2   0.9     .     .   25.2
+lead runner 2nd     22.3   6.9   0.6     .     .   29.8
+lead runner 3rd     18.6   3.8   0.1     .     .   22.5
+3 outs              16.1     .     .     .     .   16.1
+
+===== LAQ: AFTER the 4th batter's PA   (mass 1.000000; mean runs 0.568; P(no 4th PA) = 0.161); order Lansdell, Edwards, Benitez, Mackay, Foxx, Eynon, Maximiliana, Davis, Hondras
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .     .   0.7    0.7
+0 out, lead runner 1st        .     .     .   0.3     .    0.3
+0 out, lead runner 2nd        .     .   1.2   0.2     .    1.4
+0 out, lead runner 3rd        .   2.3   0.8     .     .    3.0
+1 out, lead runner none       .     .     .   2.1     .    2.1
+1 out, lead runner 1st        .     .   1.9     .     .    1.9
+1 out, lead runner 2nd        .   6.1   1.2     .     .    7.3
+1 out, lead runner 3rd      5.8   4.1   0.4     .     .   10.2
+2 out, lead runner none       .     .   3.3     .     .    3.3
+2 out, lead runner 1st        .   7.8     .     .     .    7.8
+2 out, lead runner 2nd     11.2   3.5     .     .     .   14.7
+2 out, lead runner 3rd      6.4   1.7     .     .     .    8.1
+3 outs                     36.0   3.0     .     .     .   39.0
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .     .   3.3   2.1   0.7    6.1
+lead runner 1st        .   7.8   1.9   0.3     .   10.0
+lead runner 2nd     11.2   9.7   2.4   0.2     .   23.4
+lead runner 3rd     12.2   8.0   1.2     .     .   21.3
+3 outs              36.0   3.0     .     .     .   39.0
+(percent of first innings, by outs and the base of the lead runner)
+
+===== BOS: BEFORE the 4th batter's PA resolves   (mass 1.000000; mean runs 0.232; P(no 4th PA) = 0.184); order Bryant, Geldenhuis, Yamamoto, Hastings, Schroder, Greenwood, Dumais, Paddison, Padgham
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .   0.2     .    0.2
+0 out, lead runner 1st        .     .   0.9     .     .    0.9
+0 out, lead runner 2nd        .   2.3   0.5     .     .    2.8
+0 out, lead runner 3rd      3.7   2.0   0.1     .     .    5.8
+1 out, lead runner none       .     .   1.5     .     .    1.5
+1 out, lead runner 1st        .   4.1     .     .     .    4.1
+1 out, lead runner 2nd     14.9   2.7     .     .     .   17.5
+1 out, lead runner 3rd      8.2   1.3     .     .     .    9.5
+2 out, lead runner none       .   4.1     .     .     .    4.1
+2 out, lead runner 1st     19.6     .     .     .     .   19.6
+2 out, lead runner 2nd      9.7     .     .     .     .    9.7
+2 out, lead runner 3rd      5.7     .     .     .     .    5.7
+3 outs                     18.4     .     .     .     .   18.4
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .   4.1   1.5   0.2     .    5.8
+lead runner 1st     19.6   4.1   0.9     .     .   24.7
+lead runner 2nd     24.6   5.0   0.5     .     .   30.0
+lead runner 3rd     17.7   3.3   0.1     .     .   21.0
+3 outs              18.4     .     .     .     .   18.4
+
+===== BOS: AFTER the 4th batter's PA   (mass 1.000000; mean runs 0.476; P(no 4th PA) = 0.184); order Bryant, Geldenhuis, Yamamoto, Hastings, Schroder, Greenwood, Dumais, Paddison, Padgham
+                         0 runs     1     2     3    4+  total
+0 out, lead runner none       .     .     .     .   0.4    0.4
+0 out, lead runner 1st        .     .     .   0.3     .    0.3
+0 out, lead runner 2nd        .     .   1.1   0.2     .    1.3
+0 out, lead runner 3rd        .   2.2   0.7     .     .    2.8
+1 out, lead runner none       .     .     .   1.5     .    1.5
+1 out, lead runner 1st        .     .   1.9     .     .    1.9
+1 out, lead runner 2nd        .   5.0   1.1     .     .    6.1
+1 out, lead runner 3rd      7.0   3.5   0.3     .     .   10.8
+2 out, lead runner none       .     .   2.9     .     .    2.9
+2 out, lead runner 1st        .   6.5     .     .     .    6.5
+2 out, lead runner 2nd     13.3   3.1     .     .     .   16.4
+2 out, lead runner 3rd      6.7   1.4     .     .     .    8.0
+3 outs                     38.6   2.3     .     .     .   41.0
+  -- compact: lead runner only --
+                  0 runs     1     2     3    4+  total
+lead runner none       .     .   2.9   1.5   0.4    4.8
+lead runner 1st        .   6.5   1.9   0.3     .    8.7
+lead runner 2nd     13.3   8.1   2.2   0.2     .   23.8
+lead runner 3rd     13.7   7.1   1.0     .     .   21.7
+3 outs              38.6   2.3     .     .     .   41.0
+(percent of first innings, by outs and the base of the lead runner)

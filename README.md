@@ -17,7 +17,7 @@ pixi run games       # date / teams / score / game_id -> data/games_lookup.csv
 
 pixi run rosters     # who pitched, for whom, in what role
 pixi run timeline    # how each team's use of its players changed over the season
-pixi run positions   # games at each position (PH/PR separate; pitching from the pitching table)
+pixi run positions   # games and innings at each position (PH/PR separate; pitching from the pitching table)
 pixi run chart       # data/usage.html - which innings each pitcher covered
 pixi run innings     # runs scored and allowed per inning, by team
 pixi run re          # run expectancy by base-out state, with its diagnostics
