@@ -177,15 +177,16 @@ Because many pitchers in the WPBL also bat and play non-pitcher positions, manag
 
 ## Stealing
 
-Between batters, the offence may declare a steal attempt with a runner on 1st or
-2nd and the base ahead empty. Roll the d12:
+Before a PA is rolled, a player may green-light a runner to steal 2nd or 3rd base. Roll d100.
 
-| d12   | Result                            |
-| ----- | --------------------------------- |
-| 1–10  | Safe — the runner takes the base. |
-| 11–12 | Out.                              |
+| Base, Attempt rating | No attempt | Success Low | Success League vs Benites | Success League otherwise |
+|---|---|---|---|---|
+| 2nd, Goes | 00-63 | 64-81 out, 82-99 safe | 64-75 out, 76-99 safe | 64-66 out, 67-99 safe |
+| 2nd, League | 00-93 | 94-96 out, 97-99 safe | 94-95 out, 96-99 safe | 94 *, 95-99 safe |
+| 3rd, Goes | 00-87 | 88-93 out, 94-99 safe | 88-91 out, 92-99 safe | 88 out, 89-99 safe |
+| 3rd, League | 00-98 | 99 * | 99 safe | 99 safe |
 
-*TODO: catcher and runner ratings.*
+On a * result, flip a coin or roll with 50/50 out or safe.
 
 ---
 
