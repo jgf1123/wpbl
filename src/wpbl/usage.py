@@ -13,6 +13,9 @@ shortstop. The conventions put players where their teams put them anyway:
                included; everyone else is a reliever
   conflicts    a player kept out of the window by a conflict, not a benching, is
                credited at her start rate up to her last appearance
+  starter bats a starting pitcher bats (at P, no DH) when her team batted her
+               -- lineup spot 1-9, not 10 behind a DH -- in more than half of
+               her weighted window starts at P (user, 2026-10-06: rule 4')
 """
 from __future__ import annotations
 
@@ -54,6 +57,7 @@ class Usage:
 
         self.weight = defaultdict(float)               # (team, name) -> weighted window starts
         self.weight_at = defaultdict(float)            # (team, name, pos) -> the same at pos
+        p_starts, p_bats = defaultdict(float), defaultdict(float)   # (team, name), window, at P
         for team in TEAMS.values():
             ts = st[st["team"] == team]
             reg = ts[~ts["is_postseason"]]
@@ -65,6 +69,9 @@ class Usage:
                 for r in part[part["pos"] != "P"].itertuples():
                     self.weight[(team, r.card)] += w
                     self.weight_at[(team, r.card, r.pos)] += w
+                for r in part[part["pos"] == "P"].itertuples():
+                    p_starts[(team, r.card)] += w
+                    p_bats[(team, r.card)] += w * (r.lineup_spot <= 9)
             for name in CONFLICT:
                 mine = bat[(bat["card"] == name) & (bat["team"] == team)]
                 if mine.empty:
@@ -77,6 +84,7 @@ class Usage:
                 self.weight[(team, name)] = rate * total
                 for pos, n in before["pos"].value_counts().items():
                     self.weight_at[(team, name, pos)] = rate * total * n / len(before)
+        self.bats_at_p = {k for k in p_starts if p_bats[k] > p_starts[k] / 2}   # (team, name)
 
         pit = tables.read("pitching", "all")
         pit = pit.assign(card=pit["person_name"].map(lambda n: names.get(_norm(n))),

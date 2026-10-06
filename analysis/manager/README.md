@@ -36,6 +36,9 @@ schedules, 100 each), so their rows are comparable.
 | `lineup_cost.py` | series won with one team batting its best nine | What the lineup conventions cost |
 | `two_way_dh.py` | two-way starter sits (keeps the DH); DH-aware relief | Two-way starters and DH-aware relief |
 | `nyh_swaps_order.py` | NYH one-swap run gains; best vs real-style vs by-bat order | Where NYH's cost comes from, and batting order |
+| `easy_gains.py` | every one-in lineup change, exact runs, fewest position moves, by eligibility tier | Where each team could most easily improve |
+| `easy_gains_series.py` | series and game win % with each team's top swap | Where each team could most easily improve |
+| `sff_runs_check.py` | SFF runs scored/allowed with and without its swap; whether the swap survives the game | Where each team could most easily improve |
 
 Some scripts were written against earlier states of `manager.py` (for example
 `saboteur.py` and `arm_value.py` ran before the conventions existed, with them

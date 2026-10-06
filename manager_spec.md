@@ -201,7 +201,9 @@ The comparison is "both play the conventions" above.
   Maximiliana), Saiki (DH Lahners) and Whitmore (DH Albayati). Overall -1.5,
   within noise; SFF -4.5 (per-team SE about 2.7) -- Whitmore, SFF's best bat,
   replaced by Albayati. Rule 4 (she bats at P, as SFF and NYH did) is right or
-  neutral; nothing favours sitting her.
+  neutral; nothing favours sitting her. (Later found: NYH never batted Saiki,
+  and BOS never batted Schroder; rule 4' follows what each team did. Sitting
+  them was neutral here: NYH 64.3%, BOS 26.7%.)
 - **DH-aware relief:** DH lost in 17% of DH games instead of 32%, relievers
   from the lineup 0.32 a game instead of 0.39 -- and no change in series won.
   Consistent with the user's experience that a reliever's pitching dominates
@@ -212,7 +214,8 @@ The comparison is "both play the conventions" above.
 Exact expected runs over 7 innings against the league pitcher, each nine in
 its best order -- no dice noise. Rough scale from the series runs above:
 NYH's 0.5-0.7 runs a game were worth about 12 points of series wins, so about
-2 points per 0.1 run.
+2 points per 0.1 run. (Superseded: about 1 point per 0.1 run, from
+Pythagenpat -- see "Where each team could most easily improve".)
 
 NYH, one swap at a time from the conventions nine:
 
@@ -240,6 +243,78 @@ Batting order, the conventions nine with a rested starter:
 The teams' own orders cost 0.03-0.08 runs a game against the best order --
 about a point of series wins at most. Simply batting the best bats first gets
 within 0.03 of the best.
+
+### Where each team could most easily improve (2026-10-06)
+
+One bench player in for one regular, from the conventions nine (rule 4'),
+scored by exact runs over 7 innings against the league pitcher, best order.
+Runs depend only on which nine bat, so positions decide legality alone; for
+each (in, out) the fewest regulars who change position ("moves", 0 = straight
+swap). A regular may always keep the position the conventions gave her.
+`analysis/manager/easy_gains.py`.
+
+Conventions nines under rule 4': BOS 6.754 (Schroder starts) / 6.915 (Blunt,
+Benach); LAQ 7.670; NYH 8.316 (Saiki) / 8.447 (Kim); SFF 8.457. Rule 4' moved
+BOS on Schroder days from 6.904 and NYH on Saiki days from 8.259.
+
+Best changes legal under 2+ starts:
+
+| team | change | runs | moves | days |
+|---|---|---|---|---|
+| SFF | Gutierrez in at DH for Day-Bedard | +0.354 | 0 | not Whitmore's (she bats at P, no DH) |
+| NYH | Izumi in at SS for Perez | +0.238 | 0 | Saiki's |
+| NYH | Izumi in at 2B for Willan | +0.141 | 0 | Kim's (Saiki plays SS) |
+| LAQ | Benitez in for Hondras | +0.173 | 2 | all |
+| LAQ | Apgar / Ibarra in at CF for Davis | +0.143 / +0.137 | 0 | all |
+| BOS | H. Kim in at DH for Haas | +0.170 / +0.172 | 0 | all |
+| BOS | De Leija in at DH for Haas | +0.142 / +0.144 | 0 | all |
+
+On Whitmore days SFF has nothing above +0.03. On Schroder days BOS's best
+change breaks rule 4': Schroder bats at P for Haas, +0.285.
+
+What relaxing eligibility would add:
+
+- **1+ start:** LAQ Benitez in for Davis, Hondras to CF (1 start there),
+  +0.323; Maximiliana at CF for Davis +0.288. BOS Padgham out at SS (De Leija
+  +0.195; H. Kim with Yamamoto to SS, Haas to 2B, +0.223). NYH on Kim days
+  Izumi at 3B for Perez +0.241.
+- **Card:** NYH Izumi in CF for Eccles +0.443, the largest single change; SFF
+  on Whitmore days Gutierrez at 3B for A. Yamamoto +0.259.
+
+Arms touched by the headline changes: Day-Bedard (SFF) and Hondras (LAQ) are
+role relievers leaving the lineup; Izumi (NYH) a role reliever entering it.
+Disfavored arms (Padgham, Foxx, Apgar, Narasaki, ...) never pitch, so swapping
+them does not touch relief.
+
+**Confirmation in series.** Same 600 seeded series per team as "What the
+lineup conventions cost", both B0, conventions on; one team plays its swap
+on every day it is legal, the opponents the defaults. Game win % on the days
+the swap is legal. `analysis/manager/easy_gains_series.py`.
+
+| team | change | series: defaults -> swap | games: defaults -> swap |
+|---|---|---|---|
+| BOS | H. Kim for Haas | 25.8% -> 27.5% | 36.2% -> 36.6% |
+| LAQ | Benitez for Hondras | 45.8% -> 47.3% | 48.0% -> 48.3% |
+| NYH | Izumi for Perez / Willan | 64.2% -> 69.8% | 57.8% -> 61.5% |
+| SFF | Gutierrez for Day-Bedard | 65.2% -> 63.7% | 60.0% -> 60.2% |
+
+SE of a difference about 2.8 points for series, 1.4 for games (1.9 for SFF's
+1,400 swap days): the shared seeds hardly pair once the lineups differ. Only
+NYH is clear. SFF was checked directly (`sff_runs_check.py`): the swap
+survives the game (Gutierrez still batting at the end in 98%, DH kept in 98%)
+and adds +0.21 runs a game (8.763 -> 8.968, SE about 0.18), consistent with
+the exact +0.35. Its missing wins are noise.
+
+**Runs to wins: Pythagenpat.** Win % = R^x / (R^x + A^x), x = (runs per game,
+both teams)^0.287. In SFF's games x is about 2.2 and it fits: predicted 60.3%
+against 60.0% actual on swap days, 56.0% against 55.7% on Whitmore days. Its
+slope there is 0.61-0.66 game points per 0.1 run; a best-of-5 multiplies a
+game edge by 1.875 at even (each game decides the series only when the other
+four split 2-2, 6 times in 16), 1.73 at 60%, 1.32 at 70% -- about **1 point of
+series wins per 0.1 run**, not the 2 estimated earlier from NYH. So a +0.17
+change is worth about 2 points of series, which 600 series cannot resolve;
+seeing it at 2 SE would take roughly 7,000 series per arm. Exact runs plus
+Pythagenpat is the better tool for ranking lineup changes.
 
 ### Where the saboteur loses (2026-10-05)
 
@@ -327,6 +402,13 @@ apart. So, proposed (ASSUMPTION, for the user):
    positions given (eligibility: 2+ starts). Ties go to batting.
 4. A starter who is one of the nine bats at P and the team has no DH, as SFF
    (Whitmore) and NYH (Saiki) did. Otherwise the DH is the one left over.
+   **Replaced by rule 4' (user, 2026-10-06):** a starter bats at P (no DH)
+   when her team batted her -- lineup spot 1-9, not 10 behind a DH -- in more
+   than half of her weighted window starts at P. NYH never batted Saiki: a DH
+   in all 3 of her starts. Of 11 role starters only Whitmore (9 of 9 starts)
+   and Mackay (2 of 2) bat; Albayati batted in 3 of 5, but in 1 of her 3
+   window starts (all postseason, weighted 2 of 6), so she does not.
+   `usage.bats_at_p`.
 5. A regular who is pitching or unavailable: the next by window starts.
 
 The nine this gives (starts in 10 / 16 / 11 / 15 window games), and its cost

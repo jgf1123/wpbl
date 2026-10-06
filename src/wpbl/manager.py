@@ -234,13 +234,12 @@ def _order(model, nine):
 @lru_cache(maxsize=None)
 def usage_nine(model, team, starter, starter_bats=True):
     """The conventions' nine: most weighted window starts (ties to batting),
-    then positions by window starts there. A starter who is one of the nine
-    bats at P and the team has no DH."""
+    then positions by window starts there. A starter her team mostly batted
+    when she started (usage.bats_at_p, rule 4') bats at P and the team has no DH."""
     cards, u = model.cards, model.usage
     roster = cards.team_batters(team)
     total = {b: u.weight[(team, b)] for b in roster}
-    ranked = sorted(roster, key=lambda b: (-total[b], -model.bat_score(b)))
-    batting_starter = starter_bats and starter in ranked[:9]
+    batting_starter = starter_bats and starter in roster and (team, starter) in u.bats_at_p
     pool = [b for b in roster if b != starter]
     spots = FIELD if batting_starter else FIELD + ("DH",)
 
