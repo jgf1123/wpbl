@@ -1,0 +1,117 @@
+             player team         position  PA  runs/PA
+      Lexi Hastings  BOS            CF/LF  48    0.222
+  Ticara Geldenhuis  BOS            LF/CF  63    0.220
+      Alli Schroder  BOS       1B/P/3B/RF  29    0.208
+      Denver Bryant  BOS             3B/P  59    0.206
+        Hyeonah Kim  BOS          C/1B/RF  29    0.180
+     Beth Greenwood  BOS                C  35    0.179
+     Edith De Leija  BOS         2B/3B/SS  46    0.179
+     Molly Paddison  BOS               RF  62    0.176
+    Suzuka Yamamoto  BOS            2B/SS  28    0.176
+       Maika Dumais  BOS             1B/P  31    0.174
+     Olivia Bricker  BOS                P   0    0.170
+       Gigi Schiano  BOS                P   0    0.170
+         Kate Blunt  BOS       2B/P/3B/SS  39    0.168
+   Sabrina Robinson  BOS               1B  12    0.165
+      Paloma Benach  BOS                P   1    0.160
+     Gabrielle Haas  BOS   CF/3B/2B/RF/SS  48    0.152
+      Raine Padgham  BOS             SS/P  48    0.143
+	  
+    Ashton Lansdell  LAQ            3B/RF  90    0.261
+       Jamie Mackay  LAQ     C/P/LF/RF/1B  80    0.235
+      Sarah Edwards  LAQ         1B/LF/RF  75    0.222
+      Ayuri Shimano  LAQ       SS/2B/P/1B  57    0.210
+        Maggie Foxx  LAQ        C/RF/LF/P  71    0.210
+    Samaria Benitez  LAQ         2B/SS/RF  61    0.201
+ Thaima Maximiliana  LAQ          LF/P/CF  28    0.200
+Isabella Villarreal  LAQ          LF/P/2B  33    0.191
+      Caitlin Eynon  LAQ            SS/3B  69    0.181
+     Michelle Roche  LAQ          P/RF/LF  24    0.179
+     Adelaide Frank  LAQ             1B/P  18    0.173
+  Meggie Meidlinger  LAQ                P   2    0.171
+         Ayami Sato  LAQ                P   1    0.170
+      Addisyn Baird  LAQ             LF/P   6    0.170
+      Amira Hondras  LAQ       2B/RF/P/CF  66    0.169
+       Diana Ibarra  LAQ         LF/CF/RF  37    0.166
+     Brittany Apgar  LAQ       CF/RF/LF/P  10    0.166
+         Mone Davis  LAQ               CF  67    0.145
+		 
+      Denae Benites  NYH                C  73    0.346
+      Kylee Lahners  NYH            1B/3B  57    0.247
+   Natsuki Yonetani  NYH               RF  75    0.226
+        Keira Izumi  NYH 2B/3B/SS/P/CF/LF  33    0.226
+   Claire OSullivan  NYH          1B/P/3B  42    0.225
+          Emi Saiki  NYH          SS/P/3B  20    0.208
+     Madison Willan  NYH         2B/SS/3B  39    0.196
+    Elodie Ciamarro  NYH         2B/SS/3B  23    0.194
+ Alyssa Zettlemoyer  NYH          3B/P/2B  35    0.185
+      London Studer  NYH       LF/1B/P/CF  48    0.184
+          Val Perez  NYH            SS/3B  46    0.184
+    Jacqui Reynolds  NYH                P   1    0.168
+      Suzu Narasaki  NYH       CF/LF/RF/P  22    0.165
+        Rakyung Kim  NYH          P/1B/LF  13    0.160
+          Jaida Lee  NYH          P/3B/CF  14    0.157
+   Katherine Murphy  NYH               LF  14    0.155
+      Claire Eccles  NYH          CF/P/LF  48    0.149
+	  
+    Kelsie Whitmore  SFF             CF/P  95    0.306
+  Andreanne Leblanc  SFF             1B/P  94    0.247
+       Alexia Jorge  SFF                C  82    0.241
+ Samantha Gutierrez  SFF             C/3B  30    0.239
+      Skylar Kaplan  SFF            RF/1B  88    0.230
+      Jill Albayati  SFF       3B/P/LF/1B  56    0.198
+  Amanda Gianelloni  SFF               2B  96    0.196
+           Jua Park  SFF    LF/3B/2B/CF/P  77    0.196
+     Ayaka Yamamoto  SFF               3B  25    0.193
+   Joely Leguizamon  SFF               SS  88    0.181
+      Jordan Eyster  SFF         LF/CF/RF  25    0.179
+     Ela Day Bedard  SFF       CF/LF/P/RF  45    0.171
+         Liz Gilder  SFF                P   1    0.170
+        Niki Eckert  SFF                P   4    0.168
+  Rosi del Castillo  SFF          P/CF/LF  11    0.164
+       Hinano Beppu  SFF            2B/LF   3    0.160
+       Peyton Coria  SFF                P   2    0.160
+	   
+	   
+             player team  stamina  BF  fresh  fading  gassed   avg
+      Raine Padgham  BOS       91  52  0.197   0.214   0.251 0.207	# disfavor
+         Kate Blunt  BOS       80 103  0.207   0.216   0.243 0.213	# 1st starter, bat -0.008
+       Gigi Schiano  BOS       94 152  0.218   0.218   0.253 0.218	# 2nd starter, bat -0.006
+      Alli Schroder  BOS       72  99  0.217   0.225   0.243 0.222	# 1st reliever, bat +0.032, stamina 72
+      Paloma Benach  BOS       71  86  0.218   0.225   0.244 0.223	# DH reliever, bat -0.016, stamina 71
+       Maika Dumais  BOS       66  88  0.206   0.234   0.270 0.223  # 2nd-3rd reliever, bat -0.002, stamina 66
+     Olivia Bricker  BOS       48  49  0.225   0.243   0.270 0.236	# 4th reliever, bat -0.006, stamina 48
+	 
+         Ayami Sato  LAQ       93 183  0.183   0.192   0.209 0.189	# 1st starter
+  Meggie Meidlinger  LAQ       63  85  0.182   0.201   0.244 0.194	# closer
+     Michelle Roche  LAQ       82 149  0.209   0.218   0.217 0.215	# 2nd starter
+       Jamie Mackay  LAQ       81 112  0.199   0.225   0.262 0.215	# P reliever
+        Maggie Foxx  LAQ       50  12  0.203   0.222   0.259 0.215
+      Ayuri Shimano  LAQ       88  55  0.206   0.224   0.260 0.217
+Isabella Villarreal  LAQ       73  53  0.206   0.224   0.250 0.217
+      Amira Hondras  LAQ       61  36  0.207   0.233   0.259 0.222
+      Suzu Narasaki  LAQ       50  14  0.222   0.233   0.270 0.229
+ Thaima Maximiliana  LAQ       61  40  0.215   0.243   0.278 0.232
+     Brittany Apgar  LAQ       50   7  0.242   0.252   0.280 0.249
+     Adelaide Frank  LAQ       50   7  0.242   0.252   0.280 0.249
+      Addisyn Baird  LAQ       60  18  0.245   0.252   0.280 0.250
+	  
+          Emi Saiki  NYH      100  76  0.175   0.191   0.226 0.185	# P starter
+          Jaida Lee  NYH       82  84  0.173   0.196   0.232 0.187	# closer, bat -0.028
+        Rakyung Kim  NYH       86 129  0.190   0.206   0.234 0.200	# bat -0.025
+      Claire Eccles  NYH       65  51  0.196   0.213   0.260 0.207	# bat -0.036
+    Jacqui Reynolds  NYH       70  63  0.198   0.215   0.251 0.209	# bat -0.017
+      London Studer  NYH       69  62  0.197   0.232   0.259 0.218	# bat -0.001
+   Claire OSullivan  NYH       70  97  0.208   0.225   0.243 0.218	
+ Alyssa Zettlemoyer  NYH       58  31  0.224   0.242   0.269 0.235
+        Keira Izumi  NYH       52  35  0.234   0.242   0.270 0.239
+		
+         Liz Gilder  SFF       76 139  0.189   0.199   0.224 0.195	# DH starter, bat -0.023, stamina 76
+    Kelsie Whitmore  SFF       89 177  0.190   0.200   0.227 0.196	# P starter
+      Jill Albayati  SFF       80  95  0.181   0.209   0.244 0.198	# P reliever
+       Peyton Coria  SFF       53  83  0.189   0.207   0.251 0.200	# DH reliever, bat -0.036, stamina 53
+        Niki Eckert  SFF       77 138  0.199   0.207   0.224 0.204	# DH reliever, bat -0.028, stamina 77
+  Rosi del Castillo  SFF       49  31  0.196   0.223   0.252 0.213  # DH reliever, bat -0.032, stamina 49
+     Ela Day Bedard  SFF       61  79  0.208   0.215   0.251 0.213  # DH reliever, bat -0.025, stamina 61
+  Andreanne Leblanc  SFF       44  12  0.222   0.242   0.270 0.235  # 
+           Jua Park  SFF       50  16  0.233   0.241   0.278 0.238

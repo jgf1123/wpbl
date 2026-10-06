@@ -1,3 +1,25 @@
+2026-10-02: v0.6.0
+  - Fix: a batter's usage share counted starting as a pitcher who does not
+    bat. In a DH game the feed lists the starting pitcher at lineup spot 10,
+    flagged as a starter. Only spots 1-9 now count as batting starts. Sato
+    (1 PA) had ranked as a batter who started 32% of LAQ's games, and was
+    smoothed toward bench position players instead of other non-hitters
+  - Seven pitchers now have share 0 (Sato, Reynolds, Coria, Benach, Gilder,
+    Eckert, Meidlinger), with 12 PA between them. Their cohort fills to 250 PA
+    from the nearest shares up to 0.353. It is 22 players and 257 PA: 16
+    pitchers with 150 PA, and 6 position players with 107 (Beppu, Robinson,
+    Murphy, Gutierrez, Eyster, Ciamarro)
+  - 47 of the 67 batter cards print different cells. Most moved only because
+    their cohort changed. On runs per PA, the mean change is 0.010 and the
+    largest is 0.030 (Kim, Narasaki, Gutierrez, Padgham)
+  - Pitcher and league cards are unchanged; pitcher usage was never affected
+  - New: GENERIC batter cards, marked PA 0, for a pitcher who never batted.
+    Schiano and Bricker get one, so they can pitch without a DH. A generic card
+    is the smoothed card of the share-0 cohort, and it changes no other card
+  - Open: whether the generic card, and the cohort of the pitchers who do not
+    bat, should be limited to pitchers. As built, 42% of its PA are from
+    position players, which pulls it toward bench-hitter levels
+
 2026-10-01: v0.5.4
   - Batter cards gain stolen-base ratings: attempt (Goes or League) and
     success (League or Low). Derived each build from the chance and success

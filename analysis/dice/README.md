@@ -188,6 +188,7 @@ diagnostics around it.
 |---|---|
 | `sluggers.py` | Where Benites's and Whitmore's HR come from; do rosters show availability? |
 | `hr_quality.py` <- `cohort_cards2.py` | Sluggers' HR by pitcher tier; context-neutral raw vs card |
+| `pitcher_runs.py` | Context-neutral runs per batter faced for every pitcher, from the raw record, the smoothed card, and the printed columns against the league batter, all through one exact half-inning calculator. With a name (`pitcher_runs.py "Raine Padgham"`), shows why her card differs from her record. On 1 Oct, Padgham was BOS's best card (fading 0.214) but its worst record (raw 0.343, 19 runs in 52 BF). The card is built as designed: K kept, contact taken from the cohort |
 | `regulars.py` <- `trees_cv.py` | The regulars' (17+ games) most extreme lines and run effects. The list is computed, not fixed: 20 names on 36 games, 16 on 37. Card totals here come from the old 4-step tree, so they are not the blog's Table 3 |
 | `edit_distance.py` | Pairwise name edit distances (feed spelling check) |
 | `sharpness.py` <- `tto_c.py` | Which step's k is sharp (error curve around each best k), and what share of each rate's spread is real rather than luck. In-park steps are the sharpest; batter hits per ball in park is 14% real, the pitcher version 0% |

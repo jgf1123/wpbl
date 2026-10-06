@@ -208,13 +208,38 @@ def tenure_share(frame, who, team, own, per_date) -> pd.Series:
 
 
 def usage(pa: pd.DataFrame) -> dict[str, pd.Series]:
-    """Batters: share of team games started. Pitchers: share of team batters faced."""
+    """Batters: share of team games started. Pitchers: share of team batters faced.
+
+    A batting start is a starting-lineup row at spots 1-9. In a DH game the feed
+    also lists the starting pitcher at spot 10, flagged as a starter, though she
+    does not bat; counting those (as v0.5.4 and earlier did) ranked pitchers who
+    almost never hit beside everyday bench bats, and smoothed them toward them."""
     bat = tables.read("batting", "training").copy()
     bat["date"] = bat["game_date"].astype(str).str[:10]
     team_games = bat.drop_duplicates(["game_id", "team_name"]).groupby(["team_name", "date"]).size()
-    starts = bat.groupby("person_id")["in_starting_lineup"].sum()
+    bat["bat_start"] = bat["in_starting_lineup"].astype(bool) & (bat["lineup_spot"] <= 9)
+    starts = bat.groupby("person_id")["bat_start"].sum()
     return {"B": tenure_share(bat, "person_id", "team_name", starts, team_games),
             "P": tenure_share(pa, "P", "P_team", pa.groupby("P").size(), pa.groupby(["P_team", "date"]).size())}
+
+
+def side_counts(pa: pd.DataFrame, side: str) -> pd.DataFrame:
+    """Outcome counts per player (rows) by line. Batters also get an all-zero row
+    for every pitcher with no plate appearance at the plate: the GENERIC batter
+    card. With no record and a batting share of 0, `build` gives her the card
+    of the cohort nearest share 0: the pitchers who never start at the plate,
+    then the next-lowest shares, bench bats included, until it holds COHORT_PA.
+    A zero row is never in anyone else's
+    cohort (`cohorts` takes only players with plate appearances), so adding
+    these changes no other card."""
+    counts = pd.crosstab(pa[side], pa["line"]).reindex(columns=LINES, fill_value=0)
+    if side == "B":
+        missing = sorted(set(pa["P"]) - set(counts.index))
+        if missing:
+            zeros = pd.DataFrame(0, index=pd.Index(missing, name=counts.index.name),
+                                 columns=counts.columns)
+            counts = pd.concat([counts, zeros])
+    return counts
 
 
 def cohorts(share: np.ndarray, n: np.ndarray, exclude: np.ndarray) -> list[np.ndarray]:
@@ -436,7 +461,7 @@ def cards(side: str = "B") -> pd.DataFrame:
     steps, ks, slug = ((BATTER_STEPS, BATTER_K, SLUGGERS) if side == "B"
                        else (PITCHER_STEPS, PITCHER_K, ()))
     players = tables.read("players", "training").drop_duplicates("person_id").set_index("person_id")
-    counts = pd.crosstab(pa[side], pa["line"]).reindex(columns=LINES, fill_value=0)
+    counts = side_counts(pa, side)
     ids = counts.index.to_numpy()
     names = [players["person_name"].get(i, i) for i in ids]
     built = build(counts.to_numpy().astype(float), names,
@@ -615,7 +640,7 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.5.4"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.6.0"                 # keep in step with data/dice/dice_version.md
 
 
 def plain_name(name: str) -> str:
@@ -715,7 +740,7 @@ def main() -> None:
     for side, label, steps, ks, team_col in (("B", "batters", BATTER_STEPS, BATTER_K, "B_team"),
                                             ("P", "pitchers", PITCHER_STEPS, PITCHER_K, "P_team")):
         slug = SLUGGERS if side == "B" else ()          # a hitting rule, not a pitching one
-        X = pd.crosstab(pa[side], pa["line"]).reindex(columns=LINES, fill_value=0)
+        X = side_counts(pa, side)
         ids = X.index.to_numpy()
         names = [players["person_name"].get(i, i) for i in ids]
         cards = build(X.to_numpy().astype(float), names,
@@ -723,6 +748,10 @@ def main() -> None:
                       bands=band)
         check(cards)
         last_team = pa.sort_values("date").groupby(side)[team_col].last()
+        if side == "B":                    # a generic card's player only ever pitched
+            pitched = pa.sort_values("date").groupby("P")["P_team"].last()
+            last_team = last_team.combine_first(pitched)
+        generic = set(ids[X.sum(axis=1).to_numpy() == 0]) if side == "B" else set()
         block = P_CELLS if side == "P" else B_CELLS
         start = 0 if side == "P" else BAT_START
         cells = to_cells(cards, block, W_LINE, floor_one=(side == "P"))
@@ -740,7 +769,8 @@ def main() -> None:
             t.insert(0, "PA", X.sum(axis=1).to_numpy())
             t.insert(0, "team", [CODES.get(last_team.get(i), "?") for i in ids])
             t.insert(0, "player", [plain_name(n) for n in names])
-            t.insert(2, "position", [position_of.get(i, "") for i in ids])
+            t.insert(2, "position", [position_of.get(i, "") or ("P" if i in generic else "")
+                                     for i in ids])
             return t
 
         if side == "P":
@@ -785,6 +815,9 @@ def main() -> None:
         out = OUT_DIR / f"cards_{label}.csv"
         with out.open("w", encoding="utf-8", newline="") as fh:
             fh.write("\n".join(stamp) + "\n")
+            if generic:
+                fh.write("# PA 0 marks a GENERIC card: a pitcher who never batted, given the card\n"
+                         "# of the batters started least often -- mostly pitchers, some bench bats.\n")
             table.to_csv(fh, index=False, lineterminator="\n")
         drift = np.abs((cells / 100 - cards[:, [CARD_LINES.index(l) for l in TREE_LINES]]
                         * (block / 100) / cards[:, [CARD_LINES.index(l) for l in TREE_LINES]]

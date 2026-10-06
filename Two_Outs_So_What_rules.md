@@ -168,6 +168,8 @@ Pitchers will recover from fatigue between games (see Between Games).
 
 If a manager wants another pitcher to take over, they can relieve their pitcher before any Plate Appearance while they are pitching. The relieving pitcher also immediately adds 30 to her Pitch Count before she faces the next batter.
 
+**Three-batter minimum.** Every pitcher, starter or reliever, must face three batters or pitch until the end of a half-inning. A pitcher who finishes a half-inning having faced fewer than three may be replaced before the next half-inning; if she starts it instead, she must finish her three (counting the batters she already faced) or that half-inning.
+
 Because many pitchers in the WPBL also bat and play non-pitcher positions, managers may want to the outgoing pitcher to still bat. The exact rules for switching pitchers, designated hitter, moving position players around, and pinch hitting are [complicated](https://discord.com/channels/1535452833887813756/1535467791870595153/1541290106248372346).
 
 - The only way to keep a DH (Designated Hitter) position is to replace a pitcher-only (a pitcher who is not batting) with another pitcher-only AND who is not currently in a defensive position. In such a case, the manager's lineup is unchanged.
@@ -177,7 +179,7 @@ Because many pitchers in the WPBL also bat and play non-pitcher positions, manag
 
 ## Stealing
 
-Before a PA is rolled, a player may green-light a runner to steal 2nd or 3rd base. Roll d100.
+Before a PA is rolled, a player may green-light a runner to steal 2nd or 3rd base. A runner may steal only if the next base is empty, and at most one steal is attempted per PA: with runners on 1st and 2nd, only the runner on 2nd may go, and if she steals 3rd the runner on 1st must wait for a later PA. Roll d100.
 
 | Base, Attempt rating | No attempt | Success Low | Success League vs Benites | Success League otherwise |
 |---|---|---|---|---|
@@ -242,9 +244,13 @@ Runner on 3rd always scores
 2 outs:   2nd scores on 5-12,  1st to 3rd on 10-12
 ```
 
-**Attempt Steal Table**
+**Steal Table** (d100, before the PA; next base must be empty; one per PA)
 ```
-safe 1–10, out 11–12.
+              no attempt   Low                 League vs Benites   League otherwise
+2nd, Goes     00-63        64-81 out  82+ safe 64-75 out  76+ safe  64-66 out  67+ safe
+2nd, League   00-93        94-96 out  97+ safe 94-95 out  96+ safe  94 coin    95+ safe
+3rd, Goes     00-87        88-93 out  94+ safe 88-91 out  92+ safe  88 out     89+ safe
+3rd, League   00-98        99 coin             99 safe              99 safe
 ```
 
 **Pitch count:** 
