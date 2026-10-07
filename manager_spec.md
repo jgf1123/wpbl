@@ -406,6 +406,79 @@ regulars, so differences under about 0.1 run are not meaningful. C is the
 most skewed: the min rule sets it to the league average, so "vs average"
 understates how scarce catchers are (only 7 players caught).
 
+### What losing a player costs (2026-10-06)
+
+Each player in any of her team's conventions nines is taken off the roster
+(trade, injury) and the lineup rebuilt. Batting only, exact runs a game,
+starter days by start share; a lost starter's starts go to the team's other
+starters in proportion. `analysis/manager/player_loss.py`.
+
+- **Loss (conv):** the conventions response (rule 5: the next by window
+  starts, positions by window starts, 2+ eligibility).
+- **Loss (best):** the best 2+ nine without her against the best with her.
+- **Value:** her runs over a replacement (bench) bat in her own slot, on the
+  days she bats (P included).
+- **Depth** = loss (conv) - value: positive means the real backup is worse
+  than a bench bat.
+
+**Positions with no viable replacement.** The most important finding: three
+teams have a position that only one or two players on the roster can play,
+by card.
+
+| team | pos | who can play it (starts there) | if lost |
+|---|---|---|---|
+| NYH | C | Benites (18) only | no catcher at all: emergency C (Narasaki) every day |
+| SFF | SS | Leguizamon (22) only | no shortstop: emergency SS (Albayati) |
+| LAQ | C | Foxx (14), Mackay (9) | losing Foxx leaves no catcher on Mackay's start days: emergency C (Maximiliana) |
+
+BOS has a backup at both (C: H. Kim, 6 starts; SS: Blunt 2, De Leija 1,
+S. Yamamoto 1, Haas 0 by card). An emergency fielder is let play the first
+position that makes a legal nine; the runs then count her bat only, so these
+rows understate the true cost by whatever the defence is worth. Benites is
+NYH's most valuable player by a wide margin even before that.
+
+The most costly losses, conventions response:
+
+| team | player | loss conv | series | loss best | value | depth | next in |
+|---|---|---|---|---|---|---|---|
+| NYH | Benites (C) | +0.953 | -12.2 | +1.043 | +0.890 | +0.064 | Narasaki C (emergency) |
+| SFF | Whitmore* | +0.478 | -5.8 | +0.568 | +0.669 | -0.191 | Albayati, Gutierrez DH |
+| NYH | Lahners | +0.433 | -5.3 | +0.329 | +0.368 | +0.065 | Narasaki DH |
+| LAQ | Lansdell | +0.351 | -4.8 | +0.463 | +0.414 | -0.063 | Benitez 2B, Maximiliana DH |
+| NYH | Yonetani | +0.335 | -4.1 | +0.455 | +0.218 | +0.118 | Narasaki RF |
+| NYH | O'Sullivan* | +0.320 | -3.9 | +0.148 | +0.200 | +0.120 | Narasaki LF |
+| LAQ | Edwards | +0.287 | -3.9 | +0.292 | +0.217 | +0.071 | Frank 1B |
+| BOS | Geldenhuis | +0.224 | -2.5 | +0.369 | +0.187 | +0.037 | De Leija DH |
+| BOS | Hastings | +0.220 | -2.5 | +0.366 | +0.183 | +0.037 | De Leija DH |
+| SFF | Leblanc* | +0.211 | -2.5 | +0.340 | +0.346 | -0.136 | Albayati 1B, Gutierrez DH |
+| LAQ | Mackay* | +0.196 | -2.7 | +0.271 | +0.253 | -0.057 | Maximiliana DH |
+
+\* also an arm: the pitching loss is not counted ("What one arm is worth":
+about 3.4-4.5 series points for a best reliever or ace).
+
+**Depth is mostly one bench player.** The conventions bring in the same next
+player for most losses, so each team's depth is nearly constant:
+
+| team | usually in | typical depth |
+|---|---|---|
+| SFF | Gutierrez (DH; C for Jorge) | -0.14: the deepest |
+| LAQ | Maximiliana (DH) | -0.06 |
+| BOS | De Leija (DH) | +0.04 |
+| NYH | Narasaki, a disfavored pitcher | +0.12: the thinnest |
+
+**Some losses help the batting.** Below-replacement regulars are worth less
+than the next player up: Padgham -0.162, Haas -0.144, Davis -0.137, Hondras
+-0.149, Eccles -0.109, Day-Bedard -0.154 (negative loss = the team bats
+better without her). The same holes as above; for Padgham, Davis and Eccles
+the open question is their defence. Leguizamon's -0.182 rests on the
+emergency SS and is not a real gain.
+
+Artifacts: a few small negative "loss best" values (Padgham -0.021,
+Leguizamon -0.054) come from the conventions bending eligibility after a
+loss (an emergency or card-fallback fielder), which the best search may then
+keep. In every case the best nine was the first legal one in summed-bat-score
+order.
+
 ### Where the saboteur loses (2026-10-05)
 
 Two bad but legal managers against B0, conventions off, same 2,400 series as
