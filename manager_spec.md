@@ -316,6 +316,96 @@ change is worth about 2 points of series, which 600 series cannot resolve;
 seeing it at 2 SE would take roughly 7,000 series per arm. Exact runs plus
 Pythagenpat is the better tool for ranking lineup changes.
 
+### What batting choices and an added player are worth (2026-10-06)
+
+Exact runs over 7 innings against the league pitcher, best order, rule 4'
+conventions. Starter days weighted by start share, and wins by Pythagenpat,
+both at each team's runs scored and allowed in the 2,400 default series
+(`team_runs.py`); series by the best-of-5 formula at the team's game win %.
+Pythagenpat reproduces the simulated game win % to 0.3 points (BOS 36.0 vs
+35.9, LAQ 48.0 vs 48.0, NYH 58.0 vs 58.3, SFF 57.9 vs 57.6).
+`analysis/manager/lineup_value.py`.
+
+TOSW has no fielding, so everything here is batting only: the batting price
+of the teams' choices, and the most their defence would have to be worth to
+justify them.
+
+**Part 1: the conventions nine against the best nine.** Every nine from the
+roster, the DH status of the day kept, Mackay kept in LAQ's nine. In every
+case the best nine was the first legal one in summed-bat-score order.
+
+| team | 2+ starts | 1+ start | card | what changes (2+) |
+|---|---|---|---|---|
+| BOS | +0.26 runs, +1.9 games, +3.0 series | +0.37, +2.7, +4.4 | +0.37 | De Leija, H. Kim in; Haas, S. Yamamoto out; Benach/Schroder days also Blunt at SS for Padgham |
+| LAQ | +0.40, +2.8, +5.3 | +0.47, +3.3, +6.3 | +0.47 | Benitez, Maximiliana, Apgar in; Eynon, Davis, Hondras out |
+| NYH | +0.33, +2.1, +3.7 | +0.37, +2.4, +4.2 | +0.53, +3.4, +5.8 | Izumi, Narasaki in; Perez, Eccles out (Kim days also Zettlemoyer for Willan) |
+| SFF | +0.23, +1.5, +2.6 | +0.23 | +0.37, +2.3, +4.1 | Gutierrez for Day-Bedard on DH days; Whitmore days +0.05 |
+
+Under the teams' own 2+ eligibility each leaves about 0.2-0.4 runs a game,
+3-5 points of series wins, in batting. Arms these nines touch: Blunt (BOS),
+Roche (LAQ) and Albayati (SFF), starters, in the field; Maximiliana and
+Izumi, relievers, in; Hondras, Day-Bedard and Eccles, relievers, out.
+
+**Part 2: one regular replaced by a benchmark.** The incumbent sits and a
+blended card bats in her slot. A blend is the starts-weighted mean of its
+players' blocks, which is exact (a batter's blocks are sums over her d100
+faces); it is the expected bat drawn from the pool, not a real player.
+
+- **Replacement:** the bench, starts-weighted: players outside their team's
+  top nine by season batting starts (24 players, 133 starts), 6.841 (bat
+  score, runs of nine of her), the same at every position. In a four-team
+  league with every player rostered, the bench is the only cheap talent; the
+  generic card (6.102, pitchers who never bat) is too low. Tryout players
+  who were not signed are presumably weaker still (user), so if anything this
+  level is generous.
+- **Average at the position (user):** min(positional, league), each a
+  starts-weighted blend over the season. League 7.666 (all non-P starts),
+  which sets C (9.694 at the position), 1B (8.297), 3B (7.811), RF (7.931)
+  and DH; 2B 7.011, SS 6.597; LF and CF pooled, 6.925, since they share a
+  pool (players who started at both made 38 of LF's 80 starts and 39 of
+  CF's), while RF stands apart (11 and 10 with LF, all fringe).
+
+The numbers that matter are the positive ones: what a team gains if it could
+find a bench bat, or an average one, who can also field the position.
+
+| team | pos | regular | vs replacement | vs average |
+|---|---|---|---|---|
+| LAQ | CF | Davis | +0.235 runs, +3.2 series | +0.244, +3.3 |
+| NYH | CF | Eccles | +0.235, +2.7 | +0.243, +2.8 |
+| BOS | SS | Padgham | +0.232, +2.7 | +0.204, +2.4 |
+| BOS | DH | Haas | +0.181, +2.1 | +0.274, +3.2 |
+| LAQ | RF | Hondras | +0.087, +1.2 | +0.177, +2.4 |
+| BOS | RF | Paddison | +0.044, +0.5 | +0.136, +1.6 |
+| BOS | C | Greenwood | +0.037, +0.4 | +0.129, +1.5 |
+| NYH | 3B | Zettlemoyer, Perez | +0.012, +0.1 | +0.105, +1.2 |
+| SFF | DH | Day-Bedard | +0.031, +0.4 | +0.085, +1.0 |
+| BOS | 2B | S. Yamamoto | +0.044, +0.5 | +0.063, +0.7 |
+| SFF | 3B | A. Yamamoto | -0.037 | +0.057, +0.7 |
+| SFF | SS | Leguizamon | +0.045, +0.5 | +0.014, +0.2 |
+| LAQ | SS | Eynon | +0.038, +0.5 | +0.010, +0.1 |
+| NYH | LF | Studer | +0.021, +0.2 | +0.028, +0.3 |
+| BOS | 1B | Schroder, Dumais | -0.064 | +0.027, +0.3 |
+
+- **The big holes are at SS and CF** (Padgham, Davis, Eccles): each bats
+  about 0.23 runs a game below a bench bat. These are the premium defensive
+  positions, consistent with teams buying defence with offence there.
+- **BOS DH (Haas) is the exception:** a DH needs no glove, so that hole is a
+  pure batting choice.
+- **At SS the benchmarks invert:** the average SS (6.597) bats below the
+  bench, so "vs average" is the easier bar there; at LF/CF (6.925) the two
+  nearly agree.
+
+The negative cells are each regular's batting runs above the benchmark. The
+largest: Benites (NYH C) -0.890 vs replacement, -0.796 vs average; Lansdell
+(LAQ 3B) -0.414 / -0.320; Lahners (NYH DH) -0.368 / -0.276; SFF CF (Whitmore
+58% of days, Day-Bedard 42%) -0.362 / -0.355; Leblanc (SFF 1B) -0.346 /
+-0.252; Jorge (SFF C) -0.327 / -0.233.
+
+Cautions: each positional average rests on 80 starts and in effect four
+regulars, so differences under about 0.1 run are not meaningful. C is the
+most skewed: the min rule sets it to the league average, so "vs average"
+understates how scarce catchers are (only 7 players caught).
+
 ### Where the saboteur loses (2026-10-05)
 
 Two bad but legal managers against B0, conventions off, same 2,400 series as

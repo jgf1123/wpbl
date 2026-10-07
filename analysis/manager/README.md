@@ -39,6 +39,8 @@ schedules, 100 each), so their rows are comparable.
 | `easy_gains.py` | every one-in lineup change, exact runs, fewest position moves, by eligibility tier | Where each team could most easily improve |
 | `easy_gains_series.py` | series and game win % with each team's top swap | Where each team could most easily improve |
 | `sff_runs_check.py` | SFF runs scored/allowed with and without its swap; whether the swap survives the game | Where each team could most easily improve |
+| `team_runs.py` | each team's runs scored/allowed, game win % and starter shares in the default series | What batting choices and an added player are worth |
+| `lineup_value.py` | conventions vs best nine by tier; each regular against replacement (bench) and average-at-position blends | What batting choices and an added player are worth |
 
 Some scripts were written against earlier states of `manager.py` (for example
 `saboteur.py` and `arm_value.py` ran before the conventions existed, with them
