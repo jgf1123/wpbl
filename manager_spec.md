@@ -361,17 +361,21 @@ faces); it is the expected bat drawn from the pool, not a real player.
 - **Average at the position (user):** min(positional, league), each a
   starts-weighted blend over the season. League 7.666 (all non-P starts),
   which sets C (9.694 at the position), 1B (8.297), 3B (7.811), RF (7.931)
-  and DH; 2B 7.011, SS 6.597; LF and CF pooled, 6.925, since they share a
-  pool (players who started at both made 38 of LF's 80 starts and 39 of
-  CF's), while RF stands apart (11 and 10 with LF, all fringe).
+  and DH; 2B 7.011, SS 6.597. LF and CF share players (those who started at
+  both made 38 of LF's 80 starts and 39 of CF's), while RF stands apart (11
+  and 10 with LF, all fringe). **Revised 2026-10-08 (user):** a position's
+  pool is the players who can play it. CFs also play LF, but most LFs never
+  played CF (Studer, Villarreal, Park, Murphy), so LF pools LF and CF starts
+  (6.925) while CF keeps its own (6.681). First published here as one LF/CF
+  pool for both.
 
 The numbers that matter are the positive ones: what a team gains if it could
 find a bench bat, or an average one, who can also field the position.
 
 | team | pos | regular | vs replacement | vs average |
 |---|---|---|---|---|
-| LAQ | CF | Davis | +0.235 runs, +3.2 series | +0.244, +3.3 |
-| NYH | CF | Eccles | +0.235, +2.7 | +0.243, +2.8 |
+| LAQ | CF | Davis | +0.235 runs, +3.2 series | +0.215, +2.9 |
+| NYH | CF | Eccles | +0.235, +2.7 | +0.212, +2.4 |
 | BOS | SS | Padgham | +0.232, +2.7 | +0.204, +2.4 |
 | BOS | DH | Haas | +0.181, +2.1 | +0.274, +3.2 |
 | LAQ | RF | Hondras | +0.087, +1.2 | +0.177, +2.4 |
@@ -391,20 +395,34 @@ find a bench bat, or an average one, who can also field the position.
   positions, consistent with teams buying defence with offence there.
 - **BOS DH (Haas) is the exception:** a DH needs no glove, so that hole is a
   pure batting choice.
-- **At SS the benchmarks invert:** the average SS (6.597) bats below the
-  bench, so "vs average" is the easier bar there; at LF/CF (6.925) the two
-  nearly agree.
+- **At SS and CF the benchmarks invert:** the average SS (6.597) and CF
+  (6.681) bat below the bench, so "vs average" is the easier bar there; at LF
+  (6.925) the two nearly agree.
 
 The negative cells are each regular's batting runs above the benchmark. The
 largest: Benites (NYH C) -0.890 vs replacement, -0.796 vs average; Lansdell
 (LAQ 3B) -0.414 / -0.320; Lahners (NYH DH) -0.368 / -0.276; SFF CF (Whitmore
-58% of days, Day-Bedard 42%) -0.362 / -0.355; Leblanc (SFF 1B) -0.346 /
+58% of days, Day-Bedard 42%) -0.362 / -0.386; Leblanc (SFF 1B) -0.346 /
 -0.252; Jorge (SFF C) -0.327 / -0.233.
 
 Cautions: each positional average rests on 80 starts and in effect four
 regulars, so differences under about 0.1 run are not meaningful. C is the
 most skewed: the min rule sets it to the league average, so "vs average"
 understates how scarce catchers are (only 7 players caught).
+
+**Units for readers (2026-10-08).** A bat score (runs of nine of her) puts
+nine slots of difference into one number. The post reports each blend per slot
+instead: runs a game a team gains or loses with her in one slot of an
+otherwise league-average lineup, against a league-average starter
+(`lineup_value.slot`). Nearly the bat-score gap divided by 9: C +0.228, 1B
++0.074, DH +0.054, RF +0.031, 3B +0.018, league 0, LF -0.049, 2B -0.067, LF
+pool -0.077, bench -0.085, CF -0.105, SS -0.112. Padgham is 0.233 below the
+bench per slot, matching the +0.232 above.
+
+Weighting the bench by plate appearances instead of starts gives 6.853
+against 6.841: no visible difference per slot. Starts kept: the benchmark
+stands for a player who takes a regular's slot for whole games, and
+plate appearances also count batting-order position and pinch-hitting.
 
 ### What losing a player costs (2026-10-06)
 
@@ -478,6 +496,78 @@ Leguizamon -0.054) come from the conventions bending eligibility after a
 loss (an emergency or card-fallback fielder), which the best search may then
 keep. In every case the best nine was the first legal one in summed-bat-score
 order.
+
+### Who comes in, and filling the holes (2026-10-08)
+
+Follow-ups written for the lineup blog post. Exact runs and per-slot bats as
+above (`lineup_value.slot`: runs a game in one slot of an otherwise average
+lineup, against an average starter; the bench is -0.085).
+
+**The usual lineup held up to two checks.**
+
+- *Window start* (`window_start.py`): starting the late season after the
+  August trades instead of at each team's midpoint (19-21 Aug) changes no
+  usual lineup from 22 Aug; from 27 Aug only BOS's Bryant and Haas swap 3B and
+  DH. Window kept (user).
+- *Position-first* (`position_first.py`): taking the most-started player at
+  each position (DH included) instead of the nine most-started players bats
+  0.02-0.20 runs a game better (weighted: BOS +0.14, LAQ +0.12, NYH +0.02,
+  SFF +0.20), mostly by putting at DH a player the team used there (De Leija,
+  Gutierrez) instead of a leftover fielder (Haas, Day-Bedard). It drops
+  players who moved around (Eynon, 15 of LAQ's 16 late games across 3B, SS
+  and DH). Usual lineup kept (user); the post mentions the difference.
+
+**Who comes in** (`next_up.py`). When a team loses a regular, the usual
+lineup almost always brings in the first player outside the nine: De Leija
+(BOS), Maximiliana (LAQ; Benitez for an infield loss when Mackay pitches),
+Narasaki (NYH, for 6 of its 10 regulars) and Gutierrez (SFF; Albayati on
+Whitmore's and Eckert's days). So the depth score in the section above
+mostly measures one player per team. A team is thin where that player cannot
+fill in and the usual lineup reaches further:
+
+| team | position lost | who comes in (rank by starts) | bat per slot |
+|---|---|---|---|
+| BOS | C (Greenwood) | H. Kim (12th-13th) | -0.095 |
+| BOS | 1B (Schroder) | Dumais (11th) | -0.135 |
+| BOS | 1B (Dumais, Schroder's days) | Robinson (13th) | -0.181 |
+| BOS | SS (Padgham) | Blunt (11th-12th), when she isn't pitching | -0.175 |
+| LAQ | C (Foxx) | no one when Mackay pitches: emergency C | - |
+| LAQ | 1B (Edwards) | Frank (13th-14th) | -0.154 |
+| LAQ | CF (Davis) | Ibarra (11th-12th) | -0.181 |
+| NYH | C (Benites) | no one: emergency C | - |
+| NYH | 2B, SS or 3B | Ciamarro (11th-12th) | -0.045 |
+| SFF | CF (Day-Bedard, Whitmore's days) | Eyster (11th) | -0.114 |
+| SFF | SS (Leguizamon) | no one: emergency SS | - |
+
+NYH's next player, Narasaki (-0.199), bats below every one of these deeper
+replacements; SFF's, Gutierrez, above an average starter (+0.199).
+
+**Filling the holes** (`fit_candidates.py`, `trade_fits.py`). The Part 2
+holes (BOS SS, LAQ CF, NYH CF) against players on the other teams. Rules
+(user): leave out each team's own top player at the position; rank by time
+at the position, since a player with only 2 starts there is someone a team
+could find on its own roster; DH open to anyone. A CF hole counts CF time
+only: neither LAQ's LF (Villarreal) nor NYH's (Studer) has started in CF, so
+an LF cannot fill it by moving someone over. Set aside (user): Ibarra to NYH
+and Narasaki to LAQ, which would undo the August trade, and BOS's Geldenhuis,
+who plays LF beside Hastings. Each candidate replaces the regular at the
+position (others unchanged, best order); her own team rebuilds its usual
+lineup without her:
+
+| player | from -> to | replaces | receiving team gains | her team loses |
+|---|---|---|---|---|
+| Benitez | LAQ -> BOS SS | Padgham | +0.318 runs, +3.7 series | 0 (not in its usual lineup) |
+| Eyster | SFF -> LAQ CF | Davis | +0.206, +2.8 | 0 (bench) |
+| Eyster | SFF -> NYH CF | Eccles | +0.205, +2.3 | 0 (bench) |
+| Day-Bedard | SFF -> LAQ CF | Davis | +0.180, +2.4 | -0.154: SFF bats better, Gutierrez at DH |
+| Day-Bedard | SFF -> NYH CF | Eccles | +0.180, +2.1 | -0.154 |
+
+Benitez alone is worth more to BOS than its whole best lineup in Part 1
+(+0.26). Her cost to LAQ is in future losses: on Mackay's days, when LAQ has
+no DH, she is who replaces a lost infielder or Hondras; without her, LAQ
+would play Roche (a starting pitcher) in RF, and each such loss would cost
+about 0.12 runs a game more on those days (0.116-0.119). Day-Bedard is also
+an SFF reliever; her arm is not counted. All batting only.
 
 ### Where the saboteur loses (2026-10-05)
 

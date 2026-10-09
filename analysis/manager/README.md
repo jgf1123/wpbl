@@ -40,8 +40,13 @@ schedules, 100 each), so their rows are comparable.
 | `easy_gains_series.py` | series and game win % with each team's top swap | Where each team could most easily improve |
 | `sff_runs_check.py` | SFF runs scored/allowed with and without its swap; whether the swap survives the game | Where each team could most easily improve |
 | `team_runs.py` | each team's runs scored/allowed, game win % and starter shares in the default series | What batting choices and an added player are worth |
-| `lineup_value.py` | conventions vs best nine by tier; each regular against replacement (bench) and average-at-position blends | What batting choices and an added player are worth |
+| `lineup_value.py` | conventions vs best nine by tier; each regular against replacement (bench) and average-at-position blends (LF pools LF+CF, CF its own); per-slot bat of each blend (`slot`) | What batting choices and an added player are worth |
 | `player_loss.py` | each conventions player lost: runs lost (conventions and best response), her value, depth; emergency fielders | What losing a player costs |
+| `window_start.py` | usual lineups with the late-season window starting after the August trades | Who comes in, and filling the holes |
+| `position_first.py` | usual lineup vs the most-started player at each position | Who comes in, and filling the holes |
+| `next_up.py` | who comes in for each lost regular, by rank in starts; where a team reaches past its next player | Who comes in, and filling the holes |
+| `fit_candidates.py` | other teams' players by time at a weak position (each team's top there excluded) | Who comes in, and filling the holes |
+| `trade_fits.py` | a candidate in place of the regular: receiving team's gain, giving team's loss | Who comes in, and filling the holes |
 
 Some scripts were written against earlier states of `manager.py` (for example
 `saboteur.py` and `arm_value.py` ran before the conventions existed, with them

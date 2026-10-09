@@ -10,10 +10,15 @@ Part 2: one position at a time, the incumbent replaced by a blended card --
 (a) replacement: the bench, starts-weighted (players outside their team's top
 nine by season batting starts), the same at every position; (b) average at the
 position: min(positional, league), each a starts-weighted blend over the
-season, LF and CF pooled. Signed runs: negative means the incumbent is better.
+season. A position's pool is the players who can play it: CFs also play LF,
+but most LFs do not play CF, so LF pools LF and CF starts while CF keeps its
+own. Signed runs: negative means the incumbent is better.
 
 A blended card is exact: a batter's blocks are sums over her d100 faces, so a
 blend's blocks are the weighted mean of its players' blocks.
+
+Chart: each blend in one slot of an otherwise league-average lineup (`slot`),
+runs a game against a league-average starter -- one player, one game.
 
 Wins: Pythagenpat at each team's simulated runs scored and allowed
 (team_runs.py), starter days weighted by start share there; series by the
@@ -99,15 +104,26 @@ def sc(b):
 
 
 LEAGUE = blend(league_w)
-pools = {p: blend(pos_w[p]) for p in pos_w}
+own = {p: blend(pos_w[p]) for p in pos_w}               # each position on its own
+pools = dict(own)
 lfcf = defaultdict(float)
 for p in ("LF", "CF"):
     for n, k in pos_w[p].items():
         lfcf[n] += k
-pools["LF"] = pools["CF"] = blend(lfcf)
+pools["LF"] = blend(lfcf)                               # LF's pool includes the CFs; CF keeps its own
 AVG = {p: (pools[p] if sc(pools[p]) < sc(LEAGUE) else LEAGUE) for p in FIELD + ["DH"]}
 AVG["DH"] = LEAGUE
 REPL = blend(bench_w)
+
+
+def slot(b):
+    """Runs a game a team gains with this card in one slot of an otherwise
+    league-average lineup, against a ninth league-average starter; best order.
+    The post's units (one player, one game), unlike sc's nine copies."""
+    blocks = {f"lg{i}": LEAGUE for i in range(8)}
+    blocks["x"] = b
+    return (play_lineup.local_best(blocks, ["x"] + [f"lg{i}" for i in range(8)], {})[1]
+            - play_lineup.expected_runs({"lg": LEAGUE}, ["lg"] * 9))
 
 
 # --- part 1 ---------------------------------------------------------------------
@@ -136,6 +152,11 @@ def best_nine(team, starter, nine, tier):
 def main():
     print("blends (bat score, runs of nine of her): league %.3f, replacement (bench) %.3f" % (sc(LEAGUE), sc(REPL)))
     print("  average at position: " + ", ".join(f"{p} {sc(AVG[p]):.3f}" for p in FIELD + ["DH"]))
+    print("\n== Average bat at each position, one slot in an otherwise average lineup")
+    print("   (runs a game vs a league-average starter; nine copies in brackets)")
+    chart = [(p, own[p]) for p in FIELD + ["DH"]] + [("LF pool", pools["LF"]), ("bench", REPL), ("league", LEAGUE)]
+    for p, b in sorted(chart, key=lambda x: -slot(x[1])):
+        print(f"   {p:6s} {slot(b):+.3f}  ({sc(b):.3f})")
     for t, (r, a, p, _) in ENV.items():
         print(f"  {t}: Pythagenpat {100 * pyth(r, a):.1f}% vs simulated {100 * p:.1f}%")
 
