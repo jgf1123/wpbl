@@ -6,8 +6,9 @@
 Positional versatility is a defining feature of this league rather than a
 curiosity. Fifteen-player rosters mean position players pitch, catchers move to
 the outfield, and a team's best starter may spend the rest of the week in
-centre field. The command prints two tables for the regular season: games at
-each position, and innings at each fielding position.
+centre field. The command prints games at each position, regular season and
+postseason side by side (9+2), and innings at each fielding position, the
+same way (9.0+3.1).
 
 Two things this gets right that a naive count of the box score's `position`
 field would not.
@@ -34,7 +35,7 @@ from collections import Counter, defaultdict
 
 import pandas as pd
 
-from wpbl.parse import OUT_DIR, ip_to_outs
+from wpbl.parse import ip_to_outs
 from wpbl.usage_chart import CODES, ip_text
 
 # The nine fielding positions plus the designated hitter, in scorecard order.
@@ -42,10 +43,23 @@ FIELDING = ["p", "c", "1b", "2b", "3b", "ss", "lf", "cf", "rf", "dh"]
 NOT_FIELDING = {"ph", "pr"}
 
 
-def games_by_position() -> pd.DataFrame:
-    """One row per player, one column per position, values are games played."""
-    batting = pd.read_parquet(OUT_DIR / "batting.parquet")
-    pitching = pd.read_parquet(OUT_DIR / "pitching.parquet")
+def _season_games(postseason: bool) -> set:
+    from wpbl import tables
+
+    games = tables.read("games", "all")
+    return set(games.loc[games["is_postseason"] == postseason, "game_id"])
+
+
+def games_by_position(postseason: bool = False) -> pd.DataFrame:
+    """One row per player, one column per position, values are games played,
+    in the regular season or the postseason."""
+    from wpbl import tables
+
+    keep = _season_games(postseason)
+    batting = tables.read("batting", "all")
+    pitching = tables.read("pitching", "all")
+    batting = batting[batting["game_id"].isin(keep)]
+    pitching = pitching[pitching["game_id"].isin(keep)]
 
     played: dict[tuple, Counter] = {}
     bench: dict[tuple, Counter] = {}
@@ -100,34 +114,62 @@ def main() -> None:
         if arg == "--min" and i + 1 < len(sys.argv):
             minimum = int(sys.argv[i + 1])
 
-    table = games_by_position()
-    table = table[table["games"] >= minimum].sort_values(
-        ["tm", "games", "player"], ascending=[True, False, True])
+    counted = ["games", "starts", *FIELDING, "ph/pr"]
+    regular = games_by_position(postseason=False)
+    post = games_by_position(postseason=True)
+    both = regular.merge(post, on=["tm", "player"], how="outer", suffixes=("", "_post"))
+    for col in counted:
+        both[col] = both[col].fillna(0).astype(int)
+        both[f"{col}_post"] = both[f"{col}_post"].fillna(0).astype(int)
+    # Over both seasons: what the summaries below and the --min filter use.
+    table = both[["tm", "player"]].copy()
+    for col in counted:
+        table[col] = both[col] + both[f"{col}_post"]
+    table["spots"] = [sum(1 for p in FIELDING if row[p]) for row in table.to_dict("records")]
+    table["primary"] = [max((p for p in FIELDING if row[p]), key=lambda p: row[p], default="-")
+                        for row in table.to_dict("records")]
+    keep = table["games"] >= minimum
+    table, both = table[keep], both[keep]
+    order = table.sort_values(["tm", "games", "player"], ascending=[True, False, True]).index
+    table, both = table.loc[order], both.loc[order]
+
+    def cell(row, col, width):
+        reg, post_n = row[col], row[f"{col}_post"]
+        text = f"{reg}+{post_n}" if post_n else (str(reg) if reg else "")
+        return f"{text:>{width}}"
 
     print(f"games at each position, {len(table)} players"
           f"{f' with at least {minimum} games' if minimum > 1 else ''}")
+    print("  regular season + postseason: 9+2 is 9 regular-season games and 2")
+    print("  postseason games; a lone number is regular season only")
     print("  counts are games, not innings; a player at two positions in one game")
     print("  is counted at both, so a row can exceed her games played\n")
 
-    header = (f"  {'':4s}{'player':22s}{'G':>4s}{'GS':>4s}"
-              + "".join(f"{p:>5s}" for p in FIELDING)
+    header = (f"  {'':4s}{'player':22s}{'G':>6s}{'GS':>6s}"
+              + "".join(f"{p:>6s}" for p in FIELDING)
               + f"{'ph/pr':>7s}{'spots':>7s}  primary")
     print(header)
     # itertuples mangles column names that start with a digit ("1b" becomes
     # "_6"), so iterate over plain dicts instead.
-    for _, block in table.groupby("tm"):
+    for (_, block), (_, totals) in zip(both.groupby("tm", sort=True), table.groupby("tm", sort=True)):
         print()
-        for row in block.to_dict("records"):
-            cells = "".join(f"{row[p] or '':>5}" for p in FIELDING)
-            print(f"  {row['tm']:4s}{row['player']:22s}{row['games']:4d}{row['starts']:4d}"
-                  f"{cells}{row['ph/pr'] or '':>7}{row['spots']:7d}  {row['primary']}")
+        for row, total in zip(block.to_dict("records"), totals.to_dict("records")):
+            cells = "".join(cell(row, p, 6) for p in FIELDING)
+            print(f"  {row['tm']:4s}{row['player']:22s}{cell(row, 'games', 6)}{cell(row, 'starts', 6)}"
+                  f"{cells}{cell(row, 'ph/pr', 7)}{total['spots']:7d}  {total['primary']}")
 
-    innings = innings_by_position()
+    # One row per player across both seasons: keyed on person_id, so a player
+    # traded before the postseason is not split in two.
+    innings = innings_by_position("all", False).merge(
+        innings_by_position("all", True), on="pid", how="outer", suffixes=("", "_post"))
+    innings["tm"] = innings["tm"].fillna(innings["tm_post"])
+    innings["player"] = innings["player"].fillna(innings["player_post"])
+    innings["total_outs"] = innings["total_outs"].fillna(0) + innings["total_outs_post"].fillna(0)
     if minimum > 1:
         innings = innings[innings["player"].isin(set(table["player"]))]
-    _print_innings(innings)
+    _print_innings(innings.sort_values(["tm", "total_outs", "player"], ascending=[True, False, True]))
 
-    print("\n\n=== how many positions each player covered ===")
+    print("\n\n=== how many positions each player covered (regular season + postseason) ===")
     spread = table["spots"].value_counts().sort_index()
     for spots, n in spread.items():
         print(f"  {spots} position{'s' if spots != 1 else ' '}: {n:2d} players")
@@ -137,7 +179,7 @@ def main() -> None:
         spots = ", ".join(f"{p} {row[p]}" for p in FIELDING if row[p])
         print(f"    {row['tm']} {row['player']:22s} {spots}")
 
-    print("\n=== pitchers who also played the field ===")
+    print("\n=== pitchers who also played the field (regular season + postseason) ===")
     both = table[(table["p"] > 0) & (table["spots"] >= 2)]
     print(f"  {len(both)} of {int((table['p'] > 0).sum())} pitchers")
     for row in both.sort_values("p", ascending=False).to_dict("records"):
@@ -224,8 +266,9 @@ def _install(align, team, pos, pid):
     align[team][pos] = pid
 
 
-def innings_by_position(scope: str = "default") -> pd.DataFrame:
-    """Innings at each field position, one row per player.
+def innings_by_position(scope: str = "default", postseason: bool | None = None) -> pd.DataFrame:
+    """Innings at each field position, one row per player; `postseason`, if
+    given, keeps only the regular season (False) or the postseason (True).
 
     Cells are scorebook innings: 5.2 means five innings and two outs, the same
     reading as a pitching line. A blank cell is zero. Pitching comes from the
@@ -235,9 +278,13 @@ def innings_by_position(scope: str = "default") -> pd.DataFrame:
     """
     from wpbl import tables
 
-    counted = field_outs(scope)
+    counted = field_outs(scope, postseason)
     bat = tables.read("batting", scope)
     pit = tables.read("pitching", scope)
+    if postseason is not None:
+        keep = _season_games(postseason)
+        bat = bat[bat["game_id"].isin(keep)]
+        pit = pit[pit["game_id"].isin(keep)]
     pitched = 0
     for row in pit.itertuples(index=False):
         if row.bf and row.bf > 0:
@@ -263,6 +310,7 @@ def innings_by_position(scope: str = "default") -> pd.DataFrame:
             name = pit_names.loc[pid, "person_name"]
             team_list = (pit_names.loc[pid, "team_name"],)
         row = {
+            "pid": pid,
             "tm": "/".join(CODES.get(team, "?") for team in team_list),
             "player": name,
             "total_outs": total,
@@ -279,22 +327,33 @@ def innings_by_position(scope: str = "default") -> pd.DataFrame:
 
 
 def _print_innings(frame: pd.DataFrame) -> None:
+    """`frame`: innings_by_position for the regular season merged with the
+    postseason's (columns suffixed _post)."""
     cols = [CARD_ABBR[pos] for pos in CARD_POS]
+
+    def cell(row, col):
+        reg = row[col] if isinstance(row[col], str) else ""
+        post = row[f"{col}_post"] if isinstance(row[f"{col}_post"], str) else ""
+        text = f"{reg or '0'}+{post}" if post else reg
+        return f"{text:>10s}"
+
     print(f"\n\ninnings at each position, {len(frame)} players")
-    print("  regular season, same games as the table above")
+    print("  regular season + postseason: 9.0+3.1 is 9.0 regular-season innings and")
+    print("  3.1 postseason innings; a lone number is regular season only")
     print("  5.2 means 5 innings and 2 outs; a blank cell is zero")
     print("  pitching innings come from the pitching line, the rest from who")
     print("  was standing at that position while the outs were recorded\n")
-    print(f"  {'':8s}{'player':22s}" + "".join(f"{col:>6s}" for col in cols))
+    print(f"  {'':8s}{'player':22s}" + "".join(f"{col:>10s}" for col in cols))
     for _, block in frame.groupby("tm", sort=True):
         print()
         for row in block.to_dict("records"):
-            cells = "".join(f"{row[col]:>6s}" for col in cols)
+            cells = "".join(cell(row, col) for col in cols)
             print(f"  {row['tm']:8s}{row['player']:22s}{cells}")
 
 
-def field_outs(scope: str = "training") -> dict:
-    """Outs each player spent at each field position, over the card games.
+def field_outs(scope: str = "training", postseason: bool | None = None) -> dict:
+    """Outs each player spent at each field position, over the card games
+    (only the regular season or the postseason, if `postseason` is given).
 
     Pitching innings come from the pitching line (the box score's position
     string leaves "p" off). The other eight come from the starting lineup plus
@@ -308,6 +367,11 @@ def field_outs(scope: str = "training") -> dict:
     plays = tables.read("plays", scope).sort_values(["game_id", "sequence"])
     pit = tables.read("pitching", scope)
     players = tables.read("players", scope)
+    if postseason is not None:
+        keep = _season_games(postseason)
+        bat = bat[bat["game_id"].isin(keep)]
+        plays = plays[plays["game_id"].isin(keep)]
+        pit = pit[pit["game_id"].isin(keep)]
     player_to_person = players.set_index("player_id")["person_id"].to_dict()
 
     name_of = {}

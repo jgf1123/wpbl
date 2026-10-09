@@ -1,0 +1,177 @@
+          player                     P     C    1B    2B    3B    SS    LF    CF    RF
+
+  BOS     Molly Paddison                                             [            95.0]	RF	8
+  BOS     Ticara Geldenhuis                                          [78.0  12.0	  ]	LF	2
+  BOS     Raine Padgham            7.2                         [72.0]					SS	-0.033	# BOS needs a better SS
+  BOS     Kate Blunt              14.0              27.0  19.0  12.0
+  BOS     Gabrielle Haas                            12.0   8.0   1.0        49.0
+  BOS     Maïka Dumais            13.2       [48.1]										1B	-0.002
+  BOS     Lexi Hastings                                              [22.0  39.0	  ]	CF	1
+  BOS     Denver Bryant            2.1                   [55.0]							3B	4
+  BOS     Hyeonah Kim                   46.2   5.0                                 4.0		5
+  BOS     Beth Greenwood               [53.1]											C	6		# BOS doesn't need two Catcher-only
+  BOS     Edith De Leija                            28.0  13.0   7.0						7
+  BOS     Alli Schroder           15.2        22.0         5.0                     1.0		3
+  BOS     Suzuka Yamamoto                          [33.0]        8.0					2B	9
+  BOS     Gigi Schiano            26.2
+  BOS     Sabrina Robinson                    23.1
+  BOS     Paloma Benach           14.0
+  BOS     Olivia Bricker           8.0
+  
+  # Max batting
+  "Hyeonah Kim C",
+  "Ticara Geldenhuis LF",
+  "Lexi Hastings CF",
+  "Denver Bryant 3B",
+  "Alli Schroder 1B",
+  "Beth Greenwood DH", 
+  "Edith De Leija SS", # BOS needs better batter at SS
+  "Molly Paddison RF",
+  "Suzuka Yamamoto 2B",
+
+          player                     P     C    1B    2B    3B    SS    LF    CF    RF
+  LAQ     Ashton Lansdell                                [58.0]                   42.0	3B	1
+  LAQ     Samaria Benitez                           44.0       [37.0]              6.0	SS	6
+  LAQ     Maggie Foxx              2.1 [66.0]                          9.0         7.0	C	5
+  LAQ     Sarah Edwards                      [69.1]                    6.0         3.2	1B	3
+  LAQ     Caitlin Eynon                                   43.0  29.0						9
+  LAQ     Amira Hondras            4.1             [52.1]                    3.0   7.0	2B	-0.012
+  LAQ     Mo'ne Davis                                                [      66.2      ] OF  -0.036
+  LAQ     Jamie Mackay            10.2  35.0   3.2                    13.0					2
+  LAQ     Tháima Maximiliana       8.0                               [44.0   5.0      ]	OF	7
+  LAQ     Ayuri Shimano            8.2         6.0              35.0						4
+  LAQ     Michelle Roche          21.2                                 6.0        20.1
+  LAQ     Isabella Villarreal      4.0               4.2              15.0			  		8
+  LAQ     Adelaide Frank           1.0        22.0
+  LAQ     Ayami Sato              23.0
+  LAQ     Brittany Apgar           0.2                                 1.0  11.2   7.0
+  LAQ     Meggie Meidlinger       15.1
+  LAQ     Addisyn Baird                                                7.0
+  LAQ/NYH Diana Ibarra                                               [20.0  37.2      ]	OF	-0.015
+  
+  # Max batting
+  "Sarah Edwards 1B",
+  "Ashton Lansdell RF",
+  "Ayuri Shimano SS",
+  "Jamie Mackay LF",
+  "Samaria Benitez 2B",
+  "Maggie Foxx C",
+  "Thaima Maximiliana CF",
+  "Caitlin Eynon 3B",
+  "Isabella Villarreal DH",
+  
+  # DH + position
+  "Sarah Edwards 1B",
+  "Ashton Lansdell 3B",
+  "Samaria Benitez SS",
+  "Jamie Mackay DH",
+  "Maggie Foxx C",
+  "Thaima Maximiliana LF",
+  "Amira Hondras 2B",
+  "Mone Davis CF",
+  "Diana Ibarra RF",
+  
+  LAQ/NYH Suzu Narasaki            1.1                               [ 9.0  17.2   7.0]		13	# NYH needs more OF
+          player                     P     C    1B    2B    3B    SS    LF    CF    RF
+  NYH     Denae Benites               [104.1]												1
+  NYH     Natsuki Yonetani                                           [           104.1]	OF	3
+  NYH     London Studer            8.0        32.1                   [36.0   0.1      ]	OF	10
+  NYH     Claire Eccles           10.0                                10.2  52.2      	OF
+  NYH     Madison Willan                            40.2   6.0  15.0						7
+  NYH     Claire O'Sullivan       16.0       [38.2]        5.1								5
+  NYH     Val Perez                                        7.0  52.1 						11
+  NYH     Keira Izumi              4.0              21.1 [20.0] 13.0						4
+  NYH     Alyssa Zettlemoyer       4.2               1.0  46.2 								9
+  NYH     Elodie Ciamarro                          [41.1]  1.2   2.0						8
+  NYH     Rakyung Kim             21.0        17.0                     2.2
+  NYH     Emi Saiki               11.0                     6.2 [22.0]						6
+  NYH     Jaida Lee               17.1                     7.0               6.2
+  NYH     Katherine Murphy                                            26.0
+  NYH     Kylee Lahners                       14.1         4.0								2
+  NYH     Jacqui Reynolds         12.0
+  
+  # Saiki + position
+  "Natsuki Yonetani RF",
+  "Emi Saiki P",
+  "Alyssa Zettlemoyer 3B",
+  "Denae Benites C",
+  "Claire OSullivan 1B",
+  "Elodie Ciamarro 2B",
+  "Val Perez SS",
+  "London Studer LF",
+  "Suzu Narasaki CF",
+  
+  # batting
+  "Emi Saiki SS",
+  "Kylee Lahners DH",
+  "Denae Benites C",
+  "Natsuki Yonetani RF",
+  "Keira Izumi 3B",
+  "Claire OSullivan 1B",
+  "London Studer LF",
+  "Suzu Narasaki CF",
+  "Madison Willan 2B",
+  
+  # Saiki + batting
+  "Emi Saiki P",
+  "Kylee Lahners 3B",
+  "Denae Benites C",
+  "Natsuki Yonetani RF",
+  "Keira Izumi SS",
+  "Claire OSullivan 1B",
+  "London Studer LF",
+  "Suzu Narasaki CF",
+  "Madison Willan 2B",
+  
+          player                     P     C    1B    2B    3B    SS    LF    CF    RF
+  SFF     Andreanne Leblanc        2.0       [99.0]										1B	2
+  SFF     Joely Leguizamon                                    [101.0]					SS	10
+  SFF     Skylar Kaplan                        1.0                                93.0	RF	5
+  SFF     Amanda Gianelloni                        [89.0]								2B	7
+  SFF     Kelsie Whitmore         24.0                                      60.0      	CF	1
+  SFF     Jua Park                 1.2               5.0 [34.1]       35.1   3.2      	3B	8
+  SFF     Alexia Jorge                 [76.1]											C	3
+  SFF     Jill Albayati           10.0         1.0        31.0        17.0			  		6
+  SFF     Ela Day-Bédard           7.2                                18.2  17.1   7.0	
+  SFF     Jordan Eyster                                               27.0  17.0   1.0	LF
+  SFF     Samantha Gutierrez            24.2               9.2 								4
+  SFF     Ayaka Yamamoto                                  26.0								9
+  SFF     Niki Eckert             19.2
+  SFF     Liz Gilder              18.2
+  SFF     Peyton Coria            12.1
+  SFF     Rosi del Castillo        4.2                                 2.0   3.0
+  SFF     Hinano Beppu                               7.0               1.0
+  
+  # DH + position
+  # Save Albayati to relieve when Whitmore is pitching; other pitchers are not as good bats
+  "Alexia Jorge C",
+  "Andreanne Leblanc 1B",
+  "Jua Park 3B",
+  "Kelsie Whitmore CF",
+  "Skylar Kaplan RF",
+  "Jill Albayati DH",
+  "Amanda Gianelloni 2B",
+  "Joely Leguizamon SS",
+  "Jordan Eyster LF",
+  
+  # Whitmore + position
+  "Alexia Jorge C",
+  "Andreanne Leblanc 1B",
+  "Jua Park 3B",
+  "Kelsie Whitmore P",
+  "Skylar Kaplan RF",
+  "Amanda Gianelloni 2B",
+  "Joely Leguizamon SS",
+  "Jordan Eyster LF",
+  "Ela Day Bedard CF",
+  
+  # Albayati + batting
+  "Andreanne Leblanc 1B",
+  "Alexia Jorge C",
+  "Samantha Gutierrez 3B",
+  "Kelsie Whitmore CF",
+  "Skylar Kaplan RF",
+  "Jill Albayati P",
+  "Amanda Gianelloni 2B",
+  "Joely Leguizamon SS",
+  "Jua Park LF",

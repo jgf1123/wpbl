@@ -1,74 +1,78 @@
-# WPBL dice-game player cards -- v0.5.4, NOT FINAL. What changed between versions: data/dice/dice_version.md.
-# Built from 39 games through 2026-09-22 (2798 plate appearances); code 3ec9a68 + uncommitted changes.
+# WPBL dice-game player cards -- v0.6.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
+# Built from 39 games through 2026-09-22 (2798 plate appearances); code 2d588fc + uncommitted changes.
 # These FORECAST how a player would do in games we have not seen. They do not
 # replay 2026: a card is pulled toward players her team used about as much, so it
 # will not match her season line, by design (dice_game_spec.md section 3).
 # A card that looks wrong is worth reporting: https://github.com/jgf1123/wpbl/issues
+# PA 0 marks a GENERIC card: a pitcher who never batted, given the card
+# of the batters started least often -- mostly pitchers, some bench bats.
 player,team,position,attempt,success,PA,OUT cells,OUT,K cells,K,HBP cells,HBP,BB cells,BB,1B cells,1B,HR cells,HR
 Amanda Gianelloni,SFF,2B,League,League,96,25,45-69,7,70-76,2,77-78,8,79-86,12,87-98,1,99
 Kelsie Whitmore,SFF,CF/P,League,League,95,20,45-64,6,65-70,1,71,10,72-81,11,82-92,7,93-99
 Andreanne Leblanc,SFF,1B/P,League,League,94,25,45-69,3,70-72,1,73,9,74-82,15,83-97,2,98-99
 Ashton Lansdell,LAQ,3B/RF,Goes,League,90,18,45-62,9,63-71,3,72-74,10,75-84,12,85-96,3,97-99
-Skylar Kaplan,SFF,RF/1B,League,League,88,28,45-72,2,73-74,0,-,7,75-81,16,82-97,2,98-99
 Joely Leguizamon,SFF,SS,Goes,Low,88,25,45-69,9,70-78,1,79,6,80-85,13,86-98,1,99
+Skylar Kaplan,SFF,RF/1B,League,League,88,28,45-72,2,73-74,0,-,7,75-81,16,82-97,2,98-99
 Alexia Jorge,SFF,C,League,League,82,23,45-67,5,68-72,7,73-79,7,80-86,11,87-97,2,98-99
 Jamie Mackay,LAQ,C/P/LF/RF/1B,League,League,80,26,45-70,5,71-75,4,76-79,4,80-83,12,84-95,4,96-99
-Jua Park,SFF,LF/3B/2B/CF/P,League,League,77,26,45-70,6,71-76,3,77-79,7,80-86,13,87-99,0,-
+Jua Park,SFF,LF/3B/2B/CF/P,League,League,77,25,45-69,6,70-75,3,76-78,8,79-86,13,87-99,0,-
 Sarah Edwards,LAQ,1B/LF/RF,League,League,75,22,45-66,7,67-73,2,74-75,11,76-86,12,87-98,1,99
 Natsuki Yonetani,NYH,RF,League,League,75,23,45-67,7,68-74,2,75-76,7,77-83,14,84-97,2,98-99
 Denae Benites,NYH,C,Goes,League,73,19,45-63,5,64-68,2,69-70,5,71-75,15,76-90,9,91-99
-Maggie Foxx,LAQ,C/RF/LF/P,League,League,71,28,45-72,5,73-77,0,-,7,78-84,13,85-97,2,98-99
-Caitlin Eynon,LAQ,SS/3B,League,League,69,27,45-71,7,72-78,1,79,7,80-86,12,87-98,1,99
-Mone Davis,LAQ,CF,League,League,67,30,45-74,7,75-81,0,-,7,82-88,11,89-99,0,-
-Amira Hondras,LAQ,2B/RF/P/CF,Goes,Low,66,30,45-74,6,75-80,2,81-82,6,83-88,11,89-99,0,-
+Maggie Foxx,LAQ,C/RF/LF/P,League,League,71,27,45-71,5,72-76,0,-,7,77-83,14,84-97,2,98-99
+Caitlin Eynon,LAQ,SS/3B,League,League,69,26,45-70,8,71-78,1,79,6,80-85,13,86-98,1,99
+Mone Davis,LAQ,CF,League,League,67,29,45-73,8,74-81,0,-,7,82-88,11,89-99,0,-
+Amira Hondras,LAQ,2B/RF/P/CF,Goes,Low,66,29,45-73,5,74-78,2,79-80,7,81-87,12,88-99,0,-
 Ticara Geldenhuis,BOS,LF/CF,League,League,63,20,45-64,10,65-74,1,75,12,76-87,10,88-97,2,98-99
-Molly Paddison,BOS,RF,League,League,62,24,45-68,10,69-78,2,79-80,8,81-88,11,89-99,0,-
-Samaria Benitez,LAQ,2B/SS/RF,League,League,61,25,45-69,5,70-74,3,75-77,4,78-81,18,82-99,0,-
+Molly Paddison,BOS,RF,League,League,62,24,45-68,9,69-77,2,78-79,8,80-87,12,88-99,0,-
+Samaria Benitez,LAQ,2B/SS/RF,League,League,61,26,45-70,5,71-75,3,76-78,4,79-82,17,83-99,0,-
 Denver Bryant,BOS,3B/P,Goes,League,59,26,45-70,5,71-75,1,76,9,77-85,13,86-98,1,99
 Kylee Lahners,NYH,1B/3B,League,League,57,19,45-63,8,64-71,6,72-77,11,78-88,9,89-97,2,98-99
-Ayuri Shimano,LAQ,SS/2B/P/1B,Goes,League,57,20,45-64,10,65-74,3,75-77,10,78-87,11,88-98,1,99
-Jill Albayati,SFF,3B/P/LF/1B,League,League,56,27,45-71,5,72-76,1,77,6,78-83,15,84-98,1,99
-Lexi Hastings,BOS,CF/LF,Goes,League,48,22,45-66,8,67-74,2,75-76,9,77-85,11,86-96,3,97-99
-Claire Eccles,NYH,CF/P/LF,League,League,48,34,45-78,5,79-83,0,-,4,84-87,12,88-99,0,-
-Raine Padgham,BOS,SS/P,Goes,League,48,25,45-69,10,70-79,1,80,9,81-89,10,90-99,0,-
+Ayuri Shimano,LAQ,SS/2B/P/1B,Goes,League,57,20,45-64,10,65-74,3,75-77,11,78-88,10,89-98,1,99
+Jill Albayati,SFF,3B/P/LF/1B,League,League,56,27,45-71,5,72-76,2,77-78,7,79-85,13,86-98,1,99
+Claire Eccles,NYH,CF/P/LF,League,League,48,33,45-77,4,78-81,1,82,4,83-86,13,87-99,0,-
+Raine Padgham,BOS,SS/P,Goes,League,48,26,45-70,11,71-81,0,-,8,82-89,10,90-99,0,-
+Lexi Hastings,BOS,CF/LF,Goes,League,48,23,45-67,8,68-75,2,76-77,9,78-86,10,87-96,3,97-99
 Gabrielle Haas,BOS,CF/3B/2B/RF/SS,League,League,48,29,45-73,7,74-80,2,81-82,6,83-88,11,89-99,0,-
-London Studer,NYH,LF/1B/P/CF,Goes,League,48,29,45-73,3,74-76,1,77,5,78-82,17,83-99,0,-
-Val Perez,NYH,SS/3B,League,League,46,30,45-74,3,75-77,1,78,5,79-83,15,84-98,1,99
+London Studer,NYH,LF/1B/P/CF,Goes,League,48,30,45-74,3,75-77,1,78,5,79-83,16,84-99,0,-
+Val Perez,NYH,SS/3B,League,League,46,31,45-75,3,76-78,1,79,5,80-84,14,85-98,1,99
 Edith De Leija,BOS,2B/3B/SS,League,League,46,27,45-71,6,72-77,2,78-79,7,80-86,13,87-99,0,-
-Ela Day Bedard,SFF,CF/LF/P/RF,League,League,45,19,45-63,14,64-77,8,78-85,4,86-89,10,90-99,0,-
-Claire OSullivan,NYH,1B/P/3B,Goes,League,42,26,45-70,5,71-75,2,76-77,7,78-84,12,85-96,3,97-99
-Kate Blunt,BOS,2B/P/3B/SS,League,League,39,31,45-75,6,76-81,0,-,7,82-88,11,89-99,0,-
+Ela Day Bedard,SFF,CF/LF/P/RF,League,League,45,19,45-63,14,64-77,9,78-86,4,87-90,9,91-99,0,-
+Claire OSullivan,NYH,1B/P/3B,Goes,League,42,25,45-69,6,70-75,2,76-77,7,78-84,12,85-96,3,97-99
+Kate Blunt,BOS,2B/P/3B/SS,League,League,39,29,45-73,5,74-78,1,79,9,80-88,11,89-99,0,-
 Madison Willan,NYH,2B/SS/3B,League,League,39,26,45-70,5,71-75,3,76-78,8,79-86,13,87-99,0,-
-Diana Ibarra,LAQ,LF/CF/RF,League,League,37,26,45-70,7,71-77,3,78-80,8,81-88,11,89-99,0,-
-Beth Greenwood,BOS,C,League,League,35,27,45-71,6,72-77,5,78-82,4,83-86,13,87-99,0,-
+Diana Ibarra,LAQ,LF/CF/RF,League,League,37,27,45-71,7,72-78,3,79-81,8,82-89,10,90-99,0,-
 Alyssa Zettlemoyer,NYH,3B/P/2B,League,League,35,25,45-69,7,70-76,6,77-82,5,83-87,12,88-99,0,-
-Isabella Villarreal,LAQ,LF/P/2B,League,League,33,25,45-69,8,70-77,3,78-80,5,81-85,14,86-99,0,-
-Keira Izumi,NYH,2B/3B/SS/P/CF/LF,League,League,33,23,45-67,9,68-76,4,77-80,5,81-85,11,86-96,3,97-99
-Maika Dumais,BOS,1B/P,League,League,31,24,45-68,10,69-78,1,79,9,80-88,11,89-99,0,-
-Samantha Gutierrez,SFF,C/3B,League,League,30,25,45-69,6,70-75,2,76-77,5,78-82,15,83-97,2,98-99
-Alli Schroder,BOS,1B/P/3B/RF,League,League,29,24,45-68,6,69-74,2,75-76,7,77-83,14,84-97,2,98-99
-Hyeonah Kim,BOS,C/1B/RF,League,League,29,21,45-65,10,66-75,8,76-83,6,84-89,10,90-99,0,-
-Suzuka Yamamoto,BOS,2B/SS,Goes,Low,28,24,45-68,9,69-77,3,78-80,8,81-88,11,89-99,0,-
-Thaima Maximiliana,LAQ,LF/P/CF,League,League,28,26,45-70,9,71-79,2,80-81,5,82-86,11,87-97,2,98-99
-Jordan Eyster,SFF,LF/CF/RF,League,League,25,24,45-68,11,69-79,1,80,7,81-87,12,88-99,0,-
+Beth Greenwood,BOS,C,League,League,35,27,45-71,6,72-77,5,78-82,4,83-86,13,87-99,0,-
+Keira Izumi,NYH,2B/3B/SS/P/CF/LF,League,League,33,23,45-67,8,68-75,3,76-78,5,79-83,13,84-96,3,97-99
+Isabella Villarreal,LAQ,LF/P/2B,League,League,33,24,45-68,8,69-76,2,77-78,5,79-83,16,84-99,0,-
+Maika Dumais,BOS,1B/P,League,League,31,24,45-68,9,69-77,1,78,11,79-89,10,90-99,0,-
+Samantha Gutierrez,SFF,C/3B,League,League,30,23,45-67,6,68-73,2,74-75,5,76-80,17,81-97,2,98-99
+Alli Schroder,BOS,1B/P/3B/RF,League,League,29,24,45-68,8,69-76,2,77-78,6,79-84,13,85-97,2,98-99
+Hyeonah Kim,BOS,C/1B/RF,League,League,29,22,45-66,10,67-76,8,77-84,6,85-90,9,91-99,0,-
+Suzuka Yamamoto,BOS,2B/SS,Goes,Low,28,24,45-68,9,69-77,3,78-80,7,81-87,12,88-99,0,-
+Thaima Maximiliana,LAQ,LF/P/CF,League,League,28,25,45-69,8,70-77,2,78-79,5,80-84,13,85-97,2,98-99
 Ayaka Yamamoto,SFF,3B,League,League,25,27,45-71,5,72-76,2,77-78,4,79-82,17,83-99,0,-
-Michelle Roche,LAQ,P/RF/LF,League,League,24,25,45-69,8,70-77,2,78-79,9,80-88,11,89-99,0,-
-Elodie Ciamarro,NYH,2B/SS/3B,League,League,23,26,45-70,7,71-77,1,78,4,79-82,17,83-99,0,-
-Suzu Narasaki,NYH,CF/LF/RF/P,League,League,22,28,45-72,8,73-80,1,81,5,82-86,13,87-99,0,-
-Emi Saiki,NYH,SS/P/3B,League,League,20,21,45-65,9,66-74,2,75-76,10,77-86,13,87-99,0,-
-Adelaide Frank,LAQ,1B/P,League,League,18,27,45-71,8,72-79,1,80,5,81-85,14,86-99,0,-
-Jaida Lee,NYH,P/3B/CF,League,League,14,20,45-64,15,65-79,2,80-81,8,82-89,10,90-99,0,-
-Katherine Murphy,NYH,LF,League,League,14,29,45-73,8,74-81,1,82,6,83-88,11,89-99,0,-
-Rakyung Kim,NYH,P/1B/LF,League,League,13,23,45-67,10,68-77,2,78-79,8,80-87,11,88-98,1,99
-Sabrina Robinson,BOS,1B,League,League,12,22,45-66,12,67-78,1,79,11,80-90,9,91-99,0,-
-Rosi del Castillo,SFF,P/CF/LF,League,League,11,28,45-72,8,73-80,1,81,5,82-86,13,87-99,0,-
-Brittany Apgar,LAQ,CF/RF/LF/P,League,League,10,22,45-66,13,67-79,1,80,9,81-89,10,90-99,0,-
-Addisyn Baird,LAQ,LF/P,League,League,6,26,45-70,9,71-79,1,80,8,81-88,11,89-99,0,-
-Niki Eckert,SFF,P,League,League,4,25,45-69,10,70-79,1,80,8,81-88,11,89-99,0,-
-Hinano Beppu,SFF,2B/LF,League,League,3,24,45-68,12,69-80,2,81-82,6,83-88,11,89-99,0,-
-Meggie Meidlinger,LAQ,P,League,League,2,27,45-71,8,72-79,2,80-81,6,82-87,12,88-99,0,-
-Peyton Coria,SFF,P,League,League,2,23,45-67,12,68-79,2,80-81,8,82-89,10,90-99,0,-
-Jacqui Reynolds,NYH,P,League,League,1,25,45-69,10,70-79,1,80,8,81-88,11,89-99,0,-
-Ayami Sato,LAQ,P,League,League,1,25,45-69,8,70-77,2,78-79,6,80-85,13,86-98,1,99
-Paloma Benach,BOS,P,League,League,1,24,45-68,11,69-79,2,80-81,7,82-88,11,89-99,0,-
-Liz Gilder,SFF,P,League,League,1,27,45-71,9,72-80,1,81,6,82-87,12,88-99,0,-
+Jordan Eyster,SFF,LF/CF/RF,League,League,25,21,45-65,12,66-77,1,78,7,79-85,14,86-99,0,-
+Michelle Roche,LAQ,P/RF/LF,League,League,24,24,45-68,9,69-77,1,78,7,79-85,14,86-99,0,-
+Elodie Ciamarro,NYH,2B/SS/3B,League,League,23,26,45-70,6,71-76,1,77,4,78-81,18,82-99,0,-
+Suzu Narasaki,NYH,CF/LF/RF/P,League,League,22,27,45-71,8,72-79,1,80,4,81-84,15,85-99,0,-
+Emi Saiki,NYH,SS/P/3B,League,League,20,21,45-65,9,66-74,1,75,8,76-83,16,84-99,0,-
+Adelaide Frank,LAQ,1B/P,League,League,18,26,45-70,8,71-78,0,-,6,79-84,15,85-99,0,-
+Jaida Lee,NYH,P/3B/CF,League,League,14,20,45-64,15,65-79,1,80,9,81-89,10,90-99,0,-
+Katherine Murphy,NYH,LF,League,League,14,28,45-72,8,73-80,0,-,6,81-86,13,87-99,0,-
+Rakyung Kim,NYH,P/1B/LF,League,League,13,24,45-68,11,69-79,1,80,7,81-87,12,88-99,0,-
+Sabrina Robinson,BOS,1B,League,League,12,21,45-65,13,66-78,1,79,10,80-89,10,90-99,0,-
+Rosi del Castillo,SFF,P/CF/LF,League,League,11,27,45-71,8,72-79,1,80,5,81-85,14,86-99,0,-
+Brittany Apgar,LAQ,CF/RF/LF/P,League,League,10,20,45-64,14,65-78,1,79,9,80-88,11,89-99,0,-
+Addisyn Baird,LAQ,LF/P,League,League,6,24,45-68,10,69-78,1,79,7,80-86,13,87-99,0,-
+Niki Eckert,SFF,P,League,League,4,23,45-67,11,68-78,1,79,8,80-87,12,88-99,0,-
+Hinano Beppu,SFF,2B/LF,League,League,3,23,45-67,12,68-79,1,80,7,81-87,12,88-99,0,-
+Peyton Coria,SFF,P,League,League,2,22,45-66,13,67-79,1,80,7,81-87,12,88-99,0,-
+Meggie Meidlinger,LAQ,P,League,League,2,25,45-69,9,70-78,1,79,6,80-85,14,86-99,0,-
+Jacqui Reynolds,NYH,P,League,League,1,23,45-67,11,68-78,1,79,8,80-87,12,88-99,0,-
+Ayami Sato,LAQ,P,League,League,1,25,45-69,9,70-78,1,79,7,80-86,13,87-99,0,-
+Paloma Benach,BOS,P,League,League,1,23,45-67,12,68-79,1,80,7,81-87,12,88-99,0,-
+Liz Gilder,SFF,P,League,League,1,25,45-69,9,70-78,1,79,7,80-86,13,87-99,0,-
+Olivia Bricker,BOS,P,League,League,0,24,45-68,10,69-78,1,79,7,80-86,13,87-99,0,-
+Gigi Schiano,BOS,P,League,League,0,24,45-68,10,69-78,1,79,7,80-86,13,87-99,0,-
