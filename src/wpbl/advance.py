@@ -203,12 +203,19 @@ def advance_rates(frame: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
 def rate_table(counts: pd.DataFrame) -> dict:
     """The advance rates as probabilities, pooling a thin (base, outs) cell over
-    out counts. Destinations the data never shows keep probability zero."""
+    out counts. Destinations the data never shows keep probability zero.
+
+    An out count the data never shows for a (hit, base) it does show -- the
+    season's one triple came with two out -- gets the pooled rate too, so every
+    out count of a seen (hit, base) has a row."""
     pooled = counts.groupby(level=["event", "base"]).sum()
     table = {}
     for key, row in counts.iterrows():
         use = row if row.sum() >= MIN_CELL else pooled.loc[key[:2]]
         table[key] = (use / use.sum()).to_dict()
+    for (event, base), use in pooled.iterrows():
+        for outs in range(3):
+            table.setdefault((event, base, outs), (use / use.sum()).to_dict())
     return table
 
 
@@ -226,7 +233,12 @@ def hit_transitions(rates: dict, event: str, bases: str, outs: int) -> dict:
     must = forced(runners, least)
     choices = []
     for runner in [0] + runners:    # the batter is behind everyone, so she comes first
-        row = rates[(event, runner, outs)]
+        row = rates.get((event, runner, outs))
+        if row is None:
+            # The season never saw this hit with a runner on this base (a triple
+            # with a man on): she advances as many bases as the batter.
+            choices.append([(runner, min(runner + least, 4), 1.0)])
+            continue
         floor = least if runner == 0 else runner
         allowed = {dest: p for dest, p in row.items()
                    if p > 0 and (dest in (0, 4) or (dest >= floor

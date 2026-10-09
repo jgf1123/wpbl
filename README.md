@@ -17,7 +17,7 @@ pixi run games       # date / teams / score / game_id -> data/games_lookup.csv
 
 pixi run rosters     # who pitched, for whom, in what role
 pixi run timeline    # how each team's use of its players changed over the season
-pixi run positions   # games at each position (PH/PR separate; pitching from the pitching table)
+pixi run positions   # games and innings at each position, regular season + postseason (PH/PR separate; pitching from the pitching table)
 pixi run chart       # data/usage.html - which innings each pitcher covered
 pixi run innings     # runs scored and allowed per inning, by team
 pixi run re          # run expectancy by base-out state, with its diagnostics
@@ -46,6 +46,12 @@ pixi run pitcher-chart out.png      # the pitcher table as a chart
 pixi run timeline-chart <game_id>   # WP chart -> data/timeline_YYYYMMDD_<id>.png
 
 pixi run dice        # dice-game player cards -> data/dice/cards_{batters,pitchers}.csv (dice_game_spec.md s3)
+
+pixi run python -m wpbl.steal_ratings        # each runner's smoothed steal attempt and success rates
+pixi run python -m wpbl.lineup_model         # exact runs for a batting order with the running game; sanity checks
+pixi run python -m wpbl.lineup [BOS ...]     # best batting order per team (the first lineup post)
+pixi run python -m wpbl.lineup_start [label] # the 1st inning through the 4th batter's PA, exactly
+pixi run python -m wpbl.lineup_state         # which base-out summary best predicts the 4th batter's run value
 
 pixi run table out.png table.md     # render a markdown table as a 728px PNG
 pixi run table table.md             # same; writes table.png next to the md
