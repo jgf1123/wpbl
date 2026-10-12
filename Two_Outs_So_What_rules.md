@@ -152,15 +152,15 @@ After each Plate Appearance, add to her Pitch Count:
 
 A pitcher's card has three columns. During a Plate Appearance, use the column corresponding to her Pitch Count:
 
-| Column     | Pitch count          |
-| ---------- | -------------------- |
-| **Fresh**  | up to 20             |
-| **Fading** | 21 up to her stamina |
-| **Gassed** | past that            |
+| Column     | Pitch count                   |
+| ---------- | ----------------------------- |
+| **Fresh**  | below 20                      |
+| **Fading** | 20, up to but not her stamina |
+| **Gassed** | her stamina or more           |
 
 Check the Pitch Count *before* each batter; a pitcher who crosses a boundary mid-inning changes columns for the next batter.
 
-*Example.* A pitcher with stamina 80 is Fresh to 20 Pitch Count, Fading to 80, Gassed over 80. She enters at 0. A walk puts her at 5, two strikeouts at 15, a groundout at 18: still Fresh. The next batter singles, and her Pitch Count reaches 21. From the following batter, she reads her Fading column.
+*Example.* A pitcher with stamina 80 is Fresh below 20 Pitch Count, Fading from 20 to 79, Gassed from 80. She enters at 0. A walk puts her at 5, two strikeouts at 15, a groundout at 18: still Fresh. The next batter singles, and her Pitch Count reaches 21. From the following batter, she reads her Fading column. A Pitch Count of exactly 20 is already Fading, so her first 20 pitches (give or take the last batter) are Fresh.
 
 Pitchers will recover from fatigue between games (see Between Games).
 
@@ -256,5 +256,5 @@ Runner on 3rd always scores
 **Pitch count:** 
 ```
 enter +30 · walk +5 · strikeout +5 · anything else +3 ·
-fresh ≤ 20 · fading ≤ stamina · gassed above stamina · recover 20 a day.
+fresh below 20 · fading below stamina · gassed at stamina or more · recover 20 a day.
 ```

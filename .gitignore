@@ -10,3 +10,5 @@ data/*.html
 data/img/*.png
 .cursor/
 *_post.md
+data/sim/
+

@@ -154,9 +154,13 @@ Pitching changes in v1, at a stop:
 - From cards v0.6.0, a pitcher who never batted (Schiano and Bricker) has a
   generic batter card, marked PA 0, so she can bat. A pitcher with no batter
   card at all can still pitch only when her team uses a DH.
-- A log is played on the cards it was set up with. `play` refuses a log whose
-  `cards` version differs, so a game in progress is finished on its own
-  version. A finished log still seeds the next game through `new --after`,
+- A log is played on the cards it was set up with, and with that version's
+  fatigue column rule (`engine.column_rule`: "up to" through v0.6.0, "below"
+  from v0.7.0). When the cards are rebuilt, the old version is archived in
+  `data/dice/<version>/`, and `play` loads it for a log that names it; a
+  version that is neither current nor archived is refused. So a game in
+  progress is finished on its own version, and a finished one still replays
+  and exports. A finished log seeds the next game through `new --after`,
   because that reads only its fatigue block.
 - The outgoing pitcher keeps her count, which goes into the fatigue footer.
 

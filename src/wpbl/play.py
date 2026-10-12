@@ -37,7 +37,7 @@ import numpy as np
 import pandas as pd
 
 from wpbl import engine
-from wpbl.play_wp import B_SPAN, CARD_LINES, DICE_DIR, P_SPAN, WinProbability, faces
+from wpbl.play_wp import B_SPAN, CARD_LINES, DICE_DIR, P_SPAN, WinProbability, faces, league_table
 
 COLUMNS = ("fresh", "fading", "gassed")
 POSITIONS = ("C", "1B", "2B", "3B", "SS", "LF", "CF", "RF")
@@ -68,16 +68,29 @@ class Stopped(Exception):
 
 # --- cards ---------------------------------------------------------------------
 
-def card_version() -> str:
-    first = (DICE_DIR / "cards_batters.csv").read_text(encoding="utf-8").splitlines()[0]
+def card_version(dice_dir=DICE_DIR) -> str:
+    first = (dice_dir / "cards_batters.csv").read_text(encoding="utf-8").splitlines()[0]
     return re.search(r"v\d+\.\d+\.\d+", first).group(0)
 
 
+def card_dir(version=None):
+    """Where a card version lives: the current cards in data/dice/, an older
+    version archived in data/dice/<version>/ when the cards were rebuilt."""
+    if version is None or version == card_version():
+        return DICE_DIR
+    d = DICE_DIR / version
+    if not (d / "cards_batters.csv").exists():
+        raise Refused(f"the log was played on cards {version}, which are neither the current "
+                      f"cards ({card_version()}) nor archived in {d}")
+    return d
+
+
 class Cards:
-    def __init__(self):
-        B = pd.read_csv(DICE_DIR / "cards_batters.csv", comment="#", dtype=str)
-        P = pd.read_csv(DICE_DIR / "cards_pitchers.csv", comment="#", dtype=str)
-        self.version = card_version()
+    def __init__(self, dice_dir=DICE_DIR):
+        B = pd.read_csv(dice_dir / "cards_batters.csv", comment="#", dtype=str)
+        P = pd.read_csv(dice_dir / "cards_pitchers.csv", comment="#", dtype=str)
+        self.version = card_version(dice_dir)
+        self.rule = engine.column_rule(self.version)     # the column boundaries it was played with
         self.batter = {r["player"]: r for _, r in B.iterrows()}
         self.pitcher = {r["player"]: r for _, r in P.iterrows()}
         self.bat_faces = {n: faces(r, CARD_LINES, "", B_SPAN) for n, r in self.batter.items()}
@@ -341,7 +354,7 @@ class Game:
                            [b is not None for b in bases], diff)
 
     def column(self, name):
-        return engine.column_for(self.fatigue[name], self.cards.stamina(name))
+        return engine.column_for(self.fatigue[name], self.cards.stamina(name), self.cards.rule)
 
     # -- pitchers --
     def enter(self, side, name):
@@ -488,22 +501,30 @@ class Game:
         notes = [f"{why}. {bat.team} batting, {fld.team} fielding. {self.score()}. "
                  f"{self.outs} out, bases {bases_text(self.bases)}. WP home {pct(self.wp_home())}.",
                  f"On the mound: {p}, {self.fatigue[p]} pitches, {self.column(p)} "
-                 f"(fresh to 20, gassed past {self.cards.stamina(p)}).",
+                 + (f"(fresh to 20, gassed past {self.cards.stamina(p)})."
+                    if self.cards.rule == "up to" else
+                    f"(fresh below 20, gassed from {self.cards.stamina(p)})."),
                  f"Up next: {bat.order[bat.spot % 9].name}."]
         if not self.can_change(fld):
             notes.append(f"Three-batter minimum: {p} has faced {fld.faced} and stays in; "
                          "positions may still change.")
-        notes.append(f"{fld.team} pitchers who can come in (count now -> on entering, column):")
-        for n in self.available(fld):
+        notes.append(f"{fld.team} pitchers (count now -> on entering, column):")
+        p_slot = any(s.pos == "P" for s in fld.order)
+        for n in self.cards.team_pitchers(fld.team):
+            stam = self.cards.stamina(n)
+            if n == p or n in fld.used or n in fld.gone:
+                why = ("on the mound" if n == p else
+                       "left the game" if n in fld.gone else "already pitched")
+                notes.append(f"  {n}: {self.fatigue[n]}, {self.column(n)} (stamina {stam}) — {why}")
+                continue
             c = engine.enter(self.fatigue[n])
-            col = engine.column_for(c, self.cards.stamina(n))
-            notes.append(f"  {n}: {self.fatigue[n]} -> {c}, {col} (stamina {self.cards.stamina(n)})")
-        in_game = [s.name for s in fld.order
-                   if s.name in self.cards.pitcher and s.name not in fld.used]
-        if in_game:
-            notes.append(f"In the lineup and able to pitch (needs a lineup, below): "
-                         + ", ".join(f"{n} ({self.fatigue[n]} -> {engine.enter(self.fatigue[n])})"
-                                     for n in in_game))
+            col = engine.column_for(c, stam, self.cards.rule)
+            why = ""
+            if n in fld.batting():
+                why = " — in the lineup"
+            elif p_slot and n not in self.cards.batter:
+                why = " — no batter card"
+            notes.append(f"  {n}: {self.fatigue[n]} -> {c}, {col} (stamina {stam}){why}")
         bench = [n for n in self.cards.team_batters(fld.team)
                  if n not in fld.batting() and n not in fld.gone and n != fld.pitcher
                  and n not in fld.used]
@@ -753,16 +774,17 @@ def read_log(path):
 _SHARED = {}
 
 
-def shared():
+def shared(version=None):
     """Cards and the WP table, built once per process."""
-    if not _SHARED:
-        _SHARED["cards"], _SHARED["wp"] = Cards(), WinProbability()
-    return _SHARED["cards"], _SHARED["wp"]
+    if version not in _SHARED:
+        d = card_dir(version)
+        _SHARED[version] = (Cards(d), WinProbability(league_table(d)))
+    return _SHARED[version]
 
 
 def replay(path):
     text, preamble, raw, setup, decisions = read_log(path)
-    game = Game(setup, decisions, *shared())
+    game = Game(setup, decisions, *shared(setup.get("cards")))   # its own cards and rule
     game.emit((preamble.rstrip("\n") + "\n\n" if preamble.strip() else "") + raw + "\n")
     game.mark = len(game.joined())
     try:

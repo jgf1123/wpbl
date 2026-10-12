@@ -45,6 +45,7 @@ import argparse
 import datetime as dt
 import time
 import zlib
+from math import erf
 from functools import lru_cache
 
 import numpy as np
@@ -140,6 +141,7 @@ class Model:
         self.chain = lru_cache(maxsize=4096)(self._chain)
         self.bat_score = lru_cache(maxsize=None)(self._bat_score)
         self.usage = None              # a usage.Usage turns the conventions on
+        self._lev_scale, self._lev_cache, self.run_scale = None, {}, None
         self.bats_only = set()         # teams that pick the nine by batting alone anyway
         self.starter_sits = set()      # teams whose starter never bats: they keep the DH
 
@@ -159,6 +161,63 @@ class Model:
         """Quality: runs a league lineup scores off her in an inning from scratch."""
         D, _ = self.chain(pitcher, column, (LEAGUE,) * 9)
         return float(D[0] @ np.arange(MAX_RUNS))
+
+    def pitches_per_inning(self, pitcher, column):
+        """Pitches she throws in an inning from scratch, league lineup."""
+        _, E = self.chain(pitcher, column, (LEAGUE,) * 9)
+        return float(E[0])
+
+    def leverage(self, inning, top, outs, bases, diff):
+        """The leverage index (leverage.py's definition) in the dice game: the
+        spread of win probability over the runs still possible this half-inning,
+        scaled so an average real half-inning start reads 1.00."""
+        if self._lev_scale is None:
+            from wpbl.leverage import half_inning_starts
+            st = half_inning_starts()
+            self._lev_scale = float(np.mean([
+                self._lev_raw(r.inning, r.half == "top", 0,
+                              (False, r.inning > engine.INNINGS, False), int(r.diff))
+                for r in st.itertuples()]))
+        return self._lev_raw(inning, top, outs, tuple(bool(b) for b in bases), diff) / self._lev_scale
+
+    def _lev_raw(self, inning, top, outs, bases, diff):
+        key = (min(inning, engine.INNINGS + 1), top, outs, bases, diff)
+        if key not in self._lev_cache:
+            wp, inn = self.wp, key[0]
+            D = wp.dist(outs, bases)
+            vals = np.array([wp.after_top(inn, diff - k) if top else wp.after_bottom(inn, diff + k)
+                             for k in range(len(D))])
+            m = D @ vals
+            self._lev_cache[key] = float(np.sqrt(D @ (vals - m) ** 2))
+        return self._lev_cache[key]
+
+    def run_value(self, inning, top, outs, bases, diff):
+        """The run-value index: the win probability the fielding side loses to
+        one more run allowed, given the runs that score anyway this half-inning,
+        scaled so an average real half-inning start reads 1.00 (one run there is
+        worth `self.run_scale` of win probability, about 0.062)."""
+        if self.run_scale is None:
+            from wpbl.leverage import half_inning_starts
+            st = half_inning_starts()
+            self.run_scale = float(np.mean([
+                self._rv_raw(r.inning, r.half == "top", 0,
+                             (False, r.inning > engine.INNINGS, False), int(r.diff))
+                for r in st.itertuples()]))
+        return self._rv_raw(inning, top, outs, tuple(bool(b) for b in bases), diff) / self.run_scale
+
+    def _rv_raw(self, inning, top, outs, bases, diff):
+        key = ("rv", min(inning, engine.INNINGS + 1), top, outs, bases, diff)
+        if key not in self._lev_cache:
+            wp, inn = self.wp, key[1]
+            D = wp.dist(outs, bases)
+            if top:                              # home fields: away's runs lower home WP
+                v = sum(D[k] * (wp.after_top(inn, diff - k) - wp.after_top(inn, diff - k - 1))
+                        for k in range(len(D)))
+            else:                                # away fields: home's runs raise home WP
+                v = sum(D[k] * (wp.after_bottom(inn, diff + k + 1) - wp.after_bottom(inn, diff + k))
+                        for k in range(len(D)))
+            self._lev_cache[key] = float(v)
+        return self._lev_cache[key]
 
     def _bat_score(self, name):
         """Runs a lineup of nine of her scores in seven innings off the league pitcher."""
@@ -269,22 +328,27 @@ def usage_nine(model, team, starter, starter_bats=True):
 
 
 def usage_starter(model, team, fatigue):
-    """ASSUMPTION. A starter by role (2+ starts in the last 10) who would take
-    the mound fresh, the best of them; else the least tired starter who would not
-    enter gassed; else the best rested arm of any role (a bullpen game)."""
+    return usage_starter_step(model, team, fatigue)[0]
+
+
+def usage_starter_step(model, team, fatigue):
+    """ASSUMPTION. (starter, step): 1, a starter by role (2+ starts in the last
+    10) who would take the mound fresh, the best of them; 2, else the least tired
+    role starter who would not enter gassed; 3, else the best rested arm of any
+    role (a bullpen game); 4, else the least tired arm."""
     cards = model.cards
     roles = [n for n in model.usage.starters[team] if n in cards.pitcher and n not in DISFAVORED]
     on = {n: engine.enter(fatigue[n]) for n in arms(model, team)}
-    fresh = [n for n in roles if on[n] <= engine.FRESH_UNTIL]
+    fresh = [n for n in roles if on[n] < engine.FRESH_UNTIL]
     if fresh:
-        return min(fresh, key=lambda n: model.runs_per_inning(n, "fading"))
+        return min(fresh, key=lambda n: model.runs_per_inning(n, "fading")), 1
     able = [n for n in roles if on[n] <= cards.stamina(n)]
     if able:
-        return min(able, key=lambda n: fatigue[n])
+        return min(able, key=lambda n: fatigue[n]), 2
     rested = [n for n in arms(model, team) if on[n] <= 0]
     if rested:
-        return min(rested, key=lambda n: model.runs_per_inning(n, "fading"))
-    return min(arms(model, team), key=lambda n: fatigue[n])
+        return min(rested, key=lambda n: model.runs_per_inning(n, "fading")), 3
+    return min(arms(model, team), key=lambda n: fatigue[n]), 4
 
 
 def starting_nine(model, team, starter):
@@ -299,7 +363,7 @@ def starter_for(model, team, fatigue):
 
 # --- in-game: the moves a fielding side can make ---------------------------------------
 
-def options(g, side, model):
+def options(g, side, model, disfavored=False):
     """Every legal pitching change: [(pitcher, lineup or None, slots after)].
 
     A reliever from the bench takes the pitcher's slot when there is no DH -- or,
@@ -308,14 +372,16 @@ def options(g, side, model):
     in the lineup moves to P; her field position goes to the DH or to the
     outgoing pitcher if either can play it, else to the best bench bat who can.
     Positions follow `model.can_play` (the card, plus 2+ starts with the
-    conventions on)."""
+    conventions on). Disfavored pitchers are left out unless `disfavored`."""
     cards = model.cards
     order = [(s.name, s.pos) for s in side.order]
     out = []
     p_slot = next((i for i, (m, p) in enumerate(order) if p == "P"), None)
     for n in g.available(side):
-        if n in DISFAVORED:
+        if n in DISFAVORED and not disfavored:
             continue
+        if n in cards.batter and cards.batter[n]["team"] != side.team:
+            continue                 # traded away: her pitcher card is her old team's (Narasaki)
         after = [(n if p == "P" else m, p) for m, p in order]
         out.append((n, None, after))
         if p_slot is None:
@@ -331,7 +397,9 @@ def options(g, side, model):
                     and b not in side.gone and b not in side.used and b != side.pitcher),
                    key=lambda b: -model.bat_score(b))
     for x, xpos in order:
-        if x not in cards.pitcher or x in side.used or x in DISFAVORED or xpos == "P":
+        if (x not in cards.pitcher or x in side.used or xpos == "P"
+                or cards.pitcher[x]["team"] != side.team       # no pitcher card for this team
+                or (x in DISFAVORED and not disfavored)):
             continue
         base = [(m, "P" if m == x else p) for m, p in order]
         if xpos == "DH":
@@ -380,7 +448,7 @@ def plan_rotation(model, team, fatigue, today, days):
         free = [n for n in pool if n not in {x for x, _ in plan}]
         if not free:
             break
-        fresh = [n for n in free if engine.enter(engine.recover(fatigue[n], d)) <= engine.FRESH_UNTIL]
+        fresh = [n for n in free if engine.enter(engine.recover(fatigue[n], d)) < engine.FRESH_UNTIL]
         pick = (min(fresh, key=lambda n: model.runs_per_inning(n, "fading")) if fresh
                 else min(free, key=lambda n: fatigue[n]))
         plan.append((pick, d))
@@ -393,9 +461,42 @@ def protected(model, team, fatigue, today, days):
     held = set()
     for n, d in plan_rotation(model, team, fatigue, today, days):
         after = engine.enter(fatigue[n]) + RELIEF_PITCHES
-        if engine.enter(engine.recover(after, d)) > engine.FRESH_UNTIL:
+        if engine.enter(engine.recover(after, d)) >= engine.FRESH_UNTIL:
             held.add(n)
     return held
+
+
+LADDER = ("relievers", "starters not held for a start", "disfavored pitchers", "anyone legal")
+
+
+def ladder(policy, g, side):
+    """(options, tier) for a pitcher who must be replaced (user, 2026-10-12): the
+    first tier with anyone in it, of
+      1 relievers by role who would not enter gassed
+      2 starters by role not held for an upcoming start (`policy.protected`),
+        who would not enter gassed
+      3 disfavored pitchers who would not enter gassed
+      4 anyone legal
+    The policy's own score then chooses within the tier."""
+    model, cards = policy.model, policy.model.cards
+    every = options(g, side, model, disfavored=True)
+    starters = model.usage.starters[policy.team] if model.usage else set()
+    held = starters if policy.reserve == "ban" else policy.protected
+
+    def ready(o):
+        return engine.column_for(engine.enter(g.fatigue[o[0]]), cards.stamina(o[0])) != "gassed"
+
+    tiers = [
+        [o for o in every if ready(o) and o[0] not in DISFAVORED and o[0] not in starters],
+        [o for o in every if ready(o) and o[0] not in DISFAVORED and o[0] in starters
+         and o[0] not in held],
+        [o for o in every if ready(o) and o[0] in DISFAVORED],
+        every,
+    ]
+    for i, t in enumerate(tiers):
+        if t:
+            return t, i + 1
+    return [], 0
 
 
 def lineup_text(slots):
@@ -412,8 +513,22 @@ class Policy:
         self.model, self.team = model, team
         self.future = []
         self.record, self.need = (0, 0), 3       # (my wins, theirs) before this game
+        self.log = None                          # a list turns on the decision log
         self.reserve = "ban"     # "ban": no starter relieves; "guaranteed": hold starters
         self.protected = set()   # planned for games sure to be played; "next": and the next game
+
+    def note(self, g, side, kind, choice=None, options=0, rv=None):
+        """One row of the decision log, when it is on."""
+        if self.log is None:
+            return
+        name = choice[0] if isinstance(choice, tuple) else choice
+        self.log.append({"team": side.team, "inning": g.inning, "half": "top" if g.top else "bottom",
+                         "outs": g.outs, "lead": (g.home.runs - g.away.runs) * (1 if side is g.home else -1),
+                         "pitcher": side.pitcher, "count": g.fatigue[side.pitcher],
+                         "column": g.column(side.pitcher), "kind": kind, "options": options,
+                         "chosen": name, "lineup_move": isinstance(choice, tuple),
+                         "chosen_count": None if name in (None, "keep") else g.fatigue[name],
+                         "run_value": rv, "record": self.record})
 
     def __call__(self, g, at, side):
         if side.team != self.team or not g.can_change(side):
@@ -436,6 +551,7 @@ class Baseline(Policy):
             return "keep"
         opts = relief(self, options(g, side, self.model))
         if not opts:
+            self.note(g, side, "nobody left")
             return "keep"
         cards = self.model.cards
 
@@ -451,7 +567,9 @@ class Baseline(Policy):
                 k = min(keeps, key=quality)
                 if quality(k)[0] <= quality(best)[0] + DH_MARGIN:
                     best = k
-        return best[0] if best[1] is None else (best[0], lineup_text(best[1]))
+        choice = best[0] if best[1] is None else (best[0], lineup_text(best[1]))
+        self.note(g, side, "relieved gassed", choice, len(opts))
+        return choice
 
 
 # --- the series and the median rule (B1) ------------------------------------------------
@@ -569,6 +687,177 @@ class MedianRule(Policy):
         return best[0] if best[1] is None else (best[0], lineup_text(best[1]))
 
 
+# --- B2: runs over the rest of the game, and the warm-ups that cost ----------------------------
+
+WARMUP_WP = 0.0077      # one warm-up: 30 marginal pitches in a 7-day window, run-value index
+                        # (marginal_pitches.py)
+EARLY_GATE = 2.0        # user: replace a pitcher who is not gassed only in the top ~4% of
+                        # plate appearances by run value (2.03 in real 2026 games)
+PITCH_SD = 6.0          # ASSUMPTION: spread of pitches per inning, for the chance an arm runs out
+
+
+class Planner(Policy):
+    """B2 (manager_spec.md, "Pricing a warm-up"). At each legal plate appearance
+    where the pitcher is gassed -- or not gassed but the leverage is 2.0+ -- every
+    option gets
+
+        score = series leverage today x WP per run now x (-runs to the end)
+                - next game's series leverage x 0.0077 x (expected warm-ups)
+
+    WP per run now = the run-value index x 0.062: what one more run allowed
+    costs from this state (a blowout's is near 0, a tie late about 4 times
+    average).
+
+    Runs to the end: the arm pitches until gassed (fresh, then fading column),
+    then the other arms in turn, each for her own coverage (`plan`). Expected
+    warm-ups: 1 for a new arm, plus each later arm by the chance she is needed.
+    An arm who would enter gassed is not an option while another would not. A gassed pitcher is always replaced, except with
+    2 outs in the 7th or later (user), where keeping her is scored too."""
+
+    counts = {}
+    early = True             # consider replacing a pitcher who is not gassed
+    use_ladder = False       # the fallback ladder (postseason): disfavored arms as tier 3
+    explain = False          # write a manager's note into the game log before each change
+
+    def _count(self, k):
+        Planner.counts[k] = Planner.counts.get(k, 0) + 1
+
+    def next_weight(self):
+        """The next game's series leverage, averaged over today's result; 0 if
+        no next game is possible either way."""
+        a, b = self.record
+        return sum(0.5 * leverage(x, y, self.need) for x, y in ((a + 1, b), (a, b + 1))
+                   if x < self.need and y < self.need)
+
+    def explain_note(self, g, side, gassed, rv, stake, later, tier, scored, detail, chosen):
+        """One line for the game log: why this choice."""
+        cards = self.model.cards
+        why = f"{side.pitcher} is gassed" if gassed else "high stakes"
+        a, b = self.record
+        head = (f"- Manager ({side.team}): {why}. Series {a}-{b} (leverage "
+                f"{leverage(a, b, self.need):.2f}), run value {rv:.2f}, next game weight "
+                f"{self.next_weight():.2f}")
+        if tier:
+            head += f"; choosing among {LADDER[tier - 1]}"
+        parts = []
+        seen = set()
+        top = max(sc for sc, _ in scored)
+        for sc, o in sorted(scored, key=lambda x: -x[0]):
+            name = side.pitcher if o is None else o[0]
+            if name in seen:
+                continue
+            seen.add(name)
+            count, runs, warm = detail[name]
+            label = "keep " + name if o is None else name
+            col = engine.column_for(count, cards.stamina(name))
+            parts.append(f"{label} ({count}, {col}): {runs:.2f} runs to the end, "
+                         f"{warm:.1f} warm-ups, {1000 * (sc - top):+.2f}")
+            if len(parts) == 3:
+                break
+        pick = "keep " + side.pitcher if chosen is None else chosen[0]
+        g.emit(head + ". Options (count on entering, column; score against the best, in "
+               "thousandths of series win probability): " + "; ".join(parts)
+               + f". Choice: {pick}.")
+
+    def stint(self, name, count, left):
+        """(innings she can pitch before she is gassed, capped at `left`; runs
+        allowed in them). Fresh column to 20, then fading."""
+        model, stam = self.model, self.model.cards.stamina(name)
+        if count >= stam:                        # gassed at her stamina (cards v0.7.0 on)
+            return 0.0, 0.0
+        fresh = max(0, engine.FRESH_UNTIL - count)
+        fade = max(0, stam - max(count, engine.FRESH_UNTIL))
+        i_fresh = min(fresh / model.pitches_per_inning(name, "fresh"), left)
+        i_fade = min(fade / model.pitches_per_inning(name, "fading"), left - i_fresh)
+        return (i_fresh + i_fade, i_fresh * model.runs_per_inning(name, "fresh")
+                + i_fade * model.runs_per_inning(name, "fading"))
+
+    def plan(self, g, name, count, others):
+        """(runs to the end of regulation, expected warm-ups after hers).
+
+        She pitches until gassed (a pitcher already gassed, kept with 2 outs in
+        the 7th, finishes this half only). The innings left go to the other
+        arms in turn, best first (runs per inning in the column she would enter
+        in), each only for her own coverage; each is a warm-up, counted by the
+        chance she is needed at all. If the staff runs out, the last arm pitches
+        the rest from her gassed column."""
+        model, cards = self.model, self.model.cards
+        now = (3 - g.outs) / 3
+        left = now + max(0, engine.INNINGS - g.inning)
+        sd = PITCH_SD / 18.6                     # innings: about a third of an inning
+        if count >= cards.stamina(name):
+            cov, runs = now, now * model.runs_per_inning(name, "gassed")
+        else:
+            cov, runs = self.stint(name, count, left)
+        warm, last = 0.0, name
+        queue = sorted(others, key=lambda n: model.runs_per_inning(
+            n, engine.column_for(engine.enter(g.fatigue[n]), cards.stamina(n))))
+        for n in queue:
+            if cov >= left - 1e-9:
+                break
+            warm += 0.5 * (1 + erf((left - cov) / (sd * np.sqrt(max(left, 1e-9))) / np.sqrt(2)))
+            c, r = self.stint(n, engine.enter(g.fatigue[n]), left - cov)
+            cov, runs, last = cov + c, runs + r, n
+        if cov < left - 1e-9:                    # nobody left: the last arm pitches on gassed
+            runs += (left - cov) * model.runs_per_inning(last, "gassed")
+        return runs, warm
+
+    def decide(self, g, side):
+        gassed = g.column(side.pitcher) == "gassed"
+        if not gassed and (not self.early or g.column(side.pitcher) == "fresh"):
+            return "keep"            # user: no early swap while she is still fresh
+        rv = self.model.run_value(g.inning, g.top, g.outs, [b is not None for b in g.bases],
+                                  g.home.runs - g.away.runs)
+        if not gassed and rv < EARLY_GATE:
+            return "keep"
+        cards = self.model.cards
+        if self.use_ladder:
+            opts, tier = ladder(self, g, side)
+        else:
+            opts, tier = relief(self, options(g, side, self.model)), None
+            # the floor: no arm who would enter gassed while another would not
+            ready = [o for o in opts if engine.column_for(engine.enter(g.fatigue[o[0]]),
+                                                          cards.stamina(o[0])) != "gassed"]
+            opts = ready or opts
+        if not opts:
+            self._count("nobody left")
+            self.note(g, side, "nobody left", None, 0, rv)
+            if self.explain and gassed:
+                g.emit(f"- Manager ({side.team}): {side.pitcher} is gassed and no one can come in")
+            return "keep"
+        a, b = self.record
+        stake = leverage(a, b, self.need) * rv * self.model.run_scale
+        later = self.next_weight() * WARMUP_WP
+        names = list(dict.fromkeys(o[0] for o in opts))
+
+        detail = {}
+
+        def score(name, count, warm, slots):
+            runs, need = self.plan(g, name, count, [n for n in names if n != name])
+            bats = sum(self.model.bat_score(m) for m, _ in slots)
+            detail[name] = (count, runs, warm + need)
+            return -stake * runs - later * (warm + need) + 1e-9 * bats
+
+        scored = [(score(o[0], engine.enter(g.fatigue[o[0]]), 1, o[2]), o) for o in opts]
+        if not gassed or (g.inning >= engine.INNINGS and g.outs == 2):
+            keep = score(side.pitcher, g.fatigue[side.pitcher], 0,
+                         [(s_.name, s_.pos) for s_ in side.order])
+            scored.append((keep, None))
+        best, o = max(scored, key=lambda x: x[0])
+        if self.explain and (gassed or o is not None):
+            self.explain_note(g, side, gassed, rv, stake, later, tier, scored, detail, o)
+        if o is None:
+            kind = "rode out the 7th" if gassed else "kept at high leverage"
+            self._count(kind)
+            self.note(g, side, kind, "keep", len(opts), rv)
+            return "keep"
+        kind = "relieved gassed" if gassed else "early swap"
+        self._count(kind)
+        choice = o[0] if o[1] is None else (o[0], lineup_text(o[1]))
+        self.note(g, side, kind, choice, len(opts), rv)
+        return choice
+
+
 class Shadow(Policy):
     """Rest-of-half WP, less lambda per pitch carried into the next game."""
 
@@ -621,7 +910,7 @@ FINAL = {"days": [0, 1, 3, 4, 6], "home_hi": [True, True, False, False, True]}  
 SEMI = {"days": [0, 2, 4], "home_hi": [True, False, True]}
 
 
-def series(model, hi, lo, policies, fmt, seed, usage=None, trace=None):
+def series(model, hi, lo, policies, fmt, seed, usage=None, trace=None, record=None):
     """Play one series; hi hosts games 1, 2 and 5 of five (1 and 3 of three).
     policies: {team: Policy}. Returns (winner, games played). `usage`, if given,
     collects (team, game number, pitchers used, pitches thrown, started with a DH,
@@ -635,8 +924,12 @@ def series(model, hi, lo, policies, fmt, seed, usage=None, trace=None):
     for gi, day in enumerate(fmt["days"]):
         home, away = (hi, lo) if fmt["home_hi"][gi] else (lo, hi)
         lineups = {}
+        steps = {}
         for t in (away, home):
-            st = starter_for(model, t, fatigue)
+            if model.usage:
+                st, steps[t] = usage_starter_step(model, t, fatigue)
+            else:
+                st, steps[t] = pick_starter(model, t, fatigue), None
             nine = starting_nine(model, t, st)
             lineups[t] = {"pitcher": st, "order": lineup_text(nine)}
         setup = {"seed": int(rng.integers(1 << 31)), "date": dt.date(2026, 9, 16) + dt.timedelta(day),
@@ -660,6 +953,11 @@ def series(model, hi, lo, policies, fmt, seed, usage=None, trace=None):
         g.every_pa = True
         g.run()
         winner = home if g.home.runs > g.away.runs else away
+        if record is not None:
+            # every game, as it ends: `record(game, info)`
+            nxt = fmt["days"][gi + 1] - day if gi + 1 < len(fmt["days"]) else None
+            record(g, {"game": gi + 1, "day": day, "wins_before": dict(wins), "steps": steps,
+                       "fatigue_before": dict(fatigue), "next_gap": nxt, "lineups": lineups})
         if usage is not None:
             for side in (g.away, g.home):
                 start = lineups[side.team]["order"]
@@ -668,7 +966,11 @@ def series(model, hi, lo, policies, fmt, seed, usage=None, trace=None):
                               sum(g.fatigue[n] - g.stats[n]["start"] for n in side.used),
                               any(e.endswith(" DH") for e in start),          # started with a DH
                               any(s_.pos == "DH" for s_ in side.order),       # ended with one
-                              sum(n in in_lineup for n in side.used[1:])))    # relievers from the lineup
+                              sum(n in in_lineup for n in side.used[1:]),     # relievers from the lineup
+                              sum(e["event"] == "pa" and e["fielding"] == side.team
+                                  and e["column"] == "gassed" for e in g.events),    # PAs pitched gassed
+                              tuple(e["inning"] for e in g.events if e["event"] == "pa"
+                                    and e["fielding"] == side.team and e["column"] == "gassed")))
         wins[winner] += 1
         fatigue = dict(g.fatigue)
         if wins[winner] == need:
@@ -685,6 +987,8 @@ def main(argv=None):
     ap.add_argument("--format", choices=("final", "semi"), default="final")
     ap.add_argument("--teams", nargs="*", default=["BOS", "LAQ", "NYH", "SFF"])
     ap.add_argument("--b1", action="store_true", help="also play the median rule")
+    ap.add_argument("--b2", action="store_true", help="also play B2 (runs to the end, priced warm-ups)")
+    ap.add_argument("--b2-no-early", action="store_true", help="also play B2 relieving only at gassed")
     ap.add_argument("--skip-b0", action="store_true", help="leave out the B0-vs-B0 row")
     ap.add_argument("--conventions", action="store_true",
                     help="lineups, starters and positions as the real teams used them (usage.py)")
@@ -703,9 +1007,17 @@ def main(argv=None):
     runs = [] if a.skip_b0 else [("B0", lambda t: Baseline(model, t))]
     if a.b1:
         runs.append(("B1 median", lambda t: MedianRule(model, t)))
+    if a.b2:
+        runs.append(("B2 planner", lambda t: Planner(model, t)))
+    if a.b2_no_early:
+        def no_early(t):
+            p = Planner(model, t)
+            p.early = False
+            return p
+        runs.append(("B2 no early", no_early))
     runs += [(f"shadow {l:g}", (lambda l: lambda t: Shadow(model, t, l))(l)) for l in a.lambdas]
     for label, make in runs:
-        MedianRule.counts = {}
+        MedianRule.counts, Planner.counts = {}, {}
         won = n = games = 0
         usage = []
         for me, opp in pairs:
@@ -726,8 +1038,22 @@ def main(argv=None):
         u = np.array([(x[1], x[2], x[3]) for x in usage], float)
         print("      pitchers used per game, by game number: " + "  ".join(
             f"G{int(k)} {u[u[:, 0] == k, 1].mean():.2f}" for k in sorted(set(u[:, 0]))), flush=True)
+        d = np.array([x[4:8] for x in usage], float)
+        print(f"      warm-ups a game {u[:, 1].mean():.2f}; PAs pitched gassed a game {d[:, 3].mean():.2f}; "
+              f"relievers from the lineup a game {d[:, 2].mean():.2f}; DH lost in "
+              f"{100 * (1 - d[d[:, 0] == 1, 1]).mean():.0f}% of DH games", flush=True)
+        games_by = {k: sum(1 for x in usage if x[1] == k) for k in range(1, 6)}
+        print("      PAs pitched gassed a game, by game number: " + "  ".join(
+            f"G{k} {sum(x[7] for x in usage if x[1] == k) / games_by[k]:.2f}"
+            for k in range(1, 6) if games_by[k]), flush=True)
+        inns = [i for x in usage for i in x[8]]
+        print("      ... by inning (share of all gassed PAs): " + "  ".join(
+            f"{i if i < 8 else '8+'} {100 * sum(1 for j in inns if min(j, 8) == i) / max(len(inns), 1):.0f}%"
+            for i in range(1, 9)), flush=True)
         if label.startswith("B1"):
             print(f"      gassed decisions: {MedianRule.counts}", flush=True)
+        if label.startswith("B2"):
+            print(f"      decisions: {Planner.counts}", flush=True)
 
 
 if __name__ == "__main__":

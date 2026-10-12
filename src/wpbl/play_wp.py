@@ -54,9 +54,10 @@ CARD_LINES = ("OUT", "K", "HBP", "BB", "1B", "HR")
 P_SPAN, B_SPAN = range(0, engine.RUN_START), range(engine.BAT_START, 100)
 
 
-def league_table() -> engine.Table:
-    """League batter against the league pitcher's season card (no fatigue column)."""
-    lg = pd.read_csv(DICE_DIR / "cards_league.csv", comment="#", dtype=str)
+def league_table(dice_dir: Path = DICE_DIR) -> engine.Table:
+    """League batter against the league pitcher's season card (no fatigue column),
+    from the current cards or an archived version's (`dice_dir`)."""
+    lg = pd.read_csv(dice_dir / "cards_league.csv", comment="#", dtype=str)
     pitcher = lg[(lg["player"] == "League average pitcher") & (lg["column"] == "season card")]
     batter = lg[lg["player"] == "League average batter"]
     p = faces(pitcher.iloc[0], CARD_LINES, "", P_SPAN)

@@ -164,6 +164,239 @@ on one staff are close (a league lineup scores 0.92-1.18 runs an inning off LAQ'
 regular arms, fresh); the lookahead is one half-inning and knows nothing of the
 arms it will need later in the same game.
 
+### Pricing a warm-up (2026-10-11)
+
+User: the real cost of an extra warm-up is 30 pitches that arm cannot throw
+later, which a weaker arm must then throw -- probably in low leverage. Real
+2026 games, postseason included (40 games with plays), measured two ways.
+
+**The marginal 30 pitches** (`marginal_pitches.py`). For every team and date
+it played, the 7 days ending that date (80 windows, about 3 games and 390
+pitches each). Quality = runs per pitch off the pitcher's card, fading column,
+league lineup. The marginal 30 = the window's pitches from its weakest arms.
+Leverage = `leverage.py`, mid-inning included (average half-inning start
+1.00). One run at an average half-inning start is worth 0.060 of win
+probability (dice neutral model).
+
+| team | runs/pitch, window average | marginal 30 | leverage, all pitches | marginal 30 | cost of 30 pitches |
+|---|---|---|---|---|---|
+| BOS | 0.0646 | 0.0689 | 0.72 | 0.75 | 0.60 WP points |
+| LAQ | 0.0620 | 0.0685 | 0.87 | 0.66 | 0.63 |
+| NYH | 0.0609 | 0.0678 | 0.97 | 0.90 | 1.03 |
+| SFF | 0.0599 | 0.0650 | 0.84 | 0.73 | 0.57 |
+
+All windows: **0.69 WP points** (median 0.73, 10-90% 0.09-1.22). Marginal
+pitches lean to low leverage -- 41% at leverage under 0.5 against 29% of all
+pitches -- except at BOS, whose thin staff could not hide Bricker and Dumais.
+About 5% of marginal pitches still come at leverage 2+. Caveats: few,
+overlapping windows (per-team figures are noisy); "marginal" is the weakest
+card in the window, starters included (Mackay, Eckert); leverage from the
+real-data model, the run conversion from the dice model.
+
+**The leverage at a relief decision** (`change_leverage.py`). All 152 real
+pitching changes (153 relief appearances; one entry did not begin with a
+plate appearance):
+
+| | n | mean | median | 25-75% | share at 1+ |
+|---|---|---|---|---|---|
+| all changes | 152 | 0.93 | 0.80 | 0.32-1.41 | 43% |
+| starter relieved | 78 | 0.91 | 0.92 | 0.48-1.30 | 46% |
+| reliever relieved | 74 | 0.94 | 0.63 | 0.22-1.57 | 39% |
+| at a half-inning start | 93 | 0.95 | 0.91 | 0.32-1.46 | 48% |
+| mid-inning | 59 | 0.88 | 0.71 | 0.33-1.22 | 34% |
+
+Starters were relieved mostly in the 3rd-5th innings (60 of 78), at median
+leverage 0.8-1.0, rising to 1.37 in the 6th.
+
+**Calibration.** At a typical relief decision (leverage about 0.93), a warm-up
+(0.69 WP points) is worth what 0.69 / (0.93 x 6.0) = **about 0.12 runs** of
+pitching over the rest of the game is worth. So a reliever who needs one more
+warm-up behind her to finish the game should be preferred only if she saves
+more than about 0.12 runs over the longer arm -- less in low leverage, more in
+high.
+
+**Run value, not spread (2026-10-11).** `leverage.py`'s index is the spread
+(standard deviation) of win probability over a half-inning's outcomes. In a
+high-scoring game a big late lead keeps a fat tail -- about a 3% chance of 6+
+runs -- so "top 7, home up 6" reads 0.95, average. A pitching decision needs
+the *run value*: the win probability the fielding side loses to one more run
+allowed, given the runs that score anyway (`Model.run_value`, dice model,
+scaled so an average real half-inning start reads 1.00, where one run is worth
+0.0619). T7 home up 6: 0.22; T7 tied: 3.90 (spread 2.41); B7 tied, 2 out,
+bases loaded: 4.12 (2.31). On real game states the two barely differ on
+average, because real games rarely sit in the tails:
+
+| | spread index | run-value index |
+|---|---|---|
+| cost of 30 marginal pitches | 0.69 WP points | 0.77 (median 0.86, 10-90% 0.13-1.31) |
+| leverage at real relief decisions, mean | 0.93 | 0.95 (starter relieved 1.00) |
+| top 4.3% of plate appearances starts at | 2.0 | 2.03 |
+
+### B2: runs to the end, warm-ups priced (built 2026-10-11)
+
+Decided with the user:
+
+- A gassed pitcher is replaced. Exception: with 2 outs in the 7th or later,
+  keeping her is scored too (the inning may end without another warm-up).
+- A pitcher who is not gassed may be replaced only in the top ~4% of plate
+  appearances by run value (index 2.0+), e.g. tied in the 7th.
+- Units are win probability: runs x run value now; warm-ups priced at what 30
+  marginal pitches cost (0.0077), at the leverage they are later thrown in.
+
+For every option (each legal reliever; keep her where allowed):
+
+    score = series leverage today x run value now x 0.0619 x (-runs to the end)
+            - next game's series leverage x 0.0077 x (expected warm-ups)
+
+- Runs to the end of regulation: the arm pitches until gassed -- fresh column
+  to 20, then fading, innings = pitches / her pitches per inning -- and the
+  next-best available arm finishes (user: fine for now; later perhaps a typical
+  reliever per team). League lineup rates. Extra innings not counted.
+- Expected warm-ups: 1 for a new arm, plus the chance she runs out before the
+  end. **ASSUMPTION:** pitches per inning spread with SD 6.
+- Next game's series leverage: averaged over today's result; 0 when no next
+  game is possible either way (game 5), so conservation switches off. At 1-2
+  it is 0.5 (if we win, game 5 is worth 1.0) -- so B2 still conserves in an
+  elimination game that is not the last possible one.
+- Pool, lineup moves and fallbacks as B0 (relief role first; most bats among
+  moves that bring in the same arm).
+
+**First test (2026-10-11): no gain, and it spends more arms, not fewer.**
+Conventions on, opponent B0, same 2,400 series (B0's own row is 50.2% now,
+not 50.7%: rule 4' changed the lineups since).
+
+| | series won | pitchers a game, G1-G5 | PAs pitched gassed a game | relievers from the lineup a game | DH lost |
+|---|---|---|---|---|---|
+| B0 | 50.2% | 2.0 2.2 2.7 3.0 3.4 | 0.22 | 0.41 | 38% |
+| B2 | 50.0% | 2.1 2.5 3.1 4.3 4.9 | 0.98 | 0.55 | 41% |
+
+B2's decisions (counted per plate appearance): relieved gassed 17,560; early
+swap 2,649; kept at high leverage 13,020; rode out the 7th 654; no legal arm
+left 2,558. The gap from B0 grows through the series (2.1 vs 2.0 arms in game
+1, 4.9 vs 3.4 in game 5), and staffs run dry far more often -- the opposite of
+the intent. Likely causes, untested: early swaps carry no in-game cost when the
+next-game weight is low (0 in game 5), and the plan assumes the next-best arm
+is always there to finish, so it never sees itself running out.
+
+**Ablation (2026-10-11).** Early swaps now skipped while the pitcher is still
+fresh (user). Same series; "gassed PAs" counts both no arm left and B2's rides
+in the 7th.
+
+| | series won | warm-ups a game | gassed PAs a game, G1-G5 | gassed PAs by inning, peak |
+|---|---|---|---|---|
+| B0 | 50.2% | 2.52 | 0.00 0.02 0.04 0.54 1.22 | 6th-7th (28%, 26%) |
+| B2 | 49.9% | 3.02 | 0.05 0.13 0.18 2.75 4.28 | 3rd-4th (21%, 22%) |
+| B2, no early swaps | 49.4% | 2.84 | 0.06 0.12 0.19 2.80 3.95 | 3rd-4th (24%, 23%) |
+
+Early swaps are not the cause: without them B2 still runs dry about as often
+in games 4-5. The difference from B0 is *when*: B0's gassed batters come late
+in games 4-5, when a long week finally runs out; B2's come in the 2nd-4th
+innings. That points to the plan's assumption that the next-best arm always
+finishes: it makes a tired arm's short stint look cheap, so B2 burns arms in
+short stints -- which the next day leaves its starters tired too (2nd-inning
+gassed PAs rise from 4% to 11-12%).
+
+**Instrumented (2026-10-11, `instrumented.py`, tables in `data/sim/`).** The
+last guess was half wrong. Starters are the same under every manager: the
+shared starter rule picks a fresh role starter in games 1-2, and in game 4
+nearly every team's starter enters at about 44 pitches and lasts about 2.4
+innings -- the schedule, not B2. Nightly recovery is also the same (e.g. after
+game 4: 237, 242, 233 pitches a team of a possible 383). The difference was the
+relievers: B2 brought in arms entering fading 34% and already gassed 12%
+(B0: 24% and 3%), for 1.48 innings (B0 1.93), finishing 49% of games (B0 65%).
+Cause: the plan credited the innings left after the candidate to the best
+other arm *whatever her stamina*, so a junk arm followed by "the best arm
+finishes" scored nearly as well as the best arm -- and the promise was
+postponed at every decision.
+
+**Fixed (user, 2026-10-12): the real staff, and a floor.** The plan now covers
+the innings left with the other arms in turn, best first, each only for her own
+coverage; each is a warm-up, weighted by the chance she is needed; if the staff
+runs out, the last arm pitches on gassed. And an arm who would enter gassed is
+not an option while another would not. Same 2,400 series:
+
+| | series won | relief apps a game | entering fresh / fading / gassed | innings each | finished game | no arm left (PAs) | gassed BF, G4 / G5 |
+|---|---|---|---|---|---|---|---|
+| B0 | 50.2% | 1.52 | 73 / 24 / 3% | 1.93 | 65% | 770 | 0.54 / 1.22 |
+| B2 before | 50.0% | 2.02 | 54 / 34 / 12% | 1.48 | 49% | 2,320 | 2.75 / 4.27 |
+| B2 fixed | 51.7% | 1.72 | 64 / 33 / 3% | 1.73 | 57% | 1,368 | 0.81 / 1.84 |
+| B2 fixed, no early swaps | 50.9% | 1.52 | 65 / 32 / 2% | 1.93 | 64% | 991 | 0.69 / 1.37 |
+
+Relief use is back to B0's pattern. B2 accepts a tired-but-better arm more
+often (33% entering fading against B0's 24%) without shorter stints. Early
+swaps add about 0.2 relief appearances a game. Series won: +1.5 points over B0,
+about 1.5 standard errors -- suggestive, not established.
+
+**Confirmed (2026-10-12):** 7,200 series (300 per pairing and side; the first
+100 are the 2,400 above), opponent B0, conventions on: **B2 wins 51.5% +/- 0.6**
+of series against B0 (50% by symmetry) -- about 2.5 standard errors, the first
+policy measurably better than B0. Warm-ups 2.72 a game; batters faced gassed
+0.36 a game (0.83 in game 4, 1.76 in game 5), 42% of them in the 7th, where
+B2 now rides out the inning by design.
+
+### The postseason command (2026-10-12)
+
+`pixi run postseason` (`src/wpbl/postseason.py`) plays the 2026 bracket with
+B2 managing both sides:
+
+- Semifinals SFF-BOS (9, 11, 13 Sep; SFF hosts 1 and 3) and NYH-LAQ (10, 12,
+  14 Sep; NYH hosts 1 and 3), best of 3; final best of 5, 16 and 17 Sep at the
+  SFF-BOS winner, 19 and 20 Sep at the NYH-LAQ winner, 22 Sep back at the
+  first (user). "If needed" games are skipped once a series is decided.
+- Pitch counts start from the user's chart for the morning of 9 Sep and
+  recover 20 every calendar day for the whole league.
+- Postseason settings (user, 2026-10-12): the lineup conventions; the
+  **fallback ladder** -- when a pitcher must be replaced, B2 scores only the
+  first non-empty tier of (1) relievers by role who would not enter gassed,
+  (2) starters by role not held for a start, who would not enter gassed,
+  (3) disfavored pitchers who would not enter gassed, (4) anyone legal;
+  **"guaranteed" reservation** (starters held only for games sure to be
+  played, so all hands when facing elimination). The starter is the shared
+  starter rule's. B2's series leverage is each series' own: a semifinal game's
+  stakes do not yet count the final.
+- `--until 0.01`: postseasons in batches of 100 until every team's
+  championship probability has a standard error under 1 point (user's
+  "reliable"); reports reaching the final, winning it, and the finals.
+- `--log DIR --seed N`: one postseason, one markdown file per game (lineups,
+  each staff's counts, the play-by-play) plus a README of results. Before every
+  pitching change a manager's note gives the stakes (series record and
+  leverage, run value, next game's weight), the ladder tier, the top options
+  (count and column on entering, runs to the end, expected warm-ups, score
+  against the best) and the choice. Output only: `pixi run play` cannot replay
+  these logs.
+
+**First odds (2026-10-12):** 2,500 postseasons (seeds 1-2500), stopped when
+every team's title probability had a standard error under 1 point:
+
+| team | reach the final | win the title |
+|---|---|---|
+| SFF | 73.8% +/- 0.9 | 41.4% +/- 1.0 |
+| NYH | 63.8% +/- 1.0 | 35.4% +/- 1.0 |
+| LAQ | 36.2% +/- 1.0 | 16.2% +/- 0.7 |
+| BOS | 26.2% +/- 0.9 | 7.0% +/- 0.5 |
+
+Finals: SFF v NYH 47.5%, SFF v LAQ 26.3%, BOS v NYH 16.3%, BOS v LAQ 9.9%. The
+real 2026 postseason (SFF over BOS 2-0, LAQ over NYH 2-1, LAQ over SFF 3-2)
+was a 26% final and a 16% champion by this model.
+
+**On cards v0.7.0** (columns read "below", 2026-10-12), same seeds: title SFF
+42.8%, NYH 34.1%, LAQ 16.4%, BOS 6.8% (reaching the final 75.2, 63.4, 36.6,
+24.8); finals SFF v NYH 47.9%, SFF v LAQ 27.3%, BOS v NYH 15.4%, BOS v LAQ
+9.3%. Every change is within about 1.5 standard errors. The B2 results above
+(51.5% against B0) were measured on v0.6.0 and have not been rerun.
+
+**Narasaki (ASSUMPTION, 2026-10-12).** Her batter card is NYH's (traded) but
+her pitcher card is still LAQ's -- the only such split. A pitcher may come in
+only for the team that holds her pitcher card and, if she has one, her batter
+card; so Narasaki pitches for no one and bats for NYH. (Before the ladder let
+disfavored pitchers in, this never came up.)
+
+**Known limitation.** When a staff is so thin that the plan uses every
+remaining arm to exhaustion, its total runs do not depend on the order the
+arms pitch in, so the plan cannot tell "best arm now" from "best arm later"
+(seen in a game 5: Gilder and Coria scored identically). Weighting each future
+inning by its expected stakes would fix it.
+
 ### What the lineup conventions cost (2026-10-05)
 
 Conventions on for pitching (roles, relief from relievers), both sides B0,

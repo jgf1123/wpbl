@@ -47,6 +47,7 @@ advance = "python -m wpbl.advance"
 play = "python -m wpbl.play"
 card-runs = "python -m wpbl.card_runs"
 manager = "python -m wpbl.manager"
+postseason = "python -m wpbl.postseason"
 refresh = { depends-on = ["scrape", "build", "check"] }
 
 [activation.env]

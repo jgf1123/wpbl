@@ -528,7 +528,7 @@ if __name__ == "__main__":
 # --- fatigue (spec 7.3, 7.4) ---------------------------------------------------
 # The track counts MEASURED pitches, unweighted: a struggling pitcher faces more
 # batters and so burns faster on her own, without a surcharge (spec 7.2).
-FRESH_UNTIL = 20   # her first inning: 19.5 pitches MEASURED, rounded to 20
+FRESH_UNTIL = 20   # her first inning: 19.3 pitches MEASURED (79 starts), rounded to 20
 
 # Entering a game costs pitches before she faces anybody: she warmed up. Without
 # it, short outings are FREE -- a 14-pitch appearance clears overnight, so the
@@ -566,14 +566,23 @@ def enter(count):
     return count + ENTRY_COST
 
 
-def column_for(count, cap):
-    """Which column a pitcher reads, from the pitches on her track (spec 7.4).
+def column_rule(card_version):
+    """The column boundaries a card version was played with. Cards through v0.6.0
+    used "up to": fresh up to 20, fading up to her stamina. From v0.7.0 (user,
+    2026-10-12) "below": fresh below 20, fading below her stamina, gassed at it.
+    Old game logs replay on their own cards and their own rule."""
+    major, minor, patch = (int(x) for x in card_version.lstrip("v").split("."))
+    return "up to" if (major, minor) < (0, 7) else "below"
+
+
+def column_for(count, cap, rule="below"):
+    """Which column a pitcher reads, from the count BEFORE the batter (spec 7.4).
 
     Three states, and the two boundaries are not the same KIND of thing.
 
     fresh -> fading is MEASURED. The fatigue curve found one step, after the first
-    inning, and flat after it (spec 7.2); a starter's first inning is 19.5 pitches
-    mean, 19.0 median, so the window is 20.
+    inning, and flat after it (spec 7.2); a starter's first inning is 19.3 pitches
+    mean, 18 median, so the window is 20.
 
     fading -> gassed is DESIGNED. No second step was ever found in the data, so
     there is nothing to fit. Capacity is instead placed just past what each arm
@@ -583,13 +592,19 @@ def column_for(count, cap):
 
     The count is the RULEBOOK's count, not a running total of work. A rested
     pitcher sits at RESTED = -30; entering adds the 30 she spends warming up, so
-    she takes the mound at 0 and her first twenty game pitches are fresh. That is
-    why neither boundary carries the entry cost: the measured window is one inning
-    of GAME pitches, on pitchers who had all warmed up, so the warm-up buys
-    availability later rather than making her worse now. Stating it this way makes
-    her stamina the fading limit directly -- stamina 80 means fading through 80 --
-    which is the form the printed rules use. Every number is 30 lower than the
-    first version of this and the states are identical."""
-    if count <= FRESH_UNTIL:
+    she takes the mound at 0. Neither boundary carries the entry cost: the measured
+    window is one inning of GAME pitches, on pitchers who had all warmed up, so the
+    warm-up buys availability later rather than making her worse now.
+
+    "below" (cards v0.7.0 on): fresh while the count is below 20, fading below her
+    stamina, gassed at it or more. The column is read before each batter and a
+    batter costs 3 or 5, so she throws 20-24 fresh pitches, where "up to" (cards
+    through v0.6.0: fresh up to 20, fading up to her stamina) gave 21-25 (user,
+    2026-10-12: the first is the defensible reading of "her first 20 pitches")."""
+    if rule == "up to":
+        if count <= FRESH_UNTIL:
+            return "fresh"
+        return "fading" if count <= cap else "gassed"
+    if count < FRESH_UNTIL:
         return "fresh"
-    return "fading" if count <= cap else "gassed"
+    return "fading" if count < cap else "gassed"

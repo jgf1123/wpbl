@@ -46,6 +46,10 @@ schedules, 100 each), so their rows are comparable.
 | `position_first.py` | usual lineup vs the most-started player at each position | Who comes in, and filling the holes |
 | `next_up.py` | who comes in for each lost regular, by rank in starts; where a team reaches past its next player | Who comes in, and filling the holes |
 | `fit_candidates.py` | other teams' players by time at a weak position (each team's top there excluded) | Who comes in, and filling the holes |
+| `instrumented.py` | B0 / B2 series with every game, appearance, decision and night recorded to `data/sim/` | B2 (Instrumented; Fixed) |
+| `fatigue_options.py` | three spacings of the fatigue columns: cards, scoring, column mix, careless and B2 against B0 | dice_game_spec.md 7.4 (What widening would do) |
+| `marginal_pitches.py` | each 7-day window's 30 pitches from its weakest arms: quality, leverage, WP cost; leverage bands | Pricing a warm-up |
+| `change_leverage.py` | leverage at every real pitching change, by who was relieved, where, and inning | Pricing a warm-up |
 | `trade_fits.py` | a candidate in place of the regular: receiving team's gain, giving team's loss | Who comes in, and filling the holes |
 
 Some scripts were written against earlier states of `manager.py` (for example

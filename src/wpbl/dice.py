@@ -515,7 +515,10 @@ CAPACITY_DEFAULT = 50.0    # arms with fewer than three outings to fit
 # which put a sixth of the league's plate appearances in a state the data never
 # identified. Fading now carries the weight, which is the honest shape: it is the
 # state the measurement found.
-COLUMN_SHARE = {"fresh": 0.412, "fading": 0.579, "gassed": 0.010}   # 39 games
+COLUMN_SHARE = {"fresh": 0.392, "fading": 0.597, "gassed": 0.011}   # 39 games
+# v0.7.0 (user, 12 Oct): the columns now read "below" -- fresh below 20, fading
+# below her stamina, gassed at it -- where through v0.6.0 they read "up to" and the
+# shares were fresh 0.412, fading 0.579, gassed 0.010.
 # Recomputed 29 Sep for the rulebook currency and the exact ladder, by
 # `rules_check.replay_shares`: the real outings walked in order, per plate
 # appearance, with the carry. It was 0.366 / 0.618 / 0.017 in the measured
@@ -640,7 +643,7 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.6.0"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.7.0"                 # keep in step with data/dice/dice_version.md
 
 
 def plain_name(name: str) -> str:

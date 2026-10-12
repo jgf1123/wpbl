@@ -1,3 +1,16 @@
+2026-10-12: v0.7.0
+  - Rule: the fatigue columns read "below" instead of "up to". Fresh while the
+    Pitch Count is below 20, Fading from 20 to below her stamina, Gassed at her
+    stamina or more. The column is read before each batter and a batter costs 3
+    or 5, so a pitcher now throws 20-24 fresh pitches where she threw 21-25
+    (user: the defensible reading of "her first 20 pitches"). Stamina numbers
+    are unchanged: no real plate appearance starts at or past her stamina
+  - Column shares, replayed from the real outings: fresh 0.392, fading 0.597,
+    gassed 0.011 (were 0.412, 0.579, 0.010). Every pitcher card is centred on
+    them, so pitcher columns move slightly; batter cards are unchanged
+  - v0.6.0 cards are archived in data/dice/v0.6.0/; `pixi run play` replays a
+    log on the cards and the column rule it was played with
+
 2026-10-02: v0.6.0
   - Fix: a batter's usage share counted starting as a pitcher who does not
     bat. In a DH game the feed lists the starting pitcher at lineup spot 10,

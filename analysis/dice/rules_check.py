@@ -157,7 +157,16 @@ def check_results():
 # 3. the fatigue columns
 # ---------------------------------------------------------------------------
 def column(count, stamina):
-    """Fresh up to 20, fading up to her stamina, gassed past that."""
+    """The rulebook: Fresh below 20, Fading from 20 to below her stamina, Gassed at
+    her stamina or more (cards v0.7.0 on)."""
+    if count < 20:
+        return "fresh"
+    return "fading" if count < stamina else "gassed"
+
+
+def column_up_to(count, stamina):
+    """Cards through v0.6.0, which old game logs replay with: fresh up to 20,
+    fading up to her stamina, gassed past that."""
     if count <= 20:
         return "fresh"
     return "fading" if count <= stamina else "gassed"
@@ -165,17 +174,18 @@ def column(count, stamina):
 
 def check_columns():
     bad = checked = 0
-    for stamina in (50, 60, 70, 80, 90, 100, 110):
-        for count in range(-30, int(stamina) + 25):
-            want = column(count, stamina)
-            got = engine.column_for(count, float(stamina))
-            checked += 1
-            if got != want:
-                bad += 1
-                if bad <= 8:
-                    print(f"  MISMATCH count {count} stamina {stamina}: "
-                          f"rulebook {want}, engine {got}")
-    print(f"Fatigue columns: {checked} counts checked, {bad} mismatches")
+    for rule, printed in (("below", column), ("up to", column_up_to)):
+        for stamina in (50, 60, 70, 80, 90, 100, 110):
+            for count in range(-30, int(stamina) + 25):
+                want = printed(count, stamina)
+                got = engine.column_for(count, float(stamina), rule)
+                checked += 1
+                if got != want:
+                    bad += 1
+                    if bad <= 8:
+                        print(f"  MISMATCH ({rule}) count {count} stamina {stamina}: "
+                              f"rulebook {want}, engine {got}")
+    print(f"Fatigue columns, both rules: {checked} counts checked, {bad} mismatches")
     return bad
 
 

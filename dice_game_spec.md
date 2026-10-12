@@ -1135,9 +1135,20 @@ follows replaces a role-keyed table that treated them as if they were.
 
 | column | every pitcher |
 |---|---|
-| fresh | 0-20 pitches |
-| fading | 21 to her capacity |
-| gassed | past her capacity |
+| fresh | below 20 pitches |
+| fading | 20 to below her capacity |
+| gassed | her capacity or more |
+
+**Below, not up to (user, 12 Oct; cards v0.7.0).** The column is read from the
+count *before* each batter, and a batter costs 3 or 5. Read as "up to 20", a
+pitcher threw at least 21 and as many as 25 fresh pitches (a batter could start
+at exactly 20); read as "below 20" she throws 20 to 24, the defensible reading of
+"her first 20 pitches", and closer to the measured first inning. The same reading
+moves gassed to "her capacity or more". Capacity numbers are unchanged: her last
+batter of her longest outing still starts below it. Cards through v0.6.0 were
+built and played "up to"; they are archived in `data/dice/v0.6.0/`, and
+`engine.column_rule` gives each card version its own boundaries, so old game
+logs replay as they were played.
 
 **Fresh ends at 20, and that is MEASURED -- but the measurement moved.** The
 decline is a step after her first inning and flat after (section 7.2). On the full
@@ -1249,7 +1260,8 @@ across days at 20 a day -- 11.2% of real outings END past the line. The shares:
 
 | | fresh | fading | gassed |
 |---|---|---|---|
-| **current** (rulebook currency, exact ladder, 39 games) | **0.412** | **0.579** | **0.010** |
+| **current** (columns read "below", v0.7.0) | **0.392** | **0.597** | **0.011** |
+| superseded ("up to", rulebook currency, exact ladder, 39 games) | 0.412 | 0.579 | 0.010 |
 | superseded (measured currency, ladder in tens) | 0.366 | 0.618 | 0.017 |
 | superseded (fresh 17, role capacity, 37 games) | 0.389 | 0.461 | 0.150 |
 
@@ -1277,6 +1289,209 @@ apart in lambda instead of 1, which puts fading nearly where gassed is now.
 **OPEN:** whether to widen the spacing. The evidence for 0.078 is a single 2.2-SE
 result, so the conservative spacing is defensible -- but it should not be changed
 silently in either direction.
+
+**What widening would do, measured (12 Oct, cards v0.7.0,
+`analysis/manager/fatigue_options.py`).** Fading s G3 shifts from fresh, gassed
+s + 1; s = 2.3 gives the times-seen step (+0.048), s = 3.7 the paired one
+(+0.079). Cards built in a scratch folder; 2,400 seeded best-of-5 series each,
+conventions on, the opponent B0 (`manager_spec.md`):
+
+| | current, s 1.0 | middle, s 2.3 | full, s 3.7 |
+|---|---|---|---|
+| fresh -> fading / fading -> gassed, runs per PA | +0.018 / +0.031 | +0.048 / +0.041 | +0.079 / +0.055 |
+| league pitcher K cells, fresh / fading / gassed | 6 / 3 / 2 | 8 / 3 / 1 | 11 / 2 / 1 |
+| league pitcher HR cells, fresh / fading / gassed | 1 / 1 / 3 | 1 / 2 / 4 | 1 / 3 / 6 |
+| most HR cells on any gassed card | 4 | 6 | 9 |
+| runs a team-game, B0 v B0 (season 7.64) | 7.76 | 7.98 | 8.42 |
+| simulated PAs fresh / fading / gassed | 27 / 73 / 0.7% | 28 / 72 / 0.4% | 28 / 72 / 0.5% |
+| careless manager v B0, series won | 47.0% | 45.3% | 44.2% |
+| B2 v B0, series won | 51.1% | 51.4% | 52.7% |
+
+(Series won +/- 1.0; B0 against itself read 50.1%, 50.8% and 50.9%.)
+
+- **Management matters more as fading bites.** A careless manager loses about
+  3 points of series wins now, 5-6 at the middle spacing and about 7 at the
+  full one; B2's edge grows from about 1 point to about 2-3.
+- **Scoring rises, and that is the centring, not fatigue alone.** Cards are
+  centred on the real season's shares (fresh 39%), but the simulated managers
+  spend only 27-29% of plate appearances fresh. The wider the spacing, the
+  more that mismatch over-scores: +0.12 runs a team-game against the season
+  now, +0.34 at the middle, +0.78 at the full.
+- **Wider spacing makes fresh an ace.** Centring keeps every card's average on
+  her season, so a bigger fading penalty is paid for by a better fresh column:
+  the league pitcher's fresh K goes 6 -> 8 -> 11 of 33.
+
+**OPEN (user):** keep, widen to the middle, or to the full step. Widening needs
+the scoring fixed first -- centring on simulated rather than real usage, or
+managers whose column mix matches the real one -- or the game over-scores.
+
+**How the columns are built, stated plainly (12 Oct).** Not trained on first
+innings against later ones: each pitcher's season card is shifted along ONE
+league-wide direction (`G3_RATIO`, from semifinal G3), fading one shift from
+fresh and gassed two, then all three slid back by the usage-weighted average
+shift (0.619 at today's shares) so the average lands on her card. That
+centring is in the SHIFT, not in outcomes, and the shift multiplies (HR x2.25
+a step), so the usage-weighted columns run about 0.003 runs per plate
+appearance worse than the cards (-0.0448 against -0.0479, pitcher's lines),
+roughly 0.1 runs a team-game -- not "exactly" her card, as 7.5 says.
+
+**The season's own shape (user, 12 Oct: one abnormal game should not set it;
+`analysis/dice/fatigue_shape.py`).** Each line's rate in a pitcher's later
+innings against her own first inning, same outings on both sides, batters
+taken out through the cards. (A) drops the inning she was removed in, as
+fatigue_curve.py does; (B) keeps it -- survivorship hides fatigue and the
+removal inning exaggerates it, so the truth is likely between (user). 90%
+intervals from 1,000 resamples of outings:
+
+| line | (A) 114 outings | (B) 171 outings | G3 |
+|---|---|---|---|
+| K | 1.06 (0.85-1.35) | 0.90 (0.74-1.09) | 0.59 |
+| BB | **0.66** (0.52-0.84) | 0.88 (0.74-1.06) | 1.13 |
+| HBP | 1.13 (0.73-1.91) | 1.34 (0.94-2.14) | 1.66 |
+| HR | 1.54 (0.84-3.18) | 1.44 (0.91-2.61) | 2.25 |
+| 1B | 1.08 (0.93-1.25) | **1.19** (1.05-1.35) | 0.89 |
+| OUT | 0.98 (0.90-1.07) | **0.91** (0.84-0.98) | 1.00 |
+| 2B (a fixed band in the game) | 1.40 (0.93-2.19) | **1.42** (1.05-2.05) | (4.5% -> 8.1%) |
+
+One shift by each shape, as the change in the pitcher card's share of a plate
+appearance (uncentred, so G3 reads +0.028 here against rules_check's centred
++0.018): G3 +0.028, (A) +0.003, (B) +0.023 runs per plate appearance.
+
+- **The season's fatigue looks like better contact, not lost control.**
+  Strikeouts barely fall and walks do not rise -- in (A) they fall clearly --
+  while singles, doubles and home runs rise and outs in play fall. G3's shape
+  (strikeouts down 40%, walks up) is not what a season of tiring pitchers
+  shows.
+- **The size hangs on the removal inning:** about nothing without it, about
+  G3's size with it.
+- **Doubles rise about 40% in both, and the game cannot show it**: 2B is a
+  fixed band on the Matchup Table, not a card line. Errors are not labelled in
+  the feed's event types, so ROE could not be measured.
+- Small samples: 10-16 first-inning home runs, 17-21 hit-by-pitches; their
+  intervals are wide.
+
+**Decided (user, 12 Oct):** variant (B), the removal inning kept -- the game
+then overshoots fatigue in innings that are not the removal inning and
+undershoots it in the one that is. Shrink the rare lines, if not all.
+
+**Shrunk (B).** Each line's log ratio pulled toward 0 by its own uncertainty;
+the spread of the true log ratios across lines (tau) estimated from the lines
+themselves, observed spread minus noise: tau = 0.152.
+
+| line | measured | SE of log | weight | shrunk |
+|---|---|---|---|---|
+| K | 0.899 | 0.119 | 0.62 | 0.936 |
+| BB | 0.882 | 0.114 | 0.64 | 0.922 |
+| HBP | 1.339 | 0.253 | 0.27 | 1.081 |
+| HR | 1.438 | 0.322 | 0.18 | 1.068 |
+| 1B | 1.189 | 0.078 | 0.79 | 1.147 |
+| OUT | 0.913 | 0.047 | 0.91 | 0.920 |
+| 2B | 1.417 | 0.200 | 0.37 | 1.136 |
+
+One shift by the shrunk card lines: +0.015 runs per plate appearance
+(uncentred; G3 +0.028, unshrunk (B) +0.023).
+
+**Doubles and running plays, fresh against later (same outings).** Doubles:
+3.60% of first-inning plate appearances (27 of 751; the cards expected 4.26%),
+5.09% later (92 of 1,806); league 4.65%, the band 4 of 100 rolls. Running plays
+(wild pitch, passed ball, balk): 5.32% of plate appearances with a runner on
+in first innings (25 of 470), 6.34% later (66 of 1,041); 91 of the season's 115.
+
+**OPEN (user):** whether fatigue should be allowed to move the doubles band --
+the user's proposal (12 Oct): move doubles and running plays from the Matchup
+Table onto the pitcher card, a flat X cells fresh and Y fading for every
+pitcher, X and Y around 3 to 5; and revisit the Outs and Singles Tables (more
+extra-base contact suggests more runners advancing), and with them the d12,
+which was chosen to fit the average of fresh and fading.
+
+**Decided (user, 12 Oct): layout (a).** The d100 becomes 43 pitcher cells --
+her six lines plus doubles and running plays -- 2 for reached on error, 55 for
+the batter. Columns with more doubles and running plays leave fewer cells for
+her own lines (about 34 fresh, 32 fading at doubles 4/5 and running plays 5/6).
+
+**Runner advancement, first innings against later** (`fatigue_advance.py`;
+the same 171 outings, by name as advance.py reads it; not batter-adjusted):
+
+| | first innings | later innings | rulebook |
+|---|---|---|---|
+| single, runner on 2nd scores, 0-1 out | 60.7% (17/28) | 36.8% (32/87) | 41.7% |
+| single, runner on 2nd scores, 2 out | 75.0% (18/24) | 60.5% (23/38) | 66.7% |
+| single, runner on 1st to 3rd or home, 0-1 out | 17.2% (5/29) | 10.4% (12/115) | 16.7% |
+| single, runner on 1st to 3rd or home, 2 out | 24.1% (7/29) | 23.4% (11/47) | 25.0% |
+| out in play, no runner on 1st: B / B+ / other | 41 / 53 / 6% (32) | 39 / 49 / 13% (70) | 42 / 58 / - |
+| out in play, runner on 1st: FB+ / F+ / B / B+ / other | 9 / 14 / 44 / 19 / 15% (80) | 8 / 14 / 44 / 15 / 20% (185) | 17 / 17 / 50 / 17 / - |
+
+No sign that runners advance more against a tired pitcher: the outs barely
+move, and on singles the runner from 2nd scores *less* often later (about 2.2
+standard errors on 28 first-inning plays). The first inning puts the top of the
+order on base, which this does not adjust for. The flavour split here is a
+simple reading by destination, not `out_flavors.py`'s, so its gap from the
+rulebook's shares is not a calibration finding. **Proposed:** the Outs and
+Singles Tables, and so the d12, stay as they are.
+
+**Flat or hierarchical? (user, 12 Oct).** Flat: one multiplier per outcome,
+renormalised. Hierarchical: (a) K / BB / HBP / ball in play, then (b) the
+shares within play. Both fit on variant (B) and shrunk level by level; on the
+league-average plate appearance (rates in %, run value per PA of the whole
+plate appearance against fresh):
+
+| model, steps | K | BB | HBP | OUT | 1B | 2B | HR | run value |
+|---|---|---|---|---|---|---|---|---|
+| both, 0 | 11.4 | 12.5 | 3.6 | 44.3 | 20.9 | 4.6 | 2.6 | 0 |
+| flat, 1 | 10.8 | 11.6 | 3.9 | 41.3 | 24.2 | 5.4 | 2.8 | +0.049 |
+| hierarchical, 1 | 11.0 | 11.9 | 3.6 | 40.9 | 24.3 | 5.4 | 2.8 | +0.052 |
+| flat, 2 | 10.1 | 10.8 | 4.2 | 38.0 | 27.8 | 6.1 | 3.0 | +0.101 |
+| hierarchical, 2 | 10.6 | 11.4 | 3.7 | 37.2 | 27.8 | 6.3 | 3.1 | +0.107 |
+
+The ball-in-play rate barely moves (1.02), so (a) shrinks hard (tau 0.074); the
+fatigue is in contact quality (within play, outs -10% a step, 1B/2B/HR +7-14%).
+The flat model drags K and BB down as a side effect of renormalising around the
+extra hits; the hierarchical one keeps "how often in play" apart from "what
+happens in play", which is what the season shows.
+
+**Decided (user, 12 Oct), for cards v0.8.0:**
+
+- **Layout (a):** pitcher 43 cells, reached on error 2, batter 55.
+- **Doubles 4 / 5 / 6 and running plays 5 / 6 / 7** cells on the pitcher card,
+  fresh / fading / gassed, the same for every pitcher. Her own six lines take
+  the rest: 34 / 32 / 30. (Usage-weighted doubles about 4.6 cells against the
+  league's 4.65%; running plays about 5.6 against today's band of 6.)
+- **Hierarchical fatigue shape, refit without doubles** (they are now fixed
+  cells), variant (B), shrunk:
+
+  | level | measured | shrunk |
+  |---|---|---|
+  | (a) K / BB / HBP / other balls in play (tau 0.073) | 0.899 / 0.882 / 1.339 / 1.002 | **0.969 / 0.962 / 1.023 / 1.002** |
+  | (b) OUT / 1B / HR within them (tau 0.132) | 0.911 / 1.187 / 1.434 | **0.916 / 1.135 / 1.052** |
+
+  Gassed is two steps, fading one.
+- **The Outs and Singles Tables and the d12 stay** (above).
+
+**OPEN: how hard the card must move.** The ratios were measured on the WHOLE
+plate appearance; in the game the batter's 55 cells do not tire, so the shape
+applied to her cells alone delivers about 3/8 of it -- the same reason today's
+step is +0.018 against a measured +0.078. For the league-average matchup, her
+own cells under each choice:
+
+| column | own | shape on her cells only: K / BB / HBP / OUT / 1B / HR | whole plate appearance follows the shape |
+|---|---|---|---|
+| fresh | 34 | 4.1 / 4.5 / 1.3 / 15.8 / 7.5 / 0.9 | 4.1 / 4.5 / 1.3 / 15.8 / 7.5 / 0.9 |
+| fading | 32 | 3.8 / 4.1 / 1.3 / 13.9 / 8.1 / 0.9 | 3.6 / 3.9 / 1.3 / 12.2 / 10.0 / 1.0 |
+| gassed | 30 | 3.4 / 3.7 / 1.2 / 12.0 / 8.7 / 0.9 | 3.1 / 3.3 / 1.3 / 8.5 / 12.6 / 1.1 |
+
+(Uncentred previews; centring -- in the shift or exactly in outcomes -- is also
+still open, as is checking simulated against real column usage.)
+
+**Decided (user, 12 Oct):** the whole plate appearance follows the shape, set
+against the league-average batter; centred exactly in OUTCOMES -- her columns'
+usage-weighted average is her season card, line by line, not a shift of zero.
+Floors: every outcome needs at least one cell on the pitcher OR the batter,
+not both (both would force 2 per outcome). Since batters have no floor (42 of
+67 are owed under a tenth of a cell of home runs, and flooring them inflates
+the league 16%), the floor stays on the pitcher: every line of every pitcher
+column at least one cell, as `to_cells` already does. Doubles (4-6) and running
+plays (5-7) are fixed counts, never at risk. **OPEN after the build:**
+simulated against real column usage on the real 2026 calendar.
 
 ### 7.5 As built (22 Sep)
 
@@ -1462,7 +1677,8 @@ is small.
 **The rules themselves live in `Two_Outs_So_What_rules.md`**, which is the player's
 document and carries no rationale. This section used to restate them and the two
 drifted: the rulebook re-origined the pitch count so that a rested pitcher sits at
--30, entering adds 30, and she is fresh through 20 and fading through her stamina,
+-30, entering adds 30, and she is fresh below 20 and fading below her stamina (v0.7.0;
+through v0.6.0 the rulebook read fresh through 20 and fading through her stamina),
 while this section still printed fresh to 50 and fading to 30 + stamina. Those are
 the same system with every number 30 lower -- verified boundary by boundary, and
 the column shares are identical to three decimals either way -- but two statements
@@ -1547,7 +1763,7 @@ and the user's requirement that R stay a round number is met.
 **The thresholds move up by E, not the other way.** The fresh window was measured
 as one inning of GAME pitches, on pitchers who had all warmed up, so the entry
 cost buys availability later rather than making her worse now. A pitcher with
-stamina 80 is fresh to 20, fading to 80, gassed past that.
+stamina 80 is fresh below 20, fading from 20 to 79, gassed from 80 (v0.7.0).
 
 **This fixes the multi-day exploit and not the within-game degeneracy.** They are
 different problems: the exploit was about carrying arms across days, while
