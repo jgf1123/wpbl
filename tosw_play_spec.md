@@ -156,7 +156,12 @@ Pitching changes in v1, at a stop:
   card at all can still pitch only when her team uses a DH.
 - A log is played on the cards it was set up with, and with that version's
   fatigue column rule (`engine.column_rule`: "up to" through v0.6.0, "below"
-  from v0.7.0). When the cards are rebuilt, the old version is archived in
+  from v0.7.0) and Matchup Table layout. Through v0.7.0 the pitcher's card is
+  00-32, with running play 33-38, error 39-40 and double 41-44 on the table;
+  from v0.8.0 her card is 00-42 and carries the double and the running play
+  itself, error is 43-44. `engine.Table` reads the layout from the length of
+  her column (33 or 43 faces), and `play_wp.pitcher_faces` from whether the
+  card prints a RUN range. When the cards are rebuilt, the old version is archived in
   `data/dice/<version>/`, and `play` loads it for a log that names it; a
   version that is neither current nor archived is refused. So a game in
   progress is finished on its own version, and a finished one still replays

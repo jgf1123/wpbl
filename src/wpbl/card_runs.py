@@ -33,7 +33,7 @@ import pandas as pd
 
 from wpbl import engine
 from wpbl.dice import COLUMN_SHARE
-from wpbl.play_wp import (B_SPAN, CARD_LINES, DICE_DIR, P_SPAN, STATES, FixedDie, faces,
+from wpbl.play_wp import (B_SPAN, CARD_LINES, DICE_DIR, P_SPAN, STATES, FixedDie, faces, pitcher_faces,
                           league_table, state_index)
 
 LINES = ["K", "BB", "HBP", "HR", "1B", "2B", "ROE", "OUT"]
@@ -98,7 +98,7 @@ def pitchers(lg):
         row = {"player": r["player"], "team": r["team"], "stamina": int(r["stamina"]),
                "BF": int(r["BF"])}
         for col in COLUMNS:
-            table = engine.Table.from_lines(faces(r, CARD_LINES, f"{col} ", P_SPAN), lg.b_line)
+            table = engine.Table.from_lines(pitcher_faces(r, f"{col} "), lg.b_line)
             row[col] = runs_per_pa(from_table(table))
         row["avg"] = sum(COLUMN_SHARE[c] * row[c] for c in COLUMNS)
         rows.append(row)

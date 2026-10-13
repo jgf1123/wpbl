@@ -19,8 +19,10 @@ across days by the rulebook (recover 20 a day, floor -30).
   `tosw_play_spec.md` section 4 already implements. Checked against the WPBL
   play-by-play below.
 - **Outcome model:** the dice game as played: the Matchup Table's d100 reads
-  the pitcher's card on 00-32, shared lines on 33-44 and the batter's card on
-  45-99, with steals by the steal table.
+  the pitcher's card on 00-42 (from cards v0.8.0 it carries the double and
+  the running play; through v0.7.0 it was 00-32, with those on shared lines
+  33-44), reached on error 43-44, and the batter's card on 45-99, with steals
+  by the steal table.
 - **Fatigue:** the rulebook's pitch count and fresh / fading / gassed columns.
   Baseline rule: relieve any pitcher who reaches gassed.
 - **Information:** full cards for both teams.

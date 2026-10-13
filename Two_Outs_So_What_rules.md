@@ -74,13 +74,11 @@ To simulate a plate appearance, roll d100 and d12 together and find the d100 on 
 **Matchup Table**
 | Roll      | Result                    |
 | --------- | ------------------------- |
-| **00–32** | On the **pitcher's** card |
-| **33–38** | **Running play**          |
-| **39-40** | **Reached on error**      |
-| **41–44** | **Double**                |
+| **00–42** | On the **pitcher's** card |
+| **43–44** | **Reached on error**      |
 | **45–99** | On the **batter's** card  |
 
-Each athlete's card has six lines (OUT, Strikeout, Hit by pitch, Walk, Single, Home run) and the range of numbers that produce that result.
+A batter's card has six lines (OUT, Strikeout, Hit by pitch, Walk, Single, Home run) and the range of numbers that produce that result. A pitcher's card has those six lines plus **Double** and **Running play**, in each of her three columns (see Managing Pitchers): a tired pitcher gives up more doubles.
 
 Below is how to resolve each result. The results use the following terminology:
 
@@ -226,9 +224,9 @@ After a game, do *not* reset each pitcher's Pitch Count. At the end of every day
 
 **Matchup Table**
 ```
-00-32  pitcher's card      39-40  reached on error
-33-38  running play        41-44  double
-       (advance, reroll)   45-99  batter's card
+00-42  pitcher's card (her lines, double, running play: advance, reroll)
+43-44  reached on error
+45-99  batter's card
 ```
 
 **Outs Table**

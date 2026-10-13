@@ -1490,8 +1490,136 @@ not both (both would force 2 per outcome). Since batters have no floor (42 of
 67 are owed under a tenth of a cell of home runs, and flooring them inflates
 the league 16%), the floor stays on the pitcher: every line of every pitcher
 column at least one cell, as `to_cells` already does. Doubles (4-6) and running
-plays (5-7) are fixed counts, never at risk. **OPEN after the build:**
-simulated against real column usage on the real 2026 calendar.
+plays (5-7) are fixed counts, never at risk.
+
+**Built (12 Oct), cards v0.8.0 -- first build; the size was then refit, see "The
+size, refit" below.** `dice.column_cells` solves the fresh plate
+appearance by iteration (the usage-weighted columns reproduce the target to
+1e-10 before rounding, within about a cell after), then rounds her own lines
+with `to_cells` (floor one). League pitcher, K / BB / HBP / HR / 1B / OUT / 2B /
+RUN cells:
+
+| column | cells | step, runs per PA |
+|---|---|---|
+| fresh | 4 / 5 / 1 / 1 / 6 / 17 / 4 / 5 | |
+| fading | 4 / 4 / 1 / 1 / 8 / 14 / 5 / 6 | +0.047 |
+| gassed | 3 / 4 / 1 / 1 / 11 / 10 / 6 / 7 | +0.045 |
+
+**One correction found by the season check: the doubles' excess comes out of
+singles** (user, 12 Oct). Running plays re-roll, so 4 / 5 / 6 doubles, averaging
+4.63 cells over COLUMN_SHARE, are 4.90% of plate appearances (4.63 of the 94.4
+faces that end one), against the season's 4.54%. The comparison that picked 4 /
+5 / 6 set cells against percentages and missed the re-roll. Centred line by line
+as first built, the excess replaced the whole mix, mostly outs, and the game
+scored 7.90 runs per team-game. `dice.double_excess()` (0.34 cells) is now taken
+out of the singles target, with the other lines kept at their season level, so
+hits total the season's. Options set aside: doubles 3 / 5 / 6 (the level fits,
+but the fresh -> fading jump is 2.5x the season's) and 4 / 4 / 5 (0.3 points low,
+and no fresh -> fading step at all).
+
+**The season check** (`pixi run season-fatigue`, 200 seasons on the real
+calendar, descriptive manager; the card rows read from each version's CSV for
+the comparison, same seed):
+
+| cards | runs per team-game | fresh / fading / gassed |
+|---|---|---|
+| v0.7.0 | 7.72 | 37.9 / 59.5 / 2.6% |
+| v0.8.0, excess doubles in place of the mix | 7.90 | 37.9 / 59.4 / 2.6% |
+| **v0.8.0, excess doubles in place of singles** | **7.77-7.81** | **38.0 / 59.3 / 2.7%** |
+| season | 7.64 | 39.2 / 59.7 / 1.1% |
+
+Simulation noise is about +/-0.04 (the two v0.8.0 figures are the same cards
+loaded two ways). **Usage now mirrors the season:** fresh is within 1.3 points,
+where the fatigue_options runs had it at 27-29%. v0.8.0 adds about +0.05-0.09
+runs over v0.7.0, in line with a static check over all 38 pitcher cards (BF- and
+COLUMN_SHARE-weighted, against the league batter): -0.014 against -0.015 runs
+per plate appearance. The rest of the gap to 7.64 predates v0.8.0; the 7.66
+quoted in 7.18 was measured on earlier code.
+
+**Home runs are not the gap.** Every pitcher column but a few gassed ones sits
+at the floor of one HR cell (she is owed about 0.9: 2.36 cells of the season
+rate less the batter's 1.48), and batter cards average 1.45 (PA-weighted, 42% of
+PA from batters with none), so a real matchup averages about 2.45 cells, 2.6%
+against 2.5%, worth about +0.05 runs a team-game. Against the league batter's
+ROUNDED card (2 cells) it reads 3.2%, which is the number to distrust. One
+consequence worth knowing: no pitcher card distinguishes home-run rates, and
+the fatigue shape's HR x1.052 a step never shows; home-run spread lives on the
+batter's side.
+
+**Left on the old layout, on purpose:** `lineup_model.facing_average_pitcher`
+still mixes 33 pitcher cells with fixed 4 / 2 bands over 94. Under v0.8.0 the
+average pitcher is 32.8 own cells and 4.63 doubles; it ranks batters against
+one common pitcher, so the shift moves every batter alike and is left alone.
+`analysis/manager/fatigue_options.py` and the 7.4 analysis scripts are records
+of the v0.7.0 cards and are not rerun.
+
+**The size, refit (user, 12 Oct).** Found from a B2 decision (postseason seed 29,
+NYH at LAQ game 2, top 6): B2 replaced a fading Meidlinger, LAQ's best reliever,
+with a fresh Villarreal. On the first build nine LAQ pitchers fresh beat a fading
+Meidlinger (1.13 runs an inning against a league lineup); on v0.7.0 only Sato did.
+The fatigue step (+0.31 runs an inning) was twice her edge over an ordinary
+reliever (0.16), and the step, unlike talent, is not shrunk per pitcher.
+
+Where the season's penalty sits, runs per PA above the matchup, later innings
+against the same outings' first inning (90% intervals, outings resampled):
+
+| later innings | all | starters | relievers |
+|---|---|---|---|
+| (B) all of them | +0.079 (+0.04 to +0.12) | +0.056 | +0.104 |
+| (A) innings she finished and stayed in for | +0.029 (-0.02 to +0.08) | -0.002 | +0.063 |
+| her last inning: pulled mid-inning (47) | +0.330 | +0.271 | +0.488 |
+| her last inning: finished it, then replaced (75) | +0.108 | +0.126 | +0.075 |
+| her last inning: finished the game (49) | +0.028 (-0.05 to +0.12) | -- | +0.034 |
+
+**The baseline was selected as well.** The paired design keeps only outings that
+reached a second inning, so a pitcher shelled and pulled in her first inning drops
+out. First-inning PA, runs above the matchup: outings that reached a later inning
+**-0.063** (-0.10 to -0.03), outings that ended in the first inning +0.116, all
+first innings -0.010. About 0.05 of (B)'s 0.079 is the lucky baseline.
+
+| estimate | runs per PA a step | biased |
+|---|---|---|
+| (B), as first fit | +0.079 | up: lucky baseline |
+| (B)'s later innings against ALL first innings | **+0.026** | a little down: bad days pulled early |
+| every real PA by the game's own column (replayed count) | -0.007 (-0.045 to +0.034) | down: bad days never reach fading |
+
+**Decided (user, 12 Oct): option 2** -- keep the shape's direction (the largest
+sample, contact quality), refit its size to +0.026. Set aside: keeping the first
+build; half of it as a stated compromise (about the same cards, harder to defend);
+no fresh / fading difference at all. Built as `FATIGUE_SCALE = 0.25`: each step
+multiplies by SHAPE ** 0.25, solved so the built step is the corrected size at the
+rate the build turns the fit into cells (the unshrunk fit, 0.079 measured, builds
+to 0.064, so 0.026 builds to 0.021).
+
+The same correction, applied to the fixed counts:
+
+- **Doubles keep 4 / 5 / 6.** All first innings 3.90% of PA (0.92 of expected),
+  later innings 5.09% (1.20): about +1.2 points a step, where 4 / 5 / 6 gives about
+  +1.1. The excess over the season's rate is now 0.35 cells, still out of singles.
+- **Running plays go flat, 6 / 6 / 6** (the old table's band). All first innings
+  6.91% per PA with a runner on, later innings 6.34%: no rise. The 5 / 6 / 7 came
+  from the lucky baseline (5.32%). Her own lines take 33 / 32 / 31.
+
+| | first build | refit |
+|---|---|---|
+| step fresh -> fading / fading -> gassed, runs per PA | 0.047 / 0.045 | **0.021 / 0.019** |
+| league pitcher fresh (K / BB / HBP / HR / 1B / OUT / 2B / RUN) | 4/5/1/1/6/17/4/5 | 4/5/1/1/7/15/4/6 |
+| ... fading | 4/4/1/1/8/14/5/6 | 4/5/1/1/7/14/5/6 |
+| ... gassed | 3/4/1/1/11/10/6/7 | 4/4/1/1/8/13/6/6 |
+| Meidlinger fading / Villarreal fresh, runs an inning | 1.13 / 0.98 | **1.06 / 1.09** |
+| LAQ pitchers fresh better than a fading Meidlinger | 9 | 2 (Sato, Roche) |
+| season simulation: runs per team-game (v0.7.0 7.72, season 7.64) | 7.77-7.81 | 7.78 |
+| season simulation: fresh / fading / gassed | 38.0 / 59.3 / 2.7% | 37.9 / 59.6 / 2.6% |
+| B2 postseason (500): runs / arms per team-game | 7.99 / 2.69 | 7.87 / 2.56 |
+| B2 postseason: fresh / fading / gassed | 29.3 / 70.5 / 0.3% | 26.7 / 73.0 / 0.4% |
+| B2 relief entries at a clean inning start (real 62%) | 21% | 22% |
+
+Usage in the season simulation does not move: it is set by pitch counts, not card
+quality. B2 changes pitchers less (2.56 arms) now that fading costs less. **Still
+OPEN, a manager question:** B2 brings relievers in mid-inning far more than real
+managers (22% clean entries against 62%); its plan prices keeping a pitcher as if
+she pitched until gassed, with no "finish the half, then hand over" plan, and its
+runs ignore the spread of pitches per inning.
 
 ### 7.5 As built (22 Sep)
 

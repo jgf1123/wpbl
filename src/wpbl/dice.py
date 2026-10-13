@@ -158,6 +158,39 @@ BAND_START = RUN_START + RUN_CELLS                         # 39-40 error, 41-44 
 BAT_START = BAND_START + 6                                 # 45-99 batter
 PA_CELLS = P_CELLS + B_CELLS + sum(BAND_CELLS.values())   # 94: the cells that end a PA
 MIX_ALPHA = P_CELLS / (P_CELLS + B_CELLS)      # 0.375 exactly: the pitcher's share of the tree
+# (Cards are still FITTED at 33 / 88. From v0.8.0 her own lines print on 33 / 32 / 31
+# cells by column -- 32.4 on average over real usage -- which moves the share to
+# 0.371, a difference the fit cannot see; the printed columns are set exactly below.)
+
+# --- the v0.8.0 layout (user, 12 Oct; dice_game_spec.md 7.4) ------------------------
+# The pitcher block grows to 00-42 and carries the double and the running play as
+# well as her own six lines; reached on error keeps 43-44 and the batter 45-99.
+# Doubles and running plays are the same for every pitcher. Doubles rise with
+# fatigue; running plays do not (all first innings 6.9% per PA with a runner on,
+# later innings 6.3%: the 5 / 6 / 7 first built came from a first-inning baseline
+# that only counted outings reaching a second inning). Her own lines take what is
+# left: 33 fresh, 32 fading, 31 gassed.
+P8_CELLS = 43
+P8_LINES = TREE_LINES + ["2B", "RUN"]          # how an 8-line column is stored
+PRINT_ORDER_P8 = ["HR", "2B", "1B", "BB", "HBP", "K", "OUT", "RUN"]   # how it is read
+DOUBLE_CELLS = {"fresh": 4, "fading": 5, "gassed": 6}
+RUNPLAY_CELLS = {"fresh": 6, "fading": 6, "gassed": 6}      # the old table's band
+OWN_CELLS = {k: P8_CELLS - DOUBLE_CELLS[k] - RUNPLAY_CELLS[k] for k in DOUBLE_CELLS}
+FATIGUE_STEPS = {"fresh": 0, "fading": 1, "gassed": 2}
+# The season's own fatigue shape: later innings against her first, the removal
+# inning kept, shrunk; hierarchical -- (a) K / BB / HBP / other balls in play, then
+# (b) OUT / 1B / HR within them (analysis/dice/fatigue_shape.py, spec 7.4). It
+# replaces G3_RATIO, the one spent-bullpen game, which is kept below for history.
+SHAPE_TOP = {"K": 0.969, "BB": 0.962, "HBP": 1.023, "BIP": 1.002}
+SHAPE_BIP = {"OUT": 0.916, "1B": 1.135, "HR": 1.052}
+# Its SIZE is not the fit's (user, 12 Oct; spec 7.4, "The size, refit"). The fit's
+# first-inning baseline counted only outings that reached a second inning, so it was
+# a lucky one (-0.063 runs per PA against the matchup, -0.010 over all first
+# innings). Later innings against ALL first innings: +0.026 per PA, against the
+# fit's +0.079. Each step multiplies by SHAPE ** FATIGUE_SCALE, solved so the built
+# step is the corrected size at the rate the build turns the fit into cells
+# (unshrunk fit 0.079 -> built 0.064, so 0.026 -> 0.021).
+FATIGUE_SCALE = 0.25
 # Runs cannot see BB | HBP (a walk is worth 0.45, an HBP 0.49), so that step's k is
 # fitted on log loss (spec 9.0); every other k is fitted on runs at MIX_ALPHA. The
 # two interact -- mixing is itself shrinkage -- so they were fitted together by
@@ -527,27 +560,127 @@ COLUMN_SHARE = {"fresh": 0.392, "fading": 0.597, "gassed": 0.011}   # 39 games
 # The guard checks this constant against the replay on every run.
 
 
+def shape_step(dist: np.ndarray, k: int) -> np.ndarray:
+    """Rows over TREE_LINES summing to 1, moved k steps along the season's shape:
+    (a) K / BB / HBP / other balls in play, renormalised; (b) OUT / 1B / HR within
+    them, renormalised within play."""
+    if k == 0:
+        return dist.copy()
+    t = {l: TREE_LINES.index(l) for l in TREE_LINES}
+    play = [t["OUT"], t["1B"], t["HR"]]
+    top = np.column_stack([dist[:, t["K"]], dist[:, t["BB"]], dist[:, t["HBP"]],
+                           dist[:, play].sum(axis=1)])
+    top = top * np.array([SHAPE_TOP[l] for l in ("K", "BB", "HBP", "BIP")]) ** (k * FATIGUE_SCALE)
+    top /= top.sum(axis=1, keepdims=True)
+    inner = dist[:, play] / dist[:, play].sum(axis=1, keepdims=True)
+    inner = inner * np.array([SHAPE_BIP[l] for l in ("OUT", "1B", "HR")]) ** (k * FATIGUE_SCALE)
+    inner /= inner.sum(axis=1, keepdims=True)
+    out = np.empty_like(dist)
+    out[:, t["K"]], out[:, t["BB"]], out[:, t["HBP"]] = top[:, 0], top[:, 1], top[:, 2]
+    out[:, play] = top[:, [3]] * inner
+    return out
+
+
+@lru_cache(maxsize=1)
+def league_batter_cells() -> np.ndarray:
+    """The league-average batter's own lines on her 55 cells, unrounded, TREE_LINES order."""
+    lg = league_card(plate_appearances())
+    tree = np.array([lg[l] for l in TREE_LINES])
+    return tree / tree.sum() * B_CELLS
+
+
+@lru_cache(maxsize=1)
+def double_excess() -> float:
+    """Cells of doubles the flat columns deliver past the season's rate, on the
+    100-face table. Running plays re-roll, so the season's share of plate
+    appearances is reached on the faces left over: the real 4.54% of the 94.4
+    non-running faces is 4.28 cells, against the 4.63 that 4 / 5 / 6 average
+    over COLUMN_SHARE. `column_cells` takes the difference out of singles, so the
+    hits total stays the season's (user, 12 Oct)."""
+    rate = float(league_card(plate_appearances())["2B"])
+    dbl = sum(COLUMN_SHARE[c] * DOUBLE_CELLS[c] for c in DOUBLE_CELLS)
+    run = sum(COLUMN_SHARE[c] * RUNPLAY_CELLS[c] for c in RUNPLAY_CELLS)
+    return dbl - rate * (100 - run)
+
+
 def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndarray]:
-    """Each pitcher's three columns as CELL COUNTS per line, ready to print."""
+    """Each pitcher's three columns as CELL COUNTS, P8_LINES order (her six lines,
+    then the double and the running play), ready to print (cards v0.8.0).
+
+    The WHOLE plate appearance follows the season's shape, set against the
+    league-average batter (user, 12 Oct): her cells in a column are whatever the
+    matchup needs once the batter's 55 are counted, because the batter does not
+    tire and her cells alone would deliver only her share of the change. Fading is
+    one step, gassed two.
+
+    CENTRED in OUTCOMES (user, 12 Oct): the fresh plate appearance is solved so
+    that her columns, weighted by how often each was really pitched
+    (COLUMN_SHARE), average to her season card line by line -- not a shift that
+    averages to zero, which the multiplying shape would bias toward runs --
+    except that singles give up the doubles' excess (`double_excess`). Then
+    rounded to 33 / 32 / 31 cells with every line at least one (`to_cells`), so
+    that every outcome is possible in every matchup. `centred=False` makes fresh
+    her season card instead."""
     w = line_weights()
-    mean_lam = sum(COLUMN_SHARE[k] * v for k, v in FATIGUE.items()) if centred else 0.0
-    return {name: to_cells(fatigue_card(p_cards, lam - mean_lam), P_CELLS, w, True)
-            for name, lam in FATIGUE.items()}
+    idx = [CARD_LINES.index(l) for l in TREE_LINES]
+    p = p_cards[:, idx]
+    p = p / p.sum(axis=1, keepdims=True)
+    b = league_batter_cells()
+    cols = list(DOUBLE_CELLS)
+    if centred:
+        weight = {c: COLUMN_SHARE[c] for c in cols}
+    else:
+        weight = {c: float(c == "fresh") for c in cols}
+    nbar = sum(weight[c] * OWN_CELLS[c] for c in cols)
+    target = nbar * p + b                      # the plate appearance her average must give
+    if centred:                                # the flat doubles' excess comes out of singles:
+        x = double_excess()                    # the other lines keep their season level and
+        total = target.sum(axis=1, keepdims=True)   # the cells stay nbar + 55
+        target = target * (total + x) / total
+        target[:, TREE_LINES.index("1B")] -= x
+    fresh = target / target.sum(axis=1, keepdims=True)
+    for _ in range(500):
+        got = sum(weight[c] * shape_step(fresh, FATIGUE_STEPS[c]) * (OWN_CELLS[c] + B_CELLS)
+                  for c in cols)
+        if np.abs(got - target).max() < 1e-10:
+            break
+        fresh = fresh * target / got
+        fresh /= fresh.sum(axis=1, keepdims=True)
+    out = {}
+    for c in cols:
+        own = shape_step(fresh, FATIGUE_STEPS[c]) * (OWN_CELLS[c] + B_CELLS) - b
+        full = np.zeros((len(p), len(CARD_LINES)))
+        full[:, idx] = np.clip(own, 1e-9, None)
+        cells = to_cells(full, OWN_CELLS[c], w, True)
+        out[c] = np.column_stack([cells, np.full(len(p), DOUBLE_CELLS[c]),
+                                  np.full(len(p), RUNPLAY_CELLS[c])])
+    return out
+
+
+def played_lines_p8(cells8):
+    """One array of face labels per 8-line column, low roll to high (00-42)."""
+    idx = [P8_LINES.index(l) for l in PRINT_ORDER_P8]
+    arr = np.atleast_2d(cells8)[:, idx]
+    lines = [np.repeat(PRINT_ORDER_P8, row) for row in arr]
+    return lines[0] if np.asarray(cells8).ndim == 1 else lines
+
+
+def line_weights_p8() -> np.ndarray:
+    """Run value of each P8_LINES line. The double's is measured like the others;
+    the running play is left unpriced (0): it is not a plate appearance, and the
+    columns differ by one running-play cell."""
+    from wpbl.batters import plate_appearances as _pa
+    lw = _pa("training").copy()
+    lw["line"] = lw["outcome"].map(TO_LINE).fillna("OUT")
+    two = float(lw.loc[lw["line"] == "2B", "run_value"].mean())
+    return np.concatenate([line_weights(), [two, 0.0]])
 
 
 def pitcher_columns(centred=True):
-    """Every pitcher's three columns, as expanded cell labels ready for Table.
-
-    CENTRED, and this matters. A pitcher's card is built from all her plate
-    appearances, the fading ones included, so it already carries the average
-    fatigue she pitched with. Hanging a penalty on top of it counts that twice and
-    inflates the league's scoring. Centring shifts all three columns so their
-    usage-weighted average returns her card exactly: a FRESH pitcher is better
-    than her season line, a gassed one worse, and the average is unchanged.
-    """
+    """Every pitcher's three columns, as expanded face labels (00-42) for Table."""
     P = cards("P")
     counts = column_cells(P.to_numpy(), centred)
-    return P.index, {k: played_lines(v, "P") for k, v in counts.items()}
+    return P.index, {k: played_lines_p8(v) for k, v in counts.items()}
 
 
 
@@ -643,7 +776,7 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.7.0"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.8.0"                 # keep in step with data/dice/dice_version.md
 
 
 def plain_name(name: str) -> str:
@@ -782,7 +915,7 @@ def main() -> None:
             # by side so her whole card is one line. Stamina is where fading ends.
             caps = capacity()
             cols = column_cells(cards)
-            order = PRINT_ORDER["P"]
+            order = PRINT_ORDER_P8
             table = pd.DataFrame({
                 "player": [plain_name(n) for n in names],
                 "team": [CODES.get(last_team.get(i), "?") for i in ids],
@@ -790,9 +923,9 @@ def main() -> None:
                 "BF": X.sum(axis=1).to_numpy(),
             }, index=ids)
             for st, arr in cols.items():
-                assert (arr.sum(axis=1) == block).all(), f"{st} column does not fill the block"
+                assert (arr.sum(axis=1) == P8_CELLS).all(), f"{st} column does not fill the block"
                 assert (arr >= 1).all(), f"{st} column has an empty line"
-                _, arranged = arrange(arr, "P")
+                arranged = arr[:, [P8_LINES.index(l) for l in order]]
                 ranged = [ranges(c, start) for c in arranged]
                 for j, line in enumerate(order):
                     table[f"{st} {line} cells"] = arranged[:, j]
@@ -844,7 +977,7 @@ def main() -> None:
     league = pd.DataFrame(
         [["League average batter", "-", "", "", len(pa)],
          ["League average pitcher", "-", "", "season card", len(pa)]]
-        + [["League average pitcher", "-", LEAGUE_STAMINA, st, len(pa)] for st in FATIGUE],
+        + [["League average pitcher", "-", LEAGUE_STAMINA, st, len(pa)] for st in FATIGUE_STEPS],
         columns=["player", "team", "stamina", "column", "PA/BF"])
     # Both a percentage and a cell count: the percentages are the league's own
     # rates, handy for checking what is typical; the cells are what a stand-in
@@ -853,27 +986,34 @@ def main() -> None:
                 "P": to_cells(lg.to_numpy()[None, :], P_CELLS, W_LINE, True)[0]}
     for col in CARD_LINES:
         league[f"{col} %"] = round(100 * lg[col], 2)
-    b_start = BAT_START
-    per_row = [lg_cells["B"], lg_cells["P"]] + [lg_cols[st][0] for st in FATIGUE]
-    starts = [b_start, 0] + [0] * len(FATIGUE)
-    # A batter row and a pitcher row share this file, so the columns stay in
-    # TREE_LINES order. The range text is what a player reads, and that text
-    # is in each side's own low-to-high order.
-    sides = ["B", "P"] + ["P"] * len(FATIGUE)
-    for line in TREE_LINES:
+    # The season-card pitcher in the v0.8.0 layout: her 33 own cells plus the double
+    # and running play at today's averages (4 and 6), 43 in all -- the same play as
+    # the old table, so the team-neutral win probability built on it is unchanged.
+    season_p = np.concatenate([lg_cells["P"], [BAND_CELLS["2B"], RUN_CELLS]])
+    per_row = [lg_cells["B"], season_p] + [lg_cols[st][0] for st in FATIGUE_STEPS]
+    # A batter row and pitcher rows share this file, so the columns stay in
+    # P8_LINES order. The range text is what a player reads, in each side's own
+    # low-to-high order; the batter card has no double or running play.
+    p8 = PRINT_ORDER_P8
+    for line in P8_LINES:
         cell_col, range_col = [], []
-        for cells, side, start_at in zip(per_row, sides, starts):
-            order, arranged = arrange(cells, side)
-            cell_col.append(int(arranged[order.index(line)]))
-            range_col.append(ranges(arranged, start_at)[order.index(line)])
+        for i, cells in enumerate(per_row):
+            if i == 0:
+                if line not in TREE_LINES:
+                    cell_col.append(0)
+                    range_col.append("-")
+                    continue
+                order, arranged = arrange(cells, "B")
+                cell_col.append(int(arranged[order.index(line)]))
+                range_col.append(ranges(arranged, BAT_START)[order.index(line)])
+            else:
+                arranged = np.asarray(cells)[[P8_LINES.index(l) for l in p8]]
+                cell_col.append(int(arranged[p8.index(line)]))
+                range_col.append(ranges(arranged, 0)[p8.index(line)])
         league[f"{line} cells"] = cell_col
         league[line] = range_col
-    at = BAND_START
-    for l in BAND_ORDER:
-        n = BAND_CELLS[l]
-        league[f"{l} cells"] = n
-        league[l] = ranges([n], at)[0]
-        at += n
+    league["ROE cells"] = BAND_CELLS["ROE"]
+    league["ROE"] = ranges([BAND_CELLS["ROE"]], P8_CELLS)[0]
     out = OUT_DIR / "cards_league.csv"
     with out.open("w", encoding="utf-8", newline="") as fh:
         fh.write("\n".join(stamp) + "\n")

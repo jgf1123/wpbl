@@ -43,7 +43,7 @@ import numpy as np
 import pandas as pd
 
 from wpbl import tables
-from wpbl.dice import (BAND_CELLS, BAND_START, BAT_START, B_CELLS, RUN_START,
+from wpbl.dice import (BAND_CELLS, BAND_START, BAT_START, B_CELLS, P8_CELLS, RUN_START,
                        PRINT_ORDER, P_CELLS, arrange, cards, league_card,
                        line_weights, played_lines, plate_appearances, to_cells)
 
@@ -165,13 +165,30 @@ class Table:
         return self
 
     def _layout(self):
-        """Where the bands sit, in the rulebook's Matchup Table order."""
-        self.run = RUN_START                       # 33-38 running play
-        self.roe = BAND_START                      # 39-40 reached on error
-        self.two = self.roe + BAND_CELLS["ROE"]    # 41-44 double
+        """Where the bands sit, in the rulebook's Matchup Table order.
+
+        Two layouts, told apart by the pitcher block's length. Cards through
+        v0.7.0: pitcher 00-32, running play 33-38, error 39-40, double 41-44.
+        From v0.8.0 (user, 12 Oct): pitcher 00-42 -- her own lines plus the
+        double and the running play, both on her card -- error 43-44. The
+        batter is 45-99 in both."""
+        self.pend = len(self.p_line)
+        if self.pend == P8_CELLS:
+            self.run = self.two = None
+            self.roe = P8_CELLS                    # 43-44 reached on error
+        else:
+            self.run = RUN_START                   # 33-38 running play
+            self.roe = BAND_START                  # 39-40 reached on error
+            self.two = self.roe + BAND_CELLS["ROE"]    # 41-44 double
         self.bat = BAT_START                       # 45-99 batter
 
     def read(self, roll):
+        if self.run is None:                       # v0.8.0
+            if roll < self.roe:
+                return self.p_line[roll]
+            if roll < self.bat:
+                return "ROE"
+            return self.b_line[roll - self.bat]
         if roll < self.run:
             return self.p_line[roll]
         if roll < self.roe:

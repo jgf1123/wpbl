@@ -37,7 +37,8 @@ import numpy as np
 import pandas as pd
 
 from wpbl import engine
-from wpbl.play_wp import B_SPAN, CARD_LINES, DICE_DIR, P_SPAN, WinProbability, faces, league_table
+from wpbl.play_wp import (B_SPAN, CARD_LINES, DICE_DIR, WinProbability, faces, league_table,
+                          pitcher_faces)
 
 COLUMNS = ("fresh", "fading", "gassed")
 POSITIONS = ("C", "1B", "2B", "3B", "SS", "LF", "CF", "RF")
@@ -94,7 +95,7 @@ class Cards:
         self.batter = {r["player"]: r for _, r in B.iterrows()}
         self.pitcher = {r["player"]: r for _, r in P.iterrows()}
         self.bat_faces = {n: faces(r, CARD_LINES, "", B_SPAN) for n, r in self.batter.items()}
-        self.pitch_faces = {n: {c: faces(r, CARD_LINES, f"{c} ", P_SPAN) for c in COLUMNS}
+        self.pitch_faces = {n: {c: pitcher_faces(r, f"{c} ") for c in COLUMNS}
                             for n, r in self.pitcher.items()}
 
     def positions(self, name):
@@ -627,7 +628,7 @@ class Game:
             self.events.append(self.event("pa", batter=batter, pitcher=pitcher, column=col,
                                           rolls=" · ".join(rolls), line="RUN"))
             return
-        src = "pitcher " if roll < engine.RUN_START else "batter " if roll >= engine.BAT_START else ""
+        src = "pitcher " if roll < table.pend else "batter " if roll >= table.bat else ""
         rolls.append(f"d100 {roll:02d} {src}{line}")
         occupied = [b is not None for b in self.bases]
         new, made, runs = engine.apply_line(line, tuple(occupied), self.outs, self.dice)
