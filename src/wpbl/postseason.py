@@ -25,13 +25,15 @@ probability has a standard error under the given value (default 0.01, one
 percentage point), then report each team's chances.
 
 --log: play one postseason and write each game as markdown, with a manager's
-note before every pitching change. Output only: `pixi run play` cannot replay
+note before every pitching change, plus a .jsonl of the same game for
+game_facts.py. Output only: `pixi run play` cannot replay
 these, because the AI decides before every plate appearance.
 """
 from __future__ import annotations
 
 import argparse
 import datetime as dt
+import json
 import time
 from collections import Counter
 from pathlib import Path
@@ -187,6 +189,22 @@ def write_game(model, log_dir, s, gn, rec, day, g, lineups, steps, before):
     out += ["## Play by play", "", g.joined()]
     path = Path(log_dir) / f"{day:%Y-%m-%d}_{away}-at-{home}.md"
     path.write_text("\n".join(out) + "\n", encoding="utf-8")
+    # the same game as data, for game_facts.py: a header line, then one line per event
+    head = {"event": "game", "cards": cards.version, "date": day.isoformat(),
+            "series": s.name, "game": gn,
+            "need": s.need, "record_before": rec, "away": away, "home": home,
+            "runs": {away: g.away.runs, home: g.home.runs},
+            "line": {away: g.away.line, home: g.home.line},
+            "lineup": {t: lineups[t]["order"] for t in (away, home)},
+            "starter": {t: lineups[t]["pitcher"] for t in (away, home)},
+            "staff": {t: [{"name": n, "count": before[n], "stamina": cards.stamina(n),
+                           "starter": n in roles[t], "disfavored": n in M.DISFAVORED}
+                          for n in cards.team_pitchers(t)] for t in (away, home)},
+            "fatigue_after": {n: g.fatigue[n] for t in (away, home)
+                              for n in cards.team_pitchers(t)}}
+    with path.with_suffix(".jsonl").open("w", encoding="utf-8", newline="\n") as f:
+        for row in [head] + g.events:
+            f.write(json.dumps(row, default=str) + "\n")
 
 
 def odds(model, until, cap, seed):

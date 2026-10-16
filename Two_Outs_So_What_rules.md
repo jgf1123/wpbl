@@ -158,6 +158,8 @@ A pitcher's card has three columns. During a Plate Appearance, use the column co
 
 Check the Pitch Count *before* each batter; a pitcher who crosses a boundary mid-inning changes columns for the next batter.
 
+Every pitcher's Gassed column is the same: once she is Gassed, even an ace pitches like the league's weakest regular arm.
+
 *Example.* A pitcher with stamina 80 is Fresh below 20 Pitch Count, Fading from 20 to 79, Gassed from 80. She enters at 0. A walk puts her at 5, two strikeouts at 15, a groundout at 18: still Fresh. The next batter singles, and her Pitch Count reaches 21. From the following batter, she reads her Fading column. A Pitch Count of exactly 20 is already Fading, so her first 20 pitches (give or take the last batter) are Fresh.
 
 Pitchers will recover from fatigue between games (see Between Games).

@@ -1,3 +1,23 @@
+2026-10-15: v0.9.0
+  - Rule: gassed means done. Every pitcher's Gassed column is the same line: the
+    season card of the league's worst pitcher who is not disfavored (Addisyn
+    Baird, LAQ), against the league-average batter -- about 1.52 runs an inning.
+    On v0.8.0 an ace gassed was still better than most of her bullpen fresh
+    (Sato gassed 1.09 against six of LAQ's eight others fresh; Lee 1.07 against
+    five of NYH's eight), so riding her exhausted looked like a bargain: an
+    oracle with perfect hindsight pitched Sato 33 innings in 8 games, entering at
+    a count of 117. Now every team's best arm gassed is worse than every
+    teammate fresh and fading
+  - Fresh and fading are re-centred with the new gassed line in the average, so
+    each pitcher's usage-weighted columns are still her season card. Steps in
+    runs per PA: fresh to fading 0.020, fading to gassed 0.053 (0.019 on v0.8.0).
+    A few fresh columns move: Lee 0.91 -> 0.86 runs an inning
+  - Season simulation: 7.71 runs per team-game (v0.8.0 7.78, season 7.64)
+  - The replacement is chosen on each build (dice.replacement_card);
+    dice.GASSED_EXCLUDE copies manager.DISFAVORED and rules_check holds them equal
+  - v0.8.0 cards archived in data/dice/v0.8.0/ (its PDFs are the older layout's;
+    the CSVs are v0.8.0's)
+
 2026-10-12: v0.8.0
   - Layout: the Matchup Table is 00-42 pitcher's card, 43-44 reached on error,
     45-99 batter's card. The Double and the Running play move off the table onto

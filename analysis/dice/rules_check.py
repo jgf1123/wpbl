@@ -394,7 +394,7 @@ SPEC = {
     # value per roll (her lines and the double), the whole plate appearance following
     # the season's shape (was 0.018 / 0.032 through v0.7.0, her lines alone)
     "step fresh->fading":        (0.021, 0.002),
-    "step fading->gassed":       (0.019, 0.002),
+    "step fading->gassed":       (0.053, 0.002),
     # section 7.9, the currency
     "pitches per plate appearance": (3.482, 0.005),
 }
@@ -451,8 +451,19 @@ def check_spec_numbers():
     return bad
 
 
+def check_gassed_exclude():
+    """The gassed replacement (cards v0.9.0) is the worst pitcher NOT disfavored; the
+    card builder keeps its own copy of that list, which must match the manager's."""
+    from wpbl import manager
+    from wpbl.dice import GASSED_EXCLUDE, replacement_card
+    same = set(GASSED_EXCLUDE) == set(manager.DISFAVORED)
+    print(f"Gassed replacement: {replacement_card()[0]}; dice.GASSED_EXCLUDE "
+          f"{'matches' if same else 'DIFFERS FROM'} manager.DISFAVORED")
+    return int(not same)
+
+
 def main():
-    bad = check_matchup() + check_results() + check_columns()
+    bad = check_matchup() + check_results() + check_columns() + check_gassed_exclude()
     print()
     bad += check_costs()
     bad += check_track()

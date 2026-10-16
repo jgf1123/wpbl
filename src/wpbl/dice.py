@@ -191,6 +191,17 @@ SHAPE_BIP = {"OUT": 0.916, "1B": 1.135, "HR": 1.052}
 # step is the corrected size at the rate the build turns the fit into cells
 # (unshrunk fit 0.079 -> built 0.064, so 0.026 -> 0.021).
 FATIGUE_SCALE = 0.25
+# Gassed means done (user, 15 Oct; cards v0.9.0). On the shape, an ace gassed was still
+# better than most of her bullpen fresh (Sato gassed 1.09 runs an inning against six of
+# LAQ's eight others fresh; Lee 1.07 against five of NYH's eight), so riding her
+# exhausted looked like a bargain to any manager and to the oracle. Now every pitcher's
+# gassed column is the same line: REPLACEMENT -- the season card of the league's worst
+# pitcher who is not disfavored (`replacement_card`), about 1.45 runs an inning, worse
+# than every such pitcher fresh and nearly all of them fading. GASSED_EXCLUDE copies
+# manager.DISFAVORED (rules_check holds them equal).
+GASSED_REPLACEMENT = True
+GASSED_EXCLUDE = ("Adelaide Frank", "Brittany Apgar", "Jua Park", "Maggie Foxx", "Raine Padgham",
+                  "Suzu Narasaki")
 # Runs cannot see BB | HBP (a walk is worth 0.45, an HBP 0.49), so that step's k is
 # fitted on log loss (spec 9.0); every other k is fitted on runs at MIX_ALPHA. The
 # two interact -- mixing is itself shrinkage -- so they were fitted together by
@@ -603,6 +614,24 @@ def double_excess() -> float:
     return dbl - rate * (100 - run)
 
 
+@lru_cache(maxsize=1)
+def replacement_card():
+    """(name, her season card over TREE_LINES summing to 1): the pitcher whose season
+    card gives up the most runs, of those not in GASSED_EXCLUDE."""
+    P = cards("P")
+    names = tables.read("players", "training").drop_duplicates("person_id").set_index("person_id")["person_name"]
+    idx = [CARD_LINES.index(l) for l in TREE_LINES]
+    p = P.to_numpy()[:, idx]
+    p = p / p.sum(axis=1, keepdims=True)
+    wv = line_weights_p8()[:len(TREE_LINES)]
+    order = np.argsort(-(p @ wv))
+    for i in order:
+        name = plain_name(names.get(P.index[i], P.index[i]))
+        if name not in GASSED_EXCLUDE:
+            return name, p[i]
+    raise ValueError("no pitcher outside GASSED_EXCLUDE")
+
+
 def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndarray]:
     """Each pitcher's three columns as CELL COUNTS, P8_LINES order (her six lines,
     then the double and the running play), ready to print (cards v0.8.0).
@@ -620,7 +649,12 @@ def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndar
     except that singles give up the doubles' excess (`double_excess`). Then
     rounded to 33 / 32 / 31 cells with every line at least one (`to_cells`), so
     that every outcome is possible in every matchup. `centred=False` makes fresh
-    her season card instead."""
+    her season card instead.
+
+    GASSED (cards v0.9.0, user 15 Oct): with GASSED_REPLACEMENT every pitcher's
+    gassed column is the replacement's season card against the league batter
+    (`replacement_card`), the same for all; fresh and fading are solved with it in
+    the average, so her columns still average to her season card."""
     w = line_weights()
     idx = [CARD_LINES.index(l) for l in TREE_LINES]
     p = p_cards[:, idx]
@@ -639,16 +673,26 @@ def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndar
         target = target * (total + x) / total
         target[:, TREE_LINES.index("1B")] -= x
     fresh = target / target.sum(axis=1, keepdims=True)
+    gassed_pa = None
+    if GASSED_REPLACEMENT:
+        _, p_rep = replacement_card()
+        rep = nbar * p_rep + b
+        gassed_pa = np.tile(rep / rep.sum() * (OWN_CELLS["gassed"] + B_CELLS), (len(p), 1))
+
+    def column_pa(c, fresh):
+        if c == "gassed" and gassed_pa is not None:
+            return gassed_pa
+        return shape_step(fresh, FATIGUE_STEPS[c]) * (OWN_CELLS[c] + B_CELLS)
+
     for _ in range(500):
-        got = sum(weight[c] * shape_step(fresh, FATIGUE_STEPS[c]) * (OWN_CELLS[c] + B_CELLS)
-                  for c in cols)
+        got = sum(weight[c] * column_pa(c, fresh) for c in cols)
         if np.abs(got - target).max() < 1e-10:
             break
         fresh = fresh * target / got
         fresh /= fresh.sum(axis=1, keepdims=True)
     out = {}
     for c in cols:
-        own = shape_step(fresh, FATIGUE_STEPS[c]) * (OWN_CELLS[c] + B_CELLS) - b
+        own = column_pa(c, fresh) - b
         full = np.zeros((len(p), len(CARD_LINES)))
         full[:, idx] = np.clip(own, 1e-9, None)
         cells = to_cells(full, OWN_CELLS[c], w, True)
@@ -776,7 +820,7 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.8.0"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.9.0"                 # keep in step with data/dice/dice_version.md
 
 
 def plain_name(name: str) -> str:

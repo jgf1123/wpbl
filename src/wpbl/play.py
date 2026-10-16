@@ -463,6 +463,7 @@ class Game:
         side.gone.update(out_of_order)
         side.order = slots
         self.events.append(self.event("change", pitcher=new, replaced=old,
+                                      count=self.fatigue[new] if new != old else None,
                                       lineup=" | ".join(f"{s.name} {s.pos}" for s in slots)))
 
     def stop(self, at, notes):
@@ -597,7 +598,8 @@ class Game:
         self.emit(f"{head} · {desc} → {tail} · WP home {pct(self.wp_home())}")
         self.events.append(self.event("steal", runner=runner, light="green", net_wp=net,
                                       up=bat.order[bat.spot % 9].name,
-                                      rolls=desc, result=result))
+                                      rolls=desc, result=result, wp_before=stay,
+                                      outs_after=tail, wp_home=self.wp_home()))
 
     def plate_appearance(self):
         bat, fld = self.bat_fld()
@@ -606,6 +608,7 @@ class Game:
         table = engine.Table.from_lines(self.cards.pitch_faces[pitcher][col],
                                         self.cards.bat_faces[batter])
         before = f"{self.outs} out {bases_text(self.bases)}"
+        wp_before, count_before = self.wp_home(), self.fatigue[pitcher]
         rolls, scorers = [], []
         while True:
             roll = self.dice.d100()
@@ -622,11 +625,18 @@ class Game:
                     break
             else:
                 rolls.append(f"d100 {roll:02d} running play, bases empty")
+        run_play_scored = len(scorers)         # before the batted line: not RBIs
         if self.over:                          # walk-off on a running play
             self.emit(f"- {before} · {batter} vs {pitcher} ({col}) · {' · '.join(rolls)} · "
                       f"scores: {', '.join(scorers)} · {self.score()} · WALK-OFF")
             self.events.append(self.event("pa", batter=batter, pitcher=pitcher, column=col,
-                                          rolls=" · ".join(rolls), line="RUN"))
+                                          rolls=" · ".join(rolls), line="RUN",
+                                          outs_before=before, scored=len(scorers),
+                                          scorers=list(scorers), runners=list(self.bases),
+                                          run_play_scored=run_play_scored,
+                                          count_before=count_before,
+                                          pitch_count=self.fatigue[pitcher],
+                                          wp_before=wp_before, wp_home=None))
             return
         src = "pitcher " if roll < table.pend else "batter " if roll >= table.bat else ""
         rolls.append(f"d100 {roll:02d} {src}{line}")
@@ -672,7 +682,10 @@ class Game:
         self.events.append(self.event("pa", batter=batter, pitcher=pitcher, column=col,
                                       rolls=" · ".join(rolls), line=line,
                                       outs_before=before, outs_after=after,
-                                      scored=len(scorers), pitch_count=self.fatigue[pitcher],
+                                      scored=len(scorers), scorers=list(scorers),
+                                      run_play_scored=run_play_scored,
+                                      runners=list(self.bases), count_before=count_before,
+                                      pitch_count=self.fatigue[pitcher], wp_before=wp_before,
                                       wp_home=None if self.over else self.wp_home()))
 
     def half(self):

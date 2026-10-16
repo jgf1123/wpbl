@@ -1546,6 +1546,23 @@ consequence worth knowing: no pitcher card distinguishes home-run rates, and
 the fatigue shape's HR x1.052 a step never shows; home-run spread lives on the
 batter's side.
 
+**Gassed means done (user, 15 Oct; cards v0.9.0).** An oracle with perfect hindsight
+(`analysis/manager/oracle.py`) pitched each team's best arm to exhaustion -- Sato 33
+innings in 8 postseason games, the best arms entering at an average count of 117 --
+because gassed had no limit beyond its column and an elite card gassed was still better
+than most of her bullpen fresh (Sato 1.09 runs an inning gassed against six of LAQ's
+eight others fresh; Lee 1.07 against five of NYH's eight). Real data cannot size the
+gassed column (1.1% of plate appearances), so it is a design choice. Options weighed: a
+replacement-level line for everyone (chosen); a much bigger gassed step on her own shape
+(no defensible size); a rule forcing a gassed pitcher out (managers already do it).
+
+Built: every pitcher's gassed column is the season card of the league's worst pitcher
+not disfavored (`dice.replacement_card`: Addisyn Baird), set against the league batter
+like every column -- 1.52 runs an inning. Fresh and fading are re-centred with it in the
+usage-weighted average. Every team's best arm gassed is now worse than every teammate
+fresh and fading. Steps: fresh -> fading 0.020, fading -> gassed 0.053 runs per PA.
+Season simulation 7.71 runs per team-game (v0.8.0 7.78, season 7.64).
+
 **Left on the old layout, on purpose:** `lineup_model.facing_average_pitcher`
 still mixes 33 pitcher cells with fixed 4 / 2 bands over 94. Under v0.8.0 the
 average pitcher is 32.8 own cells and 4.63 doubles; it ranks batters against

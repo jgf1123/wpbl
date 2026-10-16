@@ -399,6 +399,143 @@ arms pitch in, so the plan cannot tell "best arm now" from "best arm later"
 (seen in a game 5: Gilder and Coria scored identically). Weighting each future
 inning by its expected stakes would fix it.
 
+### B2: four fixes (user, 2026-10-13)
+
+Prompted by two postseason logs: seed 29, where B2 replaced a fading Meidlinger
+with a fresh Villarreal (mostly the first v0.8.0 cards' fatigue step; refit, see
+dice_game_spec.md 7.4), and seed 3, where usage piled onto a few arms (Meidlinger
+and Coria 5 games each; Studer, Day Bedard and Hondras never used, though not
+clearly worse).
+
+1. **Keep is scored two ways.** She pitches until gassed (as before), or she
+   finishes this half and the best arm takes the next inning; the better counts.
+   Before, keeping was priced as if she could never come out later.
+2. **Pitch-count spread in the runs** (`Planner.stint3`). The innings an arm
+   spends in each column are expectations under PITCH_SD 6 pitches an inning
+   (still an ASSUMPTION), not a straight division: a "one fresh inning" plan
+   sometimes spills past 20 pitches.
+3. **Pitches carried replace the flat warm-up charge.** Every pitch the plan
+   puts on an arm, a warm-up's 30 included, still on her count at the next game
+   after recovery, against what she would carry without pitching; a later arm by
+   the chance she is needed; priced 0.0077 / 30 WP a pitch (a warm-up's price)
+   times the next game's series leverage. On a rested arm with one day off, a
+   warm-up and her recovery carry 30: the old price. A busy arm now pays for what
+   she carries, and a longer gap charges less. Next game only.
+4. **The note always shows keep**, and each option's pitches carried; the
+   decision data gain `carried` and `plan`.
+
+Measured against the old B2 on the same cards (v0.8.0) and seeds:
+
+| 300 postseasons, B2 both sides | old B2 | fixed B2 |
+|---|---|---|
+| runs per team-game | 7.88 | 7.85 |
+| arms per team-game | 2.57 | 2.63 |
+| relief appearances per team per postseason | 7.09 | 7.29 |
+| distinct relievers per team per postseason | 3.09 | 3.21 |
+| busiest reliever's share of them | 52.8% | 51.1% |
+| plate appearances fresh / fading / gassed | 26.6 / 73.0 / 0.4% | 28.0 / 71.8 / 0.2% |
+| relief entries at a clean inning start (real 62%) | 21.9% | 21.2% |
+
+| 7,200 series against B0, conventions on | series won |
+|---|---|
+| old B2, cards v0.6.0 (2026-10-12) | 51.5% +/- 0.6 |
+| old B2, cards v0.8.0 | 50.9% +/- 0.6 |
+| fixed B2, cards v0.8.0 | 50.5% +/- 0.6 |
+
+The fixes spread the work a little and halve gassed batters (0.32 to 0.24 a
+game; game 5 1.55 to 1.21; "nobody left" 3,335 to 2,790), but they do not change
+how often B2 beats B0: most of the fall from 51.5% is the cards, where milder
+fatigue leaves less to manage. Neither B2 is now clearly better than B0.
+
+Postseason odds, fixed B2 on v0.8.0 (2,400 postseasons): title SFF 39.8%, NYH
+35.3%, LAQ 18.6%, BOS 6.3% (reaching the final 74.0, 62.1, 37.9, 26.0); finals
+SFF v NYH 45.8%, SFF v LAQ 28.1%, BOS v NYH 16.2%, BOS v LAQ 9.8%.
+
+**Still OPEN: mid-inning entries.** Of B2's changes against B0, 42,278 replaced a
+gassed pitcher and 7,756 were early swaps. A gassed pitcher must come out at
+once, and B2 only considers an early change at a run value of 2.0 or more (user),
+which an inning's start rarely reaches -- so a pitcher who will run out during
+the next inning is kept into it and pulled mid-inning. Real managers changed at
+the inning's start (62% of entries). The lever would be a decision at each
+half-inning start, scored like any other; not built.
+
+### Beyond the four fixes: what was tried, and the default (2026-10-14/15)
+
+**The question (user):** make B2 spread load and put the key arms in at the right
+time -- the team's best pitchers pitch as much as they can, and in the innings that
+matter. Everything below was judged in the dice game against B0 on the same 7,200
+series (300 per pairing and side, conventions on, best of 5), the arbiter after an
+expected-value plan failed there.
+
+**Tried in B2, each switchable and off by default (`Planner` attributes):**
+
+| version | idea | series won vs B0 | what it did to usage |
+|---|---|---|---|
+| four fixes (v0.8.0 cards) | -- | 50.5% | -- |
+| + series horizon + C (`horizon_c`) | later games priced by refilling their relief with the arms that would be left; today's later innings by their chance of being close, best arms to the close branches | 50.6% | best relievers saved for bigger spots (top-2 share of quiet entries 70% -> 49%), but game-5 gassed batters 1.21 -> 1.82, "nobody left" 2,790 -> 3,766 |
+| + ace gate (`ace_gate`) | the best 2 arms may enter only at a half-inning run value of 0.7+ (1.5+ if entering fading), from the oracle | 50.4% | no gain: most changes are forced by gassed, and the top two already had ~70% of big entries |
+| + half-inning-start decisions (`half_start`) | decide at each half start without the 2.0 gate | 50.8% | 4.55 arms in game 5, gassed batters 1.34 a game, "nobody left" 19,373: the planner's failure |
+| + the same with a warm-up hurdle (`hurdle`) | an unforced change must beat keeping by one warm-up (0.0077 x next game's weight) | 50.8% | optional changes halved; game-5 gassed batters still 4.37 |
+| + half starts, later-games charge x2 / x4 (`later_scale`) | test whether B2 underprices tiring the staff | 49.8% / 48.5% | MORE changes, not fewer (see below) |
+
+**Why the series horizon backfires.** It values tomorrow by filling its relief with
+the best rested arms, and one arm's stamina (60-80 pitches) covers most of a game's
+relief -- so in its model only the top one or two arms matter tomorrow and every
+other arm is free to tire. Raising its weight makes B2 protect the aces harder by
+handing innings to the "free" depth arms. In the dice game depth is not free: long
+unlucky innings and mid-inning gassing call on the whole staff, and wearing it out
+is what produces "nobody left" and gassed game-5 innings. A multiplier cannot fix a
+model of the later games that is wrong about depth.
+
+**The planner and the oracle (`analysis/manager/`).**
+
+- `series_plan.py`: plans a team's postseason in expected values (starters, their
+  innings, relief by stakes). With foresight of which innings would be close it
+  turned every game into a bullpen game; without (`relief_dp`, stakes bands linked
+  inning to inning) it still favoured ~3-inning starts and 4-5 arms a game.
+  `plan_test.py` played those plans in the dice game: **48.8% against 52.3% for
+  B2 on the same seeds** -- many short stints tire the staff and leave it empty.
+- `oracle.py`: the best a manager who sees how every game will go could do --
+  stakes from real 2026 team-games, stints split between half-innings by a
+  dynamic program, a price per pitch per arm searched across the postseason. An
+  upper bound and a teacher, not a plan (user). Findings
+  (`oracle_report.py`, `oracle_when.py`):
+  - **when the best arms pitch** (the lesson): almost never below a run value of
+    0.3 (1-3%), rarely to 0.7; about half the time from 1.2; and mostly SAVED when
+    they would come in already fading (24-37% even at 1.5+). Game weight and inning
+    matter little once the stakes are known. B0 is nearly backwards (its best arm
+    pitches 10% of 2.0+ innings).
+  - **headroom**: 0.8-1.3 stakes-weighted runs a postseason over B0-like for NYH,
+    LAQ, SFF (0.3 for BOS, whose arms are alike). Forcing B0's timing (stints until
+    gassed, `--b0-timing`) keeps 42-71% of it: who pitches is the larger part, when
+    is 29-58%.
+  - **gassed was a loophole**: with no limit beyond the gassed column, the oracle
+    rode each ace exhausted (Sato 33 innings in 8 games, entering at a count of
+    117). Fixed in the cards (v0.9.0: gassed is a replacement-level line for
+    everyone; dice_game_spec.md 7.4).
+  - its short stints (1.3-2.5 innings) are NOT a lesson: they rely on hindsight;
+    played with dice, many short stints are what failed.
+
+**Usage on v0.9.0** (`usage_report.py`, 300 postseasons, B2 both sides): the
+horizon version saves its best relievers for bigger spots (Lee entering at a run
+value of 1.51 against 1.25; Meidlinger 1.51 against 1.22) but overworks the depth
+(Bricker 2.7 appearances a postseason, 49% entering fading, 76% leaving gassed;
+BOS 3.3 arms a game); the four-fix version keeps the staff fresher but sends weak
+arms into big late spots (Hondras entering at 2.05, Maximiliana 2.35).
+
+| v0.9.0 cards, vs B0 | series won | arms a game, G1 -> G5 | gassed batters a game (G5) | "nobody left" |
+|---|---|---|---|---|
+| B2, horizon + C | 51.0% +/- 0.6 | 2.26 -> 4.07 | 0.30 (1.40) | 3,308 |
+| **B2, four fixes (the default)** | **51.0% +/- 0.6** | 2.15 -> 3.85 | **0.16 (0.78)** | **1,589** |
+
+**Decided (user, 2026-10-15): the four fixes are B2's default** (`horizon_c =
+False`): the same wins, half the gassed batters and "nobody left", simpler to
+explain. The horizon, C, the gate, half starts, the hurdle and the multiplier stay
+in the code, off, as tested and documented. **Open:** a real-time manager that
+captures the oracle's "who and when" without wearing out the staff -- the next
+attempt should price staff depth from what simulated games actually lose when a
+team starts a game tired, not from a model that assumes depth is free.
+
 ### What the lineup conventions cost (2026-10-05)
 
 Conventions on for pitching (roles, relief from relievers), both sides B0,
