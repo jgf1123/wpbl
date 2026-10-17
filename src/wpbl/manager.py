@@ -721,6 +721,8 @@ WARMUP_WP = 0.0077      # one warm-up: 30 marginal pitches in a 7-day window, ru
 EARLY_GATE = 2.0        # user: replace a pitcher who is not gassed only in the top ~4% of
                         # plate appearances by run value (2.03 in real 2026 games)
 PITCH_SD = 6.0          # ASSUMPTION: spread of pitches per inning, for the chance an arm runs out
+VALUE_PRICE_LO = 0.75   # value_price (0.5 overworked the weakest arms): a carried pitch costs this x the flat price for the team's
+VALUE_PRICE_HI = 2.0    # worst non-disfavored arm, this x for its best, in between by fresh quality
 ACE_ARMS = 2            # the ace gate (`Planner.gate`): the team's best arms by fresh card quality,
 ACE_FLOOR = 0.7         # may come in at a half-inning run value of this or more (the oracle's
 ACE_FLOOR_FADING = 1.5  # best arm: 1-3% below 0.3, 2-18% to 0.7; ~50% from 1.2), this if fading
@@ -777,6 +779,8 @@ class Planner(Policy):
     half_start = False       # also decide at each half-inning's start, without EARLY_GATE
     hurdle = False           # a change not forced by gassed must beat keeping by one warm-up
     later_scale = 1.0        # multiplies the charge for later games (`horizon`), for calibration
+    value_price = False      # four fixes: price a carried pitch by the arm's quality (`price_of`)
+    value_mode = "linear"    # "linear": VALUE_PRICE_LO..HI by fresh quality; "derived": from the cards
     horizon_c = False        # the default (user, 2026-10-15): the four fixes only -- today's stakes on
                              # every remaining run, the best arm next (`plan_seq`), a flat price per
                              # carried pitch. True: the series horizon and innings by their stakes,
@@ -942,9 +946,39 @@ class Planner(Policy):
         if cov < left - 1e-9:
             runs += (left - cov) * model.runs_per_inning(last, "gassed")
             arms_[last][1] += (left - cov) * model.pitches_per_inning(last, "gassed")
-        carried = sum(w * (self.carry(a) - self.carry(b)) for b, a, w in arms_.values())
+        self._carried_by = {n: w * (self.carry(a) - self.carry(b)) for n, (b, a, w) in arms_.items()}
+        carried = sum(self._carried_by.values())
         ends = {n: b + w * (a - b) for n, (b, a, w) in arms_.items()}
         return runs, warm, carried, ends
+
+    def price_of(self, name):
+        """value_price (user, 2026-10-15): a pitch a good arm carries into the next
+        game costs more than one a weak arm carries -- she is the one needed later.
+        Her multiple of the flat price runs from VALUE_PRICE_LO for the team's worst
+        non-disfavored arm to VALUE_PRICE_HI for its best, by fresh runs per inning;
+        so in a quiet spot a weak arm (Day Bedard, via the P/CF swap) can take the
+        innings and save the better ones. Disfavored arms count as the worst.
+        With value_mode "derived" (user, 2026-10-15: no hand-picked numbers) her
+        multiple comes from the cards: the runs a pitch of hers saves over
+        replacement -- (the gassed line's runs per inning, the same for everyone
+        from cards v0.9.0, less her fresh runs per inning) / her fresh pitches per
+        inning -- divided by her team's average, so the team's average arm pays
+        exactly the measured flat price."""
+        model = self.model
+        table = model.__dict__.setdefault("_price_mult", {}).setdefault(self.value_mode, {})
+        if self.team not in table:
+            team = arms(model, self.team)
+            r = {n: model.runs_per_inning(n, "fresh") for n in team}
+            if self.value_mode == "derived":
+                rep = model.runs_per_inning(team[0], "gassed")
+                v = {n: (rep - r[n]) / model.pitches_per_inning(n, "fresh") for n in team}
+                mean = sum(v.values()) / len(v)
+                table[self.team] = {n: x / mean for n, x in v.items()}
+            else:
+                lo, hi = min(r.values()), max(r.values())
+                table[self.team] = {n: VALUE_PRICE_LO + (VALUE_PRICE_HI - VALUE_PRICE_LO)
+                                    * (hi - v) / max(hi - lo, 1e-9) for n, v in r.items()}
+        return table[self.team].get(name, min(table[self.team].values()))
 
     def innings_ahead(self, g, side):
         """Today's remaining half-innings for this fielding side, through
@@ -1182,7 +1216,8 @@ class Planner(Policy):
                 cost = self.horizon(g, ends) - base
             else:
                 runs, need, carried, ends = self.plan_seq(g, name, count, before, others, half)
-                cost = carried
+                cost = (sum(self.price_of(n) * c for n, c in self._carried_by.items())
+                        if self.value_price else carried)
             bats = sum(self.model.bat_score(m) for m, _ in slots)
             detail[name] = (count, runs, warm + need, carried, "half" if half else "gassed", cost)
             return -stake * runs - later * cost + 1e-9 * bats
@@ -1355,6 +1390,10 @@ def main(argv=None):
     ap.add_argument("--b2", action="store_true", help="also play B2 (runs to the end, priced warm-ups)")
     ap.add_argument("--b2-no-early", action="store_true", help="also play B2 relieving only at gassed")
     ap.add_argument("--b2-gate", action="store_true", help="also play B2 with the ace gate")
+    ap.add_argument("--b2-value-price", action="store_true",
+                    help="also play B2 pricing carried pitches by the arm's quality")
+    ap.add_argument("--b2-value-derived", action="store_true",
+                    help="also play B2 pricing carried pitches by runs saved over replacement")
     ap.add_argument("--b2-four-fixes", action="store_true",
                     help="also play B2 with the four fixes only (no series horizon, no stakes by inning)")
     ap.add_argument("--b2-half", action="store_true",
@@ -1395,6 +1434,18 @@ def main(argv=None):
             p.horizon_c = False
             return p
         runs.append(("B2 four fixes", four))
+    if a.b2_value_price:
+        def valued(t):
+            p = Planner(model, t)
+            p.value_price = True
+            return p
+        runs.append(("B2 value price", valued))
+    if a.b2_value_derived:
+        def derived(t):
+            p = Planner(model, t)
+            p.value_price, p.value_mode = True, "derived"
+            return p
+        runs.append(("B2 value derived", derived))
     if a.b2_gate:
         def gated(t):
             p = Planner(model, t)

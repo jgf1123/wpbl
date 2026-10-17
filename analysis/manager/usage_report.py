@@ -21,7 +21,7 @@ import pandas as pd
 from wpbl import engine, manager as M, play, postseason as P, usage
 
 
-def collect(model, n, horizon_c):
+def collect(model, n, setup):
     cards = model.cards
     stints, decisions, games = [], [], []
     orig_mgr, orig_play, orig_decide = P.manager_for, P.play_game, M.Planner.decide
@@ -29,7 +29,7 @@ def collect(model, n, horizon_c):
 
     def manager_for(*a, **k):
         p = orig_mgr(*a, **k)
-        p.horizon_c = horizon_c
+        setup(p)
         p.log = []
         current[p.team] = p
         return p
@@ -89,6 +89,8 @@ def collect(model, n, horizon_c):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--postseasons", type=int, default=300)
+    ap.add_argument("--variants", nargs=2, default=["horizon", "four"],
+                    help="two of: horizon, four, value, derived")
     a = ap.parse_args()
     cards, wp = play.shared()
     model = M.Model(cards, wp)
@@ -96,8 +98,14 @@ def main():
     model.run_value(1, True, 0, (False, False, False), 0)
     pd.set_option("display.width", 250)
     res = {}
-    for label, hc in (("B2 now", True), ("four fixes", False)):
-        res[label] = collect(model, a.postseasons, hc)
+    variants = {"horizon": ("B2 + horizon", lambda p: setattr(p, "horizon_c", True)),
+                "four": ("four fixes", lambda p: None),
+                "value": ("value price", lambda p: setattr(p, "value_price", True)),
+                "derived": ("value derived", lambda p: (setattr(p, "value_price", True),
+                                                       setattr(p, "value_mode", "derived")))}
+    for key in a.variants:
+        label, setup = variants[key]
+        res[label] = collect(model, a.postseasons, setup)
         print(f"{label}: done", flush=True)
     n = a.postseasons
 
