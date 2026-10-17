@@ -74,13 +74,11 @@ To simulate a plate appearance, roll d100 and d12 together and find the d100 on 
 **Matchup Table**
 | Roll      | Result                    |
 | --------- | ------------------------- |
-| **00–32** | On the **pitcher's** card |
-| **33–38** | **Running play**          |
-| **39-40** | **Reached on error**      |
-| **41–44** | **Double**                |
+| **00–42** | On the **pitcher's** card |
+| **43–44** | **Reached on error**      |
 | **45–99** | On the **batter's** card  |
 
-Each athlete's card has six lines (OUT, Strikeout, Hit by pitch, Walk, Single, Home run) and the range of numbers that produce that result.
+A batter's card has six lines (OUT, Strikeout, Hit by pitch, Walk, Single, Home run) and the range of numbers that produce that result. A pitcher's card has those six lines plus **Double** and **Running play**, in each of her three columns (see Managing Pitchers): a tired pitcher gives up more doubles.
 
 Below is how to resolve each result. The results use the following terminology:
 
@@ -152,15 +150,17 @@ After each Plate Appearance, add to her Pitch Count:
 
 A pitcher's card has three columns. During a Plate Appearance, use the column corresponding to her Pitch Count:
 
-| Column     | Pitch count          |
-| ---------- | -------------------- |
-| **Fresh**  | up to 20             |
-| **Fading** | 21 up to her stamina |
-| **Gassed** | past that            |
+| Column     | Pitch count                   |
+| ---------- | ----------------------------- |
+| **Fresh**  | below 20                      |
+| **Fading** | 20, up to but not her stamina |
+| **Gassed** | her stamina or more           |
 
 Check the Pitch Count *before* each batter; a pitcher who crosses a boundary mid-inning changes columns for the next batter.
 
-*Example.* A pitcher with stamina 80 is Fresh to 20 Pitch Count, Fading to 80, Gassed over 80. She enters at 0. A walk puts her at 5, two strikeouts at 15, a groundout at 18: still Fresh. The next batter singles, and her Pitch Count reaches 21. From the following batter, she reads her Fading column.
+Every pitcher's Gassed column is the same: once she is Gassed, even an ace pitches like the league's weakest regular arm.
+
+*Example.* A pitcher with stamina 80 is Fresh below 20 Pitch Count, Fading from 20 to 79, Gassed from 80. She enters at 0. A walk puts her at 5, two strikeouts at 15, a groundout at 18: still Fresh. The next batter singles, and her Pitch Count reaches 21. From the following batter, she reads her Fading column. A Pitch Count of exactly 20 is already Fading, so her first 20 pitches (give or take the last batter) are Fresh.
 
 Pitchers will recover from fatigue between games (see Between Games).
 
@@ -226,9 +226,9 @@ After a game, do *not* reset each pitcher's Pitch Count. At the end of every day
 
 **Matchup Table**
 ```
-00-32  pitcher's card      39-40  reached on error
-33-38  running play        41-44  double
-       (advance, reroll)   45-99  batter's card
+00-42  pitcher's card (her lines, double, running play: advance, reroll)
+43-44  reached on error
+45-99  batter's card
 ```
 
 **Outs Table**
@@ -256,5 +256,5 @@ Runner on 3rd always scores
 **Pitch count:** 
 ```
 enter +30 · walk +5 · strikeout +5 · anything else +3 ·
-fresh ≤ 20 · fading ≤ stamina · gassed above stamina · recover 20 a day.
+fresh below 20 · fading below stamina · gassed at stamina or more · recover 20 a day.
 ```

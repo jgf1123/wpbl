@@ -1,0 +1,17 @@
+# WPBL dice-game player cards -- v0.8.0, NOT FINAL. What changed between versions: data/dice/dice_version.md.
+# Built from 39 games through 2026-09-22 (2798 plate appearances); code 1cec28a + uncommitted changes.
+# These FORECAST how a player would do in games we have not seen. They do not
+# replay 2026: a card is pulled toward players her team used about as much, so it
+# will not match her season line, by design (dice_game_spec.md section 3).
+# A card that looks wrong is worth reporting: https://github.com/jgf1123/wpbl/issues
+# The batter and season-card pitcher rows are identical by construction:
+# every plate appearance has a batter and a pitcher, so the season's
+# outcomes are one distribution. A player facing this card is shrunk toward
+# it by the mixing weight. The three column rows are the stand-in pitcher a
+# player with no card of her own reads, at stamina 70.
+player,team,stamina,column,PA/BF,K %,BB %,HBP %,HR %,1B %,2B %,ROE %,OUT %,K cells,K,BB cells,BB,HBP cells,HBP,HR cells,HR,1B cells,1B,OUT cells,OUT,2B cells,2B,RUN cells,RUN,ROE cells,ROE
+League average batter,-,,,2798,11.69,12.44,3.5,2.5,21.02,4.54,2.32,41.99,7,70-76,7,79-85,2,77-78,2,98-99,12,86-97,25,45-69,0,-,0,-,2,43-44
+League average pitcher,-,,season card,2798,11.69,12.44,3.5,2.5,21.02,4.54,2.32,41.99,4,18-21,5,12-16,1,17,1,00,7,05-11,15,22-36,4,01-04,6,37-42,2,43-44
+League average pitcher,-,70,fresh,2798,11.69,12.44,3.5,2.5,21.02,4.54,2.32,41.99,4,18-21,5,12-16,1,17,1,00,7,05-11,15,22-36,4,01-04,6,37-42,2,43-44
+League average pitcher,-,70,fading,2798,11.69,12.44,3.5,2.5,21.02,4.54,2.32,41.99,4,19-22,5,13-17,1,18,1,00,7,06-12,14,23-36,5,01-05,6,37-42,2,43-44
+League average pitcher,-,70,gassed,2798,11.69,12.44,3.5,2.5,21.02,4.54,2.32,41.99,4,20-23,4,15-18,1,19,1,00,8,07-14,13,24-36,6,01-06,6,37-42,2,43-44

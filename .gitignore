@@ -10,3 +10,8 @@ data/*.html
 data/img/*.png
 .cursor/
 *_post.md
+data/sim/
+games/*.md
+games/*/*.md
+games/*.jsonl
+games/*/*.jsonl

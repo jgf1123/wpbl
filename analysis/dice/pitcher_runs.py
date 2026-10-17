@@ -33,7 +33,7 @@ import pandas as pd
 from wpbl import dice, engine, tables
 from wpbl.card_runs import LINES, from_shares, from_table
 from wpbl.card_runs import runs_per_pa as runs_per_bf     # the one calculator, in src
-from wpbl.play_wp import CARD_LINES, DICE_DIR, P_SPAN, faces, league_table
+from wpbl.play_wp import CARD_LINES, DICE_DIR, P_SPAN, faces, league_table, pitcher_faces
 
 
 def everyone(pa, names):
@@ -55,7 +55,7 @@ def everyone(pa, names):
             pr = printed.loc[key]
             row["team"] = pr["team"]
             for col in ("fresh", "fading", "gassed"):
-                p_faces = faces(pr, CARD_LINES, f"{col} ", P_SPAN)
+                p_faces = pitcher_faces(pr, f"{col} ")
                 row[col] = runs_per_bf(from_table(engine.Table.from_lines(p_faces, lg.b_line)))
         rows.append(row)
     out = pd.DataFrame(rows).sort_values(["team", "fading"])

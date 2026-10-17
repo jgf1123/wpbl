@@ -337,6 +337,24 @@ cases = {(0, False, True): False,   # the starter before her first batter
 got = {c: rule_case(*c) for c in cases}
 check(got == cases, f"three-batter cases (faced, finished a half, at a half's start): {got}")
 
+# --- logs on older cards -----------------------------------------------------------------
+# A log replays on the cards it was played on (archived in data/dice/<version>/ when the
+# cards are rebuilt) and with that version's column rule; v0.6.0 read "up to 20".
+check(engine.column_rule("v0.6.0") == "up to" and engine.column_rule(cards.version) == "below",
+      f"column rule by card version: v0.6.0 'up to', {cards.version} 'below'")
+old_logs = [p for p in sorted((ROOT / "games").glob("*.md"))
+            if 'cards = "' in p.read_text(encoding="utf-8")]
+same = 0
+for p in old_logs:
+    copy = tmp / p.name
+    copy.write_text(p.read_text(encoding="utf-8"), encoding="utf-8", newline="\n")
+    before = copy.read_text(encoding="utf-8")
+    with contextlib.redirect_stdout(io.StringIO()):
+        msg = refused(play.play, copy)
+    same += msg is None and copy.read_text(encoding="utf-8") == before
+check(same == len(old_logs) and old_logs,
+      f"saved logs in games/ replay unchanged on their own cards ({same} of {len(old_logs)})")
+
 # --- whole games -------------------------------------------------------------------------
 N = 400
 stats = {"extras": 0, "walkoffs": 0, "cs3": 0, "green": 0, "red": 0}

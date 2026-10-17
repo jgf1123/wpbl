@@ -45,8 +45,10 @@ engine = "python -m wpbl.engine"
 season-fatigue = "python -m wpbl.season_fatigue"
 advance = "python -m wpbl.advance"
 play = "python -m wpbl.play"
+facts = "python -m wpbl.game_facts"
 card-runs = "python -m wpbl.card_runs"
 manager = "python -m wpbl.manager"
+postseason = "python -m wpbl.postseason"
 refresh = { depends-on = ["scrape", "build", "check"] }
 
 [activation.env]

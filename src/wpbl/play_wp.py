@@ -52,14 +52,27 @@ def faces(row: pd.Series, lines, prefix: str, span: range) -> np.ndarray:
 
 CARD_LINES = ("OUT", "K", "HBP", "BB", "1B", "HR")
 P_SPAN, B_SPAN = range(0, engine.RUN_START), range(engine.BAT_START, 100)
+P8_LINES = CARD_LINES + ("2B", "RUN")
+P8_SPAN = range(0, engine.P8_CELLS)
 
 
-def league_table() -> engine.Table:
-    """League batter against the league pitcher's season card (no fatigue column)."""
-    lg = pd.read_csv(DICE_DIR / "cards_league.csv", comment="#", dtype=str)
+def pitcher_faces(row: pd.Series, prefix: str = "") -> np.ndarray:
+    """A pitcher column as one label per face. Cards through v0.7.0 cover 00-32
+    with her six lines; from v0.8.0 the block is 00-42 and also carries the
+    double and the running play, which a v0.8.0 row prints as ranges."""
+    run = row.get(f"{prefix}RUN")
+    if isinstance(run, str) and run.strip() not in ("", "-"):
+        return faces(row, P8_LINES, prefix, P8_SPAN)
+    return faces(row, CARD_LINES, prefix, P_SPAN)
+
+
+def league_table(dice_dir: Path = DICE_DIR) -> engine.Table:
+    """League batter against the league pitcher's season card (no fatigue column),
+    from the current cards or an archived version's (`dice_dir`)."""
+    lg = pd.read_csv(dice_dir / "cards_league.csv", comment="#", dtype=str)
     pitcher = lg[(lg["player"] == "League average pitcher") & (lg["column"] == "season card")]
     batter = lg[lg["player"] == "League average batter"]
-    p = faces(pitcher.iloc[0], CARD_LINES, "", P_SPAN)
+    p = pitcher_faces(pitcher.iloc[0])
     b = faces(batter.iloc[0], CARD_LINES, "", B_SPAN)
     return engine.Table.from_lines(p, b)
 

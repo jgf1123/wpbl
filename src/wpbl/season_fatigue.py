@@ -370,9 +370,9 @@ def column_values(centred=True):
     when he asks whether the arm on the mound is still the cheapest way to get the
     next batter out (7.7).
     """
-    from wpbl.dice import column_cells
+    from wpbl.dice import column_cells, line_weights_p8
     P = cards("P")
-    w = line_weights()
+    w = line_weights_p8()                      # cards v0.8.0: her lines, the double, the running play
     cols = column_cells(P.to_numpy(), centred)
     return P.index, {k: (v * w).sum(axis=1) / 100.0 for k, v in cols.items()}
 

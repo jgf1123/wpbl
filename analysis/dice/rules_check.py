@@ -46,7 +46,18 @@ class FixedDie:
 # 1. the Matchup Table
 # ---------------------------------------------------------------------------
 def matchup(roll):
-    """00-32 pitcher, 33-38 running play, 39-40 error, 41-44 double, 45-99 batter."""
+    """The rulebook from cards v0.8.0: 00-42 pitcher (her lines, the double and the
+    running play are all on her card), 43-44 reached on error, 45-99 batter."""
+    if roll <= 42:
+        return "pitcher"
+    if roll <= 44:
+        return "ROE"
+    return "batter"
+
+
+def matchup_v7(roll):
+    """Cards through v0.7.0, which archived logs replay with: 00-32 pitcher, 33-38
+    running play, 39-40 error, 41-44 double, 45-99 batter."""
     if roll <= 32:
         return "pitcher"
     if roll <= 38:
@@ -59,17 +70,20 @@ def matchup(roll):
 
 
 def check_matchup():
-    table = engine.Table.from_lines(np.array(["K"] * 33), np.array(["HR"] * 55))
-    bad = 0
-    for roll in range(100):
-        want = matchup(roll)
-        got = table.read(roll)
-        got = "pitcher" if got == "K" else "batter" if got == "HR" else got
-        if got != want:
-            bad += 1
-            if bad <= 8:
-                print(f"  MISMATCH roll {roll:02d}: rulebook {want}, engine {got}")
-    print(f"Matchup Table: 100 rolls checked, {bad} mismatches")
+    bad = checked = 0
+    for p_cells, printed in ((43, matchup), (33, matchup_v7)):
+        table = engine.Table.from_lines(np.array(["K"] * p_cells), np.array(["HR"] * 55))
+        for roll in range(100):
+            want = printed(roll)
+            got = table.read(roll)
+            got = "pitcher" if got == "K" else "batter" if got == "HR" else got
+            checked += 1
+            if got != want:
+                bad += 1
+                if bad <= 8:
+                    print(f"  MISMATCH ({p_cells}-cell pitcher block) roll {roll:02d}: "
+                          f"rulebook {want}, engine {got}")
+    print(f"Matchup Table, both layouts: {checked} rolls checked, {bad} mismatches")
     return bad
 
 
@@ -157,7 +171,16 @@ def check_results():
 # 3. the fatigue columns
 # ---------------------------------------------------------------------------
 def column(count, stamina):
-    """Fresh up to 20, fading up to her stamina, gassed past that."""
+    """The rulebook: Fresh below 20, Fading from 20 to below her stamina, Gassed at
+    her stamina or more (cards v0.7.0 on)."""
+    if count < 20:
+        return "fresh"
+    return "fading" if count < stamina else "gassed"
+
+
+def column_up_to(count, stamina):
+    """Cards through v0.6.0, which old game logs replay with: fresh up to 20,
+    fading up to her stamina, gassed past that."""
     if count <= 20:
         return "fresh"
     return "fading" if count <= stamina else "gassed"
@@ -165,17 +188,18 @@ def column(count, stamina):
 
 def check_columns():
     bad = checked = 0
-    for stamina in (50, 60, 70, 80, 90, 100, 110):
-        for count in range(-30, int(stamina) + 25):
-            want = column(count, stamina)
-            got = engine.column_for(count, float(stamina))
-            checked += 1
-            if got != want:
-                bad += 1
-                if bad <= 8:
-                    print(f"  MISMATCH count {count} stamina {stamina}: "
-                          f"rulebook {want}, engine {got}")
-    print(f"Fatigue columns: {checked} counts checked, {bad} mismatches")
+    for rule, printed in (("below", column), ("up to", column_up_to)):
+        for stamina in (50, 60, 70, 80, 90, 100, 110):
+            for count in range(-30, int(stamina) + 25):
+                want = printed(count, stamina)
+                got = engine.column_for(count, float(stamina), rule)
+                checked += 1
+                if got != want:
+                    bad += 1
+                    if bad <= 8:
+                        print(f"  MISMATCH ({rule}) count {count} stamina {stamina}: "
+                              f"rulebook {want}, engine {got}")
+    print(f"Fatigue columns, both rules: {checked} counts checked, {bad} mismatches")
     return bad
 
 
@@ -366,9 +390,11 @@ SPEC = {
     "ladder min":                (44,    0),
     "ladder max":                (100,   0),
     "ladder median":             (69.5,  0),
-    # section 7.6, the spacing of the columns
-    "step fresh->fading":        (0.018, 0.002),
-    "step fading->gassed":       (0.032, 0.002),
+    # section 7.4, the spacing of the columns -- cards v0.8.0: the pitcher block's run
+    # value per roll (her lines and the double), the whole plate appearance following
+    # the season's shape (was 0.018 / 0.032 through v0.7.0, her lines alone)
+    "step fresh->fading":        (0.021, 0.002),
+    "step fading->gassed":       (0.053, 0.002),
     # section 7.9, the currency
     "pitches per plate appearance": (3.482, 0.005),
 }
@@ -379,7 +405,7 @@ def spec_numbers():
     import numpy as np
     import pandas as pd
     from wpbl.dice import (COLUMN_SHARE, PITCH_COST, capacity, cards,
-                           column_cells, line_weights, plate_appearances)
+                           column_cells, line_weights_p8, plate_appearances)
 
     pa = plate_appearances()
     pa = pa.assign(p=[PITCH_COST.get(l, 3.3) for l in pa["line"]])
@@ -391,7 +417,7 @@ def spec_numbers():
     caps = pd.Series(capacity())
 
     P = cards("P")
-    w = line_weights()
+    w = line_weights_p8()                 # v0.8.0: her lines, the double, the running play (unpriced)
     cc = column_cells(P.to_numpy(), centred=True)
     use = pa.groupby("P").size().reindex(P.index).fillna(0).to_numpy(float)
     use /= use.sum()
@@ -425,8 +451,19 @@ def check_spec_numbers():
     return bad
 
 
+def check_gassed_exclude():
+    """The gassed replacement (cards v0.9.0) is the worst pitcher NOT disfavored; the
+    card builder keeps its own copy of that list, which must match the manager's."""
+    from wpbl import manager
+    from wpbl.dice import GASSED_EXCLUDE, replacement_card
+    same = set(GASSED_EXCLUDE) == set(manager.DISFAVORED)
+    print(f"Gassed replacement: {replacement_card()[0]}; dice.GASSED_EXCLUDE "
+          f"{'matches' if same else 'DIFFERS FROM'} manager.DISFAVORED")
+    return int(not same)
+
+
 def main():
-    bad = check_matchup() + check_results() + check_columns()
+    bad = check_matchup() + check_results() + check_columns() + check_gassed_exclude()
     print()
     bad += check_costs()
     bad += check_track()

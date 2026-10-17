@@ -1,3 +1,72 @@
+2026-10-15: v0.9.0
+  - Rule: gassed means done. Every pitcher's Gassed column is the same line: the
+    season card of the league's worst pitcher who is not disfavored (Addisyn
+    Baird, LAQ), against the league-average batter -- about 1.52 runs an inning.
+    On v0.8.0 an ace gassed was still better than most of her bullpen fresh
+    (Sato gassed 1.09 against six of LAQ's eight others fresh; Lee 1.07 against
+    five of NYH's eight), so riding her exhausted looked like a bargain: an
+    oracle with perfect hindsight pitched Sato 33 innings in 8 games, entering at
+    a count of 117. Now every team's best arm gassed is worse than every
+    teammate fresh and fading
+  - Fresh and fading are re-centred with the new gassed line in the average, so
+    each pitcher's usage-weighted columns are still her season card. Steps in
+    runs per PA: fresh to fading 0.020, fading to gassed 0.053 (0.019 on v0.8.0).
+    A few fresh columns move: Lee 0.91 -> 0.86 runs an inning
+  - Season simulation: 7.71 runs per team-game (v0.8.0 7.78, season 7.64)
+  - The replacement is chosen on each build (dice.replacement_card);
+    dice.GASSED_EXCLUDE copies manager.DISFAVORED and rules_check holds them equal
+  - v0.8.0 cards archived in data/dice/v0.8.0/ (its PDFs are the older layout's;
+    the CSVs are v0.8.0's)
+
+2026-10-12: v0.8.0
+  - Layout: the Matchup Table is 00-42 pitcher's card, 43-44 reached on error,
+    45-99 batter's card. The Double and the Running play move off the table onto
+    the pitcher card, in every column: doubles 4/5/6 cells (fresh/fading/gassed)
+    and running plays 6/6/6, the same for every pitcher. Her own six lines take
+    the rest, 33/32/31 cells. Running plays do not rise with fatigue once the
+    first-inning baseline counts every outing (6.9% per PA with a runner on,
+    later innings 6.3%)
+  - Fatigue shape: one hierarchical step per column (fading 1, gassed 2). Its
+    DIRECTION is the 2026 season's, removal innings kept and shrunk: step (a)
+    over K/BB/HBP/ball in play K x0.969, BB x0.962, HBP x1.023, in play x1.002;
+    step (b) within balls in play OUT x0.916, 1B x1.135, HR x1.052. Fatigue
+    shows as harder contact, not lost control. Its SIZE is refit: those
+    multipliers are raised to FATIGUE_SCALE 0.25 a step. The fit compared later
+    innings with first innings only from outings that reached a second inning,
+    a lucky baseline (-0.063 runs per PA against the matchup; all first innings
+    -0.010). Against all first innings fatigue is +0.026 per PA, not +0.079
+    (dice_game_spec.md 7.4)
+  - The shape applies to the whole plate appearance against the league-average
+    batter, and the columns are centred exactly: the usage-weighted columns
+    give her season card, line by line, except singles: 4 / 5 / 6 doubles
+    average 0.35 cells more than the season's 4.54% of plate appearances (running
+    plays re-roll, so the rate is of the 94.4 other faces), and that excess comes
+    out of singles, keeping hits at the season's total. The game scores 7.78
+    runs per team-game, against v0.7.0's 7.72 on the same simulation and the
+    season's 7.64. Each of her lines keeps at least 1 cell
+  - League pitcher, fresh/fading/gassed cells (K/BB/HBP/HR/1B/OUT/2B/RUN):
+    4/5/1/1/7/15/4/6, 4/5/1/1/7/14/5/6, 4/4/1/1/8/13/6/6. Step in runs per
+    PA: fresh to fading 0.021, fading to gassed 0.019. A fading Meidlinger
+    (1.06 runs an inning against a league lineup) is again better than a fresh
+    Villarreal (1.09); on the first build she was 1.13 against 0.98
+  - Batter cards, the Outs and Singles Tables and the d12 are unchanged
+  - v0.7.0 cards are archived in data/dice/v0.7.0/ (its PDFs print the v0.6.0
+    layout, which is the same table); old logs replay on their own cards
+  - PDFs need regenerating in nanDECK for the new pitcher layout
+
+2026-10-12: v0.7.0
+  - Rule: the fatigue columns read "below" instead of "up to". Fresh while the
+    Pitch Count is below 20, Fading from 20 to below her stamina, Gassed at her
+    stamina or more. The column is read before each batter and a batter costs 3
+    or 5, so a pitcher now throws 20-24 fresh pitches where she threw 21-25
+    (user: the defensible reading of "her first 20 pitches"). Stamina numbers
+    are unchanged: no real plate appearance starts at or past her stamina
+  - Column shares, replayed from the real outings: fresh 0.392, fading 0.597,
+    gassed 0.011 (were 0.412, 0.579, 0.010). Every pitcher card is centred on
+    them, so pitcher columns move slightly; batter cards are unchanged
+  - v0.6.0 cards are archived in data/dice/v0.6.0/; `pixi run play` replays a
+    log on the cards and the column rule it was played with
+
 2026-10-02: v0.6.0
   - Fix: a batter's usage share counted starting as a pitcher who does not
     bat. In a DH game the feed lists the starting pitcher at lineup spot 10,
