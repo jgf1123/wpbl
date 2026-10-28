@@ -243,11 +243,19 @@ def main(argv=None):
     ap.add_argument("--max", type=int, default=20000, help="at most this many postseasons")
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--log", default=None, help="play one postseason and write its games here")
+    ap.add_argument("--out", nargs="*", default=[],
+                    help="players unavailable for the whole postseason (injured): neither pitch nor bat")
     a = ap.parse_args(argv)
     cards, wp = play.shared()
+    for name in a.out:                       # injured: gone from every lineup, rotation and bullpen
+        if name not in cards.pitcher and name not in cards.batter:
+            raise SystemExit(f"--out: no card for {name}")
+        for table in (cards.pitcher, cards.batter, cards.pitch_faces, cards.bat_faces):
+            table.pop(name, None)
+        print(f"unavailable: {name}")
     model = M.Model(cards, wp)
     model.usage = usage.Usage(cards)
-    missing = [n for n in FATIGUE_0909 if n not in cards.pitcher]
+    missing = [n for n in FATIGUE_0909 if n not in cards.pitcher and n not in a.out]
     if missing:
         raise SystemExit(f"fatigue chart names without a pitcher card: {missing}")
     if a.log:
