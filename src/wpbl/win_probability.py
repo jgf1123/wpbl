@@ -49,6 +49,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+from scipy.stats import binomtest
 
 from wpbl import markov, tables
 
@@ -391,6 +392,30 @@ def validate(model: "Model") -> None:
                   actual=("home_won", "mean")).round(3))
     table["pas"] = frame.groupby("bin", observed=True).size()
     print(table.to_string())
+
+    # The model gives home no edge (0.500 at first pitch), so whenever home
+    # teams won more or less than half their games, every row above shifts the
+    # same way. Scoring each plate appearance from both sides -- P(home) against
+    # home won, 1 - P(home) against away won -- cancels that and leaves only the
+    # shape. The result is antisymmetric by construction: half of it is the
+    # other half mirrored.
+    games = frame.groupby("game_id")["home_won"].first()
+    wins = int(games.sum())
+    print(f"\n  home teams went {wins}-{len(games) - wins} "
+          f"(two-sided p = {binomtest(wins, len(games), 0.5).pvalue:.2f} against 50/50);"
+          f" the rows above inherit that")
+    sides = pd.concat([
+        frame.assign(side="home", p=frame["wp"], won=frame["home_won"]),
+        frame.assign(side="away", p=1 - frame["wp"], won=~frame["home_won"])])
+    sides["bin"] = pd.cut(sides["p"], np.arange(0, 1.01, 0.1))
+    per_side = (sides.groupby(["bin", "game_id", "side"], observed=True)
+                .agg(p=("p", "mean"), won=("won", "first")).reset_index())
+    mirrored = (per_side.groupby("bin", observed=True)
+                .agg(sides=("p", "size"), predicted=("p", "mean"),
+                     actual=("won", "mean")))
+    mirrored["gap"] = mirrored["actual"] - mirrored["predicted"]
+    print("\n  both sides: P(a team wins) against whether it did, game-weighted")
+    print(mirrored.round(3).to_string())
 
     brier = ((frame["wp"] - frame["home_won"]) ** 2).mean()
     base = ((0.5 - frame["home_won"]) ** 2).mean()
