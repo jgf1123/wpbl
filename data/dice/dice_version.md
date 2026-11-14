@@ -1,3 +1,24 @@
+2026-11-01: v0.10.0
+  - Rule: Gassed is her own. The shared Baird line is gone: each pitcher's Gassed
+    column is her Fresh plate appearance moved along the fatigue shape at
+    dice.GASSED_SHAPE 1.75, with the same multipliers for every pitcher. The
+    direction is measured; the size is designed: the smallest of the sizes tried,
+    in quarters, at which no arm in the better half of her staff beats a
+    non-disfavored teammate Fresh when she is Gassed. Gassed runs from 1.38 runs
+    an inning (Lee) to 2.07 (Apgar), median 1.66, and every Fading to Gassed step
+    is at least 0.35, where Baird's was 0.02
+  - Against non-disfavored teammates Fading, three wins remain: Sato (1.40) over
+    Baird (1.51), Lee (1.38) and Saiki (1.39) over Izumi (1.41). Sato also beats
+    disfavored Apgar and Frank Fading. The oracle (20 samples, Gassed starts
+    allowed) uses Sato 11.35 innings a postseason (v0.9.0 11.15), Lee 10.55
+    (10.7) and Blunt 10.8 (11.15). Albayati rises from 8.55 to 10.3
+  - Season simulation: 7.77 runs per team-game (v0.9.0 7.71, season 7.64);
+    fresh / fading / gassed 38.2 / 59.3 / 2.5%
+  - Steps in runs per PA: fresh to fading 0.021, fading to gassed 0.065
+  - Batter cards are unchanged apart from the version header
+  - v0.9.0 cards archived in data/dice/v0.9.0/
+  - PDFs need regenerating in nanDECK for the new Gassed columns
+
 2026-10-15: v0.9.0
   - Rule: gassed means done. Every pitcher's Gassed column is the same line: the
     season card of the league's worst pitcher who is not disfavored (Addisyn

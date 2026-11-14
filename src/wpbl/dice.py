@@ -199,7 +199,14 @@ FATIGUE_SCALE = 0.25
 # pitcher who is not disfavored (`replacement_card`), about 1.45 runs an inning, worse
 # than every such pitcher fresh and nearly all of them fading. GASSED_EXCLUDE copies
 # manager.DISFAVORED (rules_check holds them equal).
-GASSED_REPLACEMENT = True
+# Her own gassed (user, 1 Nov; cards v0.10.0). The shared line looked arbitrary and capped
+# how weak a pitcher could get, so gassed is her own fresh plate appearance moved
+# GASSED_SHAPE powers of SHAPE, the same multipliers for every pitcher: the measured
+# direction, at a designed size. 1.75 is the smallest of the sizes tried, in quarters,
+# at which no arm in the better half of her staff beats a non-disfavored teammate
+# fresh when she is gassed.
+GASSED_REPLACEMENT = False
+GASSED_SHAPE = 1.75
 GASSED_EXCLUDE = ("Adelaide Frank", "Brittany Apgar", "Jua Park", "Maggie Foxx", "Raine Padgham",
                   "Suzu Narasaki")
 # Runs cannot see BB | HBP (a walk is worth 0.45, an HBP 0.49), so that step's k is
@@ -654,7 +661,8 @@ def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndar
     GASSED (cards v0.9.0, user 15 Oct): with GASSED_REPLACEMENT every pitcher's
     gassed column is the replacement's season card against the league batter
     (`replacement_card`), the same for all; fresh and fading are solved with it in
-    the average, so her columns still average to her season card."""
+    the average, so her columns still average to her season card. Without it (cards
+    v0.10.0, user 1 Nov) gassed is her own fresh moved GASSED_SHAPE powers of SHAPE."""
     w = line_weights()
     idx = [CARD_LINES.index(l) for l in TREE_LINES]
     p = p_cards[:, idx]
@@ -682,7 +690,8 @@ def column_cells(p_cards: np.ndarray, centred: bool = True) -> dict[str, np.ndar
     def column_pa(c, fresh):
         if c == "gassed" and gassed_pa is not None:
             return gassed_pa
-        return shape_step(fresh, FATIGUE_STEPS[c]) * (OWN_CELLS[c] + B_CELLS)
+        k = GASSED_SHAPE / FATIGUE_SCALE if c == "gassed" else FATIGUE_STEPS[c]
+        return shape_step(fresh, k) * (OWN_CELLS[c] + B_CELLS)
 
     for _ in range(500):
         got = sum(weight[c] * column_pa(c, fresh) for c in cols)
@@ -820,7 +829,7 @@ def league_card(pa: pd.DataFrame) -> pd.Series:
     return pd.Series({l: share[l] for l in CARD_LINES})
 
 
-CARD_VERSION = "v0.9.0"                 # keep in step with data/dice/dice_version.md
+CARD_VERSION = "v0.10.0"               # keep in step with data/dice/dice_version.md
 
 
 def plain_name(name: str) -> str:

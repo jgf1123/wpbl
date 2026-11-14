@@ -264,6 +264,7 @@ def plate_appearances(scope: str = "default") -> pd.DataFrame:
                 "outcome": contact(play.event_type, play.narrative),
                 "run_value": after + play.runs_scored - before,
                 "half_id": cluster,           # bootstrap cluster
+                "game_id": play.game_id,
                 "bases": play.bases,
                 "outs": int(play.outs_before),
             })

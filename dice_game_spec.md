@@ -1563,6 +1563,20 @@ usage-weighted average. Every team's best arm gassed is now worse than every tea
 fresh and fading. Steps: fresh -> fading 0.020, fading -> gassed 0.053 runs per PA.
 Season simulation 7.71 runs per team-game (v0.8.0 7.78, season 7.64).
 
+**Her own gassed (user, 1 Nov; cards v0.10.0).** The shared line was arbitrary and
+capped how weak a pitcher could get: Baird's fading -> gassed step was 0.02 runs an
+inning against Lee's 0.53. Gassed is now her own fresh plate appearance moved
+`dice.GASSED_SHAPE` = 1.75 powers of the shape, the same multipliers for every
+pitcher. The direction is measured and the size is designed: 1.75 is the smallest of
+the sizes tried, in quarters from 1.0 through the real build, at which no arm in the
+better half of her staff beats a non-disfavored teammate fresh when she is gassed.
+The size at which she also beats none fading is 2.25. Cells move in whole steps, so
+the threshold is partly rounding and should be rechecked on any rebuild. Lee 1.38,
+median 1.66, Apgar 2.07 runs an inning. The oracle's use of the best arms holds (20
+samples, gassed starts allowed; v0.9.0 in brackets): Sato 11.35 innings a postseason
+(11.15), Lee 10.55 (10.7), Blunt 10.8 (11.15), Albayati 10.3 (8.55). Season simulation
+7.77 runs per team-game. Steps: fresh -> fading 0.021, fading -> gassed 0.065.
+
 **Left on the old layout, on purpose:** `lineup_model.facing_average_pitcher`
 still mixes 33 pitcher cells with fixed 4 / 2 bands over 94. Under v0.8.0 the
 average pitcher is 32.8 own cells and 4.63 doubles; it ranks batters against

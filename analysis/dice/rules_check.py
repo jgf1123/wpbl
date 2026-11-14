@@ -394,7 +394,7 @@ SPEC = {
     # value per roll (her lines and the double), the whole plate appearance following
     # the season's shape (was 0.018 / 0.032 through v0.7.0, her lines alone)
     "step fresh->fading":        (0.021, 0.002),
-    "step fading->gassed":       (0.053, 0.002),
+    "step fading->gassed":       (0.065, 0.002),
     # section 7.9, the currency
     "pitches per plate appearance": (3.482, 0.005),
 }

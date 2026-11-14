@@ -158,7 +158,7 @@ A pitcher's card has three columns. During a Plate Appearance, use the column co
 
 Check the Pitch Count *before* each batter; a pitcher who crosses a boundary mid-inning changes columns for the next batter.
 
-Every pitcher's Gassed column is the same: once she is Gassed, even an ace pitches like the league's weakest regular arm.
+A pitcher's Gassed column is still her own, but batters hit her much harder: once she is Gassed, even an ace is worse than a Fresh teammate.
 
 *Example.* A pitcher with stamina 80 is Fresh below 20 Pitch Count, Fading from 20 to 79, Gassed from 80. She enters at 0. A walk puts her at 5, two strikeouts at 15, a groundout at 18: still Fresh. The next batter singles, and her Pitch Count reaches 21. From the following batter, she reads her Fading column. A Pitch Count of exactly 20 is already Fading, so her first 20 pitches (give or take the last batter) are Fresh.
 
@@ -219,6 +219,55 @@ Managers do a sepentine draft of 15 players among all available pitchers and bat
 After a game, do *not* reset each pitcher's Pitch Count. At the end of every day, all pitchers reduce their Pitch Count by 20 to a minimum of -30. If a pitcher is put in a game before they have fully recovered their stamina, the 30 Pitch Count cost will mean their Pitch Count starts above 0.
 
 *Example.* A pitcher with Stamina 80 finishes a game at 83 Pitch Count. She recovers 40 over that night and the following day, leaving 43. If she then pitches a game 2 days after her last outing, warming up puts her at 73: deep into Fading and only 7 pitches from Gassed.
+
+---
+
+## Design Notes
+
+"Two outs, so what?" (TOSW) is a Los Angeles Queens saying to rally their batters, that the inning isn't over even if they're down with two outs. Indeed, once there are 2 outs in MLB, the batting team scores a run just 12% of the time, while WPBL scores twice as often. The motto also reflects the spirit of the league, made up of women who had been told all their lives to play softball instead of baseball and who refused to give up on their dream.
+
+I received *Statis Pro Baseball* as a birthday present when I was a kid, and it was my introduction to board game sports simulations. One might think it is straightforward to create the cards for such a baseball simulation: the probability of an outcome for a player equals the percentage of plate appearances / batters faced with that outcome. While that is fine for MLB, which can draw on 162 regular-season games per team per season, the inaugural WPBL season had just 15 games per team.
+
+The following table shows Denae Benites's 73 plate appearances across the regular- and post-season (except the semifinals Game 3 LAQ @ NYH on Sept 14, when both bullpens were exhausted). The table also shows the performance of her TOSW card against a league-average pitcher. A card is a forecast of games we haven't seen, not a replay of 2026, because a short season is full of luck. Adelaide Frank walked 5 of the 7 batters she faced, but no one believes she'd walk 71% of batters forever. So each card blends a player's record with those of players her team used about as much, and Benites keeps an excellent card with fewer of the home runs and singles that fell her way.
+
+| Outcome | 2026 Season | TOSW |
+|---------|-------------|------|
+| HR      | 16%         | 11%  |
+| 2B      | 3%          | 4%   |
+| 1B      | 33%         | 23%  |
+| ROE     | 1%          | 2%   |
+| Out     | 26%         | 36%  |
+| BB      | 8%          | 11%  |
+| K       | 8%          | 10%  |
+| HBP     | 4%          | 3%   |
+
+### Who owns what
+
+Batters differ from each other more than pitchers do. Among regulars, batter cards run from 0 to 9 cells of home runs, while every pitcher has exactly 1, so home runs are effectively a batter's skill. Hit by pitch leans the same way, at 0-9 cells for batters and 1-3 for pitchers. Strikeouts and walks are where pitchers matter most (1-10 and 1-7 cells), though batters still vary more (2-14 and 4-12).
+
+Some outcomes aren't anyone's. Doubles sit on the pitcher's card but are the same for every pitcher, because no one's record of doubles predicted her future ones better than a flat rate. Running plays are also the same for everyone, and reaching on an error depends on the fielders, so it's on neither card.
+
+### Why not 50/50
+
+Many games split the roll evenly: in Strat-O-Matic, half the rolls read the batter's card and half the pitcher's. TOSW gives 43 rolls to the pitcher's card, 2 to errors and 55 to the batter. Only 33 of a Fresh pitcher's 43 are her own lines, so among rolls that depend on who's playing, the batter gets about 62%. That follows from the section above, and when we tested different splits on held-out games, giving pitchers about 35-45% predicted best.
+
+### The fatigue system
+
+Managers always pull a tiring pitcher, so we never see what would have happened next. The fatigue system therefore doesn't try to predict her decline; it gives you a reason to pull her on about a real manager's schedule.
+
+Fresh ends at 20 pitches because the data shows a step after a pitcher's first inning, not a slow slide. Tired pitchers don't lose the strike zone: strikeouts, walks and contact rate barely move, but outs turn into hits. Our first estimate of the cost was inflated, because pitchers shelled early had dropped out of the comparison, so 0.08 runs a batter became 0.026. Stamina is designed rather than measured, set just past each pitcher's longest real outing.
+
+Past stamina the data runs out, since only 1.1% of real plate appearances happened there, so Gassed keeps the measured direction but its size had to be chosen. At the measured step, a Gassed Sato still beat most of her bullpen, and a test manager with perfect hindsight pitched her 33 innings in 8 games. My first fix made every Gassed pitcher identical, which stopped that but erased her identity and cost the league's worst arms almost nothing.
+
+Now each pitcher keeps her own card, moved the same amount in the same direction, and the size is the smallest we tried that leaves even an ace worse than a Fresh teammate. Jaida Lee keeps nearly all her strikeouts (10 cells to 9), but her outs fall from 13 cells to 7 and her singles double from 5 to 10, taking her from 0.86 runs an inning to 1.38.
+
+The 30-pitch warm-up closes a separate loophole: without it, a manager could cycle eight arms for 14 pitches each and keep everyone Fresh. One thing remains open: nothing in the game rewards pulling a pitcher a little early, the way real managers do.
+
+### The game that started it
+
+The original impetus for creating this game came when watching the semifinals Game 1 LAQ @ NYH on Sept 10. In the top of the 5th, NYH's Emi Saiki allowed two straight doubles, leaving NYH down 4-0 with a 5th run in scoring position with just 1 out. NYH manager Rocky Henley visited the mound, which wasn't surprising. The question is who she would call to the mound: Jaida Lee was injured, but otherwise the entire NYH bullpen was fresh. On the one hand, if NYH put one of their better relievers in, NYH would still probably lose the game, and the reliever would be out for the rest of the series. On the other hand, not contesting game 1 in a best-of-3 series would put NYH in a tight spot.
+
+Rocky Henley chose London Studer, who allowed 3 runs before getting replaced by Keira Izumi in the 7th, who allowed 3 more. Meanwhile, when LAQ was up 6-1 in the bottom of the 6th, they felt safe enough to call Isabella Villarreal to relieve, who loaded the bases, before putting the game in the safe hands of Meggie Meidlinger.
 
 ---
 
